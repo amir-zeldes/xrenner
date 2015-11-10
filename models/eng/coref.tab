@@ -1,0 +1,3210 @@
+# Source: GUM corpus (see licenses)
+October|October	coref
+National Magic Month|October	coref
+William Evans|President of the International Brotherhood of Magicians	appos
+William Evans|president of the International Brotherhood of Magicians	appos
+the International Brotherhood of Magicians|the International Brotherhood of Magicians	coref
+Magicians|Magicians	coref
+magic|the International Brotherhood of Magicians	bridge
+its|magic	ana
+you|William Evans	ana
+magic|its	coref
+I|you	ana
+I|I	ana
+I|I	ana
+I|I	ana
+I|I	ana
+it|that big red box with the dragons	ana
+I|I	ana
+it|it	ana
+the counter|Hollywood Magic	bridge
+it|it	ana
+me|I	ana
+me|me	ana
+I|me	ana
+\" Scarne on Card Tricks \" and \" Scarne on Magic Tricks \"|two books	appos
+That|sold me two books	ana
+me|I	ana
+books|\" Scarne on Card Tricks \" and \" Scarne on Magic Tricks \"	bridge
+I|me	ana
+quite a few|books	bridge
+then|That	ana
+My|I	ana
+October|National Magic Month	coref
+National Magic Month|October	coref
+the US|the United States	coref
+you|My	ana
+magic|magic	coref
+a viable form of entertainment|magic	bridge
+more magicians|Magicians	bridge
+today|today	coref
+good magicians|more magicians	bridge
+good magic|magic	bridge
+magic|magic	coref
+magic|magic	coref
+I|you	ana
+young magicians|younger people	bridge
+so many|young magicians	bridge
+the internet|the internet	coref
+they|so many	ana
+the books|books	coref
+We|I	bridge
+magic|magic	coref
+the internet|the internet	coref
+magic|magic	coref
+a magician|more magicians	bridge
+you|I	ana
+your|you	ana
+I|your	ana
+I|I	ana
+International President|I	coref
+I|International President	ana
+I|I	ana
+Las Vegas|Las Vegas	coref
+November|next month	coref
+Las Vegas|Las Vegas	coref
+Eureka Springs|Eureka Springs , Arkansas	coref
+March|March	coref
+That|I am going to Las Vegas and Los Angeles next month , Italy in November , back to Las Vegas in December , Mexico in January , Magi-Fest in February , the Winter Carnival of Magic in Tennessee in March , Eureka Springs Cavalcade of Magic in March , and the FFFF in April	ana
+Image|File photo	coref
+you|Marymegan Daly	ana
+this discovery|unusual new sea anemone	coref
+I|you	ana
+the anemone|this discovery	coref
+your|I	ana
+the ice in the Ross Sea|ice	coref
+I|your	ana
+I|I	ana
+it|an undiscovered ecosystem	ana
+Frank and his colleagues|they	coref
+Frank|Frank Rack	ana
+his|Frank	ana
+the ice|the ice in the Ross Sea	coref
+it|it	ana
+it|it	ana
+you|I	ana
+there|Antarctica	ana
+yourself|you	ana
+I|yourself	ana
+I|I	ana
+more animals|the anemone	coref
+my|I	ana
+I|my	ana
+the animals|more animals	coref
+it|What I want to do with the animals	ana
+me|I	ana
+there|there	ana
+I|me	ana
+there|there	ana
+my|I	ana
+the animals|the animals	coref
+the system in which they live|it	coref
+me|my	ana
+the anemones|the animals	coref
+Antarctica|there	coref
+they|biologists	ana
+there|Antarctica	ana
+These animals|the anemones	coref
+Some of the most intriguing questions|more and better questions about the anemones	bridge
+they|These animals	ana
+their|they	ana
+The samples|the specimens on hand	coref
+we|me	bridge
+they|The samples	ana
+a kind of formaldehyde solution|formalin	appos
+The formalin|a kind of formaldehyde solution	coref
+anemones|their	coref
+it|The formalin	ana
+we|we	ana
+these animals|anemones	coref
+we|we	ana
+anatomy|structures	coref
+it|anatomy	ana
+we|we	ana
+samples|they	coref
+the genome , transcriptome , or metabolome|DNA	bridge
+the animals|these animals	coref
+these animals|the animals	coref
+them|these animals	ana
+where they live|there	coref
+they|them	ana
+a single species|they	coref
+that animal|a single species	coref
+these|that animal	ana
+we|we	ana
+them|these	ana
+comparisons|precise comparisons	coref
+We|we	ana
+more beasts|them	coref
+their glow|that orange glow in the ROV lights	coref
+their|more beasts	ana
+it|their glow	ana
+theirs|their	ana
+luminescence|it	coref
+anemone relatives|close relatives	coref
+they|theirs	ana
+light|luminescence	coref
+They|they	ana
+florescent proteins|light	bridge
+these|florescent proteins	ana
+the light of the ROV|the ROV lights	coref
+that gorgeous glow|light	coref
+the specimens|samples	coref
+I|me	ana
+a dissecting scope|equipment	bridge
+the animal \'s|They	coref
+overall body organization|the animal \'s external anatomy	bridge
+I|I	ana
+a few of the animals|the animal \'s	bridge
+them|a few of the animals	ana
+microtome|equipment	bridge
+the slices|very thin slices	coref
+the slices|the slices	coref
+those slides|microscope slides	coref
+compound microscope|equipment	bridge
+I|I	ana
+I|I	ana
+that same compound scope|compound microscope	coref
+nematocysts|the stinging capsules	appos
+I|I	ana
+I|I	ana
+the \'scopes|a dissecting scope	bridge
+the \'scopes|that same compound scope	bridge
+This step|I compared the things I saw under the \'scopes to what had been published on other species in this group	coref
+it|This step	ana
+my|I	ana
+my|my	ana
+I|my	ana
+it|the animal \'s	ana
+that group|group	coref
+it|it	ana
+specimens|the specimens	coref
+final publication|the paper	bridge
+it|final publication	ana
+You|us	ana
+we|We	ana
+it|it	ana
+Frank|his	coref
+me|I	ana
+specimens|specimens	coref
+we|we	ana
+the paper|the paper	coref
+that time|about two years	coref
+I|me	ana
+I|I	ana
+we|we	ana
+it|it	ana
+we|we	ana
+the unorthodox preservatives|it	bridge
+a specimen with intact DNA|specimens	bridge
+DNA|DNA	coref
+The preservation|the unorthodox preservatives	bridge
+anatomical preservation|The preservation	coref
+DNA-suitable material|a specimen with intact DNA	coref
+us|we	ana
+genes turned on in different ways and at different times|new genes	bridge
+these animals|it	coref
+hard ice|the ice	coref
+I|I	ana
+anemones|these animals	coref
+Edwardsiella andrillae|anemones	coref
+the fields|the \" fields \" of anemones	coref
+DNA|DNA	coref
+this|that the fields are \" clones \" produced asexually	ana
+the location of the Ross Ice Shelf|the Ross Sea	coref
+the Antarctic|where they live	coref
+E. andrillae|Edwardsiella andrillae	coref
+Daily et al.|us	coref
+Daly|I	coref
+she|Daly	ana
+these images of the anemone \'s anatomy|image	coref
+the anemone|E. andrillae	coref
+Daily et al.|Daily et al.	coref
+business|BDSM	coref
+the business|business	coref
+The costs|the business	bridge
+this industry|the business	coref
+this|this industry	ana
+It|this	ana
+it|It	ana
+black|black	coref
+It|it	ana
+that|black	ana
+we|We	ana
+what the average person would think we would hire|the opposite of what you \'d think we would hire	appos
+we|we	ana
+We|We	ana
+We|we	ana
+educated , nice people|what the average person would think we would hire	coref
+I|I	ana
+our|We	ana
+I|I	ana
+S&M|It	coref
+S&M|It	coref
+I|I	ana
+the rest of it|one of our ads that I had put in	bridge
+that ad|one of our ads that I had put in	coref
+they|so many girls	ana
+I|I	ana
+they all|they	ana
+nice girls|nice girls	coref
+this|S&M	ana
+this|S&M	ana
+a bunch of them|they all	coref
+they|a bunch of them	ana
+I|I	ana
+I|I	ana
+that|that ad	ana
+I|you	ana
+I|I	ana
+It|the startup costs	ana
+Manhattan|It	bridge
+rents|It	bridge
+build-outs|It	bridge
+hiring|It	bridge
+advertising|It	bridge
+your|our	ana
+The single most costly thing we spend on|your greatest non-fixed cost	coref
+we|your	ana
+rent and advertising|The single most costly thing we spend on	coref
+those two together|rent and advertising	coref
+the bulk of what we spend|those two together	coref
+we|we	ana
+things like that|bookkeeping	bridge
+That|supplies , and there \'s wear and tear and maintenance , and bookkeeping and things like that	ana
+this business|this	coref
+it|this business	ana
+my|I	ana
+my wife|I	coref
+the gals|they	bridge
+you|we	ana
+the web|the Internet	coref
+we|you	ana
+New York Press|the local city papers	appos
+things like that|New York Press	appos
+L Magazine|the local city papers	appos
+the paper|the local city papers	coref
+in the back of the paper|In the back of the paper	coref
+the paper|the paper	coref
+Magazines|in the back of the paper	bridge
+their|Magazines	ana
+it|our ads	ana
+it|advertising	ana
+it|it	ana
+it|it	ana
+the paper|the paper	coref
+the paper|the paper	coref
+we|we	ana
+the Press|the paper	bridge
+they|the Press	ana
+adult ads|it	coref
+we|we	ana
+the Voice|the paper	bridge
+We|we	ana
+the Internet|the web	coref
+the Internet|the Internet	coref
+it|sensitive material	ana
+employees|the gals	coref
+prospective mistresses|employees	coref
+we|We	ana
+nice people|educated , nice people	coref
+nice people|prospective mistresses	coref
+I|my	ana
+a girl|nice people	bridge
+My husband|I	coref
+My|my wife	ana
+beautiful , beautiful girls|a girl	coref
+beautiful girls|beautiful , beautiful girls	coref
+he|My husband	ana
+he|he	ana
+#I|he	ana
+them|beautiful girls	ana
+I|My	ana
+you|I	ana
+I|you	ana
+them|them	ana
+I|I	ana
+I|I	ana
+someone who \'s going to treat people nicely and well|them	bridge
+people|the customers	coref
+We|we	ana
+you|I	ana
+they|them	ana
+them|they	ana
+a psychologist|you	ana
+me|you	ana
+it|someone who \'s going to treat people nicely and well	ana
+he|me	ana
+I|I	ana
+him|he	ana
+these girls|them	coref
+he|him	ana
+They|these girls	ana
+#I|he	ana
+they|them	ana
+me|I	ana
+I|me	ana
+I|I	ana
+Rebecca and I|We	coref
+Rebecca|I	coref
+I|I	ana
+I|Rebecca	ana
+you|your	ana
+one|a mini-MMPI	ana
+I|I	ana
+you|you	ana
+I|I	ana
+a mini-MMPI|one	coref
+I|I	ana
+I|you	ana
+a sample|a mini-MMPI	bridge
+one that \'s filled out|a mini-MMPI	bridge
+one that you|a mini-MMPI	bridge
+you|I	ana
+I|I	ana
+you|I	ana
+The questions|a mini-MMPI	bridge
+He|you	ana
+you|I	ana
+one|a mini-MMPI	ana
+You|He	ana
+You|You	ana
+me|you	ana
+you|You	ana
+you|you	ana
+No question|a question like \" the greatest woman in the world \"	bridge
+all the questions together|a question like \" the greatest woman in the world \"	bridge
+I|you	ana
+I|I	ana
+the MMPI|a chart	bridge
+The baseline data that I use to|a chart	bridge
+The baseline data|a chart	bridge
+I|I	ana
+you|I	ana
+these questions|all the questions together	coref
+I|you	ana
+them|these questions	coref
+a baseline|The baseline data that I use to	coref
+girls|girls	coref
+it|a baseline	ana
+an amalgamation of questions|them	coref
+Of many , many questions|an amalgamation of questions	coref
+your favorite question|Of many , many questions	bridge
+your|I	ana
+I|your	ana
+I|me	ana
+O.J. Simpson|the O.J. Simpson	coref
+that|O.J. Simpson	ana
+I|I	ana
+one|one	ana
+you|I	ana
+him|I	ana
+you|I	ana
+I|you	ana
+them|references	ana
+I|I	ana
+wikiHow founder|Jack Herrick	appos
+Herrick|wikiHow founder	coref
+It|wikiHow	ana
+its|It	ana
+the site|its	coref
+its|the site	ana
+Wikinews|Wikinews	coref
+the site \'s founder|Herrick	coref
+the site \'s|its	coref
+Jack Herrick|the site \'s founder	appos
+the interview|Jack Herrick , wikiHow founder interviewed by Wikinews	coref
+Herrick|Jack Herrick	coref
+wikiHow|the site \'s	coref
+he|Herrick	ana
+it|wikiHow	ana
+he|he	ana
+it|it	ana
+he|he	ana
+his|he	ana
+his site|it	coref
+the interview|the interview	coref
+Interview|the interview	coref
+your site|his site	coref
+your|his	ana
+you|your	ana
+wikiHow|your site	coref
+wikiHow|wikiHow	coref
+the world \'s largest , highest quality how-to manual|the world \'s largest , highest quality how-to manual	coref
+Our|wikiHow	ana
+practical instructions on almost every topic in every language|the world \'s largest , highest quality how-to manual	bridge
+We|Our	ana
+We|Our	ana
+our|We	ana
+our goals|Our long term goal	coref
+we|our	ana
+wikiHow|the world \'s largest , highest quality how-to manual	coref
+We|we	ana
+over 1000 featured articles|just under 50000 articles	bridge
+We hope that in time , we will have millions of articles with many of them having featured status|our goals	coref
+We|We	ana
+we|We	ana
+millions of articles|1000 featured articles	coref
+we|we	ana
+this goal|We hope that in time , we will have millions of articles with many of them having featured status	coref
+we|we	ana
+We|we	ana
+us|We	ana
+135th most popular site|wikiHow	coref
+The interview|Interview	coref
+Wikipedia|Wikipedia	coref
+wikiHow|wikiHow	coref
+Our|us	ana
+we|Our	ana
+Wikipedia|Wikipedia	coref
+We|we	ana
+The English wikiHow|wikiHow	bridge
+English Wikipedia|Wikipedia	bridge
+wikiHow|We	coref
+We|wikiHow	ana
+a for-profit company focused on achieving a social good|a Hybrid Organization	appos
+This|We are run as a Hybrid Organization - a for-profit company focused on achieving a social good	ana
+We|We	ana
+Our|We	ana
+Our advertising revenue|opt-out advertising	bridge
+community|Our community	coref
+the Wikimedia Foundation|the Wikimedia Foundation	coref
+we|Our	ana
+our revenue|Our advertising revenue	coref
+our|we	ana
+Our|our	ana
+Our community|community	coref
+wikiHow|Our	coref
+you|you	ana
+wikiHow|wikiHow	coref
+I|you	ana
+a person|people	coref
+detailed step-by-step instructions on how to do any activity you could imagine|providing people with a practical education	coref
+you|a person	ana
+you|you	ana
+you|you	ana
+any activity|any activity	coref
+I|I	ana
+a universal how-to manual|detailed step-by-step instructions on how to do any activity you could imagine	coref
+wikiHow|wikiHow	coref
+all of us|you	ana
+I|I	ana
+comprehensive how-to manual|building a universal how-to manual	coref
+comprehensive how-to manual|a universal how-to manual	coref
+I|I	ana
+wikiHow|wikiHow	coref
+My|I	ana
+this resource|comprehensive how-to manual	coref
+I|My	bridge
+eHow|a website	coref
+eHow|eHow	coref
+eHow|eHow	coref
+I|I	ana
+eHow|eHow	coref
+the content|copyrighted content	coref
+This business model|the content was professionally produced and edited	coref
+content|the content	coref
+paying people to write and edit articles|This business model	coref
+the topics|topics that appeal to advertisers in languages like English	coref
+content|content	coref
+I|I	ana
+either of these sacrifices|one of two sacrifices	coref
+I|I	ana
+the world \'s how to manual|this resource	coref
+I|I	ana
+eHow \'s model|paying people to write and edit articles	coref
+eHow|eHow	coref
+the resource|the world \'s how to manual	coref
+I|I	ana
+I|I	ana
+Wikipedia|Wikipedia	coref
+I|I	ana
+the how-to resource the world really needs|the resource	coref
+I|I	ana
+eHow|eHow	coref
+wikiHow|wikiHow	coref
+you|wikiHow	ana
+We|you	ana
+a Creative Commons license|a Creative Commons license	coref
+our|We	ana
+our community|Our community	coref
+my|I	ana
+you|people	ana
+wikiHow|We	coref
+wikiHow volunteers|our community	coref
+our site|wikiHow	coref
+our|We	ana
+they|wikiHow volunteers	ana
+This|In my opinion , people should be hesitant to contribute to websites where you only have the \" right to leave . \" If wikiHow volunteers think our site is going in the wrong direction , they can take all the content and all the software and move the project elsewhere	ana
+This|If wikiHow volunteers think our site is going in the wrong direction , they can take all the content and all the software and move the project elsewhere	ana
+we|wikiHow	ana
+all of our software|all the software	coref
+our content|all the content	coref
+our|we	ana
+a Creative Commons license|a Creative Commons license	coref
+This right to fork|the right to fork	coref
+wikiHow|wikiHow	coref
+the company|wikiHow	appos
+our volunteer community|wikiHow volunteers	coref
+our|our	ana
+I|my	ana
+this right to fork|This right to fork	coref
+our|our	ana
+My|I	ana
+internet users|you	coref
+this|this right to fork	ana
+any site|websites	coref
+their|internet users	ana
+we|our	ana
+I|My	ana
+my|I	ana
+we|we	ana
+I|my	ana
+we|we	ana
+this|the CC BY-SA license	ana
+wikiHow|our site	coref
+you|I	ana
+the site|wikiHow	coref
+it|the site	ana
+wikiHow|the site	coref
+over 14 million unique visitors|millions of visitors per month	coref
+wikiHow|wikiHow	coref
+wikiHow|wikiHow	coref
+this popularity|135th most popular site	bridge
+enough quality information|high quality how-to information	coref
+we|we	ana
+millions of readers|over 14 million unique visitors	coref
+We|we	ana
+those articles|some articles	ana
+more readers|millions of readers	coref
+We|We	ana
+this same virtuous cycle|the virtuous circle of wiki editing	ana
+More readers|more readers	ana
+more editors|editors	ana
+more readers|More readers	coref
+It|this same virtuous cycle	ana
+the same virtuous circle|It	ana
+Wikipedia|Wikipedia	coref
+Libertarian Party nominee for Governor of Virginia|Robert Sarvis	appos
+Attorney Robert Sarvis|Robert Sarvis	coref
+the Libertarian Party \'s nominee for Governor of Virginia|Attorney Robert Sarvis	appos
+Libertarian Party \'s|Libertarian Party	coref
+Governor|Governor	coref
+Governor of Virginia|Governor of Virginia	coref
+five questions|Wikinews interviews Robert Sarvis , Libertarian Party nominee for Governor of Virginia	bridge
+Wikinews|Wikinews	coref
+Sarvis|Attorney Robert Sarvis	coref
+Virginia|Virginia	coref
+an unusual feat|double digits in opinion polls	appos
+a third party candidate|Sarvis	coref
+The latest Newsmax / Zogby poll|opinion polls	coref
+him|Sarvis	ana
+Virginia|Virginia	coref
+Virginia \'s Attorney General|Republican Party nominee Ken Cuccinelli	appos
+the former Democratic National Committee chairman|Democratic Party nominee Terry McAuliffe	appos
+Democratic National Committee|Democratic Party	bridge
+election|2013 Virginia gubernatorial election	coref
+governor|Governor	coref
+Sarvis|him	coref
+Virginia \'s|Virginia	coref
+gun - rights|US Second Amendment	appos
+the state|Virginia \'s	coref
+Wikinews|Wikinews	coref
+Sarvis|Sarvis	coref
+his|Sarvis	ana
+McDonnell|outgoing governor Bob McDonnell	coref
+his|his	ana
+Virginia|the state	coref
+governor|governor	coref
+he|his	ana
+Interview|five questions	bridge
+your background|his background	coref
+your|he	ana
+I|your	ana
+candidate|candidate	coref
+Virginia|Virginia	coref
+the only candidate|the only candidate	coref
+candidate|candidate	coref
+the commonwealth|Virginia	coref
+I|I	ana
+I|I	ana
+the only candidate|the only candidate	coref
+candidate|candidate	coref
+law|laws	coref
+the only candidate|the only candidate	coref
+candidate|candidate	coref
+background|background	coref
+my academic and professional background|who has studied both economics and law	bridge
+my academic and professional background|background in technology entrepreneurship	bridge
+my|I	ana
+I|my	ana
+Virginia|Virginia	coref
+the other candidates|Republican Party	bridge
+candidates|candidate	coref
+I|I	ana
+I|I	ana
+the only candidate|the other candidates	coref
+candidate|candidates	coref
+the only candidate|the only candidate	coref
+candidate|candidate	coref
+law|law	coref
+your thoughts on the job Bob McDonnell has done as Governor of Virginia|views on McDonnell \'s tenure	coref
+your|I	ana
+Bob McDonnell|McDonnell	coref
+Governor|governor	coref
+Governor of Virginia|Bob McDonnell	coref
+Virginia|Virginia	coref
+you|your	ana
+him|Bob McDonnell	ana
+McDonnell|him	coref
+his term|the job Bob McDonnell has done	coref
+his|McDonnell	ana
+Senate Democrats|the former Democratic National Committee chairman	bridge
+tax|Tax	coref
+Those early budget efforts|McDonnell did well early in his term pushing back against Senate Democrats who wanted huge tax increases in response to major revenue shortfalls during the recession .	coref
+his|his	ana
+Governor|Governor	coref
+he|his	ana
+huge tax increases|huge tax increases	coref
+tax|tax	coref
+transportation|transportation	coref
+He|he	ana
+tax|tax	coref
+reform|reform	coref
+reform|reform	coref
+school choice|parental school choice through student vouchers	coref
+he|He	ana
+candidates|candidate	coref
+you have done exceptionally well in opinion polling|Sarvis has garnered double digits in opinion polls for the 2013 Virginia gubernatorial election , an unusual feat for a third party candidate	coref
+you|you	ana
+opinion polling|The latest Newsmax / Zogby poll	coref
+you|you	ana
+that success|you have done exceptionally well in opinion polling	bridge
+Voters|voters	coref
+They|Voters	ana
+the partisanship and nonsense and the total lack of substance in modern campaigns|the sham it has become	bridge
+the partisanship|the sham it has become	coref
+Voters|They	coref
+the two major party|two-party	bridge
+the two major party nominees|Senate Democrats	bridge
+the two major party nominees|the two-party system	bridge
+their respective parties|the two major party	coref
+they|Voters	ana
+Voters|they	coref
+me|you	ana
+me|me	ana
+I|me	ana
+I|I	ana
+I|I	ana
+cronyism|cronyism	coref
+corporatism|corporatism	coref
+the rule of law|the rule of law	coref
+law|law	coref
+People|Voters	coref
+I|I	ana
+Virginia|Virginia	coref
+governor|Governor of Virginia	coref
+governor|Governor	coref
+you|I	ana
+your agenda|his agenda	coref
+your|you	ana
+governors|governor	coref
+the legislature|legislature	coref
+governor|governors	coref
+governor|governor	coref
+Libertarians|Libertarian Party \'s	bridge
+the major parties|a major party	coref
+both Republicans and Democrats|the major parties	coref
+each party|both Republicans and Democrats	coref
+both|each party	ana
+a third-party governor|a wise third-party governor	coref
+governor|governor	coref
+major party|both	coref
+legislators|the legislature	bridge
+many people|People	coref
+people|People	coref
+leadership|leadership	coref
+previous Virginia Governor(s)|the former Virginia governor	coref
+Virginia|Virginia	coref
+Governor(s)|governor	coref
+you|your	ana
+He|Thomas Jefferson	ana
+freedom|freedom	coref
+the rule of law|the rule of law	coref
+law|law	coref
+He|He	ana
+He|a strong advocate	ana
+a Libertarian|Libertarians	coref
+Libertarian|Libertarians	coref
+Robert Sarvis|you	coref
+Sarvis for Governor|Robert Sarvis	coref
+Governor|previous Virginia Governor(s)	coref
+Virginia|Virginia	coref
+a former member of the Australia women \'s national wheelchair basketball team|Tina McKenzie	appos
+Australia|Australia	coref
+the Gliders|the Australia women \'s national wheelchair basketball team	coref
+McKenzie|a former member of the Australia women \'s national wheelchair basketball team	coref
+a silver and bronze Paralympic medalist in wheelchair basketball|McKenzie	appos
+wheelchair basketball|wheelchair basketball	coref
+the game|wheelchair basketball	coref
+Wikinews|Wikinews	coref
+her|a silver and bronze Paralympic medalist in wheelchair basketball	ana
+Preston|Preston , Victoria , Australia	coref
+It|The Spitfire Tournament in Canada	ana
+It|a really good tournament	ana
+#I|her	ana
+we|the Gliders	ana
+that one|It	ana
+It|that one	ana
+we|we	ana
+the Gliders team|we	coref
+we|the Gliders team	ana
+our|we	ana
+us|our	ana
+we|us	ana
+each other|we	bridge
+Australia|Australia	coref
+we|we	ana
+we|each other	ana
+our|we	ana
+Spitfire|It	coref
+We|our	ana
+there|Spitfire	ana
+the one|the World Cup	coref
+the one where you were the captain of the team|the World Cup	coref
+you|I	ana
+the team|We	coref
+2005|2005	coref
+a later one|the one where you were the captain of the team	bridge
+I|you	ana
+I|the captain of the team	ana
+2010|2010	coref
+World Cup|a later one	coref
+I|I	ana
+The Gliders|the team	coref
+the World Championship|World Cup	coref
+We|The Gliders	ana
+the World Cup|the World Championship	bridge
+I|I	coref
+It|We always seem to have just a little bit of a chill out at the World Cup .	ana
+World Cup|the World Cup	coref
+we|We	coref
+we|we	coref
+World Cups|World Cup	ana
+World Cups|It	ana
+2010|2010	coref
+we|we	ana
+We|we	coref
+we|We	coref
+us|we	coref
+the actual Paralympics|2012 Summer Paralympics	coref
+the World Cup|World Cups	coref
+the World Cup|the World Cup	coref
+it|to be able to do well at the World Cup , to be placed	ana
+the Paralympics|the actual Paralympics	coref
+the team|us	coref
+it|the World Cup	ana
+it|it	coref
+the Paralympics|the Paralympics	coref
+that|moving it	ana
+Tina McKenzie|I	coref
+the “ Mets Poet|Frank Messina	coref
+You|the “ Mets Poet	coref
+I|You	ana
+me|I	ana
+themselves|people	ana
+Frank|me	coref
+my name|themselves	bridge
+I|Frank	ana
+John|John	coref
+Frank|I	ana
+they|John	ana
+It|when people come up to me and introduce themselves and say , \" Hey Frank , my name is John , \' I say , \" Hey John , my name is Frank \" and they laugh	ana
+your|Frank	ana
+your|Frank	coref
+that|It	ana
+that|a funny phenomenon	ana
+I|your	ana
+I|your	ana
+it|that	ana
+I|I	ana
+I|I	ana
+it|it	ana
+I|I	ana
+I|I	ana
+this|have performed in 32 countries and 40 states	ana
+I|I	ana
+my|I	ana
+that|since I was in my twenties	ana
+I|my	ana
+little tidbit poetry readings in coffeehouses|this	bridge
+I|I	ana
+Spoken Motion|The band I started in 1993	appos
+a spoken word band born out of the New York spoken word scene|Spoken Motion	coref
+I worked with some great musicians and performed around the world|a lot of recognition	bridge
+I|I	ana
+I|I	ana
+my|I	ana
+I|my	ana
+I|I	ana
+I|I	ana
+that kind of thing|signing my first autograph to a kid when I was 25 years old	coref
+me|I	ana
+they|somebody	ana
+you|an artist	ana
+someone|they	coref
+Frank|me	coref
+your|Frank	ana
+your work|books and CDs	bridge
+You|your	ana
+the attention you have garnered|that kind of thing	bridge
+you|You	ana
+you|you	ana
+having a lot of your work overshadowed by the Mets work|as of late the attention you have garnered is for the Mets-inspired work	appos
+a lot of your work|your work	coref
+your|you	ana
+the Mets work|Mets	coref
+the Mets work|the Mets-inspired work	coref
+It|having a lot of your work overshadowed by the Mets work	ana
+the first great American poet|Walt Whitman	appos
+the Civil War|failure and the depths of adversity in the human experience	bridge
+He|the first great American poet	ana
+his|He	ana
+George Whitman|his brother	appos
+he|his	ana
+him|he	ana
+his|him	ana
+his brother|George Whitman	coref
+he|his	ana
+he|his	ana
+his|he	ana
+his poems|Walt Whitman , the first great American poet , wrote about the Civil War	bridge
+he|his	ana
+he|his	ana
+He|he	ana
+he|He	ana
+his brother|his brother	coref
+he|he	ana
+I|your	ana
+that kind of adversity|the real horrors of war	bridge
+I|I	ana
+I|a civilian volunteer	ana
+Ground Zero|11-Sep	bridge
+I|I	ana
+Whitman|he	coref
+what is happening in the world right now|Ground Zero	bridge
+I|I	ana
+I|I	coref
+my|I	ana
+9/11-related|11-Sep	coref
+9/11-related|what is happening in the world right now	coref
+that|9/11-related	ana
+I|my	ana
+you|I	ana
+a stanza|poems	bridge
+you|you	ana
+This|a stanza	ana
+it|a piece	ana
+you|you	ana
+you|you	ana
+Mets|Mets	coref
+you|you	ana
+it \'s|Have no fear , no hesitation	ana
+your|you	ana
+you|your	ana
+You|you	ana
+Mets|Mets	coref
+late September|late September	coref
+you|You	ana
+the team|Mets	coref
+your boys in orange and blue|the team	coref
+your|you	ana
+them|your boys in orange and blue	ana
+you|your	ana
+they|them	ana
+Frank Messina|you	coref
+you|Frank Messina	ana
+\" new readers \'|Sports fans	bridge
+your Mets work|the Mets work	coref
+your|you	ana
+Mets|they	coref
+I|your	ana
+I|your	ana
+me|I	ana
+it|a picture of me	ana
+me|me	ana
+The e-mail|an e-mail	coref
+Frank|me	coref
+I|This one person who I never met	ana
+you|Frank	ana
+I|I	ana
+your work|your Mets work	coref
+your|you	ana
+I|I	ana
+you|your	ana
+your work|your work	coref
+your|you	ana
+my|your	ana
+I|my	ana
+That|We Know	ana
+it|a banner that read We Know	ana
+Poet|I	coref
+It|earlier this year these shirts started to come out that said , \" Poet says We Know \"	ana
+the banner|it	coref
+this year|this year	coref
+we|We	ana
+The team|Mets	coref
+we|we	ana
+Last year|Last year	coref
+we|we	ana
+we|we	ana
+we|we	ana
+we|we	ana
+post-season|the playoffs	bridge
+This year|this year	coref
+we|we	ana
+We|we	ana
+a season ticket holder and a die hard fan|a woman	appos
+She|a season ticket holder and a die hard fan	ana
+last year|Last year	coref
+Last year|last year	coref
+she|She	ana
+me|Poet	ana
+she|she	ana
+we|We	ana
+the post season|post-season	coref
+that point|one of the games late in the season	ana
+we|we	ana
+it|the post season	ana
+She|she	ana
+me|me	ana
+she|She	ana
+she|she	ana
+me|me	ana
+her|she	ana
+her|she	coref
+she|her	ana
+Mets Poet|me	coref
+It|With tears in her eyes she said , \" Thank you , Mets Poet , thank you . \"	ana
+it|It	ana
+Moments like that|\" Thank you , Mets Poet , thank you . \"	ana
+that|it	coref
+you|Mets Poet	ana
+you|you	ana
+a new fan base|people who are n\'t normally touched by poetry	coref
+the last year|This year	coref
+me|you	ana
+the \" Mets Poet \'|me	coref
+I|the \" Mets Poet \'	ana
+myself|I	ana
+that|the \" Mets Poet \'	coref
+my|that	coref
+\" The Poet \'|the \" Mets Poet \'	bridge
+that|\" The Poet \'	ana
+my|myself	ana
+My|my	ana
+My|my	coref
+him|My brother	ana
+Birdie|The Birdman	appos
+they|they	coref
+me|My	ana
+The Poet|that	coref
+The Poet|my nickname	coref
+It|they used to call him The Birdman -- Birdie -- and they called me The Poet	ana
+I|me	ana
+myself|I	ana
+The Mets Poet|The Poet	coref
+just over 24 hours ago|Sunday , January 20 , 2008	coref
+the Church of Scientology|Church of Scientology	coref
+the Church of Scientology \'s website is being attacked by hackers|Hackers attack Church of Scientology website	coref
+the Church of Scientology \'s website|Church of Scientology website	coref
+hackers|Hackers	coref
+the site|the Church of Scientology \'s website	coref
+The attack|the Church of Scientology \'s website is being attacked by hackers	coref
+on Wednesday|Sunday , January 20 , 2008	coref
+Anonymous|a user	coref
+Insurgency Wiki|the website	appos
+a spinoff of 4chan|Insurgency Wiki	appos
+The \" History \" section of the site|a spinoff of 4chan	bridge
+the site|the website	coref
+the site|Insurgency Wiki	coref
+the incident|The attack	coref
+the Church of Scientology|the Church of Scientology	coref
+YouTube|YouTube	coref
+the Church of Scientology|the Church of Scientology	coref
+the Church of Scientology \'s requests to take down the video|the Church of Scientology \'s attempts to remove a promotional video featuring Scientologist Tom Cruise from YouTube	coref
+the video|a promotional video	coref
+they|other sites such as Gawker.com	ana
+the video|the video	coref
+the Internet : 1 , Scientology : 0|they will keep hosting the video	coref
+Scientology|the Church of Scientology	coref
+Matthew Ingram of The Globe and Mail|Matthew Ingram	coref
+the ongoing conflict involving the Church of Scientology \'s attempts to remove the Cruise video from the Internet|a long game	coref
+the Church of Scientology|Scientology	coref
+the Church of Scientology \'s attempts to remove the Cruise video from the Internet|the Church of Scientology \'s attempts to remove a promotional video featuring Scientologist Tom Cruise from YouTube	coref
+the Cruise video|the video	coref
+Scientology|the Church of Scientology	coref
+Scientology vs. the Internet , part XVII|the ongoing conflict involving the Church of Scientology \'s attempts to remove the Cruise video from the Internet	coref
+the Internet|the Internet	coref
+He|Matthew Ingram of The Globe and Mail	ana
+the conflict between the Church of Scientology and anonymous posters of the Cruise video|Scientology vs. the Internet , part XVII	coref
+the Church of Scientology|Scientology	coref
+anonymous posters|the Internet	coref
+the Cruise video|the Cruise video	coref
+another small skirmish in a war that Scientology has been waging for almost 15 years|the conflict between the Church of Scientology and anonymous posters of the Cruise video	coref
+a war|Scientology vs. the Internet , part XVII	coref
+Scientology|the Church of Scientology	coref
+internal church documents|Scientology	bridge
+Lawsuits have been filed , mailing lists have been shut down , homes of discussion group participants have been raided and their computers seized|another small skirmish in a war that Scientology has been waging for almost 15 years , since the early days of newsgroups such as alt.religion.scientology , which posted internal church documents in 1994	coref
+Lawsuits have been filed , mailing lists have been shut down , homes of discussion group participants have been raided and their computers seized|a war	coref
+their|discussion group participants	ana
+an all-out war|Lawsuits have been filed , mailing lists have been shut down , homes of discussion group participants have been raided and their computers seized	appos
+#I|He	ana
+the Tom Cruise video|the Cruise video	coref
+the internet|the Internet	coref
+An insurgency against The Church of Scientology|a new obsession	coref
+The Church of Scientology|Scientology	coref
+Anonymous blogger|I	coref
+Anon declares war on Church of Scientology|an all-out war	coref
+Church of Scientology|The Church of Scientology	coref
+One poster|Anonymous blogger	coref
+a part of the effort|An insurgency against The Church of Scientology	bridge
+a blog post|One poster	bridge
+I|One poster	ana
+myself|I	ana
+the Scientology homepage|the site	coref
+Scientology|Church of Scientology	coref
+the net|the internet	coref
+these \' events \'|An insurgency against The Church of Scientology	coref
+The poster|myself	coref
+I|The poster	ana
+the Tom Cruise video|the Tom Cruise video	coref
+Tom Cruise|Scientologist Tom Cruise	coref
+a new obsession|An insurgency against The Church of Scientology	coref
+the internet|the net	coref
+An insurgency against The Church of Scientology|a new obsession	coref
+The Church of Scientology|Scientology	coref
+me|I	ana
+a tool a group ’s been using to attack the scientology website|Gigaloader	coref
+the scientology website|the Scientology homepage	coref
+scientology|The Church of Scientology	coref
+an interesting tool|a tool a group ’s been using to attack the scientology website	coref
+The Church|scientology	coref
+The Church \'s website|the scientology website	coref
+they|Some individuals	ana
+the site|The Church \'s website	coref
+they|they	ana
+the site|the site	coref
+the site|the site	coref
+the Scientology.org site|the site	coref
+Scientology|The Church	coref
+the Internet newsgroup alt.religion.scientology|alt.religion.scientology	coref
+the Internet|the internet	coref
+the Church of Scientology website|the Scientology.org site	coref
+Church of Scientology|Scientology	coref
+one poster|Critics of Scientology at the Internet newsgroup alt.religion.scientology	bridge
+one side|both sides	bridge
+the Scientology website|the Church of Scientology website	coref
+Scientology|Church of Scientology	coref
+the attack|the attacks to the Church of Scientology website	coref
+the Tom Cruise video|the Tom Cruise video	coref
+Tom Cruise|Tom Cruise	coref
+the Internet|the Internet	coref
+At that time|Traffic to the Scientology website had already increased 18-fold prior to the attack	bridge
+one in three visits to the site|Traffic to the Scientology website	bridge
+the site|the Scientology website	coref
+the website|the site	coref
+Microsoft|Microsoft	coref
+Microsoft|Microsoft	coref
+IE6|Internet Explorer 6	coref
+the antiquated 10-year-old browser|IE6	coref
+Microsoft|Microsoft	coref
+it|the antiquated 10-year-old browser	ana
+three newer versions|Microsoft \'s Internet Explorer 9 ( IE9 ) browser	bridge
+three newer versions|Internet Explorer 9 ( IE9 ) browser	bridge
+The Internet Explorer 6 Countdown|a new website	appos
+Internet Explorer 6|it	coref
+Microsoft|Microsoft	coref
+users|IE6 users	coref
+IE6|Internet Explorer 6	coref
+a newer IE|three newer versions	bridge
+Its|an aggressive campaign to persuade users to stop using IE6 and update to a newer IE	ana
+IE6 users|users	coref
+a browser|IE6	coref
+Its|a browser	ana
+Internet Explorer 6|Its name	coref
+Microsoft|Microsoft	coref
+The Internet Explorer 6 Countdown|The Internet Explorer 6 Countdown	coref
+Internet Explorer|a newer IE	bridge
+IE|Internet Explorer	coref
+IE \'s various versions|a newer IE	bridge
+70 percent of the market|Internet Explorer \'s market share	bridge
+this|70 percent of the market	ana
+its main rival|Mozilla Firefox	appos
+its|Internet Explorer	ana
+its market share|Internet Explorer \'s market share	bridge
+its|Mozilla Firefox	ana
+Internet Explorer|IE	coref
+Firefox|Mozilla Firefox	coref
+it|Internet Explorer	ana
+Chrome|Google Chrome	coref
+Chrome|Chrome	coref
+IE|Internet Explorer	coref
+fourth place|# 3	bridge
+IE6 .|IE	bridge
+they|Web developers	ana
+their|they	ana
+the newer browsers|IE \'s various versions	bridge
+the newer browsers|Firefox	bridge
+the newer browsers|Safari	bridge
+the newer browsers|Chrome	bridge
+they|their	ana
+IE6 users|IE6 users	coref
+Microsoft|Microsoft	coref
+The Internet Explorer 6 Countdown \" site|The Internet Explorer 6 Countdown	coref
+the browser|IE6 .	coref
+IE6|the browser	coref
+277 vulnerabilities|numerous security vulnerabilities	coref
+these|277 vulnerabilities	ana
+Microsoft|Microsoft	coref
+the latest versions of Internet Explorer|the newer browsers	bridge
+these attacks and threats|277 vulnerabilities	coref
+Microsoft \'s Internet Explorer 6|IE6	coref
+its|Microsoft \'s Internet Explorer 6	ana
+it|its	ana
+IE6|Microsoft \'s Internet Explorer 6	coref
+it|IE6	ana
+its|it	ana
+Microsoft|Microsoft	coref
+it|its	ana
+shuttles|shuttle	coref
+NASA|NASA	coref
+where four space shuttle orbiters will be permanently displayed|new homes	coref
+four space shuttle orbiters|retired shuttles	coref
+30th anniversay of the first shuttle launch|30th anniversary of first shuttle launch	coref
+the first shuttle launch|first shuttle launch	coref
+12-Apr-11|30th anniversay of the first shuttle launch	appos
+NASA|NASA	coref
+NASA|NASA	coref
+the launch of the first space shuttle|the first shuttle launch	coref
+Tuesday|12-Apr-11	coref
+an event|an event	coref
+KSC|Kennedy Space Center	appos
+Kennedy Space Center|Kennedy Space Center	coref
+the first space shuttle mission|STS-1	appos
+NASA|NASA	coref
+a ceremony|an event	coref
+ceremony|an event	coref
+the date|12-Apr-81	coref
+Orbiter Processing Facility-1|the hangar	coref
+its|Space Shuttle Atlantis	ana
+STS-135|its final mission	coref
+the last Space Shuttle mission|the conclusion of the Space Shuttle Program	bridge
+the ceremony|a ceremony	coref
+the ceremony|ceremony	coref
+NASA Administrator Charles Bolden|NASA Administrator Charles Bolden	coref
+NASA|NASA	coref
+the locations|where four space shuttle orbiters will be permanently displayed	coref
+the three remaining Space Shuttle orbiters|four space shuttle orbiters	coref
+the end of the Space Shuttle program|the conclusion of the Space Shuttle Program	coref
+Space Shuttle program|Space Shuttle Program	coref
+Space Shuttle Enterprise|prototype orbiter	appos
+Enterprise|Space Shuttle Enterprise	coref
+Udvar-Hazy Center|Steven F. Udvar-Hazy Center	coref
+Discovery|Space Shuttle Discovery	coref
+its 39th mission|STS-133	appos
+its|Discovery	ana
+Discovery|its	coref
+the orbiter|Discovery	coref
+Space Shuttle Columbia|Space Shuttle Columbia	coref
+STS-1|the first space shuttle mission	coref
+STS-1|first space shuttle mission	coref
+Kennedy Space Center|Kennedy Space Center	coref
+12-Apr-81|the date	coref
+NASA|NASA	coref
+its|Space Shuttle Endeavour	ana
+Kennedy Space Center|Kennedy Space Center	coref
+the orbiter|Atlantis	coref
+Columbia|Space Shuttle Columbia	coref
+it|Columbia	ana
+Bolden|NASA Administrator Charles Bolden	coref
+KSC|Kennedy Space Center	coref
+one|very difficult decision	coref
+these choices|one	coref
+NASA|NASA	coref
+Space Shuttle Program|Space Shuttle program	coref
+These facilities|the locations	coref
+we|NASA	ana
+very difficult decision|these choices	coref
+one|very difficult decision	coref
+these choices|one	coref
+the history and accomplishments of NASA \'s remarkable Space Shuttle Program|the history and accomplishments of NASA \'s remarkable Space Shuttle Program	coref
+NASA|we	coref
+Space Shuttle Program|Space Shuttle Program	coref
+Charles Bolden|Bolden	coref
+NASA Administrator|Charles Bolden	appos
+NASA|NASA	coref
+Space Shuttle Atlantis|the orbiter	coref
+its last mission before retirement|last flight	coref
+its|Space Shuttle Atlantis	ana
+last mission before retirement|last flight	coref
+NASA|NASA	coref
+the final choice of locations|these choices	coref
+locations|These facilities	coref
+Republican from Texas|U.S. Senator John Cornyn	appos
+the rejection of Johnson Space Center|the final choice of locations	bridge
+JSC|Johnson Space Center	appos
+location|locations	coref
+I|Republican from Texas	ana
+NASA \'s decision to slight the Johnson Space Center|the rejection of Johnson Space Center	coref
+NASA|NASA	coref
+Johnson Space Center|Johnson Space Center	coref
+a permanent home for one of the Space Shuttle Orbiters|location	coref
+Space Shuttle Orbiters|the three remaining Space Shuttle orbiters	coref
+Houston|Houston , Texas	coref
+the space shuttle|Space Shuttle Orbiters	coref
+space shuttle|Space Shuttle Orbiters	coref
+the selection of the final locations for the orbiter fleet|NASA \'s decision to slight the Johnson Space Center	coref
+the final locations|a permanent home for one of the Space Shuttle Orbiters	coref
+the final locations|permanent home for one of the Space Shuttle Orbiters	coref
+the orbiter fleet|the space shuttle	bridge
+Cornyn \'s statement|statement	coref
+Cornyn|I	coref
+Houston|Houston	coref
+a final home for one of the  orbiters|the final locations	coref
+Administrator Bolden|NASA Administrator	coref
+Today \'s announcement|the ceremony	bridge
+Johnson Space Center|Johnson Space Center	coref
+the greater Houston community|Houston	bridge
+the State of Texas|Texas	coref
+I|Cornyn	ana
+the Administration|NASA	coref
+the Administration \'s misguided decision|the selection of the final locations for the orbiter fleet	coref
+the JSC|Johnson Space Center	coref
+another location for a shuttle|a final home for one of the  orbiters	coref
+a shuttle|the space shuttle	coref
+an orbiter|a shuttle	coref
+Museum of Flight|Museum of Flight	coref
+a retired shuttle|an orbiter	coref
+shuttles|a retired shuttle	coref
+Seattle|Seattle , Washington	coref
+Museum of Flight|Museum of Flight	coref
+I|Governor of Washington Chris Gregoire	ana
+I|Chris Gregoire	ana
+NASA|the Administration	coref
+them|Museum of Flight	ana
+Endeavour|its	coref
+Atlantis|its	coref
+their|Endeavour	bridge
+their|Atlantis	bridge
+NASA|NASA	coref
+Museum of Flight|them	coref
+Bonnie Dunbar|former Museum of Flight CEO	appos
+the Museum of Flight|Museum of Flight	coref
+The largest of the trainers|the full fuselage trainer	coref
+The largest of the trainers|that	coref
+this addition|will soon call the Museum of Flight home	coref
+the trainer|The largest of the trainers	coref
+astronauts|every astronaut	coref
+this trainer|the trainer	coref
+our dynamic museum|the Museum of Flight	coref
+It|this trainer	ana
+the thousands of dedicated men and women at Johnson Space Center|the thousands of dedicated men and women at Johnson Space Center	coref
+Johnson Space Center|the JSC	coref
+the greater Houston community|the greater Houston community	coref
+Houston|Houston	coref
+the State of Texas|the State of Texas	coref
+I|I	ana
+the Administration|NASA	coref
+John Cornyn|I	coref
+U.S. Senator ( R-Texas )|John Cornyn	appos
+various shuttle simulators|Other items	bridge
+The nose cap assembly|Other items	bridge
+crew compartment trainer|Other items	bridge
+orbital maneuvering system engines|Other items	bridge
+NASA|the Administration	coref
+technology|shuttle heat shield tiles	bridge
+a piece of space history|shuttle heat shield tiles	bridge
+their|schools	bridge
+their|universities	bridge
+The 30th anniversary of the first shuttle mission|Tuesday	coref
+space|space	coref
+his|Dennis Hopper	ana
+Warhol|Warhol	coref
+Andy Warhol|Warhol	coref
+Andy Warhol|Andy Warhol	coref
+the Andy Warhol exhibit of Polaroids and screen prints|university exhibits	bridge
+Andy Warhol|Andy Warhol	coref
+the University of Southern Indiana|USI	coref
+the opening night of an Andy Warhol exhibit|Opening night , January 23 , 2014	coref
+an Andy Warhol exhibit|the Andy Warhol exhibit of Polaroids and screen prints	coref
+Andy Warhol|Andy Warhol	coref
+the University of Southern Indiana|the University of Southern Indiana	coref
+USI|the University of Southern Indiana	coref
+189 other educational galleries and museums around the country|USI \'s art gallery	bridge
+the country|United States	coref
+Warhol|Andy Warhol	coref
+this program|a major Warhol donor program	coref
+Warhol|Warhol	coref
+Warhol \'s photographic legacy|Warhol \'s photo legacy	coref
+the opening|the opening night of an Andy Warhol exhibit	coref
+exhibit|an Andy Warhol exhibit	coref
+The USI art gallery|USI \'s art gallery	coref
+USI|USI	coref
+the Thursday opening|the opening	coref
+its|The USI art gallery	ana
+Warhol|Warhol	coref
+Warhol \'s Polaroids|Polaroids	coref
+several colored screen prints|screen prints	coref
+USI|USI	coref
+USI \'s exhibit|exhibit	coref
+Evansville , Indiana|Evansville , Indiana , United States	coref
+23-Jan|the Thursday opening	coref
+curator of the exhibition|Kristin Wilkins	appos
+the exhibition|USI \'s exhibit	coref
+the University of Southern Indiana|USI	coref
+The McCutchan Art Center / Pace Galleries|its	coref
+USI|the University of Southern Indiana	coref
+its exhibit|the exhibition	coref
+its|The McCutchan Art Center / Pace Galleries	ana
+roughly 100 Polaroids|Warhol \'s Polaroids	coref
+its|its	ana
+The Polaroids|roughly 100 Polaroids	coref
+the Andy Warhol Photographic Legacy Program|this program	coref
+Andy Warhol|Warhol	coref
+Photographic Legacy|Warhol \'s photographic legacy	coref
+Kristen Wilkins|curator of the exhibition	coref
+assistant professor of photography and curator of the exhibit|Kristen Wilkins	ana
+the exhibit|its exhibit	coref
+The Andy Warhol Foundation for the Visual Arts|the Andy Warhol Foundation for the Visual Arts	coref
+Andy Warhol|Andy Warhol	coref
+two donations|The Polaroids were all donated by the Andy Warhol Photographic Legacy Program	coref
+USI Art Collections|its collection	coref
+USI|USI	coref
+a second|two donations	bridge
+director of the gallery|Kathryn Waters	appos
+the gallery|its	coref
+the foundation|The Andy Warhol Foundation for the Visual Arts	coref
+2007|2007	coref
+the Andy Warhol Photographic Legacy Program|the Andy Warhol Photographic Legacy Program	coref
+Andy Warhol|Andy Warhol	coref
+Photographic Legacy|Photographic Legacy	coref
+the United States|the country	coref
+over 28000 Andy Warhol photographs and other artifacts|The Polaroids	bridge
+Andy Warhol|Andy Warhol	coref
+The program|the Andy Warhol Photographic Legacy Program	coref
+Warhol|Andy Warhol	coref
+Warhol \'s photography collection|over 28000 Andy Warhol photographs and other artifacts	coref
+university art galleries|university art galleries	coref
+Warhol|Warhol	coref
+photography|photography	coref
+University|USI	coref
+University exhibits|the exhibit	bridge
+Kristen Wilkins|assistant professor of photography and curator of the exhibit	coref
+curator of \" Andy Warhol : Photographs and Prints from the University Collection \"|Kristen Wilkins	appos
+Andy Warhol|Warhol	coref
+the University of Southern Indiana|University	coref
+23-Jan|23-Jan	coref
+March 9 2014|9-Mar	coref
+Wikinews|Wikinews	coref
+Wilkins|curator of \" Andy Warhol : Photographs and Prints from the University Collection \"	coref
+the 2007 starting date|2007	coref
+the donation program|The program	coref
+the Andy Warhol Foundation for the Visual Arts|the foundation	coref
+Andy Warhol|Andy Warhol	coref
+the 20th anniversary of Andy Warhol \'s death in 1987|the 2007 starting date	coref
+Andy Warhol|Andy Warhol	coref
+USI|the University of Southern Indiana	coref
+a donation|a second	coref
+chief financial officer and treasurer at the Andy Warhol Foundation|Maurer	appos
+the Andy Warhol Foundation|the Andy Warhol Foundation for the Visual Arts	coref
+Andy Warhol|Andy Warhol	coref
+one or more donations|a donation	coref
+Institutional recipients|190 universities	coref
+Mauer|chief financial officer and treasurer at the Andy Warhol Foundation	coref
+their donated Warhol photographs|Warhol \'s photography collection	bridge
+their|Institutional recipients	ana
+USI|USI	coref
+its|USI	ana
+Warhol Polaroid exhibits|University exhibits	coref
+Warhol|Andy Warhol	coref
+Edward Steichen and Andy Warhol exhibit|Warhol Polaroid exhibits	bridge
+Andy Warhol|Warhol	coref
+Polaroids|their donated Warhol photographs	coref
+the foundation|the Andy Warhol Foundation	coref
+University exhibits|Warhol Polaroid exhibits	coref
+11000 visitors|large audiences	bridge
+it|the University of North Carolina at Greensboro	ana
+its|it	ana
+That exhibit|it exhibited its Warhol collection	coref
+donated items|Polaroids	bridge
+the Andy Warhol Photographic Legacy Program|the donation program	coref
+Andy Warhol|Warhol	coref
+Photographic Legacy|Photographic Legacy	coref
+Each collection|donated items	coref
+the Andy Warhol Photographic Legacy Program|the Andy Warhol Photographic Legacy Program	coref
+Andy Warhol|Andy Warhol	coref
+Photographic Legacy|Photographic Legacy	coref
+well-known celebrities|Superstars	coref
+The successful UNC Greensboro exhibit|That exhibit	coref
+UNC Greensboro|its	coref
+Polaroids|donated items	bridge
+celebrity culture|well-known celebrities	bridge
+Warhol|Andy Warhol	coref
+Gustafon|curator Elaine Gustafon	coref
+stars|well-known celebrities	coref
+Wilkins|Wilkins	coref
+Warhol|Warhol	coref
+celebrities|stars	coref
+he|Warhol	ana
+his|he	ana
+He|his	ana
+the celebrities|celebrities	coref
+he|He	ana
+his|he	ana
+Wilkins|Wilkins	coref
+The exhibit at USI|its exhibit	coref
+USI|its	coref
+Polaroids|donated items	bridge
+Wikinews|Wikinews	coref
+the USI exhibit|The exhibit at USI	coref
+USI|USI	coref
+Polaroids of fashion designer Halston|donated items	bridge
+a former resident of Evansville|fashion designer Halston	appos
+Evansville|Evansville , Indiana	coref
+University collections|Each collection	coref
+the United States|the United States	coref
+their|unknowns	ana
+curator and director of exhibits at the University of Arkansas , Fayetteville|Cynthia Thompson	appos
+These images|Polaroids of \" unknowns \" who have not yet had their fifteen minutes of fame	coref
+people in his every day life and art|their	coref
+his every day life and art|he	bridge
+his|his	ana
+one|documentation of people in his every day life and art	appos
+Warhol \'s photographic legacy|Warhol \'s photographic legacy	coref
+Warhol|Warhol	coref
+Wikinews|Wikinews	coref
+USI|USI	coref
+USI \'s opening exhibit|the USI exhibit	coref
+He|Warhol	ana
+Pop art|the pop art movement	coref
+Kathryn Waters|director of the gallery	coref
+he|He	ana
+these iconic products of American culture|the Campbell Soup cans	bridge
+these iconic products of American culture|the Marilyn pictures	bridge
+American culture|popular American culture	coref
+he|he	ana
+this part of our culture|these iconic products of American culture	coref
+our culture|American culture	coref
+I|Kathryn Waters	ana
+Andy Warhol|he	coref
+that|Andy Warhol \'s name	ana
+he|Andy Warhol	ana
+Water|I	coref
+USI|USI	coref
+USI associate professor of art history|Hilary Braysmith	appos
+I|USI associate professor of art history	ana
+his|he	ana
+his graphic works|the Marilyn pictures	coref
+his|his	ana
+his more famous pictures of Marilyn|his graphic works	appos
+his|his	ana
+Marilyn|Marilyn	coref
+photography|his photography	coref
+them|photography	ana
+the celebrity fascination|celebrity worship	coref
+I|I	ana
+he|his	ana
+The Polaroid format|Polaroids of well-known celebrities	bridge
+he|he	ana
+Ansel Adams|other well-known photographers	bridge
+Chuck Close|other well-known photographers	bridge
+Walker Evans|other well-known photographers	bridge
+Robert Mapplethorpe|other well-known photographers	bridge
+Helmut Newton|other well-known photographers	bridge
+Wilkins|Wilkins	coref
+Warhol|he	coref
+the Polaroid \'s front flash|The Polaroid format	bridge
+Polaroid|The Polaroid format	bridge
+She|Wilkins	ana
+Warhol|Warhol	coref
+the Polaroid camera|Polaroid	coref
+his|Warhol	ana
+Wilkins|She	coref
+Warhol|his	coref
+the Polaroid photograph|them	coref
+it|the Polaroid photograph	ana
+he|Warhol	ana
+the image|it	bridge
+the silk screen medium|several colored screen prints	bridge
+applying paint|painting on them	coref
+paint|painting on them	bridge
+them|it	ana
+One of the silk screens|several colored screen prints	bridge
+USI|USI	coref
+Wilkins|Wilkins	coref
+Warhol|he	coref
+his|Warhol	ana
+he|his	ana
+a blue Marilyn|his more famous pictures of Marilyn	bridge
+Marilyn|Marilyn	coref
+a pink Marilyn|his more famous pictures of Marilyn	bridge
+Marilyn|Marilyn	coref
+a yellow Marilyn|his more famous pictures of Marilyn	bridge
+Marilyn|Marilyn	coref
+your favorite color|a blue Marilyn	bridge
+your favorite color|a pink Marilyn	bridge
+your favorite color|a yellow Marilyn	bridge
+that|your favorite color	ana
+It|a way to commercialize his work	ana
+his work|his work	coref
+his|he	ana
+He|his	ana
+that|his work	ana
+He|He	ana
+he|He	ana
+Wilkins|Wilkins	coref
+USI|USI	coref
+USI exhibit|USI \'s opening exhibit	coref
+a second year USI art major|Kiara Perkins	appos
+she|a second year USI art major	ana
+Thursday night|23-Jan	coref
+the opening exhibit|USI exhibit	coref
+her|she	ana
+the exhibit|the opening exhibit	coref
+she|her	ana
+It|the exhibit	ana
+Warhol|he	coref
+He|Warhol	ana
+a USI instructor in English|Kevin Allton	appos
+Warhol|He	coref
+He|a USI instructor in English	ana
+Andy Warhol|Warhol	coref
+He|Andy Warhol	ana
+Allton|He	coref
+he|Allton	ana
+The Silver Clouds installation|the Silver Clouds installation	coref
+those balloons|silver balloons blown up with helium	coref
+#I|he	ana
+it|The Silver Clouds installation	ana
+I|Allton	ana
+them|those balloons	ana
+Elements of the Zeitgeist|the Zeitgeist for the 20th century	bridge
+the Zeitgeist|the Zeitgeist for the 20th century	coref
+USI|USI	coref
+USI \'s opening night|It	coref
+Waters|Water	coref
+those features|Elements of the Zeitgeist	coref
+attendees|attendees	coref
+the touches of the Warhol Factory|those features	coref
+the studio where he worked|the Warhol Factory	coref
+he|He	ana
+them|attendees	ana
+She|Waters	ana
+Campbell \'s Soup|the Campbell Soup cans	bridge
+Wikinews|Wikinews	coref
+attendees|them	coref
+their own Polaroid|the Polaroid-room	bridge
+The Polaroids|their own Polaroid	coref
+the entry of the exhibit|USI \'s opening night	bridge
+the exhibit|USI \'s opening night	coref
+Exhibit goers|attendees	coref
+the very exhibit|the exhibit	coref
+they|Exhibit goers	ana
+many people|they	bridge
+Wikinews|Wikinews	coref
+their|many people	ana
+they|their	ana
+their own phone cameras|their mobiles	bridge
+their|they	ana
+a photo of a photo|one further record of the moment	appos
+a photo|The Polaroids	coref
+they|their	ana
+the Warhol exhibit|the very exhibit	coref
+Warhol|he	coref
+cultural events|the Warhol exhibit	bridge
+these|cultural events	ana
+We|Wikinews	bridge
+these exit instant snap shots|a photo of a photo	coref
+the self selfie|these exit instant snap shots	coref
+A research team from the Massachusetts Institute of Technology and Colorado State University of the US and the University of Sheffield of the UK has analysed effects of global warming and ozone pollution|Scientists analyse effects of global warming , atmospheric ozone on crops	coref
+A research team|Scientists	coref
+effects of global warming and ozone pollution|effects of global warming , atmospheric ozone	coref
+global warming|global warming	coref
+ozone pollution|atmospheric ozone	coref
+wheat , rice , maize and soybean|crops	coref
+The study|A research team from the Massachusetts Institute of Technology and Colorado State University of the US and the University of Sheffield of the UK has analysed effects of global warming and ozone pollution	coref
+Nature Climate Change|journal	appos
+The scientists|A research team	coref
+crop|wheat , rice , maize and soybean	coref
+crop yields|the worldwide production of wheat , rice , maize and soybean	coref
+Several scenarios|all cases	bridge
+ozone pollution|ozone pollution	coref
+They|The scientists	ana
+by 2050|by 2050	coref
+2050|2050	coref
+food|food	coref
+the future of ozone pollution|future levels of ozone pollution	coref
+ozone pollution|ozone pollution	coref
+effects [ of climate change|effects of global warming and ozone pollution	coref
+climate change|global warming	coref
+crops|crop	coref
+By 2050|by 2050	coref
+the scenario|Several scenarios	bridge
+The study|The study	coref
+ozone-temperature covariation|ground-level ozone increases with temperatures	appos
+ozone|ozone pollution	coref
+Heald|coauthor Colette Heald	coref
+Heald|Colette Heald	coref
+temperature|temperatures	coref
+ozone|ozone	coref
+crop|crops	coref
+crop yields|crop yields	coref
+these|temperature and ozone	ana
+crops|crop	coref
+the yields|crop yields	coref
+ozone|ozone	coref
+wheat|crops	bridge
+heat|temperature	coref
+maize|crops	bridge
+climate change|climate change	coref
+ozone|ozone	coref
+Ground-level ozone|ozone	coref
+plants|crops	coref
+agriculture|Agriculture	coref
+soybean|dicot species	bridge
+cotton|dicot species	bridge
+peanut|dicot species	bridge
+yield|the yields	coref
+ozone|Ground-level ozone	coref
+sorghum|monocot species	bridge
+field corn|monocot species	bridge
+winter wheat|monocot species	bridge
+The researchers|NCLAN studies	bridge
+ozone pollution|ozone	coref
+heat-attributed|heat	coref
+damage|damage to plants	coref
+soybean crops|soybean	coref
+the effect of rising carbon dioxide concentration|Ground-level ozone	bridge
+food|food	coref
+crops|crops	coref
+yields|yield	coref
+increased levels of carbon dioxide|rising carbon dioxide concentration	coref
+levels of carbon dioxide|rising carbon dioxide concentration	coref
+global warming|climate change	coref
+crops-damaging|crops	coref
+floods|extreme crops-damaging weather events	bridge
+droughts|extreme crops-damaging weather events	bridge
+extreme temperatures|extreme crops-damaging weather events	bridge
+Climate change|global warming	coref
+Heald|Heald	coref
+An air-quality cleanup|pollution reduction	coref
+air-quality|air quality	coref
+crop yields|yields	coref
+Ozone|ozone pollution	coref
+something|Ozone	coref
+air quality|air-quality	coref
+Heald|Heald	coref
+surface ozone|US surface ozone	coref
+ozone air quality|air quality	coref
+the U.S.|the U.S.	coref
+air quality policy|the Clean Air Act	bridge
+air quality|ozone air quality	coref
+Greek court has ruled that worshippers of the ancient Greek religion may now formally associate and worship at archeological sites|Greek court rules worship of ancient Greek deities is legal	coref
+Greek court|Greek court	coref
+worshippers of the ancient Greek religion|worship of ancient Greek deities	bridge
+the ancient Greek religion|worship of ancient Greek deities	bridge
+the ruling|Greek court has ruled that worshippers of the ancient Greek religion may now formally associate and worship at archeological sites	coref
+the religion|the ancient Greek religion	coref
+that|the religion was banned from conducting public worship at archeological sites	bridge
+the religion|the religion	coref
+a Christian denomination|The Greek Orthodox Church	appos
+worshippers of the ancient deities|worshippers of the ancient Greek religion	coref
+the ancient deities|ancient Greek deities	coref
+ancient deities|ancient Greek deities	coref
+about 100000 Greeks|worshippers of the ancient deities	bridge
+the ancient gods|the ancient deities	coref
+the ancient gods|ancient deities	coref
+Zeus|the ancient gods	bridge
+Hera|the ancient gods	bridge
+Poseidon|the ancient gods	bridge
+Aphrodite|the ancient gods	bridge
+Athena|the ancient gods	bridge
+The Greek Orthodox Church|The Greek Orthodox Church	coref
+that number|about 100000	coref
+that number|about 100000	coref
+Wicca|Many neo-pagan religions	bridge
+their|Many neo-pagan religions	ana
+Hellenic polytheism|the religion	coref
+the ancient religions|ancient Greek religions	coref
+Lake Erie|the shores	bridge
+one of the Great Lakes|Lake Erie	appos
+Northeast Ohio|Ohio , USA	bridge
+Northeast Ohio|Ohio	bridge
+world-class museums|Recreational , cultural and educational opportunities	coref
+cultural events|Recreational , cultural and educational opportunities	coref
+professional sports|Recreational , cultural and educational opportunities	coref
+amusement parks|Recreational , cultural and educational opportunities	coref
+the most golf courses|Recreational , cultural and educational opportunities	coref
+the United States|USA	coref
+the area|Northeast Ohio	coref
+recreational options|Recreational , cultural and educational opportunities	coref
+US|the United States	coref
+this region|the area	coref
+the nation|US	coref
+major cultural resources|cultural events	coref
+Cleveland|Cleveland	coref
+lakefront|the shores	coref
+Cleveland|Cleveland	coref
+Northeast Ohio|this region	coref
+the 15th largest combined metropolitan area in the United States|Northeast Ohio	appos
+the United States|the nation	coref
+the City of Cleveland proper|Cleveland	coref
+the U.S.|the United States	coref
+US|the U.S.	coref
+U.S.|US	coref
+Cleveland proper|the City of Cleveland proper	coref
+Cleveland|Cleveland proper	coref
+the \" Comeback City|Cleveland	coref
+the \" Comeback City|the nickname	coref
+the urban core|Cleveland	bridge
+a dramatic revitalization process|Comeback	coref
+its|Cleveland	ana
+its \" comeback|a dramatic revitalization process	coref
+Cleveland|its	coref
+Cleveland|Cleveland	coref
+the automotive and steel plants|an industrial town	bridge
+the mouth|the Cuyahoga River	bridge
+the southern shore|lakefront	bridge
+the southern shore|Lake Erie	bridge
+Lake Erie|Lake Erie	coref
+Canada|the other side	coref
+Cleveland|Cleveland	coref
+it|Cleveland	ana
+a manufacturing-based economy|the so-called \" rust belt	bridge
+Cleveland|Cleveland	coref
+it has also developed economic prowess in the fields of health care , law , finance , insurance , real estate development , and professional services|its transition	coref
+it|Cleveland	ana
+non-locals|visitors	coref
+Cleveland|it	coref
+Cleveland \'s long history of industrial wealth has left it chock full of cultural riches as well as the beginnings of a \" sustainable city \' movement|thing	appos
+it|Cleveland	ana
+Cleveland|it	coref
+visitor|non-locals	coref
+the city|Cleveland	coref
+The Cleveland Orchestra|a \" Big Five \" orchestra	appos
+Playhouse Square Center|the second largest performing arts center in the U.S.	appos
+The Cleveland Museum of Art|a world-renowned art museum	appos
+HealthSpace Cleveland|the nation \'s first health museum	appos
+the NASA Glenn Research & Visitors Center|R&D hub of the aerospace and aviation industry	appos
+its \" comeback \' years|its \" comeback	coref
+comeback|its \" comeback	coref
+Cleveland|the city	coref
+the downtown area|a clean and beautiful downtown	coref
+Progressive Field|four new sports facilities	bridge
+The Jake|Progressive Field	appos
+Major League Baseball Indians|Progressive Field	bridge
+The Q|QuickenLoans Arena	appos
+the NBA Cavaliers|QuickenLoans Arena	bridge
+the NFL Browns|Cleveland Browns Stadium	bridge
+the Cleveland State University Vikings basketball team|Wolstein Center	bridge
+Fort Lee|Fort Lee	coref
+Fort Lee|Fort Lee	coref
+Fort Lee|a city in Bergen County	coref
+Fort Lee|Fort Lee	coref
+Upper Manhattan|Manhattan	bridge
+This town|Fort Lee	coref
+Fort Lee natives , transplants from New York , and immigrants , especially from Korea|a large residential community	bridge
+Fort Lee|This town	coref
+This cultural diversity|Fort Lee natives , transplants from New York , and immigrants , especially from Korea	coref
+Fort Lee|Fort Lee	coref
+Fort Lee|Fort Lee	coref
+the river|the Hudson River	coref
+New York City|New York	coref
+the river|the river	coref
+highly built up|piled high with apartment buildings	coref
+Fort Lee|Fort Lee	coref
+George Washington Bridge|George Washington Bridge	coref
+Fort Lee|Fort Lee	coref
+Manhattan|Manhattan	coref
+this town|Fort Lee	coref
+buses and vans|mass transit	bridge
+the bridge|George Washington Bridge	coref
+the many highrise residential buildings|apartment buildings	coref
+Fort Lee|this town	coref
+Fort Lee|Fort Lee	coref
+New York City|New York City	coref
+the George Washington Bridge|the bridge	coref
+Fort Lee|Fort Lee	coref
+New Jersey|NJ	coref
+the bridge|the George Washington Bridge	coref
+bus or jitney|buses and vans	coref
+s/he|any bus or jitney driver	ana
+Fort Lee|Fort Lee	coref
+Fort Lee|Fort Lee	coref
+boat or ferry|ferry	coref
+New York City|New York City	coref
+Edgewater|Edgewater	coref
+airports|plane	bridge
+Fort Lee|Fort Lee	coref
+Fort Lee|Fort Lee	coref
+a residential highrise|the many highrise residential buildings	bridge
+it|the Good Shepherd Episcopalian Church	ana
+such as Main Street|a central area	appos
+there|a central area	ana
+there|a municipal parking lot	ana
+the town|Fort Lee	coref
+the town ’s retail area|retail and dining storefronts	bridge
+to walk around|walk around	coref
+high traffic|vehicle traffic	coref
+walking|to walk around	coref
+parking|park in a municipal parking lot	coref
+the meter maids|the meter	bridge
+meter|the meter	coref
+their|the meter maids	ana
+fort lee|the town	coref
+the city|New York City	coref
+high traffic|high traffic	coref
+local traffic|high traffic	coref
+air-port/train|airports	coref
+A-1|several local taxi companies	bridge
+Babe \'s|several local taxi companies	bridge
+G W Taxi|several local taxi companies	bridge
+Fort Lee|fort lee	coref
+a reconstruction of a Revolutionary War encampment|Fort Lee Historic Park	appos
+Fort Lee|Fort Lee	coref
+New Jersey|New Jersey	coref
+Fort Lee|Fort Lee	coref
+The Visitors \' Center|Fort Lee Historic Park	bridge
+Fort Lee|Fort Lee	coref
+the War|Revolutionary War	coref
+Audio-visual displays|information on the role of Fort Lee in the War	bridge
+detailed exhibits|information on the role of Fort Lee in the War	bridge
+this town|Fort Lee	coref
+Fort Lee|this town	coref
+Fort Lee Historic Park|Fort Lee Historic Park	coref
+Revolutionary|the War	coref
+breathtaking views of the GW Bridge , the Little Red Light House , Hudson River and majestic city skyline|beautiful views	coref
+the GW Bridge|the bridge	coref
+Hudson River|the river	coref
+majestic city skyline|the city	bridge
+The George Washington Bridge|the GW Bridge	coref
+Fort Lee|Fort Lee	coref
+a daily activity for the elementary school set|Fort Lee \'s Public School 4	appos
+Fort Lee|Fort Lee	coref
+Fort Lee|Fort Lee	coref
+The community center|a great community center	coref
+their|The community center	ana
+their|The community center	ana
+Jack Alter Fort Lee Community Center|their	coref
+Jack Alter Fort Lee Community Center|their	coref
+Fort Lee|Fort Lee	coref
+supermarkets|shopping for food	bridge
+one the most famous and unique being Caffasso ’s Fairway Market|supermarkets	appos
+Cafasso \'s Fairway Market|one the most famous and unique being Caffasso ’s Fairway Market	coref
+Store|Cafasso \'s Fairway Market	coref
+Main Street|such as Main Street	coref
+Fort Lee|Fort Lee	coref
+Main St.|Main Street	coref
+a haven for flower lovers|Metropolitan Plants	appos
+Fort Lee|Fort Lee	coref
+its|Fort Lee	ana
+Fort Lee|its	coref
+their|Fort Lee	ana
+their pizzerias , delis and 24-hour diners , in addition to its Korean restaurants|its collection of restaurants	coref
+They|their pizzerias , delis and 24-hour diners , in addition to its Korean restaurants	ana
+its larger neighbor|San Francisco	appos
+its|Oakland	ana
+its|its	ana
+Oakland|Oakland	coref
+a hub of radical culture|Oakland	coref
+the birthplace of both the Black Panther Party and the Hell \'s Angels|Oakland	coref
+Oakland|Oakland	coref
+Oakland|Oakland	coref
+Gertrude Stein|novelists	appos
+Jack London|novelists	appos
+Amy Tan|novelists	appos
+Maya Angelou|novelists	appos
+Meryl Streep|actors	appos
+Mark Hamill|actors	appos
+Bruce Lee|actors	appos
+Tom Hanks|actors	appos
+Julia \" Butterfly \" Hill|architect	appos
+Calvin Simmons|classical conductor	appos
+MC Hammer|rappers	appos
+2Pac|rappers	appos
+Messy Marv|rappers	appos
+Oakland|Oakland	coref
+its|Oakland	ana
+they|many visitors	ana
+Downtown|Downtown	coref
+they|many visitors	ana
+town|Oakland	coref
+there|Downtown	ana
+there|there	ana
+Old Oakland|Oakland	bridge
+10th Street|Old Oakland	coref
+Broadway|Broadway	coref
+Oakland|Oakland	coref
+Chinatown|Oakland \'s famous Chinatown	coref
+Oakland|Oakland	coref
+San Francisco|San Francisco	coref
+Chinatown|Chinatown	coref
+the diverse nature of its history|Many of the buildings and streets	ana
+its|Chinatown	ana
+the neighborhood|Chinatown	coref
+Broadway|Broadway	coref
+the city|Oakland	coref
+the Square|Jack London Square	coref
+interesting place to visit and explore|the Square	appos
+It|the Square	ana
+home of the USS Potomac|It	coref
+the site of the namesake author \'s residence|It	coref
+namesake author|Jack London	coref
+Downtown|there	coref
+the Financial District|Downtown	bridge
+it|Uptown	ana
+the area|it	coref
+A popular area|the area	coref
+It|A popular area	ana
+nightclubs|performing arts	coref
+music halls|performing arts	coref
+avant-garde performance art|performing arts	coref
+an improv theater company|performing arts	coref
+Uptown|It	coref
+the city|the city	coref
+the Gothic Revival Cathedral Building|the best in the city \'s vintage architecture	coref
+the Art Deco Fox|the best in the city \'s vintage architecture	coref
+Paramount Theaters|the best in the city \'s vintage architecture	coref
+everywhere north of Uptown and Lake Merritt|North Oakland	coref
+Uptown|Uptown	coref
+the neighborhoods|North Oakland	bridge
+Downtown|Downtown	coref
+Chinatown|the neighborhood	coref
+Downtown|Downtown	coref
+a dominantly Italian-American neighborhood|Temescal	coref
+it|a dominantly Italian-American neighborhood	ana
+some of the city \'s best Korean and Ethiopian establishments|many restaurants	bridge
+the city|the city	coref
+city|Oakland	coref
+Temescal|it	coref
+a neighborhood mixed with family friendly and artistic vibes|Rockridge	appos
+It|a neighborhood mixed with family friendly and artistic vibes	ana
+a BART station|BART	bridge
+its|It	ana
+North Oakland|North Oakland	coref
+Rockridge|Rockridge	coref
+Rockridge|Rockridge	coref
+Temescal|Temescal	coref
+a street extending from Broadway near 34th and Hawthorne|Piedmont Avenue	appos
+Broadway|Broadway	coref
+an area with a group of hospitals on a hill ( Pill Hill ) up and through a neighborhood bordered on both sides by picturesque hills , houses and trees|Piedmont Avenue	appos
+Pill Hill|a hill	appos
+North Oakland|North Oakland	coref
+home to the city \'s single Michelin-rated restaurant and many others|Piedmont Avenue	coref
+the city|the city	coref
+cafes|many others	coref
+ice cream|many others	coref
+coffee shops|many others	coref
+pleasant walks|many others	coref
+this interesting and quiet neighborhood|home to the city \'s single Michelin-rated restaurant and many others	coref
+Piedmont Avenue|this interesting and quiet neighborhood	coref
+Grand Lake|two neighborhoods separated by a couple of blocks	coref
+Lakeshore|two neighborhoods separated by a couple of blocks	coref
+Grand Lake|Grand Lake	coref
+the entrance|Grand Lake	bridge
+the neighborhood that bears its name|Grand Lake	coref
+its|The Grand Lake Theater	ana
+Lakeshore Avenue|Lakeshore	coref
+both|Grand Lake	ana
+both|Lakeshore Avenue	ana
+your|your	ana
+it|your budget	ana
+either of these twin-sister neighborhoods|both	coref
+its|West Oakland	ana
+It|its	ana
+the neighborhood|It	coref
+the 1906 earthquake|major earthquakes	bridge
+many San Franciscans|San Francisco	bridge
+there|the neighborhood	ana
+its|there	ana
+Loma Prieta in 1989|major earthquakes	coref
+the neighborhood|its	coref
+the neighborhood|the neighborhood	coref
+West Oakland|the center of the neighborhood	coref
+you|you	ana
+more respect|Respect	coref
+you|you	ana
+them|Thais	ana
+their customs|them	bridge
+respect|more respect	coref
+it|The wai	ana
+The traditional greeting|it	coref
+the wai|The traditional greeting	ana
+Thais|them	coref
+the wai|the wai	coref
+your hands|your hands	coref
+Thais|Thais	coref
+a wai|the wai	coref
+they|Thais	ana
+a wai|a wai	coref
+most Thais|they	coref
+foreigners|foreigners	coref
+waiing|a wai	ana
+Personal appearance|Dress	coref
+You|you	ana
+dressing|Personal appearance	coref
+you|You	ana
+This|more respect	coref
+foreigners|foreigners	coref
+Thais|most Thais	coref
+Thais|Thais	coref
+your|you	ana
+you|your	ana
+capped sleeves|blouses	bridge
+the straps|tank tops	bridge
+spaghetti straps|the straps	bridge
+Thai men|Thais	coref
+pants|Pants	coref
+most Thais|Thai men	ana
+shorts|shorts	coref
+shorts|shorts	coref
+Men \'s shorts|shorts	coref
+this|Taking off one \'s shoes	ana
+shoes that slip on and off easily|Taking off one \'s shoes	bridge
+Flip-flops , hiking sandals , and clog-type shoes|shoes that slip on and off easily	bridge
+Flip-flops|shoes that slip on and off easily	ana
+Flip-flops , hiking sandals , and clog-type shoes|shoes that slip on and off easily	bridge
+Thailand|Thailand	coref
+Thailand|Thailand	coref
+your|you	ana
+ankle-length pants|your dress	bridge
+t-shirts|your dress	bridge
+a button-front or polo shirt|your dress	bridge
+full length dresses and skirts|your dress	bridge
+you|your	ana
+your clothing|your dress	coref
+your shoulders and your knees|you	bridge
+you|you	ana
+ankle-length pants|ankle-length pants	coref
+Shorts and sleeveless shirts|ankle-length pants or skirts and long sleeved tops	ana
+foreign visitors|foreigners	coref
+you|you	ana
+shorts|Men \'s shorts	coref
+it|shorts	ana
+beaches which are primarily Thai visitors|many tourist beaches	ana
+this|Topless sunbathing	ana
+Monks|Religion	bridge
+Buddhism in Thailand|Religion	coref
+Thailand|Thailand	coref
+Thai men|Thai men	coref
+a monk|Monks	coref
+their lifetime|Thai men	bridge
+Buddhist monks|a monk	coref
+they|Buddhist monks	ana
+women|women	coref
+women \'s hands|women	bridge
+Women|women	coref
+monks|they	coref
+them|monks	ana
+they|them	ana
+you|Women	ana
+monk|they	coref
+their|Women	ana
+Objects or donations|anything	coref
+a monk|monk	coref
+he|a monk	ana
+it|Objects or donations	ana
+it|it	ana
+he|he	ana
+him|he	ana
+Monks|him	coref
+women merit-makers|Women	ana
+their behalf|Monks	bridge
+their|Monks	ana
+Theravada Buddhist monks|Monks	coref
+money|material temptations	bridge
+money|money	coref
+a monk|Theravada Buddhist monks	coref
+you|you	ana
+a monk|a monk	coref
+you|you	ana
+your|you	ana
+your monetary donation|money	coref
+They|Vava’u	ana
+They|Vava’u	ana
+the Port of Refuge Harbour|The beautiful harbour opposite the main town of Neiafu	coref
+the islands|Vava’u	coref
+the islands|They	coref
+their|the islands	ana
+The area|their	coref
+them|many humpback whales	ana
+these islands|The area	coref
+in the Group|early-Polynesians	bridge
+the Group|these islands	coref
+Neiafu|Neiafu	coref
+the Group|the Group	coref
+the Group ’s overall population|in the Group	coref
+the population|the Group ’s overall population	ana
+small villages|Neiafu and surrounding villages	coref
+the other islands|on these islands	bridge
+the other islands|these islands	bridge
+Neiafu|Neiafu	coref
+yachts coming to Vava\'u|yachties sailing	bridge
+Vava\'u|the Group	coref
+500 yachts|yachts coming to Vava\'u	coref
+the Group|Vava\'u	coref
+humpback whales|them	coref
+these protected waters|the area	coref
+This|between June and October	ana
+Neiafu town|Neiafu	coref
+It|Neiafu town	ana
+the main island of Utu Vava\'u|the Group	bridge
+one of the world \'s most beautiful harbours|these protected waters	coref
+Neiafu|It	coref
+banks , schools , tour companies , restaurants , cafes and bars , supermarkets , a market and a hospital|all the usual amenities	bridge
+It|Neiafu	ana
+Vava\'u|the Group	coref
+the winds|southeast trade winds	coref
+Port of Refuge Harbor|the Port of Refuge Harbour	coref
+Neiafu|It	coref
+Utu Vava\'u|The main islands	bridge
+This|Utu Vava\'u	ana
+Neiafu|Neiafu	coref
+It|This	ana
+a limestone island with heights up to 213|the largest island	coref
+The island|the largest island	coref
+The island|It	coref
+The island|a limestone island with heights up to 213	coref
+Tropical vegetation|some of the limited remaining native vegetation	coref
+the pandanus or screw pine , the casuarina , and the mulberry tree ,|Tropical vegetation	bridge
+the bark of which|the mulberry tree	bridge
+of which is used to make tapa cloth . Pangaimotu . This is the second largest island in the Group . It can be seen across the water from Neiafu and is connected by land bridge at the most southern point of ‘Utu Vava’u|The island	coref
+Pangaimotu|The main islands	bridge
+This|Pangaimotu	ana
+the Group|Vava\'u	coref
+It|This	ana
+It|the second largest island	ana
+Neiafu|Neiafu	coref
+the island|It	coref
+Hunga Island|The main islands	bridge
+Neiafu Harbour|Neiafu	coref
+the main concentration of humpback whales|humpback whales	coref
+The island|Hunga Island	coref
+The island|Island	coref
+sheltered waters and bays|one of the world \'s most beautiful harbours	coref
+humpbacks with calves|the main concentration of humpback whales	coref
+people|Arrogant People	coref
+themselves|people	ana
+them|themselves	ana
+These people|them	coref
+you|you	ana
+the arrogant|These people	coref
+the not-so-arrogant|people different from them	bridge
+the not-so-arrogant|the arrogant	bridge
+their|the arrogant	ana
+they|their	ana
+you|you	ana
+you|you	ana
+them|they	ana
+them|them	ana
+they|them	ana
+These|they get mad or irritated if the centre of attention moves to someone else	ana
+Arrogance|arrogance	coref
+Arrogance and smugness|arrogance	coref
+them|they	ana
+actions|questions and learning	appos
+them|them	ana
+arrogant people|them	coref
+their|arrogant people	ana
+their limited , narrow life experiences|limited life experience	coref
+their|their	ana
+your|you	ana
+they|another person	ana
+they|they	ana
+you|your	ana
+you|you	ana
+Arrogant people|their	coref
+you|you	ana
+them|Arrogant people	ana
+it|When you make them look bad	ana
+they|them	ana
+you|you	ana
+This|When you make them look bad	ana
+you|you	ana
+their|they	ana
+their|their	ana
+their|their	ana
+they|their	ana
+their|they	ana
+they|their	ana
+they|they	ana
+they|they	ana
+you|you	ana
+their|they	ana
+one of those|their \' perfect little world	coref
+arrogance|Arrogance	coref
+them|most people	ana
+Arrogant people|their	coref
+this|that the world does n\'t revolve around them	ana
+them|Arrogant people	ana
+they|them	ana
+the real world|the world	coref
+the real world|world	coref
+arrogant people|they	coref
+it|Ambiguity	ana
+realities|imperfection , change and lack of certainty	appos
+we|we all	ana
+the world|the real world	coref
+the arrogant person|arrogant people	coref
+it|Reality	ana
+an arrogant person|the arrogant person	coref
+other people|others	coref
+their|an arrogant person	ana
+They|their	ana
+themselves|They	ana
+others|other people	coref
+their|themselves	ana
+they|their	ana
+them|someone	ana
+that|happy with someone one day and hateful with them	ana
+them|they	ana
+That|having a lot of fair weather friends	ana
+arrogance|arrogance	coref
+someone who \'s stuck on themselves|them	coref
+Prideful people|someone who \'s stuck on themselves	coref
+that|to look good	ana
+them|someone	ana
+they|Prideful people	ana
+arrogant people|they	coref
+they|arrogant people	ana
+they|they	ana
+themselves|they	ana
+they|themselves	ana
+those with different beliefs , cultural backgrounds and ways of seeing the world|those not like themselves	coref
+the world|the world	coref
+it|treat those with different beliefs , cultural backgrounds and ways of seeing the world	ana
+they|they	ana
+other people|others	coref
+their|they	ana
+them|their	ana
+them|them	ana
+this|it	ana
+their|them	ana
+they|their	ana
+prideful people|they	coref
+This|a serious \' my-way\'s-the-only-way \' attitude	ana
+their|prideful people	ana
+their fantasy land|their fantasy land	coref
+their|their	ana
+their|their	ana
+they|their	ana
+their|they	ana
+they|their	ana
+they|they	ana
+they|they	ana
+they|they	ana
+they|they	ana
+their|they	ana
+Many arrogant people|their	coref
+the arrogant person|Many arrogant people	coref
+their|the arrogant person	ana
+they|their	ana
+they|they	ana
+their|they	ana
+it|When they are cruel	ana
+it|it	ana
+they|their friends	ana
+they|they	ana
+their \' friend|their	coref
+their|they	ana
+you|you	ana
+they|their \' friend	ana
+This|Mention people you know that they do n\'t like	ana
+their|they	ana
+they|their	ana
+it|their condemnation	ana
+they|they	ana
+arrogant people|they	coref
+they|arrogant people	ana
+their perfect little world|their fantasy land	coref
+their|they	ana
+they|their	ana
+that person|someone	coref
+their fantasy land|their perfect little world	coref
+their|they	ana
+they|their	ana
+you|you	ana
+they|they	ana
+you|you	ana
+they|they	ana
+you|you	ana
+they|they	ana
+your|you	ana
+your face|you	bridge
+you|your	ana
+your|you	ana
+your back|you	bridge
+it|talk bad about you behind your back	ana
+their|they	ana
+they|their	ana
+Arrogant people|they	coref
+they|Arrogant people	ana
+They|they	ana
+this|do n\'t have any good friends	ana
+they|They	ana
+they|they	ana
+they|they	ana
+their trophy friends|a lot of friends	coref
+their|they	ana
+they|their trophy friends	ana
+Basil|Basil	coref
+Basil|Basil	coref
+Basil|Basil	coref
+Fresh basil|Basil	coref
+it|Fresh basil	ana
+it|it	ana
+basil|it	coref
+basil|the same herb	coref
+Method 1|Three Methods	bridge
+Seeds|Seeds	coref
+the kind of basil|basil	coref
+basil|basil	coref
+Basil|the kind of basil	coref
+Basil|basil	coref
+many different varieties|Basil	bridge
+each of which|many different varieties	bridge
+different types of basil|many different varieties	coref
+one|different types of basil	bridge
+several|different types of basil	coref
+you|you	ana
+the seeds|Seeds	coref
+them|the seeds	ana
+the sweet spice|Cinnamon	coref
+it|Cinnamon basil	ana
+an aromatic compound|citral	appos
+its|Purple basil	ana
+African Blue Basil|perennial basils	bridge
+its|African Blue Basil	ana
+Thai Basil|perennial basils	bridge
+you|you	coref
+pretty little bushes|Globe and Greek basil	coref
+seed|them	ana
+seed|them	coref
+Basil|Basil	coref
+seeds|seed	coref
+seeds|seed	coref
+they|seeds	ana
+frost|frost	coref
+you|you	ana
+you|you	ana
+the seeds|they	coref
+frost|frost	coref
+your|you	ana
+seed|the seeds	coref
+individual seed containers|seed containers	coref
+mixture|mixture	coref
+the mixture|the mixture	coref
+mixture|mixture	appos
+the basil seeds|seed	coref
+the seeds|the basil seeds	coref
+seeds|the seeds	coref
+seeds|seeds	coref
+each container|individual seed containers	coref
+them|seeds	ana
+containers|each container	coref
+containers|container	coref
+they|them	ana
+the containers|they	coref
+containers|containers	coref
+plastic wrap|clear plastic kitchen wrap	coref
+the containers|the containers	coref
+containers|the containers	coref
+containers|containers	coref
+water|water	coref
+the plastic wrap|the plastic wrap	coref
+you|your	ana
+the plastic wrap|the plastic wrap	coref
+the sprouts|the sprouts	coref
+the soil|the soil	coref
+their|the plants	ana
+them|their	ana
+a larger container|the containers	coref
+Method 2|Three Methods	bridge
+Basil|Basil	coref
+the basil plants|them	coref
+sets of leaves|their leaves	coref
+sets of leaves|leaves	coref
+basil|Basil	coref
+permanent containers|a larger container	coref
+Basil|basil	coref
+frost|frost	coref
+basil|Basil	coref
+basil|it	coref
+basil|it	coref
+the garden|the garden	coref
+the roots|basil	bridge
+the holes|holes	coref
+soil|well-drained soil	coref
+the stems|basil	bridge
+soil|soil	coref
+the plants|the basil plants	coref
+you|you	ana
+the basil|basil	coref
+a container|permanent containers	coref
+it|a container	ana
+they|the plants	ana
+they|they	ana
+the soil|soil	coref
+Basil|the basil	coref
+well-drained soil|the soil	coref
+the mature basil plants|they	coref
+the plants|the mature basil plants	coref
+you|you	ana
+flower buds|flower heads	coref
+them|flower buds	ana
+them|them	coref
+the leaves|pairs of leaves	coref
+the amount of foliage|the leaves	bridge
+This|Flowers blooming	ana
+extra sunshine|a good deal of sunshine	coref
+the flowers|Flowers	coref
+the plant|the plants	coref
+the leaves|the leaves	coref
+Basil plants|the plant	coref
+Japanese beetles|pests	bridge
+these pests|Japanese beetles	coref
+them|these pests	coref
+the plants|Basil plants	coref
+your plants|the plants	coref
+your|you	ana
+mold growth|mold	coref
+they|your plants	coref
+sunlight|extra sunshine	coref
+they|they	coref
+the smaller plants|they	bridge
+the larger ones|the smaller plants	bridge
+Method 3|Three Methods	bridge
+Basil|Basil	coref
+the plant|they	coref
+leaves|the leaves	coref
+you|your	ana
+every leaf|leaves	coref
+two tiny little leaves|every leaf	coref
+them|two tiny little leaves	ana
+those tiny leaves|them	coref
+them|those tiny leaves	ana
+the plant|the plant	coref
+its stronger stems|the stem	coref
+its|the plant	ana
+leaves|them	coref
+This|Pinching	ana
+the plants|its	coref
+the lower part of the stem|its	bridge
+the basil plants|the plants	coref
+them|the basil plants	coref
+the top|the lower part of the stem	bridge
+the basil|Basil	coref
+the leaves|leaves	coref
+the basil|the basil	coref
+the basil|the basil	coref
+more basil|the basil	coref
+some|more basil	coref
+the fridge|the refrigerator	appos
+the leaves|the leaves	coref
+them|the leaves	ana
+them|them	ana
+them|them	coref
+the basil|some	coref
+the leaves|them	coref
+you|You	ana
+it|the basil	ana
+you|you	ana
+it|it	coref
+the basil|it	coref
+a little water|the water	coref
+it|the basil	ana
+it|it	coref
+a food storage bag|a food storage container	bridge
+you|you	ana
+it|it	coref
+Methods|How to Make Vegan Cupcakes	bridge
+Basic Vanilla Vegan Cupcakes|Methods	bridge
+Basic Chocolate Vegan Cupcakes|Methods	bridge
+the eggs , butter , and milk|wicked cakes	bridge
+great vegan cupcake recipe|Methods	coref
+vegan cupcake|Vegan Cupcakes	coref
+whatever flavored icing|great vegan cupcake recipe	bridge
+you|you	ana
+it|great vegan cupcake recipe	coref
+They|vegan cupcake	coref
+Ingredients Method 1|Methods	bridge
+Basic Vanilla Vegan Cupcakes|Basic Vanilla Vegan Cupcakes	coref
+Servings|Basic Vanilla Vegan Cupcakes	bridge
+18 - 24|Servings	appos
+fewer|18 - 24	bridge
+you|you	ana
+larger-sized cupcakes|Basic Vanilla Vegan Cupcakes	bridge
+1 tablespoon ( 15 ml ) apple cider vinegar|Basic Vanilla Vegan Cupcakes	bridge
+1 1/2 cups ( 350 ml ) plain soy milk|Basic Vanilla Vegan Cupcakes	bridge
+2 3/4 cups ( 345 g ) self raising flour|Basic Vanilla Vegan Cupcakes	bridge
+2 teaspoons ( 10 g ) baking powder|Basic Vanilla Vegan Cupcakes	bridge
+1/2 teaspoon baking soda|Basic Vanilla Vegan Cupcakes	bridge
+1/2 teaspoon salt|Basic Vanilla Vegan Cupcakes	bridge
+1 cup ( 200 g ) sugar|Basic Vanilla Vegan Cupcakes	bridge
+1/2 cup ( 120 ml ) vegetable oil|Basic Vanilla Vegan Cupcakes	bridge
+1 teaspoon vanilla extract Vegan icing|Basic Vanilla Vegan Cupcakes	bridge
+your|you	ana
+Method 2|Methods	bridge
+Basic Chocolate Vegan Cupcakes|Basic Chocolate Vegan Cupcakes	coref
+approx : 20 - 24 cupcakes|Basic Chocolate Vegan Cupcakes	bridge
+275 g ( 2 cups ) plain or all-purpose flour ( sifted )|Basic Chocolate Vegan Cupcakes	bridge
+100 g ( 3/4 cup ) quality cocoa powder ( sifted )|Basic Chocolate Vegan Cupcakes	bridge
+2 teaspoons baking soda|Basic Chocolate Vegan Cupcakes	bridge
+1 teaspoon baking powder|Basic Chocolate Vegan Cupcakes	bridge
+Pinch of salt 450 ml ( 1 - 3/4 cup )|Basic Chocolate Vegan Cupcakes	bridge
+unsweetened soy milk|Basic Chocolate Vegan Cupcakes	bridge
+2 teaspoons red wine|Basic Chocolate Vegan Cupcakes	bridge
+apple cider vinegar|Basic Chocolate Vegan Cupcakes	bridge
+320 g ( 1 - 2/3 cups ) caster / superfine sugar|Basic Chocolate Vegan Cupcakes	bridge
+320 ml ( 1 - 1/4 cups ) sunflower oil|Basic Chocolate Vegan Cupcakes	bridge
+coconut oil|Basic Vanilla Vegan Cupcakes	bridge
+2 tablespoons vanilla extract / essence|Basic Chocolate Vegan Cupcakes	bridge
+Method 1 of 2|Method 2	bridge
+Basic Vanilla Vegan Cupcakes|Basic Vanilla Vegan Cupcakes	coref
+the cider vinegar|1 tablespoon ( 15 ml ) apple cider vinegar	coref
+the soy milk|1 1/2 cups ( 350 ml ) plain soy milk	coref
+this|Put the cider vinegar into a small bowl and add the soy milk	ana
+The mixture|this	coref
+this|The mixture will now curdle	ana
+the flour|2 3/4 cups ( 345 g ) self raising flour	coref
+sugar|1 cup ( 200 g ) sugar	coref
+baking powder|2 teaspoons ( 10 g ) baking powder	coref
+baking soda|1/2 teaspoon baking soda	coref
+salt|1/2 teaspoon salt	coref
+you|your	ana
+cocoa|100 g ( 3/4 cup ) quality cocoa powder ( sifted )	coref
+the oil|1/2 cup ( 120 ml ) vegetable oil	coref
+vanilla extract|1 teaspoon vanilla extract Vegan icing	coref
+the bowl containing the soy milk and vinegar|a small bowl	coref
+bowl|a small bowl	coref
+the soy milk and vinegar|The mixture	coref
+wet ingredients|Stir the oil and vanilla extract into the bowl containing the soy milk and vinegar	coref
+dry ingredients|the flour , sugar , baking powder , baking soda and salt	coref
+the muffin pan|the muffin tray	coref
+paper cupcake holder|cupcake holders / cases	coref
+you|you	ana
+the muffin pan|the muffin pan	coref
+the cupcake holders|paper cupcake holder	coref
+you|you	ana
+the cupcakes|They	coref
+they|the cupcakes	ana
+they|they	ana
+you|you	ana
+the oven|the oven	coref
+them|they	coref
+them|them	coref
+the pan|the muffin pan	coref
+cupcakes|them	coref
+the cupcakes|cupcakes	coref
+your|you	ana
+soy milk|the soy milk	coref
+Method 2 of 2|Method 2	coref
+Basic Chocolate Vegan Cupcakes|Basic Chocolate Vegan Cupcakes	coref
+the oven|the oven	coref
+cupcake cases|the cupcake holders	coref
+baking sheet|the pan	coref
+it|silicone cupcake sheet	ana
+flour|275 g ( 2 cups ) plain or all-purpose flour ( sifted )	coref
+baking soda|2 teaspoons baking soda	coref
+salt|Pinch of salt 450 ml ( 1 - 3/4 cup )	coref
+soy milk|unsweetened soy milk	coref
+vinegar|apple cider vinegar	coref
+sugar|320 g ( 1 - 2/3 cups ) caster / superfine sugar	coref
+oil|320 ml ( 1 - 1/4 cups ) sunflower oil	coref
+vanilla|2 tablespoons vanilla extract / essence	coref
+liquid mixture|the soy milk , vinegar , sugar , oil and vanilla	coref
+flour mixture|the flour , cocoa powder , baking soda and pinch of salt	coref
+cupcake cases or cupcake holes|cupcake cases	coref
+the oven|the oven	coref
+they|Basic Chocolate Vegan Cupcakes	ana
+it|a wooden skewer	ana
+a cupcake|they	coref
+they|a cupcake	ana
+the oven|the oven	coref
+the cupcakes|they	coref
+the rack|wire cooling rack	coref
+You|your	ana
+One small container|pureed fruit	bridge
+pureed fruit|pureed fruit	coref
+flavoring|delicious flavor	coref
+little containers that children take to school in their lunchboxes|One small container	coref
+their|children	ana
+strawberry , apple , banana , apricot , peach|pureed fruit	bridge
+cupcakes|the cupcakes	coref
+you|You	ana
+fruit|pureed fruit	coref
+vegan sugar|sugar	coref
+you|you	ana
+it|vegan sugar	ana
+maple sugar|vegan sugar	bridge
+rice syrup|vegan sugar	bridge
+vegetable oil|oil	coref
+walnut or macadamia nut oils|vegetable oil	bridge
+you|you	ana
+Coconut oil|vegetable oil	bridge
+olive oil|vegetable oil	bridge
+it|olive oil	ana
+You|you	ana
+plain soy milk|soy milk	coref
+you|You	ana
+cupcakes|cupcakes	coref
+the vanilla extract|vanilla	coref
+neroli orange oil|fragrant ingredients	bridge
+rosewater|fragrant ingredients	bridge
+orange blossom water|fragrant ingredients	bridge
+coconut extract|fragrant ingredients	bridge
+This|Name your language	bridge
+This|Name your language	bridge
+all languages|your language	bridge
+You|your	ana
+many names|This	bridge
+You|You	ana
+your made up language|your language	coref
+your|You	ana
+\' Victory \'|many names	bridge
+Great Language|many names	bridge
+The choice|use a made up word from your made up language like \' Victory \' or \' Great Language	coref
+yours|your	ana
+the highly frequently used words such as \' and \' or \' I \' or \' one \' or \' the \'|a made up word from your made up language like \' Victory \' or \' Great Language \'	coref
+you|yours	ana
+short words|the highly frequently used words such as \' and \' or \' I \' or \' one \' or \' the \'	bridge
+they|short words	ana
+the grammar rules|Grammar	coref
+Bird|the word	appos
+Birds|the word	appos
+\' Vogelaviatiolaps \'|\' Vogelaviatiolap \'	bridge
+\' s \'|the suffix	appos
+most languages|all languages	bridge
+you|you	ana
+you|you	ana
+you|you	ana
+\' horse \'|the word	appos
+you|you	ana
+\' the horse \'|\' horse \'	coref
+you|you	ana
+\' the cat \'|a \' cat \'	coref
+your|you	ana
+your language|your language	coref
+an existing language|your language	bridge
+my made up language|your language	bridge
+\' Vogelaviatiolap \'|\' Vogelaviatiolap \'	coref
+Bird|Birds	coref
+you|your	ana
+it|\' Vogelaviatiolap \'	ana
+German|German	coref
+bird|Bird	coref
+It|it	ana
+the word|It	coref
+\' aviation \'|the term	appos
+It|\' lap \'	ana
+it|It	ana
+your|you	ana
+your words|your language	bridge
+you|your	ana
+you|you	ana
+the word|your words	coref
+\' China \'|the word	appos
+\' Khinssa \'|\' China \'	coref
+\' Drink \'|the word	appos
+\' Bever \'|\' Drink \'	coref
+\' Accident \'|the word	appos
+\' Casnondelibreaten \'|\' Accident \'	coref
+\' tea \'|the word	appos
+\' Khincasnonbever \'|\' tea \'	coref
+\' Bevernondelibreatekin \'|\' tea \'	coref
+\' Khinssacasnondelibreatenibever \'|\' tea \'	coref
+some non Latin Characters such as ß|existing alphabets and words	bridge
+You|you	ana
+the whole language|your language	coref
+You|You	ana
+them|some words of languages	ana
+You|You	ana
+\' pen \'|the word	appos
+penn|\' pen \'	coref
+pen|\' pen \'	coref
+you|You	ana
+your|you	ana
+your|your	ana
+your|your	ana
+it|your language	ana
+yourself|your	ana
+it|it	ana
+you|yourself	ana
+your|you	ana
+your language|your language	coref
+it|a book / novel	ana
+your|your	ana
+your|your	ana
+this new language|your own language	coref
+your|your	ana
+your friends|your friends	coref
+your|your	ana
+your language|this new language	coref
+them|your friends	ana
+it|your language	ana
+your|your	ana
+your own made up language|your language	coref
+this|your own made up language	ana
+your|your	ana
+your friends|your friends	coref
+your|your	ana
+your|your	ana
+your own made up language|your own made up language	coref
+you|your	ana
+the language|your own made up language	coref
+you|you	coref
+it|the language	ana
+it|it	ana
+you|you	coref
+your|you	ana
+you|your	ana
+it|it	ana
+it|a language	ana
+it|it	ana
+Chinese|Chinese	coref
+you|you	ana
+your|you	ana
+you|you and your friend(s)	ana
+the same guidelines|a systematic language system	coref
+It|a systematic language system	ana
+it|It	ana
+you|you	ana
+your|you	ana
+English examples|many basic words in your language	bridge
+you|your	ana
+This|follow closely to a language you like	ana
+grammar|the grammar rules	coref
+You|you	ana
+grammar rules|grammar	bridge
+this|simply copying the grammar rules	ana
+your language|it	coref
+your|You	ana
+your language|your language	coref
+your|your	ana
+you|your	ana
+it|your language	ana
+vowels|various letters	bridge
+this|add connotation	ana
+a certain vowel|vowels	coref
+example|various words	coref
+the vowel|a certain vowel	coref
+A|the vowel	appos
+it|A	ana
+you|you	ana
+your own words|various words	coref
+your|you	ana
+you|your	ana
+your words|your own words	coref
+your|you	ana
+We|we	ana
+your friends|you and your friend(s)	coref
+your|your	ana
+the letters|the letters	coref
+you|your	ana
+this|Just put marks over the letters or make up something right on the spot	ana
+letters|the letters	coref
+this|to start a writing system	ana
+other people|a group of friends	coref
+your language|it	coref
+your|you	ana
+your friends|a group of friends	coref
+your|your	ana
+the language|your language	coref
+they|your friends	ana
+a writing system|a writing system	coref
+it|a writing system	ana
+all your letters|the letters	coref
+your|your	ana
+you|your	ana
+you|you	ana
+this language|the language	coref
+a different language|other languages	bridge
+This|you can use this language as a model and change some letters or sounds to create a different language	ana
+your first language|this language	coref
+your|you	ana
+a language|a proto-language	appos
+those overalls|Overalls	coref
+The straps on adults ’ overalls|those overalls	bridge
+adults ’ overalls|those overalls	coref
+she|one	ana
+Your|you	ana
+the straps|The straps on adults ’ overalls	coref
+your overalls|adults ’ overalls	coref
+your|Your	ana
+you|your	ana
+your overalls|your overalls	ana
+they|your overalls	ana
+you|you	ana
+them|they	ana
+adults ’ overalls|them	coref
+just a few items|\" like \" clothing	coref
+them|adults ’ overalls	ana
+blue jeans|just a few items	bridge
+you|you	ana
+them|them	ana
+the straps|the straps	coref
+women ’s long sleeve shirts|anything that can get twisted up with the straps	bridge
+kids ’ blankets|anything that can get twisted up with the straps	bridge
+the denim and canvas stuff|similar clothing	bridge
+the straps|the straps	coref
+you|you	ana
+the bib|the bib	coref
+both straps|the straps	coref
+you|you	ana
+them|both straps	ana
+the straps|them	coref
+This step|Use twist ties to keep the straps fastened .	coref
+your|you	ana
+it|This step	ana
+a couple twist ties|twist ties	coref
+they|the fasteners	ana
+your washing machine|a Washing Machine	coref
+it|your washing machine	ana
+those straps|the straps	coref
+them|those straps	ana
+you|your	ana
+it|it will undo those straps in a heartbeat and tie them in a sheet bend	ana
+two twist ties|a couple twist ties	coref
+a few seconds of patience|the 20 seconds	coref
+Overalls|them	coref
+more pockets|the pockets	coref
+The bib|the bib	coref
+a wallet pocket|more pockets	bridge
+a watch pocket|more pockets	bridge
+these|a wallet pocket	bridge
+these|a watch pocket	bridge
+them|these	ana
+bib pockets|them	coref
+all the pockets|more pockets	coref
+the strap adjusters|them	bridge
+You|you	ana
+them|the strap adjusters	ana
+you|You	ana
+them|them	ana
+you|you	ana
+the adjusters|them	coref
+the straps|them	coref
+the straps|the straps	coref
+the adjusters|the adjusters	coref
+you|you	ana
+them|the adjusters	ana
+The straps|the straps	coref
+the adjusters|them	coref
+they|Overalls	ana
+them|the adjusters	ana
+This|Moving them distributes the wear and tear of washing .	ana
+You|you	ana
+your tires|tires	coref
+your|You	ana
+you|your	ana
+you|you	ana
+your|you	ana
+your overalls|they	coref
+overalls|they	coref
+the straps|The straps	coref
+the bib|The bib	coref
+you|your	ana
+them|your overalls	ana
+them|overalls	ana
+This|Leave the straps fastened and twist-tied to the bib when you throw them in the dryer .	ana
+you|you	ana
+them|them	ana
+The paper-type twist ties|two twist ties	bridge
+the dryer filter screen|the dryer	bridge
+Plastic-type twist ties|two twist ties	bridge
+the wash|the wash	coref
+your dryer|the dryer	coref
+your|you	ana
+your|you	ana
+all your possessions|Your Possessions	coref
+your|your	ana
+everything you are packing|all your possessions	coref
+you|you	ana
+you|your	ana
+it|everything you are packing	ana
+Books , CDs , expensive clothes|it	bridge
+which item|items	coref
+which box|boxes	coref
+sturdy boxes|which box	coref
+the box|sturdy boxes	coref
+the lid|the box	bridge
+That way|Fill the box to the brim and seal the lid	coref
+you|you	ana
+boxes|the box	coref
+one another|boxes	ana
+the box|one another	coref
+it|the bottom of the box	ana
+a box|the box	coref
+it|a box	ana
+you|you	ana
+it|it	ana
+the heavy items|which item	coref
+items|which item	coref
+a few boxes|it	coref
+boxes|the box	coref
+boxes|a few boxes	coref
+towels or soft toys|lighter items	bridge
+the lighter items|lighter items	coref
+newsprint|newspapers	bridge
+newspaper|newspapers	coref
+boxes|boxes	coref
+Boxes|boxes	coref
+each box|Boxes	coref
+which room|one room	coref
+it|each box	ana
+the box|each box	coref
+you|you	ana
+your|you	ana
+your new house|your new house	coref
+items like toiletries , toilet paper , bottled water , snacks and a change of clothes|essentials	coref
+toiletries|essentials	bridge
+toilet paper|essentials	bridge
+bottled water|essentials	bridge
+snacks|essentials	bridge
+a change of clothes|essentials	bridge
+you|your	ana
+everything|it	ana
+boxes|a separate box	coref
+the contents|contents	coref
+you|you	ana
+it|boxes with contents	ana
+the contents|the contents	coref
+Example|\" Mom \'s old dishes \" instead of \" Fine China \"	appos
+it|Tape	ana
+box bottoms|it	coref
+box|boxes	coref
+it|something	ana
+You|you	ana
+the right screw|screws	coref
+something|it	coref
+it|the right screw	ana
+you|You	ana
+there|your new house	coref
+one box|box	coref
+you|you	ana
+it|one box	ana
+it|it	ana
+books|books	coref
+it|it	ana
+lighter stuff|the lighter items	coref
+Walmart|National superstores	bridge
+you|you	coref
+the store|National superstores	coref
+the stores|the store	coref
+You|you	ana
+boxes of all sizes|boxes	coref
+boxes|boxes	coref
+Cereal , diaper and houseware boxes|boxes of all sizes	bridge
+Cereal|boxes of all sizes	coref
+diaper|boxes of all sizes	coref
+houseware boxes|boxes of all sizes	coref
+a good size|all sizes	coref
+the store|the stores	coref
+They|they	ana
+the cart|a cart	coref
+you|You	ana
+you|you	ana
+too many boxes|boxes of all sizes	coref
+you|you	ana
+the unused|too many boxes	coref
+These boxes|the unused	coref
+you|you	ana
+them|These boxes	ana
+your attic|you	bridge
+your|you	ana
+you|your	ana
+Some national companies|other nation companies	coref
+you|you	ana
+some|These boxes	coref
+you|you	ana
+your new place|there	coref
+your|you	ana
+it|junk	ana
+the house|your new place	coref
+you|your	ana
+boxes|These boxes	coref
+a room|the house	bridge
+the formal dining or living room|a room	bridge
+You|you	ana
+boxes|boxes	coref
+you|You	ana
+books|books	coref
+heavy items|the heavy items	coref
+smaller boxes|boxes	coref
+your|you	ana
+the contents of boxes|the contents	coref
+25 mL Shot|Single Serving	appos
+\" Skittled \" Vodka|Skittles Vodka	coref
+Skittles|Skittles	coref
+Skittles vodka|\" Skittled \" Vodka	coref
+your|you	ana
+Skittles candies|Skittles	coref
+it|your favorite combination of Skittles candies	ana
+You|your	ana
+your Skittles vodka|Skittles vodka	coref
+your|You	ana
+it|your Skittles vodka	ana
+multiple methods|Three Methods	coref
+Skittles vodka|your Skittles vodka	coref
+Skittles|Skittles	coref
+you|your	ana
+1.75 liters|A handle	appos
+about a half gallon|1.75 liters	appos
+vodka|regular vodka	coref
+bag of Skittles|Skittles	coref
+A large bag of Skittles candy|bag of Skittles	coref
+the \" movie size \" bag|A large bag of Skittles candy	appos
+Method 1 of 3|multiple methods	bridge
+Method|Three Methods	coref
+3|Three Methods	coref
+Single Serving|Single Serving	coref
+25 mL Shot|Single Serving	appos
+Skittles that you want to flavor the vodka with|the \" movie size \" bag	coref
+you|you	ana
+the vodka|vodka	coref
+the green|the colors	bridge
+you|you	ana
+original Skittles|A large bag of Skittles candy	bridge
+purple|the colors	bridge
+the original style|original Skittles	coref
+they|lime	bridge
+they|purple	bridge
+the final product|Single Serving	coref
+you|you	ana
+them|they	ana
+you|you	ana
+you|you	ana
+you|you	ana
+this step|Separate the colors of Skittles that you want to flavor the vodka with	coref
+Skittles|Skittles that you want to flavor the vodka with	coref
+vodka|the vodka	coref
+the mixture|vodka	bridge
+the Skittles|Skittles	coref
+Skittles|the Skittles	coref
+vodka|vodka	coref
+You|you	ana
+your|You	ana
+your preferred mix|the mixture	bridge
+the remaining Skittle \" insides \"|Skittles	bridge
+the remaining Skittle|Skittles	ana
+the remaining Skittle|the Skittles	ana
+this|single servings	ana
+you|your	ana
+you|you	ana
+bottles|larger bottles	bridge
+you|you	ana
+Method 2 of 3|multiple methods	bridge
+Method|Method	coref
+3|3	coref
+Bottles|bottles	coref
+\" Skittled \" Vodka|Skittles vodka	coref
+some vodka|vodka	coref
+Skittles|Skittles	coref
+Skittles|Skittles	coref
+the Skittles|Skittles	coref
+color|the colors	coref
+the Skittles|the Skittles	coref
+20 - 25|the Skittles	appos
+350 ml|your preferred mix	coref
+11.8 fl oz|350 ml	appos
+the mixture|11.8 fl oz	coref
+the Skittles|20 - 25	coref
+the Skittles|25	coref
+a paper coffee filter|a filter	bridge
+a clean t-shirt|a filter	bridge
+Method 3 of 3|multiple methods	bridge
+Method|Method	coref
+3|3	coref
+Dishwasher Bottle Method|Method 3 of 3	coref
+Skittles|the Skittles	coref
+23.6 fl oz bottles|700 ml	appos
+10.1 fl oz of vodka|300 ml	appos
+vodka|some vodka	coref
+skittles|Skittles	coref
+the bottles|each bottle	coref
+your|you	ana
+your dishwasher|Dishwasher	coref
+the cycle|an intensive cycle	coref
+all bottles|the bottles	coref
+the cycle|the cycle	coref
+all bottles|all bottles	coref
+the cycle|the cycle	coref
+all bottles|all bottles	coref
+the vodka|vodka	coref
+it|the vodka	ana
+it|a sieve	ana
+muslin|a piece of cheesecloth	appos
+the vodka|it	coref
+the first bottle|all bottles	bridge
+the bottle|the first bottle	coref
+the Skittles vodka|the vodka	coref
+Skittles|skittles	coref
+the above two steps|Take a sieve , line it with a piece of cheesecloth ( muslin ) or a coffee filter , place above a large jug and pour the vodka through slowly	bridge
+the above two steps|Once the first bottle has been filtered , wash out the bottle and pour the Skittles vodka back in	bridge
+all bottles|all bottles	coref
+all of the bottles|all bottles	coref
+the freezer|the freezer	coref
+you|your	ana
+the vodka|the Skittles vodka	coref
+You|you	ana
+your tasty creation|the vodka	coref
+your|You	ana
+you|your	ana
+it|your tasty creation	ana
+the skittles|Skittles	coref
+them|the skittles	ana
+vodka|vodka	coref
+They|them	ana
+you|you	ana
+them|They	ana
+the color|them	bridge
+vodka|vodka	coref
+Skittles|them	coref
+you|you	ana
+You|you	ana
+this|Start with small amount of vodka and Skittles at first to experiment which combination of taste suits you best	ana
+vodka|vodka	coref
+Skittles|Skittles	coref
+you|You	ana
+you|you	ana
+the taste|taste	coref
+The lime green Skittles|Skittles	bridge
+the drink|vodka	coref
+you|you	ana
+one|the drink	ana
+the green ones|The lime green Skittles	coref
+them|the green ones	ana
+their|them	ana
+vodka|the drink	coref
+Skittles|Skittles	coref
+the candy|Skittles	coref
+one flavor|the candy	bridge
+each bottle|five bottles	coref
+an empty|four bottles	bridge
+the skittles|the candy	ana
+a t-shirt|a clean t-shirt	coref
+it|a t-shirt	ana
+your|you	ana
+your|your	ana
+You|your	ana
+1.75 liters|Each handle of vodka	appos
+about a half gallon|1.75 liters	appos
+Skittles|the skittles	coref
+you|You	ana
+you|you	ana
+Skittles|Skittles	coref
+Coffee filter|a coffee filter	coref
+cheesecloth|a piece of cheesecloth	coref
+muslin|muslin	coref
+filter|Coffee filter	coref
