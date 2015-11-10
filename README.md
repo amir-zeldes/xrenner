@@ -11,6 +11,6 @@ options:
 
 Examples:
 ========
-Python xrenner.py example_in.conll10 > example_out.sgml
-Python xrenner.py -o conll example_in.conll10 > example_out.conll
-Python xrenner.py -m eng -o conll example_in.conll10 > example_out.conll
+  * Python xrenner.py example_in.conll10 > example_out.sgml
+  * Python xrenner.py -o conll example_in.conll10 > example_out.conll
+  * Python xrenner.py -m eng -o conll example_in.conll10 > example_out.conll
