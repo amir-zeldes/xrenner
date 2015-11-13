@@ -1354,7 +1354,7 @@ discotheques	discos
 discs	disks
 discussion	debate
 discussions	debates
-disease	illness
+disease	illness,disease
 diseases	illnesses
 disgrace	shame
 disinfecting	disinfection
@@ -2912,7 +2912,7 @@ neurons	neurones
 newbie	probie
 newsletter	bulletin
 newsletters	bulletins
-newspaper	journal
+newspaper	journal,newspaper
 newts	tritons
 nicin	nisin
 night	evening

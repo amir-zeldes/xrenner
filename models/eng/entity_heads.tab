@@ -758,6 +758,7 @@ cooper	person
 cop	person
 coppersmith	person
 copyist	person
+copyright	abstract
 copywriter	person
 core	place
 corgi-chihuahua	animal
@@ -1744,7 +1745,7 @@ lark	animal
 laryngologist	person
 launch	abstract
 launchpads	place
-law	abstract
+law	abstract/inanim
 lawman	person
 laws	abstract
 Lawsuits	abstract
