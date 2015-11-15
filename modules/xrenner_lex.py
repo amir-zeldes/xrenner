@@ -45,6 +45,7 @@ class LexData:
 		self.last = {}
 
 		self.morph = self.get_morph()
+		self.func_substitutes_forward, self.func_substitutes_backward = self.get_func_substitutes()
 
 		self.debug = self.read_delim('debug.tab')
 
@@ -176,6 +177,20 @@ class LexData:
 				return lemma.lower()
 		else:
 			return lemma
+
+	def get_func_substitutes(self):
+
+		substitutions_forward = {}
+		substitutions_backward = {}
+		subst_rules = self.filters["func_substitute_forward"]
+		for rule in subst_rules.split(";"):
+			rule_part = rule.split("/")
+			substitutions_forward[rule_part[0]] = [rule_part[1],rule_part[2]]
+		subst_rules = self.filters["func_substitute_backward"]
+		for rule in subst_rules.split(";"):
+			rule_part = rule.split("/")
+			substitutions_backward[rule_part[0]] = [rule_part[1],rule_part[2]]
+		return [substitutions_forward,substitutions_backward]
 
 	def process_morph(self, token):
 

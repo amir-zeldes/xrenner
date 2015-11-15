@@ -42,7 +42,7 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
 										return candidate
-								elif markable.entity == candidate.entity and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
+								elif markable.entity == candidate.entity and (isa(markable, candidate, lex) or isa(candidate, markable, lex)) and agree_compatible(markable, candidate, lex):
 									if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
@@ -273,7 +273,7 @@ def postprocess_coref(markables, lex):
 	# Check for markables to remove in postprocessing
 	if len(lex.filters["remove_head_func"].pattern) > 0:
 		for mark in markables:
-			if lex.filters["remove_head_func"].match(mark.head.func):
+			if lex.filters["remove_head_func"].match(mark.head.func) and (mark.form != "proper" or mark.text.strip() == "U.S."): # Proper restriction matches OntoNotes guidelines; US is interpreted as "American" (amod)
 				splice_out(mark, marks_by_group[mark.group])
 	if len(lex.filters["remove_child_func"].pattern) > 0:
 		for mark in markables:

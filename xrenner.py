@@ -81,7 +81,7 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 			# Check for markable projecting beyond an apposition to itself and remove from children on violation
 			if lex.filters["apposition_func"].match(tok1.func) and not tok1.id == "1":
 				for tok2 in conll_tokens[int(tok1.id) + 1:]:
-					if tok2.head == tok1.head and not lex.filters["non_link_func"].match(tok2.func):
+					if tok2.head == tok1.head and not lex.filters["non_link_func"].match(tok2.func) and tok2.id in children[tok2.head]:
 						children[tok2.head].remove(tok2.id)
 
 
@@ -389,8 +389,14 @@ for myline in infile:
 			quoted = False
 		if lex.filters["question_mark"].match(cols[1]):
 			current_sentence.mood = "question"
+		if cols[3] in lex.func_substitutes_forward and int(cols[6]) > int(cols[0]):
+			tok_func = re.sub(lex.func_substitutes_forward[cols[3]][0],lex.func_substitutes_forward[cols[3]][1],cols[7])
+		elif cols[3] in lex.func_substitutes_backward and int(cols[6]) < int(cols[0]):
+			tok_func = re.sub(lex.func_substitutes_backward[cols[3]][0],lex.func_substitutes_backward[cols[3]][1],cols[7])
+		else:
+			tok_func = cols[7]
 		conll_tokens.append(ParsedToken(str(int(cols[0]) + tokoffset), cols[1], cols[2], cols[3], cols[5],
-		                                str(int(cols[6]) + tokoffset), cols[7], current_sentence, [], [], lex, quoted))
+		                                str(int(cols[6]) + tokoffset), tok_func, current_sentence, [], [], lex, quoted))
 		sentlength += 1
 		if not (lex.filters["non_link_func"].match(cols[7]) or lex.filters["non_link_tok"].match(
 				cols[1])):  # do not add a child if this is a coordinating conjunction etc.
