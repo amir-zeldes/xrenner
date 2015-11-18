@@ -13,7 +13,7 @@ from modules.xrenner_classes import *
 from modules.xrenner_coref import *
 from modules.xrenner_lex import *
 
-__version__ = "1.0.0"
+__version__ = "1.0.2"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
@@ -50,10 +50,10 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 				tok1.pos = tok1.text
 				tok1.func = "punct"
 				tok1.head = "0"
-			if lex.filters["mark_head_pos"].match(tok1.pos):
+			if lex.filters["mark_head_pos"].match(tok1.pos) is not None:
 				entity_candidate = tok1.text + " "
 				for tok2 in conll_tokens[int(tok1.id) + 1:]:
-					if lex.filters["mark_head_pos"].match(tok2.pos):
+					if lex.filters["mark_head_pos"].match(tok2.pos) is not None:
 						entity_candidate += tok2.text + " "
 						### DEBUG BREAKPOINT ###
 						if entity_candidate.strip() in lex.debug:
@@ -62,7 +62,7 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 							for tok3 in conll_tokens[int(tok1.id):int(tok2.id)]:
 								# Ensure right most token has head outside entity:
 								if int(tok2.head) > int(tok2.id) or int(tok2.head) < int(tok1.id):
-									if int(tok3.head) < int(tok1.id) or int(tok3.head) > int(tok2.id):
+									if (int(tok3.head) < int(tok1.id) or int(tok3.head) > int(tok2.id)) and tok3.id in children[tok3.head]:
 										children[tok3.head].remove(tok3.id)
 										tok3.head = tok2.id
 										children[tok3.head].append(tok3.id)
@@ -71,17 +71,17 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 						break
 			# Check for apposition pointing back to immediately preceding proper noun token -
 			# typical (German model) MaltParser name behavior
-			if lex.filters["apposition_func"].match(tok1.func) and not tok1.id == "1":
-				if lex.filters["proper_pos"].match(conll_tokens[int(tok1.id) - 1].pos) and conll_tokens[
+			if lex.filters["apposition_func"].match(tok1.func) is not None and not tok1.id == "1":
+				if lex.filters["proper_pos"].match(conll_tokens[int(tok1.id) - 1].pos) is not None and conll_tokens[
 							int(tok1.id) - 1].id == tok1.head:
 					tok1.func = "xrenner_fix"
 					children[str(int(tok1.id) - 1)].append(tok1.id)
 					stop_ids[tok1.id] = True
 
 			# Check for markable projecting beyond an apposition to itself and remove from children on violation
-			if lex.filters["apposition_func"].match(tok1.func) and not tok1.id == "1":
+			if lex.filters["apposition_func"].match(tok1.func) is not None and not tok1.id == "1":
 				for tok2 in conll_tokens[int(tok1.id) + 1:]:
-					if tok2.head == tok1.head and not lex.filters["non_link_func"].match(tok2.func) and tok2.id in children[tok2.head]:
+					if tok2.head == tok1.head and lex.filters["non_link_func"].match(tok2.func) is None and tok2.id in children[tok2.head]:
 						children[tok2.head].remove(tok2.id)
 
 
@@ -91,27 +91,27 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 
 	# Revert conj token function to parent function
 	for token in conll_tokens[tokoffset:]:
-		if lex.filters["conjunct_func"].match(token.func):
+		if lex.filters["conjunct_func"].match(token.func) is not None:
 			token.func = conll_tokens[int(token.head)].func
 			token.head = conll_tokens[int(token.head)].head
 
 	# Enrich tokens with modifiers
 	for token in conll_tokens[tokoffset:]:
 		for child in children[token.id]:
-			if lex.filters["mod_func"].match(conll_tokens[int(child)].func):
+			if lex.filters["mod_func"].match(conll_tokens[int(child)].func) is not None:
 				token.modifiers.append(conll_tokens[int(child)])
 
 	# Find dead areas
 	for tok1 in conll_tokens[tokoffset + 1:]:
 		# Affix tokens can't be markable heads - assume parser error and fix if desired
 		if lex.filters["postprocess_parser"]:
-			if ((lex.filters["mark_head_pos"].match(tok1.pos) and not lex.filters["mark_forbidden_func"].match(tok1.func)) or
+			if ((lex.filters["mark_head_pos"].match(tok1.pos) is not None and lex.filters["mark_forbidden_func"].match(tok1.func) is None) or
 			pos_func_combo(tok1.pos, tok1.func, lex.filters["pos_func_heads"])) and not (stop_ids[tok1.id]):
 				if tok1.text.strip() in lex.affix_tokens:
 					stop_ids[tok1.id] = True
 					for child_id in sorted(children[tok1.id], reverse=True):
 						child = conll_tokens[int(child_id)]
-						if ((lex.filters["mark_head_pos"].match(child.pos) and not lex.filters["mark_forbidden_func"].match(child.func)) or
+						if ((lex.filters["mark_head_pos"].match(child.pos) is not None and lex.filters["mark_forbidden_func"].match(child.func) is None) or
 						pos_func_combo(child.pos, child.func, lex.filters["pos_func_heads"])) and not (stop_ids[child.id]):
 							child.head = tok1.head
 							tok1.head = child.id
@@ -158,7 +158,7 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 		if tok.text.strip() in lex.debug:
 			pass
 		# TODO: consider switch for lex.filters["stop_func"].match(tok.func)
-		if ((lex.filters["mark_head_pos"].match(tok.pos) and not lex.filters["mark_forbidden_func"].match(tok.func)) or
+		if ((lex.filters["mark_head_pos"].match(tok.pos) is not None and lex.filters["mark_forbidden_func"].match(tok.func) is None) or
 			    pos_func_combo(tok.pos, tok.func, lex.filters["pos_func_heads"])) and not (stop_ids[tok.id]):
 			if tok.id in descendants:
 				tokenspan = descendants[tok.id] + [tok.id]
@@ -176,7 +176,7 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 			# Check for a trailing coordinating conjunction on a descendant of the head and re-connect if necessary
 			if end < len(conll_tokens) - 1:
 				coord = conll_tokens[end + 1]
-				if lex.filters["coord_func"].match(coord.func) and not coord.head == tok.id and int(
+				if lex.filters["coord_func"].match(coord.func) is not None and not coord.head == tok.id and int(
 						coord.head) >= start:
 					conjunct1 = conll_tokens[int(conll_tokens[end + 1].head)]
 					for tok2 in conll_tokens[end + 1:]:
@@ -198,7 +198,7 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 			if marktext.strip() in lex.debug:
 				pass
 			# Do not extend pronouns or stop functions
-			if not lex.filters["stop_func"].match(tok.func) and not lex.filters["pronoun_pos"].match(tok.pos):
+			if lex.filters["stop_func"].match(tok.func) is None and lex.filters["pronoun_pos"].match(tok.pos) is None:
 				extend_affixes = markable_extend_affixes(start, end, conll_tokens, tokoffset + 1, lex)
 				if not extend_affixes[0] == 0:
 					if extend_affixes[0] < start:
@@ -243,9 +243,9 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 		if mark.text.strip() in lex.debug:
 			pass
 		tok = mark.head
-		if lex.filters["proper_pos"].match(tok.pos):
+		if lex.filters["proper_pos"].match(tok.pos) is not None:
 			mark.form = "proper"
-		elif lex.filters["pronoun_pos"].match(tok.pos):
+		elif lex.filters["pronoun_pos"].match(tok.pos) is not None:
 			mark.form = "pronoun"
 		elif tok.text in lex.pronouns:
 			mark.form = "pronoun"
@@ -287,7 +287,7 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 		if mark.entity == lex.filters["person_def_entity"] and mark.agree is None:
 			mark.agree = lex.filters["person_def_agree"]
 		if mark.form == "pronoun" and (mark.entity == "abstract" or mark.entity == ""):
-			if mark.head.head in markables_by_head and lex.filters["subject_func"].match(mark.head.func):
+			if mark.head.head in markables_by_head and lex.filters["subject_func"].match(mark.head.func) is not None:
 				mark.entity = markables_by_head[mark.head.head].entity
 		if mark.entity == "" and mark.core_text.upper() == mark.core_text:  # Unknown all caps entity, guess acronym default
 			mark.entity = lex.filters["all_caps_entity"]
@@ -317,12 +317,15 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 			current_markable = markables_by_head[markable_head_id]
 			if current_markable.text.strip() in lex.debug:
 				pass
-			antecedent = find_antecedent(current_markable, markables, lex)
+			if antecedent_prohibited(current_markable, conll_tokens, lex):
+				antecedent = None
+			else:
+				antecedent = find_antecedent(current_markable, markables, lex)
 			if antecedent is not None:
 				if int(antecedent.head.id) < int(current_markable.head.id):
 					current_markable.antecedent = antecedent
 					current_markable.group = antecedent.group
-					if lex.filters["apposition_func"].match(current_markable.head.func):
+					if lex.filters["apposition_func"].match(current_markable.head.func) is not None:
 						current_markable.coref_type = "appos"
 					elif current_markable.form == "pronoun":
 						current_markable.coref_type = "ana"
@@ -383,11 +386,11 @@ current_sentence = Sentence(sent_num, "")
 for myline in infile:
 	if myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
 		cols = myline.split("\t")
-		if lex.filters["open_quote"].match(cols[1]) and quoted is False:
+		if lex.filters["open_quote"].match(cols[1]) is not None and quoted is False:
 			quoted = True
-		elif lex.filters["open_quote"].match(cols[1]) and quoted is True:
+		elif lex.filters["open_quote"].match(cols[1]) is not None and quoted is True:
 			quoted = False
-		if lex.filters["question_mark"].match(cols[1]):
+		if lex.filters["question_mark"].match(cols[1]) is not None:
 			current_sentence.mood = "question"
 		if cols[3] in lex.func_substitutes_forward and int(cols[6]) > int(cols[0]):
 			tok_func = re.sub(lex.func_substitutes_forward[cols[3]][0],lex.func_substitutes_forward[cols[3]][1],cols[7])
@@ -398,8 +401,8 @@ for myline in infile:
 		conll_tokens.append(ParsedToken(str(int(cols[0]) + tokoffset), cols[1], cols[2], cols[3], cols[5],
 		                                str(int(cols[6]) + tokoffset), tok_func, current_sentence, [], [], lex, quoted))
 		sentlength += 1
-		if not (lex.filters["non_link_func"].match(cols[7]) or lex.filters["non_link_tok"].match(
-				cols[1])):  # do not add a child if this is a coordinating conjunction etc.
+		if not (lex.filters["non_link_func"].match(cols[7]) is not None or lex.filters["non_link_tok"].match(cols[1]) is not None):
+		# Do not add a child if this is a coordinating conjunction etc.
 			children[str(int(cols[6]) + tokoffset)].append(str(int(cols[0]) + tokoffset))
 		child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
 	elif sentlength > 0:
