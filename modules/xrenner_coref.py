@@ -1,6 +1,6 @@
 from collections import defaultdict
 from xrenner_marker import *
-
+from xrenner_classes import *
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
 Coreference resolution module. Iterates through markables to find possible matches based on rules.
@@ -254,7 +254,7 @@ def propagate_agree(markable, candidate):
 		markable.agree = candidate.agree
 
 
-def postprocess_coref(markables, lex):
+def postprocess_coref(markables, lex, markstart, markend):
 	# Collect markable groups
 	marks_by_group = defaultdict(list)
 	for markable in markables:
@@ -301,6 +301,37 @@ def postprocess_coref(markables, lex):
 					singleton.id = "0"
 
 
+	# apposition envelope
+	env_marks=[]
+	for group in marks_by_group:
+		for i in reversed(range(len(marks_by_group[group]))):
+			#print marks_by_group[group]
+			mark=marks_by_group[group][i]
+			prev = mark.antecedent
+			if prev != "none":
+				if prev.coref_type == "appos":
+					prevprev=prev.antecedent
+					envlop=create_envelope(prevprev,prev)
+					markables.append(envlop)
+					markstart[envlop.start].append(envlop)
+					markend[envlop.end].append(envlop)
+					#print envlop.text
+					envlop.non_antecdent_groups=prev.antecedent
+					ab_group=1000+prevprev.group+prev.group
+					prevprev.group=ab_group
+					prev.group=ab_group
+					mark.antecedent=envlop
+					prevprev.antecedent="none"
+					#marks_by_group[group].append(envlop)
+					#marks_by_group[group].remove(prevprev)
+					print envlop.group,envlop.text
+					break
+
+
+
+
+
+
 def splice_out(mark, group):
 	min_id = 0
 	mark_id = int(mark.id.replace("referent_", ""))
@@ -319,3 +350,30 @@ def splice_out(mark, group):
 				member.group = str(min_id)
 	mark.id = "0"
 
+
+def create_envelope(first,second):
+	mark_id="env"
+	form = "proper" if (first.form == "proper" or second.form == "proper") else "common"
+	head=first.head
+	definiteness=first.definiteness
+	start=first.start
+	end=second.end
+	text=first.text.strip() + " " + second.text.strip()
+	entity=second.entity
+	entity_certainty=second.entity_certainty
+	subclass=first.subclass
+	infstat=first.infstat
+	agree=first.agree
+	sentence=first.sentence
+	antecedent=first.antecedent
+	coref_type=first.coref_type
+	group=first.group
+	alt_entities=first.alt_entities
+	alt_subclasses=first.alt_subclasses
+	alt_agree=first.alt_agree
+
+
+
+	envelope = Markable(mark_id, head, form, definiteness, start, end, text, entity, entity_certainty, subclass, infstat, agree, sentence, antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree)
+
+	return envelope

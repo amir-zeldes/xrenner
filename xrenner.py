@@ -419,7 +419,7 @@ for myline in infile:
 if sentlength > 0:  # Leftover sentence did not have trailing newline
 	process_sentence(conll_tokens, tokoffset, current_sentence)
 
-postprocess_coref(markables, lex)
+postprocess_coref(markables, lex, markstart_dict, markend_dict)
 
 marks_to_kill = []
 for mark in markables:
