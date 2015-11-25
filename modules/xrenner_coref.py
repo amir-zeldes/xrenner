@@ -324,7 +324,7 @@ def postprocess_coref(markables, lex, markstart, markend):
 					prevprev.antecedent="none"
 					#marks_by_group[group].append(envlop)
 					#marks_by_group[group].remove(prevprev)
-					print envlop.group,envlop.text
+					#print envlop.group,envlop.text
 					break
 
 
