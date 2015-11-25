@@ -24,8 +24,8 @@ def agree_compatible(mark1, mark2, lex):
 		return True
 	elif (mark1.agree is None or mark1.agree == '') and (mark2.agree is None or mark2.agree == ''):
 		return True
-	elif (((mark1.agree is None or mark1.agree == '') and lex.filters["agree_with_unknown"].match(mark2.agree))
-	or ((mark2.agree is None or mark2.agree == '') and lex.filters["agree_with_unknown"].match(mark1.agree))):
+	elif (((mark1.agree is None or mark1.agree == '') and lex.filters["agree_with_unknown"].match(mark2.agree) is not None)
+	or ((mark2.agree is None or mark2.agree == '') and lex.filters["agree_with_unknown"].match(mark1.agree) is not None)):
 		return True
 	else:
 		return False
@@ -111,7 +111,7 @@ def incompatible_modifiers(markable, candidate, lex):
 			# TODO: add support for ident_mod pos func combo:
 			# if lex.filters["ident_mod_func"].match(mod.func+"+"+mod.pos) and lex.filters["ident_mod_func"].match(candidate_mod.func+"+"+candidate_mod.pos) and
 			# mod.text.lower != candidate_mod.text.lower():
-			if lex.filters["ident_mod_func"].match(mod.func) and lex.filters["ident_mod_func"].match(candidate_mod.func) and mod.text.lower != candidate_mod.text.lower():
+			if lex.filters["ident_mod_func"].match(mod.func) is not None and lex.filters["ident_mod_func"].match(candidate_mod.func) is not None and mod.text.lower != candidate_mod.text.lower():
 				markable.non_antecdent_groups.add(candidate.group)
 				return True
 
@@ -174,7 +174,7 @@ def remove_suffix_tokens(marktext, lex):
 
 def remove_prefix_tokens(marktext, lex):
 	re_prefix_tokens = re.compile(" ?([Tt]he|an?|some|all|many) ?")
-	if re_prefix_tokens.match(marktext):
+	if re_prefix_tokens.match(marktext) is not None:
 		return re.sub(r"^ ?([Tt]he|an?|some|all|many) ?", "", marktext)
 	else:
 		tokens = marktext.strip().split(" ")
@@ -193,10 +193,10 @@ def resolve_mark_entity(mark, lex):
 		if mark.agree == "male" or mark.agree == "female":
 			entity = lex.filters["person_def_entity"]
 	if entity == "":
-		if re.match(r'(1[456789][0-9][0-9]|20[0-9][0-9])', mark.core_text):
+		if re.match(r'(1[456789][0-9][0-9]|20[0-9][0-9])', mark.core_text) is not None:
 			entity = lex.filters["time_def_entity"]
 	if entity == "":
-		if re.match(r'(([0-9]+[.,]?)+)', mark.core_text):
+		if re.match(r'(([0-9]+[.,]?)+)', mark.core_text) is not None:
 			entity = lex.filters["quantity_def_entity"]
 	if entity == "":
 		entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
@@ -267,7 +267,7 @@ def resolve_entity_cascade(entity_text, mark, lex):
 	if 0 < entity_text.count(" ") < 3:
 		if entity_text.split(" ")[0] in lex.first_names and entity_text.split(" ")[-1] in lex.last_names:
 			if entity_text[0].istitle() or not lex.filters["cap_names"]:
-				if not lex.filters["articles"].match(mark.core_text.split(" ")[0]):
+				if lex.filters["articles"].match(mark.core_text.split(" ")[0]) is None:
 					if entity == "":
 						entity = lex.filters["person_def_entity"]
 						mark.agree = lex.first_names[entity_text.split(" ")[0]]
