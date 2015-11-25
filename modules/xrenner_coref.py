@@ -36,8 +36,8 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 											propagate_entity(markable, candidate)
 											return candidate
 								elif markable.entity == candidate.entity and (markable.head.text == candidate.head.text or
-								(markable.head.lemma == candidate.head.lemma and lex.filters["lemma_match_pos"].match(markable.head.pos)
-								and lex.filters["lemma_match_pos"].match(candidate.head.pos))):
+								(markable.head.lemma == candidate.head.lemma and lex.filters["lemma_match_pos"].match(markable.head.pos) is not None
+								and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
 									if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
@@ -48,7 +48,7 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 											propagate_entity(markable, candidate, propagate)
 										return candidate
 								elif (markable.head.text == candidate.head.text or (markable.head.lemma == candidate.head.lemma and
-								lex.filters["lemma_match_pos"].match(markable.head.pos) and lex.filters["lemma_match_pos"].match(candidate.head.pos))):
+								lex.filters["lemma_match_pos"].match(markable.head.pos) is not None and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
 									if merge_entities(markable, candidate, previous_markables, lex):
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
@@ -158,11 +158,11 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 						return False
 					rule_property = "$1"
 				else:
-					if not re.match(value, mark.head.head):
+					if re.match(value, mark.head.head) is None:
 						if group_failure and anaphor is not None:
 							anaphor.non_antecdent_groups.add(mark.group)
 						return False
-			elif re.match(r"last\[([^\[]+)\]", key):
+			elif re.match(r"last\[([^\[]+)\]", key) is not None:
 				match = re.match(r"last\[([^\[]+)\]", key)
 				agree = match.group(1)
 				if agree in lex.last:
@@ -273,12 +273,12 @@ def postprocess_coref(markables, lex, markstart, markend):
 	# Check for markables to remove in postprocessing
 	if len(lex.filters["remove_head_func"].pattern) > 0:
 		for mark in markables:
-			if lex.filters["remove_head_func"].match(mark.head.func) and (mark.form != "proper" or mark.text.strip() == "U.S."): # Proper restriction matches OntoNotes guidelines; US is interpreted as "American" (amod)
+			if lex.filters["remove_head_func"].match(mark.head.func) is not None and (mark.form != "proper" or mark.text.strip() == "U.S."): # Proper restriction matches OntoNotes guidelines; US is interpreted as "American" (amod)
 				splice_out(mark, marks_by_group[mark.group])
 	if len(lex.filters["remove_child_func"].pattern) > 0:
 		for mark in markables:
 			for child_func in mark.head.child_funcs:
-				if lex.filters["remove_child_func"].match(child_func):
+				if lex.filters["remove_child_func"].match(child_func) is not None:
 					splice_out(mark, marks_by_group[mark.group])
 
 	# Remove i in i rule (no overlapping markable coreference in group)
@@ -296,9 +296,18 @@ def postprocess_coref(markables, lex, markstart, markend):
 	# Inactivate singletons if desired by setting their id to 0
 	if lex.filters["remove_singletons"]:
 		for group in marks_by_group:
+			wipe_group = True
 			if len(marks_by_group[group]) < 2:
 				for singleton in marks_by_group[group]:
 					singleton.id = "0"
+			else:
+				for singleton_candidate in marks_by_group[group]:
+					if singleton_candidate.antecedent is not 'none':
+						wipe_group = False
+						break
+				if wipe_group:
+					for singleton in marks_by_group[group]:
+						singleton.id = "0"
 
 
 	# apposition envelope
@@ -324,7 +333,7 @@ def postprocess_coref(markables, lex, markstart, markend):
 					prevprev.antecedent="none"
 					#marks_by_group[group].append(envlop)
 					#marks_by_group[group].remove(prevprev)
-					print envlop.group,envlop.text
+					#print envlop.group,envlop.text
 					break
 
 
@@ -351,6 +360,50 @@ def splice_out(mark, group):
 	mark.id = "0"
 
 
+    
+def antecedent_prohibited(markable, conll_tokens, lex):
+	mismatch = True
+	if "/" in lex.filters["no_antecedent"]:
+		constraints = lex.filters["no_antecedent"].split(";")
+		for constraint in constraints:
+			if not mismatch:
+				return True
+			descriptions = constraint.split("&")
+			mismatch = False
+			for token_description in descriptions:
+				if token_description.startswith("^"):
+					test_token = conll_tokens[markable.start]
+				elif token_description.startswith("$"):
+					test_token = conll_tokens[markable.end]
+				elif token_description.startswith("@"):
+					test_token = markable.head
+				else:
+					# Invalid token description
+					return False
+				token_description = token_description[1:]
+				pos, word = token_description.split("/")
+				if pos.startswith("!"):
+					pos = pos[1:]
+					negative_pos = True
+				else:
+					negative_pos = False
+				if word.startswith("!"):
+					word = word[1:]
+					negative_word = True
+				else:
+					negative_word = False
+				pos_matcher = re.compile(pos)
+				word_matcher = re.compile(word)
+				if (pos_matcher.match(test_token.pos) is None and not negative_pos) or (pos_matcher.match(test_token.pos) is not None and negative_pos) and \
+				(word_matcher.match(test_token.text.strip()) is None and not negative_word) or (word_matcher.match(test_token.text.strip()) is not None and negative_word):
+					mismatch = True
+					break
+	if mismatch:
+		return False
+	else:
+		return True
+    
+    
 def create_envelope(first,second):
 	mark_id="env"
 	form = "proper" if (first.form == "proper" or second.form == "proper") else "common"
