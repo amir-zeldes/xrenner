@@ -1,5 +1,6 @@
 import re
 import collections
+from modules.xrenner_classes import Markable
 
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
@@ -187,43 +188,52 @@ def remove_prefix_tokens(marktext, lex):
 	return marktext
 
 
-def resolve_mark_entity(mark, lex):
+def resolve_mark_entity(mark, token_list, lex):
 	entity = ""
 	if mark.form == "pronoun":
 		if mark.agree == "male" or mark.agree == "female":
 			entity = lex.filters["person_def_entity"]
+		else:
+			entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
+	else:
+		if entity == "":
+			if re.match(r'(1[456789][0-9][0-9]|20[0-9][0-9])', mark.core_text) is not None:
+				entity = lex.filters["time_def_entity"]
+		if entity == "":
+			if re.match(r'(([0-9]+[.,]?)+)', mark.core_text) is not None:
+				entity = lex.filters["quantity_def_entity"]
+		if entity == "":
+			entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
+		if entity == "":
+			entity = resolve_entity_cascade(replace_head_with_lemma(mark), mark, lex)
+		if entity == "":
+			entity = resolve_entity_cascade(remove_suffix_tokens(mark.core_text, lex).strip(), mark, lex)
+		if entity == "":
+			entity = resolve_entity_cascade(remove_prefix_tokens(mark.core_text, lex).strip(), mark, lex)
+		if entity == "":
+			entity = resolve_entity_cascade(remove_suffix_tokens(remove_prefix_tokens(mark.core_text, lex), lex).strip(), mark, lex)
+		if entity == "":
+			entity = recognize_prefix(mark, lex.entity_mods)
+		if entity == "" and mark.head.text.istitle():
+			entity = resolve_entity_cascade(mark.core_text.lower().strip(), mark, lex)
+		if entity == "" and not mark.head.text.istitle():
+			entity = resolve_entity_cascade(mark.core_text.strip()[:1].upper() + mark.core_text.strip()[1:], mark, lex)
+		if entity == "":
+			entity = resolve_entity_cascade(mark.head.text, mark, lex)
+		if entity == "" and mark.head.text.istitle():
+			entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
+		if entity == "" and not mark.head.lemma == mark.head.text:  # Try lemma match if lemma different from token
+			entity = resolve_entity_cascade(mark.head.lemma, mark, lex)
+		if entity == "":
+			if (mark.head.text.istitle() or not lex.filters["cap_names"]):
+				if mark.head.text in lex.last_names or mark.head.text in lex.first_names:
+					entity = lex.filters["person_def_entity"]
 	if entity == "":
-		if re.match(r'(1[456789][0-9][0-9]|20[0-9][0-9])', mark.core_text) is not None:
-			entity = lex.filters["time_def_entity"]
-	if entity == "":
-		if re.match(r'(([0-9]+[.,]?)+)', mark.core_text) is not None:
-			entity = lex.filters["quantity_def_entity"]
-	if entity == "":
-		entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
-	if entity == "":
-		entity = resolve_entity_cascade(replace_head_with_lemma(mark), mark, lex)
-	if entity == "":
-		entity = resolve_entity_cascade(remove_suffix_tokens(mark.core_text, lex).strip(), mark, lex)
-	if entity == "":
-		entity = resolve_entity_cascade(remove_prefix_tokens(mark.core_text, lex).strip(), mark, lex)
-	if entity == "":
-		entity = resolve_entity_cascade(remove_suffix_tokens(remove_prefix_tokens(mark.core_text, lex), lex).strip(), mark, lex)
-	if entity == "":
-		entity = recognize_prefix(mark, lex.entity_mods)
-	if entity == "" and mark.head.text.istitle():
-		entity = resolve_entity_cascade(mark.core_text.lower().strip(), mark, lex)
-	if entity == "" and not mark.head.text.istitle():
-		entity = resolve_entity_cascade(mark.core_text.strip()[:1].upper() + mark.core_text.strip()[1:], mark, lex)
-	if entity == "":
-		entity = resolve_entity_cascade(mark.head.text, mark, lex)
-	if entity == "" and mark.head.text.istitle():
-		entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
-	if entity == "" and not mark.head.lemma == mark.head.text:  # Try lemma match if lemma different from token
-		entity = resolve_entity_cascade(mark.head.lemma, mark, lex)
-	if entity == "":
-		if (mark.head.text.istitle() or not lex.filters["cap_names"]) and mark.form != "pronoun":
-			if mark.head.text in lex.last_names or mark.head.text in lex.first_names:
-				entity = lex.filters["person_def_entity"]
+		parent_text = token_list[int(mark.head.head)].text
+		if parent_text in lex.entity_deps:
+			if mark.head.func in lex.entity_deps[parent_text]:
+				#pass
+				entity = lex.entity_deps[parent_text][mark.head.func][0]
 
 	mark.entity = entity
 
@@ -288,6 +298,9 @@ def resolve_mark_agree(mark, lex):
 			return [lex.names[mark.core_text.strip()]]
 		elif mark.head.text.strip() in lex.first_names:
 			return [lex.first_names[mark.head.text.strip()]]
+	if mark.head.pos in lex.pos_agree_mappings:
+		mark.agree_certainty = "pos_agree_mappings"
+		return [lex.pos_agree_mappings[mark.head.pos]]
 	elif mark.core_text.strip() in lex.entities:
 		for entry in lex.entities[mark.core_text.strip()]:
 			if "/" in entry:
@@ -300,8 +313,6 @@ def resolve_mark_agree(mark, lex):
 				if mark.agree == "":
 					mark.agree = entry[entry.find("/") + 1:]
 				mark.alt_agree.append(entry[entry.find("/") + 1:])
-	if mark.head.pos in lex.pos_agree_mappings and mark.agree == "":
-		return [lex.pos_agree_mappings[mark.head.pos]]
 
 
 def recognize_prefix(mark, prefix_dict):
@@ -356,10 +367,15 @@ def get_mod_ordered_dict(mod):
 
 
 
-def markable_extend_punctuation(marktext, next_token, open_close_punct):
-	for open_punct in open_close_punct:
-		if open_punct in marktext and next_token.text == open_close_punct[open_punct]:
-			return True
+def markable_extend_punctuation(marktext, adjacent_token, punct_dict, direction):
+	if direction == "trailing":
+		for open_punct in punct_dict:
+			if open_punct in marktext and adjacent_token.text == punct_dict[open_punct]:
+				return True
+	else:
+		for close_punct in punct_dict:
+			if close_punct in marktext and adjacent_token.text == punct_dict[close_punct]:
+				return True
 	return False
 
 
@@ -430,3 +446,76 @@ def replace_head_with_lemma(mark):
 	head = mark.head.text
 	lemma = mark.head.lemma
 	return re.sub(head, lemma, mark.core_text).strip()
+
+
+def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex):
+	if tok.id in descendants:
+		tokenspan = descendants[tok.id] + [tok.id]
+		tokenspan = map(int, tokenspan)
+		tokenspan.sort()
+		marktext = ""
+		start = min(tokenspan)
+		end = max(tokenspan)
+		for span_token in conll_tokens[start:end + 1]:
+			marktext += span_token.text + " "
+	else:
+		marktext = tok.text
+		start = int(tok.id)
+		end = int(tok.id)
+	# Check for a trailing coordinating conjunction on a descendant of the head and re-connect if necessary
+	if end < len(conll_tokens) - 1:
+		coord = conll_tokens[end + 1]
+		if lex.filters["coord_func"].match(coord.func) is not None and not coord.head == tok.id and int(
+				coord.head) >= start:
+			conjunct1 = conll_tokens[int(conll_tokens[end + 1].head)]
+			for tok2 in conll_tokens[end + 1:]:
+				if (tok2.head == conjunct1.head and tok2.func == conjunct1.func) or tok2.head == coord.id:
+					conjunct2 = tok2
+					tokenspan = [conjunct2.id, str(end)]
+					if conjunct2.id in descendants:
+						tokenspan += descendants[conjunct2.id]
+					tokenspan = map(int, tokenspan)
+					tokenspan.sort()
+					end = max(tokenspan)
+					marktext = ""
+					for span_token in conll_tokens[start:end + 1]:
+						marktext += span_token.text + " "
+					break
+
+	core_text = marktext
+	if marktext.strip() in lex.debug:
+		pass
+	# Extend markable to 'affix tokens'
+	# Do not extend pronouns or stop functions
+	if lex.filters["stop_func"].match(tok.func) is None and lex.filters["pronoun_pos"].match(tok.pos) is None:
+		extend_affixes = markable_extend_affixes(start, end, conll_tokens, tokoffset + 1, lex)
+		if not extend_affixes[0] == 0:
+			if extend_affixes[0] < start:
+				prefix_text = ""
+				for prefix_tok in conll_tokens[extend_affixes[0]:extend_affixes[1]]:
+					prefix_text += prefix_tok.text + " "
+					keys_to_pop.append(prefix_tok.id)
+					start -= 1
+				marktext = prefix_text + marktext
+			else:
+				for suffix_tok in conll_tokens[extend_affixes[0]:extend_affixes[1]]:
+					keys_to_pop.append(suffix_tok.id)
+					marktext += suffix_tok.text + " "
+					end += 1
+
+	# Extend markable to trailing closing punctuation if it contains opening punctuation
+	if int(tok.id) < len(conll_tokens) - 1:
+		next_id = int(tok.id) + 1
+		if markable_extend_punctuation(marktext, conll_tokens[next_id], lex.open_close_punct, "trailing"):
+			marktext += conll_tokens[next_id].text + " "
+			end += 1
+	if tok.id != "1":
+		prev_id = start - 1
+		if markable_extend_punctuation(marktext, conll_tokens[prev_id], lex.open_close_punct_rev, "leading"):
+			marktext = conll_tokens[prev_id].text + " " + marktext
+			start -= 1
+
+
+	this_markable = Markable("", tok, "", "", start, end, core_text, "", "", "", "new", "", sentence, "none", "none", 0, [], [], [])
+	this_markable.text = marktext  # Update core_text with potentially modified markable text
+	return this_markable

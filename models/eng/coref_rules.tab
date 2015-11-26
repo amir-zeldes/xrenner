@@ -1,3 +1,5 @@
+#reflexives agree with subject of same parent
+text=/^(him|her|my|y?our|it|them)sel(f|ves)$/;func=/nsubj/&sameparent;0;propagate
 #allow coreference between "you" in a question and "I/we" in an answer
 form=/pronoun/&text=/^(I|[Ww]e)/&mood!=/question/;mood=/question/&text=/^[Yy]our?s?/&anytext&anyagree;1;nopropagate
 #propagate entity type across apposition
@@ -5,7 +7,7 @@ func=/appos/&anytext;has_child_func=/appos/&anytext&anyagree;0;propagate
 #prefer pronouns to corefer to identical pronouns in same sentence
 form=/pronoun/;text_lower=$1;0;nopropagate
 #prefer inanimate pronouns to corefer with the subject up to one sentence back, if the last inanimate is a place or time
-form=/pronoun/&agree=/inanim/&last[inanim]=/place|time|organization/;func=/nsubj/;1;nopropagate
+form=/pronoun/&agree=/inanim/&last[inanim]=/place|time|organization|abstract/;func=/nsubj/;1;nopropagate
 #prefer inanimate pronouns to corefer not with an oblique pobj, if the last inanimate is an abstract (weaker version of the place/time constraint, allowing e.g. dobj and not forcing only subj)
 form=/pronoun/&agree=/inanim/&last[inanim]=/abstract/;func!=/pobj|nn/;1;nopropagate
 #identify coreferent light heads based on identical modifiers
@@ -25,7 +27,7 @@ form=/pronoun/&text=/[Yy]our?s?/&quoted=True;func=/nsubj/&text=/^I|[Mm]e|[Mm]y|[
 #prefer pronouns to corefer to agreeing pronouns in same sentence
 form=/pronoun/;form=/pronoun/&agree=$1;0;propagate_forward
 #prefer pronouns to corefer to non-compound modifiers
-form=/pronoun/;func!=/nn/;1;propagate_forward
+form=/pronoun/;func!=/nn/&!sameparent*;1;propagate_forward
 #allow nouns to refer back to a compatible pronoun in previous sentence
 #form!=/pronoun/&func!=/nn;form=/pronoun/&entity=$1&agree=$1&anytext;1;nopropagate
 #allow long distance coreference for locations with identical heads

@@ -11,9 +11,10 @@ import argparse
 from modules.xrenner_out import *
 from modules.xrenner_classes import *
 from modules.xrenner_coref import *
+from modules.xrenner_marker import make_markable
 from modules.xrenner_lex import *
 
-__version__ = "1.0.2"
+__version__ = "1.1.0"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
@@ -94,6 +95,7 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 		if lex.filters["conjunct_func"].match(token.func) is not None:
 			token.func = conll_tokens[int(token.head)].func
 			token.head = conll_tokens[int(token.head)].head
+			token.coordinate = True
 
 	# Enrich tokens with modifiers
 	for token in conll_tokens[tokoffset:]:
@@ -160,77 +162,50 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 		# TODO: consider switch for lex.filters["stop_func"].match(tok.func)
 		if ((lex.filters["mark_head_pos"].match(tok.pos) is not None and lex.filters["mark_forbidden_func"].match(tok.func) is None) or
 			    pos_func_combo(tok.pos, tok.func, lex.filters["pos_func_heads"])) and not (stop_ids[tok.id]):
-			if tok.id in descendants:
-				tokenspan = descendants[tok.id] + [tok.id]
-				tokenspan = map(int, tokenspan)
-				tokenspan.sort()
-				marktext = ""
-				start = min(tokenspan)
-				end = max(tokenspan)
-				for span_token in conll_tokens[start:end + 1]:
-					marktext += span_token.text + " "
-			else:
-				marktext = tok.text
-				start = int(tok.id)
-				end = int(tok.id)
-			# Check for a trailing coordinating conjunction on a descendant of the head and re-connect if necessary
-			if end < len(conll_tokens) - 1:
-				coord = conll_tokens[end + 1]
-				if lex.filters["coord_func"].match(coord.func) is not None and not coord.head == tok.id and int(
-						coord.head) >= start:
-					conjunct1 = conll_tokens[int(conll_tokens[end + 1].head)]
-					for tok2 in conll_tokens[end + 1:]:
-						if (tok2.head == conjunct1.head and tok2.func == conjunct1.func) or tok2.head == coord.id:
-							conjunct2 = tok2
-							tokenspan = [conjunct2.id, str(end)]
-							if conjunct2.id in descendants:
-								tokenspan += descendants[conjunct2.id]
-							tokenspan = map(int, tokenspan)
-							tokenspan.sort()
-							end = max(tokenspan)
-							marktext = ""
-							for span_token in conll_tokens[start:end + 1]:
-								marktext += span_token.text + " "
-							break
+			this_markable = make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex)
+			if this_markable is not None:
+				mark_candidates_by_head[tok.id] = this_markable
 
-			core_text = marktext
-			# Extend markable to 'affix tokens'
-			if marktext.strip() in lex.debug:
-				pass
-			# Do not extend pronouns or stop functions
-			if lex.filters["stop_func"].match(tok.func) is None and lex.filters["pronoun_pos"].match(tok.pos) is None:
-				extend_affixes = markable_extend_affixes(start, end, conll_tokens, tokoffset + 1, lex)
-				if not extend_affixes[0] == 0:
-					if extend_affixes[0] < start:
-						prefix_text = ""
-						for prefix_tok in conll_tokens[extend_affixes[0]:extend_affixes[1]]:
-							prefix_text += prefix_tok.text + " "
-							keys_to_pop.append(prefix_tok.id)
-							start -= 1
-						marktext = prefix_text + marktext
-					else:
-						for suffix_tok in conll_tokens[extend_affixes[0]:extend_affixes[1]]:
-							keys_to_pop.append(suffix_tok.id)
-							marktext += suffix_tok.text + " "
-							end += 1
+			# Check whether this head is the beginning of a coordination and needs its own sub-markable too
+			make_submark = False
+			submark_id = ""
+			for child_id in children[tok.id]:
+				child = conll_tokens[int(child_id)]
+				if child.coordinate:
+					# Coordination found - make a small markable for just this first head without coordinates
+					make_submark = True
+					# Remove the coordinate children from descendants of small markable head
+					if child.id in descendants:
+						for sub_descendant in descendants[child.id]:
+							if sub_descendant in descendants[tok.id]:
+								descendants[tok.id].remove(sub_descendant)
+					descendants[tok.id].remove(child.id)
+					# Build a composite id for the large head from coordinate children id's separated by underscore
+					submark_id += "_" + child.id
+			if make_submark:
+				# Remove coordination tokens, such as 'and', 'or' based on coord_func setting
+				for child_id in children[tok.id]:
+					child = conll_tokens[int(child_id)]
+					if lex.filters["coord_func"].match(child.func):
+						descendants[tok.id].remove(child.id)
 
-			# Extend markable to trailing closing punctuation if it contains opening punctuation
-			if int(tok.id) < len(conll_tokens) - 1:
-				next_id = int(tok.id) + 1
-				if markable_extend_punctuation(marktext, conll_tokens[next_id], lex.open_close_punct):
-					marktext += conll_tokens[next_id].text + " "
-					end += 1
+				# Make the small markable and recall the big markable
+				small_markable = make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex)
+				big_markable = mark_candidates_by_head[tok.id]
 
-			this_markable = Markable("", tok, conll_tokens[int(tok.head)], "", start, end, core_text, "", "", "", "new", "", sentence, "none", "none", 0, [], [], [])
-			this_markable.text = marktext  # Update core_text with potentially modified markable text
-			mark_candidates_by_head[tok.id] = this_markable
+				# Switch the id's so that the big markable has the 1_2_3 style id, and the small has just the head id
+				mark_candidates_by_head[tok.id + submark_id] = big_markable
+				mark_candidates_by_head[tok.id] = small_markable
 
+
+	# Check for atomicity and remove any subsumed markables if atomic
 	for mark_id in mark_candidates_by_head:
 		mark = mark_candidates_by_head[mark_id]
 		if is_atomic(mark, lex.atoms, lex):
 			for index in enumerate(mark_candidates_by_head):
 				key = index[1]
-				if key != mark.head.id and mark.start <= int(key) <= mark.end and int(key):
+				# Note that the key may contain underscores if it's a composite, but those can't be atomic
+				if key != mark.head.id and mark.start <= int(re.sub('_.*','',key)) <= mark.end and '_' not in key:
 					keys_to_pop.append(key)
 		elif len(recognize_prefix(mark, lex.entity_mods)) > 1:
 			stoplist_prefix_tokens(mark, lex.entity_mods, keys_to_pop)
@@ -262,14 +237,16 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 
 		if mark.agree != mark.head.morph and mark.head.morph != "_" and mark.head.morph != "--":
 			mark.agree = mark.head.morph
+			mark.agree_certainty = "mark_head_morph"
 			mark.alt_agree.append(mark.head.morph)
 
-		resolve_mark_entity(mark, lex)
+		resolve_mark_entity(mark, conll_tokens, lex)
 		if "/" in mark.entity:  # Lexicalized agreement information appended to entity
 			if mark.agree == "" or mark.agree is None:
 				mark.agree = mark.entity.split("/")[1]
-			else:
-				mark.alt_agree.append(mark.entity.split("/")[1])
+			elif mark.agree_certainty == "":
+				mark.alt_agree.append(mark.agree)
+				mark.agree = mark.entity.split("/")[1]
 			mark.entity = mark.entity.split("/")[0]
 		elif mark.entity == lex.filters["person_def_entity"] and mark.agree == lex.filters["default_agree"]:
 			mark.agree = lex.filters["person_def_agree"]
@@ -308,12 +285,12 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 		                         subclass, "new", mark.agree, mark.sentence, "none", "none", groupcounter,
 		                         mark.alt_entities, mark.alt_subclasses, mark.alt_agree)
 		markables.append(this_markable)
-		markables_by_head[tok.id] = this_markable
+		markables_by_head[mark_id] = this_markable
 		markstart_dict[this_markable.start].append(this_markable)
 		markend_dict[this_markable.end].append(this_markable)
 
 	for markable_head_id in markables_by_head:
-		if int(markable_head_id) > tokoffset:  # Resolve antecedent for current sentence markables
+		if int(re.sub('_.*','',markable_head_id)) > tokoffset:  # Resolve antecedent for current sentence markables
 			current_markable = markables_by_head[markable_head_id]
 			if current_markable.text.strip() in lex.debug:
 				pass
@@ -402,7 +379,7 @@ for myline in infile:
 		                                str(int(cols[6]) + tokoffset), tok_func, current_sentence, [], [], lex, quoted))
 		sentlength += 1
 		if not (lex.filters["non_link_func"].match(cols[7]) is not None or lex.filters["non_link_tok"].match(cols[1]) is not None):
-		# Do not add a child if this is a coordinating conjunction etc.
+		# Do not add a child if this is a function which discontinues the markable span
 			children[str(int(cols[6]) + tokoffset)].append(str(int(cols[0]) + tokoffset))
 		child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
 	elif sentlength > 0:

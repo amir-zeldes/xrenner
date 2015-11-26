@@ -3,6 +3,7 @@ import gc
 import os
 import re
 import ConfigParser
+from collections import defaultdict
 
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
@@ -25,7 +26,9 @@ class LexData:
 		self.names = self.read_delim('names.tab')
 		self.stop_list = self.read_delim('stop_list.tab', 'low')
 		self.open_close_punct = self.read_delim('open_close_punct.tab')
+		self.open_close_punct_rev = {v: k for k, v in self.open_close_punct.items()}
 		self.entity_mods = self.read_delim('entity_mods.tab')
+		self.entity_deps = self.read_delim('entity_deps.tab','quadruple')
 		self.coref = self.read_delim('coref.tab')
 		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
 		self.pronouns= self.read_delim('pronouns.tab', 'double')
@@ -78,6 +81,23 @@ class LexData:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2]]
 				return out_dict
 				# Return dict((rows[0], rows[1]+"\t"+rows[2]) for rows in reader if not rows[0].startswith('#'))
+			elif mode == "quadruple":
+				out_dict = defaultdict(dict)
+				#dep_dict = {}
+				for rows in reader:
+					if rows[0] == "in":
+						pass
+					if not rows[0].startswith('#'):
+						#dep_dict[rows[1]] = [rows[2], rows[3]]
+						if rows[0] in out_dict:
+							if rows[1] in out_dict[rows[0]]:
+								if int(rows[3]) > int(out_dict[rows[0]][rows[1]][1]):
+									out_dict[rows[0]] = {rows[1] :[rows[2], rows[3]]}
+							else:
+								out_dict[rows[0]][rows[1]] =[rows[2], rows[3]]
+						else:
+							out_dict[rows[0]] = ({rows[1] :[rows[2], rows[3]]})
+				return out_dict
 			else:
 				return dict((rows[0], rows[1]) for rows in reader if not rows[0].startswith('#'))
 

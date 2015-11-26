@@ -24,6 +24,7 @@ class ParsedToken:
 		self.modifiers = modifiers
 		self.child_funcs = child_funcs
 		self.quoted = quoted
+		self.coordinate = False
 
 
 class Markable:
@@ -41,6 +42,7 @@ class Markable:
 		self.subclass = subclass
 		self.infstat = infstat
 		self.agree = agree
+		self.agree_certainty = ""
 		self.sentence = sentence
 		self.antecedent = antecedent
 		self.coref_type = coref_type
