@@ -254,7 +254,7 @@ def propagate_agree(markable, candidate):
 		markable.agree = candidate.agree
 
 
-def postprocess_coref(markables, lex, markstart, markend):
+def postprocess_coref(markables, lex, markstart, markend, markbyhead):
 	# Collect markable groups
 	marks_by_group = defaultdict(list)
 	for markable in markables:
@@ -319,22 +319,27 @@ def postprocess_coref(markables, lex, markstart, markend):
 			prev = mark.antecedent
 			if prev != "none":
 				if prev.coref_type == "appos":
+					#two markables in the envelop:prev and prevprev
 					prevprev=prev.antecedent
 					envlop=create_envelope(prevprev,prev)
 					markables.append(envlop)
 					markstart[envlop.start].append(envlop)
 					markend[envlop.end].append(envlop)
-					#print envlop.text
+
+					#markables_by_head
+					head_id=str(prevprev.head.id) + "_" + str(prev.head.id)
+					markbyhead[head_id]=envlop
+
+					#set some fields for the envlop markable
 					envlop.non_antecdent_groups=prev.antecedent
+					#new group number for the envelope
 					ab_group=1000+prevprev.group+prev.group
 					prevprev.group=ab_group
 					prev.group=ab_group
 					mark.antecedent=envlop
 					prevprev.antecedent="none"
-					#marks_by_group[group].append(envlop)
-					#marks_by_group[group].remove(prevprev)
-					#print envlop.group,envlop.text
-					break
+
+
 
 
 
