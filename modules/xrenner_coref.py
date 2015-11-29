@@ -333,11 +333,12 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead):
 					#set some fields for the envlop markable
 					envlop.non_antecdent_groups=prev.antecedent
 					#new group number for the envelope
-					ab_group=1000+prevprev.group+prev.group
+					ab_group=1000+int(prevprev.group)+int(prev.group)
 					prevprev.group=ab_group
 					prev.group=ab_group
 					mark.antecedent=envlop
 					prevprev.antecedent="none"
+					break
 
 
 
