@@ -14,7 +14,7 @@ from modules.xrenner_coref import *
 from modules.xrenner_marker import make_markable
 from modules.xrenner_lex import *
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
@@ -177,9 +177,11 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 					# Remove the coordinate children from descendants of small markable head
 					if child.id in descendants:
 						for sub_descendant in descendants[child.id]:
-							if sub_descendant in descendants[tok.id]:
-								descendants[tok.id].remove(sub_descendant)
-					descendants[tok.id].remove(child.id)
+							if tok.id in descendants:
+								if sub_descendant in descendants[tok.id]:
+									descendants[tok.id].remove(sub_descendant)
+					if tok.id in descendants:
+						descendants[tok.id].remove(child.id)
 					# Build a composite id for the large head from coordinate children id's separated by underscore
 					submark_id += "_" + child.id
 			if make_submark:
@@ -378,10 +380,10 @@ for myline in infile:
 		conll_tokens.append(ParsedToken(str(int(cols[0]) + tokoffset), cols[1], cols[2], cols[3], cols[5],
 		                                str(int(cols[6]) + tokoffset), tok_func, current_sentence, [], [], lex, quoted))
 		sentlength += 1
-		if not (lex.filters["non_link_func"].match(cols[7]) is not None or lex.filters["non_link_tok"].match(cols[1]) is not None):
+		if not (lex.filters["non_link_func"].match(tok_func) is not None or lex.filters["non_link_tok"].match(cols[1]) is not None):
 		# Do not add a child if this is a function which discontinues the markable span
 			children[str(int(cols[6]) + tokoffset)].append(str(int(cols[0]) + tokoffset))
-		child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
+		child_funcs[(int(cols[6]) + tokoffset)].append(tok_func)
 	elif sentlength > 0:
 		# Add list of all funcs dependent on this token to its child_funcs
 		for child_id in child_funcs:

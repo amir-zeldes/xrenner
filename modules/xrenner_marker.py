@@ -63,6 +63,8 @@ def merge_entities(mark1, mark2, previous_markables, lex):
 				return True
 			else:
 				return False
+	else:
+		return True
 
 
 def update_group(host, model, previous_markables, lex):
