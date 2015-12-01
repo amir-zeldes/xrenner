@@ -313,12 +313,13 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead):
 	# apposition envelope
 	env_marks=[]
 	for group in marks_by_group:
-		for i in reversed(range(len(marks_by_group[group]))):
+		#count_env=0
+		for i in reversed(range(1,len(marks_by_group[group]))):
 			#print marks_by_group[group]
 			mark=marks_by_group[group][i]
 			prev = mark.antecedent
 			if prev != "none":
-				if prev.coref_type == "appos":
+				if prev.coref_type == "appos" and prev.antecedent != "none":
 					#two markables in the envelop:prev and prevprev
 					prevprev=prev.antecedent
 					envlop=create_envelope(prevprev,prev)
@@ -338,7 +339,11 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead):
 					prev.group=ab_group
 					mark.antecedent=envlop
 					prevprev.antecedent="none"
-					break
+					#count_env+=1
+					#break
+		#if count_env > 0:
+		#	print "this group:" + str(group) + " has created " + str(count_env) + " envelops"
+		#	print "====================================="
 
 
 
