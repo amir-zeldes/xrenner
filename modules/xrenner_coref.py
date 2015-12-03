@@ -53,12 +53,17 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
 										return candidate
-								elif entities_compatible(markable, candidate, lex):
-									if isa(markable, candidate, lex) or isa(candidate, markable, lex):
+								elif entities_compatible(markable, candidate, lex) and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
 										if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
 											if merge_entities(markable, candidate, previous_markables, lex):
 												if propagate.startswith("propagate"):
 													propagate_entity(markable, candidate, propagate)
+												return candidate
+								elif lex.filters["match_acronyms"] and markable.head.text.isupper() or candidate.head.text.isupper():
+									if acronym_match(markable, candidate, lex) or acronym_match(candidate, markable, lex):
+										if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
+											if merge_entities(markable, candidate, previous_markables, lex):
+												propagate_entity(markable, candidate, "propagate")
 												return candidate
 								if rule.find("anytext") > -1:
 									if rule.find("anyagree") > -1 or agree_compatible(markable, candidate, lex):
@@ -439,5 +444,28 @@ def create_envelope(first,second):
 
 
 	envelope = Markable(mark_id, head, form, definiteness, start, end, text, entity, entity_certainty, subclass, infstat, agree, sentence, antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree)
-
 	return envelope
+
+
+def acronym_match(mark, candidate, lex):
+	position = 0
+	calibration = 0
+	if mark.head.text.isupper() and len(mark.head.text) > 2:
+		for word in candidate.core_text.split(" "):
+			if lex.filters["articles"].match(word):
+				calibration = -1
+			elif len(word) > 0:
+				if len(mark.head.text) > position:
+					if word[0].isupper():
+						if word[0] == mark.head.text[position]:
+							position+=1
+						else:
+							return False
+				else:
+					return False
+		if (position == len(candidate.core_text.strip().split(" ")) + calibration) and position > 2:
+			return True
+		else:
+			return False
+	else:
+		return False
