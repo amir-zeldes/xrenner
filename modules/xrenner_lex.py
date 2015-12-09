@@ -18,7 +18,7 @@ class LexData:
 	Use model argument to define subdirectory under modes/ for reading different sets of
 	configuration files.
 	"""
-	def __init__(self, model):
+	def __init__(self, model,override=None):
 		self.model = model
 		self.atoms = {}
 		self.entities = self.read_delim('entities.tab', 'triple')
@@ -34,7 +34,7 @@ class LexData:
 		self.pronouns= self.read_delim('pronouns.tab', 'double')
 		self.affix_tokens = self.read_delim('affix_tokens.tab')
 
-		self.filters = self.get_filters()
+		self.filters = self.get_filters(override)
 
 		self.antonyms = self.read_antonyms()
 		self.isa = self.read_isa()  # isa dictionary, from generic subclass string to list of valid substitutes
@@ -150,14 +150,44 @@ class LexData:
 				output[isa].append(member.lower())
 		return output
 
-	def get_filters(self):
-
+	def get_filters(self, override=None):
+		#e.g., override = 'OntoNotes'
 		config = ConfigParser.ConfigParser()
 		config.read(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + 'config.ini')
-
 		filters = {}
 		options = config.options("main")
+
+		if override:
+			config_ovrd = ConfigParser.ConfigParser()
+			config_ovrd.read(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + 'override.ini')
+			options_ovrd = config_ovrd.options(override)
+
+
 		for option in options:
+			if override and option in options_ovrd:
+				try:
+					option_string = config_ovrd.get(override, option)
+					if option_string == -1:
+						pass
+					else:
+						if option_string.startswith("/") and option_string.endswith("/"):
+							option_string = option_string[1:-1]
+							filters[option] = re.compile(option_string)
+						elif option_string == "True" or option_string == "False":
+							filters[option] = config_ovrd.getboolean(override, option)
+						elif option_string.isdigit():
+							filters[option] = config_ovrd.getint(override, option)
+						else:
+							filters[option] = option_string
+				except:
+					print("exception on %s!" % option)
+					filters[option] = None
+				continue
+
+
+
+
+
 			try:
 				option_string = config.get("main", option)
 				if option_string == -1:

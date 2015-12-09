@@ -331,6 +331,7 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 parser = argparse.ArgumentParser()
 parser.add_argument('-o', '--output', action="store", dest="format", default="sgml", help="Output format, default: sgml; alternatives: html, paula, webanno, conll")
 parser.add_argument('-m', '--model', action="store", dest="model", default="eng", help="Input model directory name, in models/")
+parser.add_argument('-x', '--override', action="store", dest="override", default=None, help="provide an override file to run alternative settings for config.ini")
 parser.add_argument('file', action="store", help="Input file name to process")
 parser.add_argument('--version', action='version', version=xrenner_version)
 
@@ -340,7 +341,8 @@ options = parser.parse_args()
 
 out_format = options.format
 model = options.model
-lex = LexData(model)
+override = options.override
+lex = LexData(model,override)
 infile = open(options.file)
 
 conll_tokens = []
