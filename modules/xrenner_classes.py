@@ -19,6 +19,7 @@ class ParsedToken:
 			self.morph = lex.process_morph(self)
 
 		self.head = head
+		self.original_head = head
 		self.func = func
 		self.sentence = sentence
 		self.modifiers = modifiers
