@@ -1,51 +1,53 @@
 # Source: Amir Zeldes
-a part of	prefix
-a number of	prefix
-a group of	prefix
-a type of	prefix
-a kind of	prefix
-a sort of	prefix
-that sort of	prefix
-that kind of	prefix
-those sorts of	prefix
-those kinds of	prefix
-a total of	prefix
-a high percentage of	prefix
+a couple of	prefix
 a form of	prefix
-one of	prefix
-one of the most	prefix
-two of	prefix
-three of	prefix
-four of	prefix
-five or	prefix
-six of	prefix
-seven of	prefix
-eight of	prefix
-nine of	prefix
-ten of	prefix
-most of	prefix
-a team of	prefix
-ago	suffix
-grams of	prefix
-some sort of	prefix
-sort of	prefix
+a group of	prefix
 a handful of	prefix
-Ltd.	suffix
-Corp.	suffix
-Inc.	suffix
-GmbH	suffix
-LLC	suffix
-Co.	suffix
-N.V.	suffix
-the Isle of	prefix
-p.m.	suffix
+a high percentage of	prefix
+a kind of	prefix
+a liter of	prefix
+a number of	prefix
+a part of	prefix
+a sort of	prefix
+a team of	prefix
+a total of	prefix
+a type of	prefix
 a.m.	suffix
-pm	suffix
-some of	prefix
+ago	suffix
+atoms	suffix
+Co.	suffix
+Corp.	suffix
+eight of	prefix
+five or	prefix
+four of	prefix
+GmbH	suffix
+grams of	prefix
+grams of	prefix
+Inc.	suffix
+LLC	suffix
 loads of	prefix
 lots of	prefix
-a liter of	prefix
+Ltd.	suffix
 milliliters of	prefix
-atoms	suffix
-grams of	prefix
-a couple of	prefix
+most of	prefix
+N.V.	suffix
+nine of	prefix
+one of	prefix
+one of the most	prefix
+p.m.	suffix
+pm	suffix
+seven of	prefix
+six of	prefix
+some of	prefix
+some sort of	prefix
+sort of	prefix
+ten of	prefix
+that kind of	prefix
+that sort of	prefix
+the Isle of	prefix
+the majority of	prefix
+the vast majority of	prefix
+those kinds of	prefix
+those sorts of	prefix
+three of	prefix
+two of	prefix

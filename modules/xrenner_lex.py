@@ -3,6 +3,7 @@ import gc
 import os
 import re
 import ConfigParser
+import sys
 from collections import defaultdict
 
 """
@@ -160,7 +161,11 @@ class LexData:
 		if override:
 			config_ovrd = ConfigParser.ConfigParser()
 			config_ovrd.read(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + 'override.ini')
-			options_ovrd = config_ovrd.options(override)
+			try:
+				options_ovrd = config_ovrd.options(override)
+			except ConfigParser.NoSectionError:
+				sys.stderr.write("\nNo section " +  override + " in override.ini in model " + self.model + "\n")
+				sys.exit()
 
 
 		for option in options:

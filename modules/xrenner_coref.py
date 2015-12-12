@@ -13,15 +13,16 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 	else:
 		referents_to_loop = reversed(previous_markables)
 	for candidate in referents_to_loop:  # loop through previous markables backwards
-		# DEBUG breakpoint: if candidate.text.strip() == "xyz":
-		# pass
+		#DEBUG breakpoint:
+		if candidate.text.startswith("SOME TEXT"):
+			pass
 		if markable.sentence.sent_num - candidate.sentence.sent_num <= max_dist:
 			if ((int(markable.head.id) > int(candidate.head.id) and
 			rule.find("lookahead") == -1) or (int(markable.head.id) < int(candidate.head.id) and rule.find("lookahead") > -1)):
 				if candidate.group not in markable.non_antecdent_groups:
 					if coref_rule_applies(lex, rule, candidate, markable):
 						if not markables_overlap(markable, candidate):
-							if markable.text.strip() == candidate.text.strip():
+							if markable.text.strip() == candidate.text.strip() or (len(markable.text) > 4 and (candidate.text.lower() == markable.text.lower())):
 								propagate_entity(markable, candidate, propagate)
 								return candidate
 							elif markable.text.strip() + "|" + candidate.text.strip() in lex.coref and entities_compatible(
@@ -36,6 +37,7 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 											propagate_entity(markable, candidate)
 											return candidate
 								elif markable.entity == candidate.entity and (markable.head.text == candidate.head.text or
+								(len(markable.head.text) > 4 and (candidate.head.text.lower() == markable.head.text.lower())) or
 								(markable.head.lemma == candidate.head.lemma and lex.filters["lemma_match_pos"].match(markable.head.pos) is not None
 								and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
 									if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
@@ -53,7 +55,7 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
 										return candidate
-								elif entities_compatible(markable, candidate, lex) and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
+								elif entities_compatible(markable, candidate, lex) and (isa(markable, candidate, lex) or isa(candidate, markable, lex)) and agree_compatible(markable, candidate, lex):
 										if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
 											if merge_entities(markable, candidate, previous_markables, lex):
 												if propagate.startswith("propagate"):
@@ -119,7 +121,7 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 				pass
 			elif "$" in value and anaphor is not None:
 				if key == "form" or key == "text" or key == "agree" or key == "entity":
-					value = "^" + getattr(anaphor, key) + "$"
+					value = "^" + getattr(anaphor, key).strip() + "$"
 				elif key == "text_lower":
 					value = "^" + getattr(anaphor, "text").lower() + "$"
 				elif key == "func" or key == "pos":
@@ -142,9 +144,9 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 				value = value.lower()
 			value_matcher = re.compile(value)
 			if key == "form" or key == "text" or key == "agree" or key == "entity":
-				rule_property = getattr(mark, key)
+				rule_property = getattr(mark, key).strip()
 			elif key == "text_lower":
-				rule_property = getattr(mark, "text").lower()
+				rule_property = getattr(mark, "text").lower().strip()
 			elif key == "func" or key == "pos" or key == "lemma":
 				rule_property = getattr(mark.head, key)
 			elif key == "quoted":
@@ -298,6 +300,14 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead):
 						else:
 							splice_out(mark1, marks_by_group[group])
 
+	# Remove cataphora if desired
+	if lex.filters["remove_cataphora"]:
+		for mark in markables:
+			if mark.coref_type == "cata":
+				mark.id = "0"
+				if mark.antecedent != "none":
+					mark.antecedent.id = "0"
+
 	# Inactivate singletons if desired by setting their id to 0
 	if lex.filters["remove_singletons"]:
 		for group in marks_by_group:
@@ -315,46 +325,34 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead):
 						singleton.id = "0"
 
 
-	# apposition envelope
-	env_marks=[]
-	for group in marks_by_group:
-		#count_env=0
-		for i in reversed(range(1,len(marks_by_group[group]))):
-			#print marks_by_group[group]
-			mark=marks_by_group[group][i]
-			prev = mark.antecedent
-			if prev != "none":
-				if prev.coref_type == "appos" and prev.antecedent != "none":
-					#two markables in the envelop:prev and prevprev
-					prevprev=prev.antecedent
-					envlop=create_envelope(prevprev,prev)
-					markables.append(envlop)
-					markstart[envlop.start].append(envlop)
-					markend[envlop.end].append(envlop)
+	# Add apposition envelopes if desired
+	if lex.filters["add_appos_envelopes"]:
+		for group in marks_by_group:
+			for i in reversed(range(1,len(marks_by_group[group]))):
+				# Print marks_by_group[group]
+				mark = marks_by_group[group][i]
+				prev = mark.antecedent
+				if prev != "none":
+					if prev.coref_type == "appos" and prev.antecedent != "none":
+						# Two markables in the envelop: prev and prevprev
+						prevprev = prev.antecedent
+						envlop = create_envelope(prevprev,prev)
+						markables.append(envlop)
+						markstart[envlop.start].append(envlop)
+						markend[envlop.end].append(envlop)
 
-					#markables_by_head
-					head_id=str(prevprev.head.id) + "_" + str(prev.head.id)
-					markbyhead[head_id]=envlop
+						# Markables_by_head
+						head_id=str(prevprev.head.id) + "_" + str(prev.head.id)
+						markbyhead[head_id] = envlop
 
-					#set some fields for the envlop markable
-					envlop.non_antecdent_groups=prev.antecedent
-					#new group number for the two markables inside the envelope
-					ab_group=1000+int(prevprev.group)+int(prev.group)
-					prevprev.group=ab_group
-					prev.group=ab_group
-					mark.antecedent=envlop
-					prevprev.antecedent="none"
-					#count_env+=1
-					#break
-		#if count_env > 0:
-		#	print "this group:" + str(group) + " has created " + str(count_env) + " envelops"
-		#	print "====================================="
-
-
-
-
-
-
+						# Set some fields for the envlop markable
+						envlop.non_antecdent_groups = prev.antecedent
+						# New group number for the two markables inside the envelope
+						ab_group = 1000 + int(prevprev.group) + int(prev.group)
+						prevprev.group = ab_group
+						prev.group = ab_group
+						mark.antecedent = envlop
+						prevprev.antecedent = "none"
 
 
 def splice_out(mark, group):

@@ -187,6 +187,7 @@ areas	place
 Arena	place
 argali	animal
 ariegeois	animal
+arm	object/inanim
 armadillo	animal
 around	person
 arranger	person
@@ -546,6 +547,8 @@ cavapoo	animal
 caver	person
 celebrities	person
 celebutante	person
+cell	place/inanim
+cell	object/inanim
 cellist	person
 census	event/inanim
 center	place
@@ -570,6 +573,7 @@ chantilly-tiffany	animal
 chaplain	person
 chapmen	person
 Characters	abstract
+charge	abstract/inanim
 charioteer	person
 charities	organization
 charm	abstract
@@ -606,6 +610,7 @@ choreographer	person
 Chrome	object
 chronicler	person
 chrysotile	substance
+church	place/inanim
 Church	organization
 churchman	person
 cider	substance
@@ -1432,7 +1437,6 @@ hawker	person
 Hawthorne	place
 hayward	person
 hazzan	person
-he	person
 head	object
 headmaster	person
 heads	plant
@@ -1469,12 +1473,10 @@ highwayman	person
 Hill	person
 hill	place
 hills	object
-him	person
 hip	abstract
 hippopotamus	animal
 hipster	abstract
 hiring	abstract
-his	person
 hispanist	person
 historian	person
 history	abstract
@@ -1564,7 +1566,7 @@ improvement	abstract
 improviser	person
 in	place
 Inc.	organization/inanim
-incentives	abstract
+incentive	abstract
 incident	event
 increases	event
 Indians	organization
@@ -1617,11 +1619,9 @@ islands	place
 isle	place/inanim
 issue	abstract
 issues	abstract
-It	abstract
 Italy	place
 item	object
 items	object
-Its	object
 its	place
 jämthund	animal
 Jack	person
@@ -3095,6 +3095,7 @@ tables	object
 tactician	person
 tag	abstract
 taigan	animal
+tail	object/inanim
 tailor	person
 Taking	event
 talk	event
@@ -3152,10 +3153,12 @@ Theater	place
 theaters	place
 theatre	place
 theft	abstract
+theft	event
 theirs	animal
 then	event
 theologian	person
 theoretician	person
+theory	abstract/inanim
 there	place
 these	abstract
 These	event
@@ -3493,3 +3496,5 @@ Zeus	event
 zookeeper	person
 zoologist	person
 \'scopes	object
+novel	object/inanim
+sum	quantity/inanim

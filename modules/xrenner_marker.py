@@ -39,9 +39,9 @@ def entities_compatible(mark1, mark2, lex):
 		return True
 	if mark1.form == "pronoun" and not (mark1.entity == lex.filters["person_def_entity"] and mark2.entity != lex.filters["person_def_entity"]):
 		return True
-	if mark1.entity in mark2.alt_entities and mark1.entity != mark2.entity and (mark1.entity_certainty == "uncertain" or mark1.entity_certainty == "propagated"):
+	if mark1.entity in mark2.alt_entities and mark1.entity != mark2.entity and (mark2.entity_certainty == "uncertain" or mark2.entity_certainty == "propagated"):
 		return True
-	elif mark2.entity in mark1.alt_entities and mark1.entity != mark2.entity and (mark2.entity_certainty == "uncertain" or mark2.entity_certainty == "propagated"):
+	elif mark2.entity in mark1.alt_entities and mark1.entity != mark2.entity and (mark1.entity_certainty == "uncertain" or mark1.entity_certainty == "propagated"):
 		return True
 
 	return False
@@ -195,6 +195,8 @@ def resolve_mark_entity(mark, token_list, lex):
 	if mark.form == "pronoun":
 		if mark.agree == "male" or mark.agree == "female":
 			entity = lex.filters["person_def_entity"]
+			mark.alt_entities.append("animal")
+			mark.entity_certainty = 'uncertain'
 		else:
 			entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
 	else:
@@ -224,6 +226,10 @@ def resolve_mark_entity(mark, token_list, lex):
 			entity = resolve_entity_cascade(mark.head.text, mark, lex)
 		if entity == "" and mark.head.text.istitle():
 			entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
+		if entity == "" and mark.head.text.isupper():
+			entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
+		if entity == "" and mark.head.text.isupper():
+			entity = resolve_entity_cascade(mark.head.text.lower().title(), mark, lex)
 		if entity == "" and not mark.head.lemma == mark.head.text:  # Try lemma match if lemma different from token
 			entity = resolve_entity_cascade(mark.head.lemma, mark, lex)
 		if entity == "":
@@ -438,7 +444,7 @@ def pos_func_combo(pos, func, pos_func_heads_string):
 	elif pos + "!" + func in pos_func_heads:
 		return False
 	else:
-		if pos_func_heads_string.find(pos + "!") > -1:
+		if pos_func_heads_string.find(";" + pos + "!") > -1 or pos_func_heads_string.startswith(pos + "!"):
 			return True
 		else:
 			return False
@@ -485,6 +491,7 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 					break
 
 	core_text = marktext
+	# DEBUG POINT
 	if marktext.strip() in lex.debug:
 		pass
 	# Extend markable to 'affix tokens'
