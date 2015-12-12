@@ -27,7 +27,7 @@ class LexData:
 		self.names = self.read_delim('names.tab')
 		self.stop_list = self.read_delim('stop_list.tab', 'low')
 		self.open_close_punct = self.read_delim('open_close_punct.tab')
-		self.open_close_punct_rev = {v: k for k, v in self.open_close_punct.items()}
+		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
 		self.entity_mods = self.read_delim('entity_mods.tab')
 		self.entity_deps = self.read_delim('entity_deps.tab','quadruple')
 		self.coref = self.read_delim('coref.tab')

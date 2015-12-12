@@ -15,7 +15,7 @@ from modules.xrenner_marker import make_markable
 from modules.xrenner_lex import *
 from modules.depedit import run_depedit
 
-__version__ = "1.1.3"
+__version__ = "1.1.3.1"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
