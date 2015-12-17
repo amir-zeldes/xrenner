@@ -1,11 +1,13 @@
 from collections import defaultdict
 from xrenner_marker import *
+from xrenner_compatible import *
 from xrenner_classes import *
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
 Coreference resolution module. Iterates through markables to find possible matches based on rules.
 Author: Amir Zeldes
 """
+
 
 def search_prev_markables(markable, previous_markables, rule, lex, max_dist, propagate):
 	if rule.find("lookahead") > -1:
@@ -40,12 +42,12 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 								(len(markable.head.text) > 4 and (candidate.head.text.lower() == markable.head.text.lower())) or
 								(markable.head.lemma == candidate.head.lemma and lex.filters["lemma_match_pos"].match(markable.head.pos) is not None
 								and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
-									if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
+									if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
 										return candidate
 								elif markable.entity == candidate.entity and (isa(markable, candidate, lex) or isa(candidate, markable, lex)) and agree_compatible(markable, candidate, lex):
-									if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
+									if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
 										return candidate
@@ -56,14 +58,14 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 											propagate_entity(markable, candidate, propagate)
 										return candidate
 								elif entities_compatible(markable, candidate, lex) and (isa(markable, candidate, lex) or isa(candidate, markable, lex)) and agree_compatible(markable, candidate, lex):
-										if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
+										if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
 											if merge_entities(markable, candidate, previous_markables, lex):
 												if propagate.startswith("propagate"):
 													propagate_entity(markable, candidate, propagate)
 												return candidate
 								elif lex.filters["match_acronyms"] and markable.head.text.isupper() or candidate.head.text.isupper():
 									if acronym_match(markable, candidate, lex) or acronym_match(candidate, markable, lex):
-										if not incompatible_modifiers(markable, candidate, lex) and not incompatible_modifiers(candidate, markable, lex):
+										if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
 											if merge_entities(markable, candidate, previous_markables, lex):
 												propagate_entity(markable, candidate, "propagate")
 												return candidate
@@ -417,7 +419,6 @@ def antecedent_prohibited(markable, conll_tokens, lex):
 	else:
 		return True
     
-    
 def create_envelope(first,second):
 	mark_id="env"
 	form = "proper" if (first.form == "proper" or second.form == "proper") else "common"
@@ -438,8 +439,6 @@ def create_envelope(first,second):
 	alt_entities=first.alt_entities
 	alt_subclasses=first.alt_subclasses
 	alt_agree=first.alt_agree
-
-
 
 	envelope = Markable(mark_id, head, form, definiteness, start, end, text, entity, entity_certainty, subclass, infstat, agree, sentence, antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree)
 	return envelope

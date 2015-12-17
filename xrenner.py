@@ -15,7 +15,7 @@ from modules.xrenner_marker import make_markable
 from modules.xrenner_lex import *
 from modules.depedit import run_depedit
 
-__version__ = "1.1.3.1"
+__version__ = "1.1.4"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
@@ -267,14 +267,20 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 		tok = mark.head
 		if lex.filters["proper_pos"].match(tok.pos) is not None:
 			mark.form = "proper"
+			definiteness = "def"
 		elif lex.filters["pronoun_pos"].match(tok.pos) is not None:
 			mark.form = "pronoun"
+			definiteness = "def"
 		elif tok.text in lex.pronouns:
 			mark.form = "pronoun"
+			definiteness = "def"
 		else:
 			mark.form = "common"
-
-		definiteness = "def"
+			children_are_articles = (lex.filters["definite_articles"].match(conll_tokens[int(maybe_article)].text) is not None for maybe_article in children[mark.head.id]+[mark.head.id])
+			if any(children_are_articles):
+				definiteness = "def"
+			else:
+				definiteness = "indef"
 
 		mark.alt_agree = resolve_mark_agree(mark, lex)
 		if mark.alt_agree is not None:
@@ -324,6 +330,8 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			mark.entity_certainty = "uncertain"
 		if subclass == "":
 			subclass = mark.entity
+		if mark.head.func == "title":
+			mark.entity = lex.filters["default_entity"]
 
 		markcounter += 1
 		groupcounter += 1
