@@ -9,6 +9,14 @@ Author: Amir Zeldes
 
 
 def output_SGML(conll_tokens, markstart_dict, markend_dict):
+	"""
+	Outputs analysis results as CWB SGML (with nesting), one token per line and markables in <referent> tags
+	:param conll_tokens: List of all processed ParsedToken objects in the document
+	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
+	:param markend_dict: Dictionary from markable ending token ids to Markable objects
+	:return: void
+	"""
+
 	for out_tok in conll_tokens:
 		if int(out_tok.id) in markstart_dict:
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
@@ -24,7 +32,16 @@ def output_SGML(conll_tokens, markstart_dict, markend_dict):
 
 
 def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
-	print "# begin document " + str(file_name).replace(".conll10", "")
+	"""
+	Outputs analysis results in CoNLL format, one token per line and markables with opening
+	and closing numbered brackets. Compatible with CoNLL scorer.
+	:param conll_tokens: List of all processed ParsedToken objects in the document
+	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
+	:param markend_dict: Dictionary from markable ending token ids to Markable objects
+	:param file_name: name of the source file (dependency data) to create header for CoNLL file
+	:return: void
+	"""
+	print "# begin document " + str(file_name).replace(".conll10", "").replace("_xrenner","").replace("_hyph","")
 	i = -1
 	for out_tok in conll_tokens[1:]:
 		i += 1
@@ -52,6 +69,15 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 
 
 def output_HTML(conll_tokens, markstart_dict, markend_dict):
+	"""
+	Outputs analysis results as HTML (assuming jquery, xrenner css and js files), one token per line and
+	markables in <div> tags with Font Awesome icons and colored groups.
+	:param conll_tokens: List of all processed ParsedToken objects in the document
+	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
+	:param markend_dict: Dictionary from markable ending token ids to Markable objects
+	:return: void
+	"""
+
 	print '''<html>
 <head>
 	<link rel="stylesheet" href="./css/renner.css" type="text/css" charset="utf-8"/>
@@ -74,6 +100,7 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict):
 			print out_tok.text.replace("-RRB-", ")").replace("-LRB-", "(").replace("-LSB-", "[").replace("-RSB-", "]")
 		if int(out_tok.id) in markend_dict:
 			for out_mark in markend_dict[int(out_tok.id)]:
+				#print "["+out_mark.definiteness+"]"
 				print "</div>"
 	print '<script>colorize();</script>'
 	print '''</body>
@@ -81,6 +108,16 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict):
 
 
 def output_PAULA(conll_tokens, markstart_dict, markend_dict):
+	"""
+	Outputs analysis results as PAULA standoff XML. Separate files for tokens, markables and coreference links
+	plus annotations. This format is the most complete, distinguishing apposition, anaphora, cataphora and other
+	coreference types as edge annotations.
+	:param conll_tokens: List of all processed ParsedToken objects in the document
+	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
+	:param markend_dict: Dictionary from markable ending token ids to Markable objects
+	:return: void
+	"""
+
 	paula_text = ""
 	paula_tokens = ""
 	paula_markables = ""
@@ -305,6 +342,12 @@ def output_webanno(conll_tokens, markables):
 
 
 def get_glyph(entity_type):
+	"""
+	Generates appropriate Font Awesome icon strings based on entity type strings, such as
+	a person icon (fa-male) for the 'person' entity, etc.
+	:param entity_type: String specifying the entity type to be visualized
+	:return: HTML string with the corresponding Font Awesome icon
+	"""
 	if entity_type == "person":
 		return '<i title="' + entity_type + '" class="fa fa-male"></i>'
 	elif entity_type == "place":

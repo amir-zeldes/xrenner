@@ -834,6 +834,7 @@ chromatography	chromatographic
 chrome	chrome-plated
 chrome-plated	chrome
 chu	zhu
+church	church,cathedral,abbey
 cia	cla
 cilantro	coriander
 cip	pac
@@ -2372,6 +2373,9 @@ kurds	kurdish
 l.111	l.112
 l.112	l.111
 l1s	n1
+LA	Los Angeles,L.A.
+Los Angeles	LA,L.A.
+L.A.	Los Angeles,LA
 lab	laboratory
 label	tag
 labelers	labellers

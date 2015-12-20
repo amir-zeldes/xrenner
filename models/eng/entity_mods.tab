@@ -1,11 +1,22 @@
+about	quantity
+captain	person
+carbonate	substance/inanim
+chief	person
+chief executive officer	person
 Co.	organization
+colonel	person
 Corp.	organization
+corporal	person
 Dr.	person
 East	place
 Emperor	person
+Father	person
+general	person
 Hurricane	event/inanim
 Inc.	organization
 King	person
+lieutenant	person
+lieutenant	person
 LLC	organization
 Mr	person
 Mr.	person
@@ -13,23 +24,21 @@ Mrs	person
 Mrs.	person
 Ms	person
 Ms.	person
-North	place
-Prime Minister	person
-Prof.	person
-Professor	person
-South	place
-USS	object
-West	place
-about	quantity
-carbonate	substance/inanim
-chief	person
-chief executive officer	person
-lieutenant	person
 née	person/female
 nee	person/female
+North	place
 officer	person
 pm	time/inanim
 president	person
+Prime Minister	person
+Prof.	person
+Professor	person
+sergeant	person
+Sister	person
+South	place
 sulfate	substance/inanim
+USS	object
+Vicar	person
 vice	person
 vice president	person
+West	place

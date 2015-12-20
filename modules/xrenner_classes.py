@@ -6,7 +6,7 @@ Author: Amir Zeldes
 
 
 class ParsedToken:
-	def __init__(self, tok_id, text, lemma, pos, morph, head, func, sentence, modifiers, child_funcs, lex, quoted=False):
+	def __init__(self, tok_id, text, lemma, pos, morph, head, func, sentence, modifiers, child_funcs, child_strings, lex, quoted=False):
 		self.id = tok_id
 		self.text = text
 		self.pos = pos
@@ -19,10 +19,12 @@ class ParsedToken:
 			self.morph = lex.process_morph(self)
 
 		self.head = head
+		self.original_head = head
 		self.func = func
 		self.sentence = sentence
 		self.modifiers = modifiers
 		self.child_funcs = child_funcs
+		self.child_strings = child_strings
 		self.quoted = quoted
 		self.coordinate = False
 
@@ -51,7 +53,7 @@ class Markable:
 		self.entity_certainty = entity_certainty
 		self.isa_partner_head = ""  # Property to hold isa match; once saturated, no other lexeme may form isa link
 
-		#  Alternate agreement, subclass and entity lists:
+		# Alternate agreement, subclass and entity lists:
 		self.alt_agree = alt_agree
 		self.alt_entities = alt_entities
 		self.alt_subclasses = alt_subclasses

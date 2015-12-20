@@ -13,11 +13,14 @@ from modules.xrenner_classes import *
 from modules.xrenner_coref import *
 from modules.xrenner_marker import make_markable
 from modules.xrenner_lex import *
+from modules.xrenner_postprocess import postprocess_coref
+from modules.depedit import run_depedit
 
-__version__ = "1.1.1"
+__version__ = "1.1.5"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
+
 
 def find_antecedent(markable, previous_markables, lex):
 	candidate = None
@@ -29,7 +32,7 @@ def find_antecedent(markable, previous_markables, lex):
 	return candidate
 
 
-def process_sentence(conll_tokens, tokoffset, sentence):
+def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strings):
 	global children
 	global markstart_dict
 	global markend_dict
@@ -39,6 +42,17 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 	global sent_num
 	global markables_by_head
 	global groupcounter
+
+	# Add list of all funcs dependent on each token to its child_funcs
+	for child_id in child_funcs:
+		for func in child_funcs[child_id]:
+			if func not in conll_tokens[child_id].child_funcs:
+				conll_tokens[child_id].child_funcs.append(func)
+		for tok_text in child_strings[child_id]:
+			if tok_text not in conll_tokens[child_id].child_strings:
+				conll_tokens[child_id].child_strings.append(tok_text)
+
+
 	mark_candidates_by_head = collections.OrderedDict()
 	stop_ids = {}
 	for tok1 in conll_tokens[tokoffset + 1:]:
@@ -79,20 +93,34 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 					children[str(int(tok1.id) - 1)].append(tok1.id)
 					stop_ids[tok1.id] = True
 
+			# Check for [city], [state] apposition -
+			# typical (English model) Stanford parser behavior
+			if tok1.text == "England":
+				pass
+			if lex.filters["apposition_func"].match(tok1.func) is not None and not int(tok1.id) < 3:
+				if lex.filters["proper_pos"].match(conll_tokens[int(tok1.id) - 2].pos) is not None and conll_tokens[
+							int(tok1.id) - 2].id == tok1.head and conll_tokens[int(tok1.id) - 1].text.strip() == ",":
+					if conll_tokens[int(tok1.id) - 2].text.strip().lower().title() in lex.entities and tok1.text.strip().lower().title() in lex.entities:
+						country = [i for i, x in enumerate(lex.entities[tok1.text.strip().lower().title()]) if re.search(r'place\t(state|country|region)', x)]
+						city = [i for i, x in enumerate(lex.entities[conll_tokens[int(tok1.id) - 2].text.strip().lower().title()]) if re.search(r'place\t', x)]
+						#if "place\tstate/inanim" in lex.entities[tok1.text.strip()] or "place\tcountry/inanim" in lex.entities[tok1.text.strip()]: # Later token is a state or country in appos to earlier token
+							#if "place\ttown/inanim" in lex.entities[conll_tokens[int(tok1.id) - 2].text.strip()] or "place\tcity/inanim" in lex.entities[conll_tokens[int(tok1.id) - 2].text.strip()]: # Early token is a city or town
+						if len(country) > 0 and len(city) > 0:
+							tok1.func = "xrenner_fix"
+							children[str(int(tok1.id) - 2)].append(tok1.id)
+
+
 			# Check for markable projecting beyond an apposition to itself and remove from children on violation
 			if lex.filters["apposition_func"].match(tok1.func) is not None and not tok1.id == "1":
 				for tok2 in conll_tokens[int(tok1.id) + 1:]:
 					if tok2.head == tok1.head and lex.filters["non_link_func"].match(tok2.func) is None and tok2.id in children[tok2.head]:
 						children[tok2.head].remove(tok2.id)
 
-
-	# Expand children list recursively into descendants
-	for parent_key in children:
-		descendants[parent_key] = get_descendants(parent_key, children)
-
 	# Revert conj token function to parent function
 	for token in conll_tokens[tokoffset:]:
 		if lex.filters["conjunct_func"].match(token.func) is not None:
+			for child_func in conll_tokens[int(token.head)].child_funcs:
+				token.child_funcs.append(child_func)
 			token.func = conll_tokens[int(token.head)].func
 			token.head = conll_tokens[int(token.head)].head
 			token.coordinate = True
@@ -123,12 +151,21 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 									conll_tokens[int(child_id2)].head = child.id
 									children[tok1.id].remove(child_id2)
 									children[child.id].append(child_id2)
+
 							# Assign the function of the affix head to the new head and vice versa
 							temp_func = child.func
 							child.func = tok1.func
 							tok1.func = temp_func
 							children[tok1.id].remove(child.id)
 							children[child.id].append(tok1.id)
+							# Check if any other non-link parents need to be re-routed to the new head
+							for tok_to_rewire in conll_tokens[tokoffset + 1:]:
+								if tok_to_rewire.original_head == tok1.id and tok_to_rewire.head != child.id and tok_to_rewire.id != child.id:
+									tok_to_rewire.head = child.id
+									# Also add the rewired child func
+									if tok_to_rewire.func not in child.child_funcs:
+										child.child_funcs.append(tok_to_rewire.func)
+
 							# Only do this for the first subordinate markable head found by traversing right to left
 							break
 
@@ -150,6 +187,11 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 		tok2 = conll_tokens[int(tok1.id) + 2]
 		if tok1.text in lex.first_names and tok2.text in lex.last_names and tok1.head == tok2.id:
 			stop_ids[tok1.id] = True
+
+	# Expand children list recursively into descendants
+	for parent_key in children:
+		descendants[parent_key] = get_descendants(parent_key, children)
+
 
 	keys_to_pop = []
 
@@ -185,11 +227,15 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 					# Build a composite id for the large head from coordinate children id's separated by underscore
 					submark_id += "_" + child.id
 			if make_submark:
+				# Assign aggregate/coordinate agreement class to large markable if desired
+				if lex.filters["aggregate_agree"] != "_":
+					this_markable.agree = lex.filters["aggregate_agree"]
 				# Remove coordination tokens, such as 'and', 'or' based on coord_func setting
 				for child_id in children[tok.id]:
 					child = conll_tokens[int(child_id)]
 					if lex.filters["coord_func"].match(child.func):
-						descendants[tok.id].remove(child.id)
+						if child.id in descendants[tok.id]:
+							descendants[tok.id].remove(child.id)
 
 				# Make the small markable and recall the big markable
 				small_markable = make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex)
@@ -222,14 +268,20 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 		tok = mark.head
 		if lex.filters["proper_pos"].match(tok.pos) is not None:
 			mark.form = "proper"
+			definiteness = "def"
 		elif lex.filters["pronoun_pos"].match(tok.pos) is not None:
 			mark.form = "pronoun"
+			definiteness = "def"
 		elif tok.text in lex.pronouns:
 			mark.form = "pronoun"
+			definiteness = "def"
 		else:
 			mark.form = "common"
-
-		definiteness = "def"
+			children_are_articles = (lex.filters["definite_articles"].match(conll_tokens[int(maybe_article)].text) is not None for maybe_article in children[mark.head.id]+[mark.head.id])
+			if any(children_are_articles):
+				definiteness = "def"
+			else:
+				definiteness = "indef"
 
 		mark.alt_agree = resolve_mark_agree(mark, lex)
 		if mark.alt_agree is not None:
@@ -279,6 +331,8 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 			mark.entity_certainty = "uncertain"
 		if subclass == "":
 			subclass = mark.entity
+		if mark.head.func == "title":
+			mark.entity = lex.filters["default_entity"]
 
 		markcounter += 1
 		groupcounter += 1
@@ -294,9 +348,10 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 	for markable_head_id in markables_by_head:
 		if int(re.sub('_.*','',markable_head_id)) > tokoffset:  # Resolve antecedent for current sentence markables
 			current_markable = markables_by_head[markable_head_id]
+			# DEBUG POINT
 			if current_markable.text.strip() in lex.debug:
 				pass
-			if antecedent_prohibited(current_markable, conll_tokens, lex):
+			if antecedent_prohibited(current_markable, conll_tokens, lex) or (current_markable.definiteness == "indef" and  lex.filters["apposition_func"].match(current_markable.head.func) is None):
 				antecedent = None
 			else:
 				antecedent = find_antecedent(current_markable, markables, lex)
@@ -312,11 +367,10 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 						current_markable.coref_type = "coref"
 					current_markable.infstat = "giv"
 				else:  # Cataphoric match
-					antecedent.antecedent = current_markable
+					current_markable.antecedent = antecedent
 					antecedent.group = current_markable.group
 					current_markable.coref_type = "cata"
-					current_markable.infstat = antecedent.infstat
-					antecedent.infstat = "giv"
+					current_markable.infstat = "new"
 			elif current_markable.form == "pronoun":
 				current_markable.infstat = "acc"
 			else:
@@ -325,7 +379,8 @@ def process_sentence(conll_tokens, tokoffset, sentence):
 			if current_markable.agree is not None and current_markable.agree != '':
 				lex.last[current_markable.agree] = current_markable
 			else:
-				lex.last[lex.filters["default_agree"]] = current_markable
+				pass
+				#lex.last[lex.filters["default_agree"]] = current_markable
 
 
 parser = argparse.ArgumentParser()
@@ -342,15 +397,20 @@ options = parser.parse_args()
 out_format = options.format
 model = options.model
 override = options.override
-lex = LexData(model,override)
+lex = LexData(model, override)
 infile = open(options.file)
+
+depedit_config = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + "models" + os.sep + options.model + os.sep + "depedit.ini")
+
+infile = run_depedit(infile, depedit_config)
+infile = infile.split("\n")
 
 conll_tokens = []
 markables = []
 markables_by_head = OrderedDict()
 markstart_dict = defaultdict(list)
 markend_dict = defaultdict(list)
-conll_tokens.append(ParsedToken(0, "ROOT", "--", "XX", "", -1, "NONE", Sentence(1, ""), [], [], lex))
+conll_tokens.append(ParsedToken(0, "ROOT", "--", "XX", "", -1, "NONE", Sentence(1, ""), [], [], [], lex))
 tokoffset = 0
 sentlength = 0
 markcounter = 1
@@ -360,6 +420,7 @@ groupcounter = 1
 children = defaultdict(list)
 descendants = {}
 child_funcs = defaultdict(list)
+child_strings = defaultdict(list)
 
 sent_num = 1
 quoted = False
@@ -380,19 +441,15 @@ for myline in infile:
 		else:
 			tok_func = cols[7]
 		conll_tokens.append(ParsedToken(str(int(cols[0]) + tokoffset), cols[1], cols[2], cols[3], cols[5],
-		                                str(int(cols[6]) + tokoffset), tok_func, current_sentence, [], [], lex, quoted))
+		                                str(int(cols[6]) + tokoffset), tok_func, current_sentence, [], [], [], lex, quoted))
 		sentlength += 1
 		if not (lex.filters["non_link_func"].match(tok_func) is not None or lex.filters["non_link_tok"].match(cols[1]) is not None):
 		# Do not add a child if this is a function which discontinues the markable span
 			children[str(int(cols[6]) + tokoffset)].append(str(int(cols[0]) + tokoffset))
 		child_funcs[(int(cols[6]) + tokoffset)].append(tok_func)
+		child_strings[(int(cols[6]) + tokoffset)].append(cols[1])
 	elif sentlength > 0:
-		# Add list of all funcs dependent on this token to its child_funcs
-		for child_id in child_funcs:
-			for func in child_funcs[child_id]:
-				if func not in conll_tokens[child_id].child_funcs:
-					conll_tokens[child_id].child_funcs.append(func)
-		process_sentence(conll_tokens, tokoffset, current_sentence)
+		process_sentence(conll_tokens, tokoffset, current_sentence, child_funcs, child_strings)
 		sent_num += 1
 		current_sentence = Sentence(sent_num, "")
 		if sentlength > 0:
@@ -401,7 +458,7 @@ for myline in infile:
 		sentlength = 0
 
 if sentlength > 0:  # Leftover sentence did not have trailing newline
-	process_sentence(conll_tokens, tokoffset, current_sentence)
+	process_sentence(conll_tokens, tokoffset, current_sentence, child_funcs, child_strings)
 
 postprocess_coref(markables, lex, markstart_dict, markend_dict,markables_by_head)
 

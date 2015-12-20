@@ -2,6 +2,7 @@ import re
 import collections
 from modules.xrenner_classes import Markable
 
+
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
 Marker module for markable entity recognition. Establishes compatibility between entity features
@@ -9,122 +10,6 @@ and determines markable extension in tokens
 Author: Amir Zeldes
 """
 
-
-def agree_compatible(mark1, mark2, lex):
-	if mark1.agree == mark2.agree:
-		return True
-	elif lex.filters["no_person_agree"].match(mark1.agree) and mark2.entity == lex.filters["person_def_entity"]:
-		return False
-	elif lex.filters["no_person_agree"].match(mark2.agree) and mark1.entity == lex.filters["person_def_entity"]:
-		return False
-	elif mark1.agree in mark2.alt_agree:
-		mark2.agree = mark1.agree
-		return True
-	elif mark2.agree in mark1.alt_agree:
-		mark1.agree = mark2.agree
-		return True
-	elif (mark1.agree is None or mark1.agree == '') and (mark2.agree is None or mark2.agree == ''):
-		return True
-	elif (((mark1.agree is None or mark1.agree == '') and lex.filters["agree_with_unknown"].match(mark2.agree) is not None)
-	or ((mark2.agree is None or mark2.agree == '') and lex.filters["agree_with_unknown"].match(mark1.agree) is not None)):
-		return True
-	else:
-		return False
-
-
-def entities_compatible(mark1, mark2, lex):
-	if mark1.entity == mark2.entity:
-		return True
-	elif mark1.entity is None or mark2.entity is None:
-		return True
-	if mark1.form == "pronoun" and not (mark1.entity == lex.filters["person_def_entity"] and mark2.entity != lex.filters["person_def_entity"]):
-		return True
-	if mark1.entity in mark2.alt_entities and mark1.entity != mark2.entity and (mark1.entity_certainty == "uncertain" or mark1.entity_certainty == "propagated"):
-		return True
-	elif mark2.entity in mark1.alt_entities and mark1.entity != mark2.entity and (mark2.entity_certainty == "uncertain" or mark2.entity_certainty == "propagated"):
-		return True
-
-	return False
-
-
-def merge_entities(mark1, mark2, previous_markables, lex):
-	if not mark1.entity == mark2.entity:
-		if mark1.entity in mark2.alt_entities:
-			if update_group(mark2, mark1, previous_markables, lex):
-				mark2.entity = mark1.entity
-				mark2.subclass = mark1.subclass
-				return True
-			else:
-				return False
-		else:
-			if update_group(mark1, mark2, previous_markables, lex):
-				mark1.entity = mark2.entity
-				mark1.subclass = mark2.subclass
-				return True
-			else:
-				return False
-	else:
-		return True
-
-
-def update_group(host, model, previous_markables, lex):
-	group = host.group
-	for markable in previous_markables:
-		if markable.group == group:
-			if incompatible_modifiers(markable, model, lex):
-				return False
-	for markable in previous_markables:
-		if markable.group == group:
-			markable.entity = model.entity
-			markable.subclass = model.subclass
-	return True
-
-
-def incompatible_modifiers(markable, candidate, lex):
-	# Check if markable and candidate have modifiers that are in the antonym list together,
-	# e.g. 'the good news' should not be coreferent with 'the bad news'
-	for mod in markable.head.modifiers:
-		if mod.text.lower() in lex.antonyms:
-			for candidate_mod in candidate.head.modifiers:
-				if candidate_mod.text.lower() in lex.antonyms[mod.text.lower()]:
-					markable.non_antecdent_groups.add(candidate.group)
-					return True
-		elif mod.lemma.lower() in lex.antonyms:
-			for candidate_mod in candidate.head.modifiers:
-				if candidate_mod.lemma.lower() in lex.antonyms[mod.lemma.lower()]:
-					markable.non_antecdent_groups.add(candidate.group)
-					return True
-
-	# Check if markable and candidate have modifiers that are different place names
-	# e.g. 'Georgetown University' is incompatible with 'Boston University' even if those entities are not in lexicon
-	for mod in markable.head.modifiers:
-		if mod.text.strip() in lex.entities and (mod.text.istitle() or not lex.filters["cap_names"]):
-			if re.sub('\t.*', "", lex.entities[mod.text.strip()][0]) == lex.filters["place_def_entity"]:
-				for candidate_mod in candidate.head.modifiers:
-					if candidate_mod.text.strip() in lex.entities and (candidate_mod.text.istitle() or not lex.filters["cap_names"]):
-						if re.sub('\t.*', "", lex.entities[candidate_mod.text.strip()][0]) == lex.filters["place_def_entity"]:
-							markable.non_antecdent_groups.add(candidate.group)
-							return True
-
-
-	# Check for each possible pair of modifiers with identical function in the ident_mod list whether they are identical,
-	# e.g. for the num function 'the four children' shouldn't be coreferent with 'five other children'
-	for mod in markable.head.modifiers:
-		for candidate_mod in candidate.head.modifiers:
-			# TODO: add support for ident_mod pos func combo:
-			# if lex.filters["ident_mod_func"].match(mod.func+"+"+mod.pos) and lex.filters["ident_mod_func"].match(candidate_mod.func+"+"+candidate_mod.pos) and
-			# mod.text.lower != candidate_mod.text.lower():
-			if lex.filters["ident_mod_func"].match(mod.func) is not None and lex.filters["ident_mod_func"].match(candidate_mod.func) is not None and mod.text.lower != candidate_mod.text.lower():
-				markable.non_antecdent_groups.add(candidate.group)
-				return True
-
-	# Recursive check through antecedent ancestors in group
-	if candidate.antecedent != "none":
-		antecdent_incompatible = incompatible_modifiers(markable, candidate.antecedent, lex)
-		if antecdent_incompatible:
-			return True
-
-	return False
 
 
 def is_atomic(mark, atoms, lex):
@@ -195,6 +80,8 @@ def resolve_mark_entity(mark, token_list, lex):
 	if mark.form == "pronoun":
 		if mark.agree == "male" or mark.agree == "female":
 			entity = lex.filters["person_def_entity"]
+			#mark.alt_entities.append("animal")
+			mark.entity_certainty = 'uncertain'
 		else:
 			entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
 	else:
@@ -224,6 +111,10 @@ def resolve_mark_entity(mark, token_list, lex):
 			entity = resolve_entity_cascade(mark.head.text, mark, lex)
 		if entity == "" and mark.head.text.istitle():
 			entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
+		if entity == "" and mark.head.text.isupper():
+			entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
+		if entity == "" and mark.head.text.isupper():
+			entity = resolve_entity_cascade(mark.head.text.lower().title(), mark, lex)
 		if entity == "" and not mark.head.lemma == mark.head.text:  # Try lemma match if lemma different from token
 			entity = resolve_entity_cascade(mark.head.lemma, mark, lex)
 		if entity == "":
@@ -438,7 +329,7 @@ def pos_func_combo(pos, func, pos_func_heads_string):
 	elif pos + "!" + func in pos_func_heads:
 		return False
 	else:
-		if pos_func_heads_string.find(pos + "!") > -1:
+		if pos_func_heads_string.find(";" + pos + "!") > -1 or pos_func_heads_string.startswith(pos + "!"):
 			return True
 		else:
 			return False
@@ -485,6 +376,7 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 					break
 
 	core_text = marktext
+	# DEBUG POINT
 	if marktext.strip() in lex.debug:
 		pass
 	# Extend markable to 'affix tokens'

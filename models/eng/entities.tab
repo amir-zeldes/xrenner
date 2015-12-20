@@ -7078,6 +7078,7 @@ Cornell	person	person
 Cornell Progressive	organization	newspaper/inanim@
 Corner Brook	place	town/inanim
 Cornwall	place	town/inanim
+Cornwall	place	region/inanim
 Cornwall Standard Freeholder	organization	newspaper/inanim@
 Cornyn	person	person
 Cornyn \'s statement	abstract	abstract/inanim
@@ -7923,7 +7924,7 @@ Devgadh Bāriya	place	town/inanim
 Devgarh	place	town/inanim
 Devils Lake Journal	organization	newspaper/inanim@
 Devli	place	town/inanim
-Devon	place	place/inanim
+Devon	place	region/inanim
 Devonport	place	town/inanim
 Devrek	place	town/inanim
 Dewas	place	city/inanim
@@ -8979,7 +8980,7 @@ Engadine	place	town/inanim
 Engel’s	place	city/inanim
 Engelskirchen	place	town/inanim
 Enger	place	town/inanim
-England	place	place/inanim
+England	place	country/inanim
 Englewood	place	town/inanim
 Englewood Cliffs	place	place/inanim
 English	abstract	abstract/inanim
@@ -11475,7 +11476,6 @@ Hazorasp	place	town/inanim
 Hazro	place	town/inanim
 HaZvi	organization	newspaper/inanim@
 HBO	organization	organization
-he	person	person
 head shots	object	object/inanim
 Heald	person	person
 Health	organization	organization
@@ -11723,7 +11723,6 @@ Hilton Head Island	place	town/inanim
 Hilvan	place	town/inanim
 Hilvarenbeek	place	town/inanim
 Hilversum	place	town/inanim
-him	person	person
 Himamaylan	place	town/inanim
 Himatnagar	place	town/inanim
 Himeji	place	city/inanim
@@ -11759,7 +11758,6 @@ Hiriyūr	place	town/inanim
 Hirosaki	place	city/inanim
 Hiroshima-shi	place	city/inanim
 Hirsutism	abstract	disease/inanim
-his	person	person
 his agenda	abstract	abstract/inanim
 his background	abstract	abstract/inanim
 his brother	person	person
@@ -15152,7 +15150,9 @@ L'Organe	organization	newspaper/inanim@
 L'Orignal déchaîné	organization	newspaper/inanim@
 L'Osservatore Romano	organization	newspaper/inanim@
 L'Unità	organization	newspaper/inanim@
-L.A.	place	place/inanim
+L.A.	place	city/inanim
+L. A.	place	city/ianim@
+LA	place	city/inanim
 Laâyoune / El Aaiún	place	capital/inanim
 Laç	place	town/inanim
 Laï	place	town/inanim
@@ -19421,7 +19421,7 @@ New Territory	place	town/inanim
 New Times LA	organization	newspaper/inanim@
 New Westminster	place	town/inanim
 New Yekepa	place	town/inanim
-New York	place	place/inanim
+New York	place	city/inanim
 New York	place	state/inanim
 New York Central Railroad Adirondack Division Historic District	place	region/inanim@
 New York City	place	city/inanim
@@ -24771,7 +24771,7 @@ Scoliosis	abstract	disease/inanim
 Scordia	place	town/inanim
 scotch	substance	substance
 Scotch Plains	place	town/inanim
-Scotland	place	place/inanim
+Scotland	place	region/inanim
 Scotland on Sunday	organization	newspaper/inanim@
 Scotoma	abstract	disease/inanim
 Scottburgh	place	town/inanim
@@ -27295,7 +27295,6 @@ Texan	person	person
 Texans	person	person
 Texarkana	place	town/inanim
 Texarkana Gazette	organization	newspaper/inanim@
-Texas	place	place/inanim
 Texas	place	state/inanim
 Texas A&M \'s Aerospace Engineering Department	organization	organization
 Texas City	place	town/inanim
@@ -28642,8 +28641,8 @@ the winter of 1776-77	time	time
 The Woodlands	place	town/inanim
 The Woodward News	organization	newspaper/inanim@
 the word	abstract	abstract/inanim
-the world	abstract	abstract/inanim
 the world	place	place/inanim
+the world	abstract	abstract/inanim
 the World Championship	event	event/inanim
 the World Cup	event	event/inanim
 the world of entertainment	abstract	abstract/inanim
@@ -32153,3 +32152,207 @@ Zyuzino	place	city/inanim
 \'Ali Sabieh	place	town/inanim
 \'s-Gravenzande	place	town/inanim
 \'s-Hertogenbosch	place	city/inanim
+All Saints Church	place	church/inanim@
+Allen Chapel A.M.E. Church	place	church/inanim@
+Annunciation Church	place	church/inanim@
+Asamkirche	place	church/inanim@
+Basilica of Our Lady of the Pillar	place	church/inanim@
+Basilica of San Domenico	place	church/inanim@
+Basilica of San Vitale	place	church/inanim@
+Basilica of San Zeno	place	church/inanim@
+Basilica of Santa Maria del Popolo	place	church/inanim@
+Basilica of St Denis	place	church/inanim@
+Basilica of St Peter and St Paul	place	church/inanim@
+Bethel African Methodist Episcopal Church	place	church/inanim@
+Bethel Assembly of God Church	place	church/inanim@
+Biertan fortified church	place	church/inanim@
+Calvary Presbyterian Church	place	church/inanim@
+Capuchin Church	place	church/inanim@
+Catholic Church of Our Lady of the Rosary	place	church/inanim@
+Center Church	place	church/inanim@
+Central Christian Church	place	church/inanim@
+Central Presbyterian Church	place	church/inanim@
+Chesme Church	place	church/inanim@
+Christ Church	place	church/inanim@
+Christ Church Greyfriars	place	church/inanim@
+Christ Episcopal Church	place	church/inanim@
+Church of Greyfriars	place	church/inanim@
+Church of Nossa Senhora da Nazaré	place	church/inanim@
+Church of Our Blessed Lady of the Sablon	place	church/inanim@
+Church of Our Lady Mary of Zion	place	church/inanim@
+Church of San Giorgio Maggiore	place	church/inanim@
+Church of St George	place	church/inanim@
+Church of St Mary	place	church/inanim@
+Church of St. Joseph-Catholic	place	church/inanim@
+Church of St. Peter & St. Paul	place	church/inanim@
+Church of the Celestines	place	church/inanim@
+Church of the Holy Apostles	place	church/inanim@
+Church of the Holy Archangels	place	church/inanim@
+Church of the Holy Archangels Michael and Gabriel	place	church/inanim@
+Church of the Nativity	place	church/inanim@
+Collegiate Church of San Gimignano	place	church/inanim@
+Crenshaw Christian Center East	place	church/inanim@
+Crystal Cathedral	place	church/inanim@
+Cumberland Presbyterian Church	place	church/inanim@
+Etchmiadzin Cathedral	place	church/inanim@
+Faith Covenant Church	place	church/inanim@
+First African Baptist Church	place	church/inanim@
+First Baptist Church	place	church/inanim@
+First Christian Church	place	church/inanim@
+First Congregational Church	place	church/inanim@
+First Congregational Church and Parsonage	place	church/inanim@
+First Congregational Church of East Haven	place	church/inanim@
+First Congregational Church of Riverside	place	church/inanim@
+First Lutheran Church	place	church/inanim@
+First Methodist Church	place	church/inanim@
+First Methodist Episcopal Church	place	church/inanim@
+First Presbyterian Church	place	church/inanim@
+First United Methodist Church	place	church/inanim@
+Fourth Baptist Church	place	church/inanim@
+Godalming United Church	place	church/inanim@
+Grace Episcopal Church	place	church/inanim@
+Hans Herr House	place	church/inanim@
+Hermitage Church of Nuestra Senora de Valvanera of Coamo	place	church/inanim@
+Herz-Jesu-Kirche	place	church/inanim@
+Highland Park Presbyterian Church	place	church/inanim@
+Holy Family Catholic Church	place	church/inanim@
+Iglesia Santa Clara	place	church/inanim@
+Il Redentore	place	church/inanim@
+Jesuit Church	place	church/inanim@
+Karlskirche	place	church/inanim@
+Kirkmichael Church	place	church/inanim@
+La Madeleine	place	church/inanim@
+Leigh Street Baptist Church	place	church/inanim@
+Minoritenkirche	place	church/inanim@
+Mission Dolores Basilica	place	church/inanim@
+Mission San Fernando Rey de España	place	church/inanim@
+Nes Church	place	church/inanim@
+New Birth Missionary Baptist Church	place	church/inanim@
+New Herrnhut Moravian Church	place	church/inanim@
+New Providence Presbyterian Church	place	church/inanim@
+Oak City Christian Church	place	church/inanim@
+Old West Church	place	church/inanim@
+Our Lady of Guadalupe Church	place	church/inanim@
+Our Lady of the Assumption Church	place	church/inanim@
+Panay Church	place	church/inanim@
+Parkview Christian Church	place	church/inanim@
+Pioneer Church	place	church/inanim@
+Prejmer fortified church	place	church/inanim@
+Presbyterian Manse	place	church/inanim@
+Rock Church	place	church/inanim@
+Royal Church of San Lorenzo	place	church/inanim@
+S:t Görans kyrka	place	church/inanim@
+Sacred Heart Catholic Church	place	church/inanim@
+Sagrada Família	place	church/inanim@
+Saint Andrew 's Cathedral	place	church/inanim@
+Saint Basil 's Cathedral	place	church/inanim@
+Saint Clement Catholic Church	place	church/inanim@
+Saint John the Baptist Church	place	church/inanim@
+Saint John the Baptist Parish Church	place	church/inanim@
+Saint Lucy Parish	place	church/inanim@
+Saint Pierre de Reims	place	church/inanim@
+Saints Peter and Paul Catholic Church	place	church/inanim@
+Salem Associated Reformed Presbyterian Church	place	church/inanim@
+San Bartolomeo all'Isola	place	church/inanim@
+San Biagio	place	church/inanim@
+San Francesco alle Scale	place	church/inanim@
+San Gottardo	place	church/inanim@
+San Juan de Dios Church	place	church/inanim@
+San Lorenzo	place	church/inanim@
+San Lorenzo in Lucina	place	church/inanim@
+San Martino	place	church/inanim@
+San Nicola Church	place	church/inanim@
+San Nicola in Carcere	place	church/inanim@
+San Petronio Basilica	place	church/inanim@
+San Pietro in Vincoli	place	church/inanim@
+San Sebastiano fuori le mura	place	church/inanim@
+San Teodoro	place	church/inanim@
+San Vitale	place	church/inanim@
+Sanctuary of the Madonna di San Luca	place	church/inanim@
+Sanjiang Church	place	church/inanim@
+Santa Bibiana	place	church/inanim@
+Santa Maria Antica	place	church/inanim@
+Santa Maria presso San Satiro	place	church/inanim@
+Santa Maria sopra Minerva	place	church/inanim@
+Sant'Agostino Church	place	church/inanim@
+Santi Bartolomeo ed Alessandro dei Bergamaschi	place	church/inanim@
+Santi Cosma e Damiano	place	church/inanim@
+Santo Sepolcro	place	church/inanim@
+Santo Spirito	place	church/inanim@
+Santuario del Santo Cristo	place	church/inanim@
+Second Presbyterian Church	place	church/inanim@
+Shepherd 's Fellowship of Greensboro	place	church/inanim@
+Shiloh Baptist Church	place	church/inanim@
+Shiloh Church	place	church/inanim@
+Shirdi Sai Baba Temple	place	church/inanim@
+Shrine Church of St. Stanislaus	place	church/inanim@
+Southland	place	church/inanim@
+Spelsbury Church	place	church/inanim@
+St Andrew 's Church	place	church/inanim@
+St Anne 's Church	place	church/inanim@
+St Bartholomew Church	place	church/inanim@
+St Bride 's Church	place	church/inanim@
+St Brides Church	place	church/inanim@
+St Clement Danes	place	church/inanim@
+St James Anglican Church	place	church/inanim@
+St Magnus-the-Martyr	place	church/inanim@
+St Mary Aldermary	place	church/inanim@
+St Mary Primrose Hill	place	church/inanim@
+St Mary the Virgin Church	place	church/inanim@
+St Michael in Berg am Laim	place	church/inanim@
+St Mildred	place	church/inanim@
+St Nicholas' Church	place	church/inanim@
+St Pancras Church	place	church/inanim@
+St Paul 's Church	place	church/inanim@
+St Peter 's Church	place	church/inanim@
+St Stephen 's	place	church/inanim@
+St Swithin	place	church/inanim@
+St. George 's Basilica	place	church/inanim@
+St. George 's Church	place	church/inanim@
+St. James Episcopal Church	place	church/inanim@
+St. John 's Episcopal Church	place	church/inanim@
+St. John 's Lutheran Church	place	church/inanim@
+St. John the Evangelist Episcopal Church	place	church/inanim@
+St. Joseph Catholic Church	place	church/inanim@
+St. Joseph 's Catholic Church	place	church/inanim@
+St. Joseph 's Hospital	place	church/inanim@
+St. Luke 's Episcopal Church	place	church/inanim@
+St. Margaret 's Church	place	church/inanim@
+St. Mark 's Episcopal Church	place	church/inanim@
+St. Mary Abbot  church	place	church/inanim@
+St. Mary 's Catholic Church	place	church/inanim@
+St. Mary 's Church	place	church/inanim@
+St. Mary 's Episcopal Church	place	church/inanim@
+St. Michael and All Angels	place	church/inanim@
+St. Michael 's	place	church/inanim@
+St. Patrick 's Catholic Church	place	church/inanim@
+St. Patrick 's Church	place	church/inanim@
+St. Paul 's Cathedral	place	church/inanim@
+St. Paul 's Episcopal Church	place	church/inanim@
+St. Paul 's Parish Church	place	church/inanim@
+St. Paul the Apostle Church	place	church/inanim@
+St. Paulus Lutheran Church	place	church/inanim@
+St. Peter 's Church	place	church/inanim@
+St. Peter 's Episcopal Church	place	church/inanim@
+St. Peters Roman Catholic Church	place	church/inanim@
+St. Stephen 's Episcopal Church	place	church/inanim@
+St. Theodosius Russian Orthodox Cathedral	place	church/inanim@
+St. Thomas Episcopal Church	place	church/inanim@
+Strawberry Field	place	church/inanim@
+Temple of Antoninus and Faustina	place	church/inanim@
+The Church of St Peter and St Paul	place	church/inanim@
+The Class of 1959 Chapel	place	church/inanim@
+The Crossing Church	place	church/inanim@
+The Packinghouse Christian Fellowship	place	church/inanim@
+The Shepherd 's Chapel	place	church/inanim@
+Theatine Church	place	church/inanim@
+Trinity Church	place	church/inanim@
+Trinity Episcopal Cathedral	place	church/inanim@
+Trinity Episcopal Church	place	church/inanim@
+Trinity Lutheran Church	place	church/inanim@
+Union Presbyterian Church	place	church/inanim@
+United Faith Church	place	church/inanim@
+United Methodist Church	place	church/inanim@
+Whitneyville Congregational Church	place	church/inanim@
+Woodlands Church	place	church/inanim@
+Zion Lutheran Church	place	church/inanim@
