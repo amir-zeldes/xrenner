@@ -13,12 +13,14 @@ from modules.xrenner_classes import *
 from modules.xrenner_coref import *
 from modules.xrenner_marker import make_markable
 from modules.xrenner_lex import *
+from modules.xrenner_postprocess import postprocess_coref
 from modules.depedit import run_depedit
 
-__version__ = "1.1.4"
+__version__ = "1.1.5"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
+
 
 def find_antecedent(markable, previous_markables, lex):
 	candidate = None
@@ -49,7 +51,6 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 		for tok_text in child_strings[child_id]:
 			if tok_text not in conll_tokens[child_id].child_strings:
 				conll_tokens[child_id].child_strings.append(tok_text)
-
 
 
 	mark_candidates_by_head = collections.OrderedDict()
@@ -347,9 +348,10 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 	for markable_head_id in markables_by_head:
 		if int(re.sub('_.*','',markable_head_id)) > tokoffset:  # Resolve antecedent for current sentence markables
 			current_markable = markables_by_head[markable_head_id]
+			# DEBUG POINT
 			if current_markable.text.strip() in lex.debug:
 				pass
-			if antecedent_prohibited(current_markable, conll_tokens, lex):
+			if antecedent_prohibited(current_markable, conll_tokens, lex) or (current_markable.definiteness == "indef" and  lex.filters["apposition_func"].match(current_markable.head.func) is None):
 				antecedent = None
 			else:
 				antecedent = find_antecedent(current_markable, markables, lex)
