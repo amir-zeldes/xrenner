@@ -178,38 +178,53 @@ def isa(markable, candidate, lex):
 	:return: bool
 	"""
 
-	# Don't allow an indefinite to have a definite antecedent via isa relation
-	if markable.start > candidate.start:
-		if markable.definiteness == "indef" and candidate.definiteness =="def":
-			return False
-	else:
-		if markable.definiteness == "def" and candidate.definiteness =="indef":
-			return False
+	if not lex.filters["allow_indef_anaphor"]:
+		# Don't allow an indefinite to have a definite antecedent via isa relation
+		if markable.start > candidate.start:
+			if markable.definiteness == "indef" and candidate.definiteness =="def":
+				return False
+		else:
+			if markable.definiteness == "def" and candidate.definiteness =="indef":
+				return False
 
-	# Don't allow a proper markable to have an indefinite antecedent via isa relation
-	if markable.start > candidate.start:
-		if markable.form == "proper" and candidate.definiteness == "indef":
-			return False
-	else:
-		if markable.definiteness == "indef" and candidate.form =="proper":
-			return False
+		# Don't allow a proper markable to have an indefinite antecedent via isa relation
+		if markable.start > candidate.start:
+			if markable.form == "proper" and candidate.definiteness == "indef":
+				return False
+		else:
+			if markable.definiteness == "indef" and candidate.form =="proper":
+				return False
 
 
+	# Subclass based isa match - check agreement too
 	for subclass in markable.alt_subclasses:
 		if subclass in lex.isa:
 			if candidate.head.lemma.lower() in lex.isa[subclass] or candidate.text.lower().strip() in lex.isa[subclass]:
 				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
-					candidate.isa_partner_head = markable.head.lemma
-					return True
+					if agree_compatible(markable, candidate, lex):
+						candidate.isa_partner_head = markable.head.lemma
+						return True
+
+	# Exact text match in isa table - no agreement matching is carried out
 	if markable.text.strip() in lex.isa:
 		if candidate.text.strip() in lex.isa[markable.text.strip()] or candidate.text.strip() in lex.isa[markable.text.strip()]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				candidate.isa_partner_head = markable.head.lemma
 				return True
 	# TODO: add prefix/suffix stripped version to catch '*the* United States' = 'America'
-	if markable.head.lemma in lex.isa:
-		if candidate.head.lemma in lex.isa[markable.head.lemma] or candidate.head.text.strip() in lex.isa[markable.head.lemma]:
+
+	# Head isa match - no agreement matching is carried out
+	if markable.head.text.strip() in lex.isa:
+		if candidate.head.text.strip() in lex.isa[markable.head.text.strip()] or candidate.head.text.strip() in lex.isa[markable.head.text.strip()]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				candidate.isa_partner_head = markable.head.lemma
 				return True
+
+	# Lemma based isa matching - check agreement too
+	if markable.head.lemma in lex.isa:
+		if candidate.head.lemma in lex.isa[markable.head.lemma] or candidate.head.text.strip() in lex.isa[markable.head.lemma]:
+			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
+				if agree_compatible(markable, candidate, lex):
+					candidate.isa_partner_head = markable.head.lemma
+					return True
 	return False

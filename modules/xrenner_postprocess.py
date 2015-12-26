@@ -1,6 +1,6 @@
 from collections import defaultdict
 from xrenner_classes import *
-from xrenner_marker import markables_overlap
+from xrenner_marker import markables_overlap, markable_extend_punctuation
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
 Postprocessing module. Alters results of coreference analysis based on model settings,
@@ -10,7 +10,7 @@ Author: Amir Zeldes and Shuo Zhang
 """
 
 
-def postprocess_coref(markables, lex, markstart, markend, markbyhead):
+def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_tokens):
 	# Collect markable groups
 	marks_by_group = defaultdict(list)
 	for markable in markables:
@@ -85,7 +85,16 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead):
 					if prev.coref_type == "appos" and prev.antecedent != "none":
 						# Two markables in the envelop: prev and prevprev
 						prevprev = prev.antecedent
-						envlop = create_envelope(prevprev,prev)
+						envlop = create_envelope(prevprev, prev, conll_tokens)
+
+						# Extend markable to trailing closing punctuation if it contains opening punctuation
+						if envlop.end < len(conll_tokens) - 1:
+							next_id = envlop.end + 1
+							lex.open_close_punct[","] = "," # Add trailing comma option to envelope to match OntoNotes behavior
+							if markable_extend_punctuation(envlop.text, conll_tokens[next_id], lex.open_close_punct, "trailing"):
+								envlop.text += conll_tokens[next_id].text + " "
+								envlop.end += 1
+
 						markables.append(envlop)
 						markstart[envlop.start].append(envlop)
 						markend[envlop.end].append(envlop)
@@ -123,14 +132,18 @@ def splice_out(mark, group):
 	mark.id = "0"
 
 
-def create_envelope(first,second):
+def create_envelope(first,second, conll_tokens):
 	mark_id="env"
 	form = "proper" if (first.form == "proper" or second.form == "proper") else "common"
 	head=first.head
 	definiteness=first.definiteness
 	start=first.start
 	end=second.end
-	text=first.text.strip() + " " + second.text.strip()
+	intermediate = ""
+	if first.end+1 < second.start: # Some intervening tokens should be included in the envelope text
+		for tok in conll_tokens[first.end+1:second.start]:
+			intermediate += tok.text + " "
+	text=first.text.strip() + " " + intermediate + second.text.strip()
 	entity=second.entity
 	entity_certainty=second.entity_certainty
 	subclass=first.subclass
