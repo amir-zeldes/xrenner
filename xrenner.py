@@ -16,7 +16,7 @@ from modules.xrenner_lex import *
 from modules.xrenner_postprocess import postprocess_coref
 from modules.depedit import run_depedit
 
-__version__ = "1.1.5"
+__version__ = "1.1.6"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
@@ -95,7 +95,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 
 			# Check for [city], [state] apposition -
 			# typical (English model) Stanford parser behavior
-			if tok1.text == "England":
+			if tok1.text == "Am":
 				pass
 			if lex.filters["apposition_func"].match(tok1.func) is not None and not int(tok1.id) < 3:
 				if lex.filters["proper_pos"].match(conll_tokens[int(tok1.id) - 2].pos) is not None and conll_tokens[
@@ -134,6 +134,10 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 	# Find dead areas
 	for tok1 in conll_tokens[tokoffset + 1:]:
 		# Affix tokens can't be markable heads - assume parser error and fix if desired
+
+		# DEBUG POINT
+		if tok1.text=="Am":
+			pass
 		if lex.filters["postprocess_parser"]:
 			if ((lex.filters["mark_head_pos"].match(tok1.pos) is not None and lex.filters["mark_forbidden_func"].match(tok1.func) is None) or
 			pos_func_combo(tok1.pos, tok1.func, lex.filters["pos_func_heads"])) and not (stop_ids[tok1.id]):
@@ -190,7 +194,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 
 	# Expand children list recursively into descendants
 	for parent_key in children:
-		descendants[parent_key] = get_descendants(parent_key, children)
+		descendants[parent_key] = get_descendants(parent_key, children, [], sent_num, conll_tokens)
 
 
 	keys_to_pop = []
@@ -223,7 +227,8 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 								if sub_descendant in descendants[tok.id]:
 									descendants[tok.id].remove(sub_descendant)
 					if tok.id in descendants:
-						descendants[tok.id].remove(child.id)
+						if child.id in descendants[tok.id]:
+							descendants[tok.id].remove(child.id)
 					# Build a composite id for the large head from coordinate children id's separated by underscore
 					submark_id += "_" + child.id
 			if make_submark:
@@ -277,7 +282,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			definiteness = "def"
 		else:
 			mark.form = "common"
-			children_are_articles = (lex.filters["definite_articles"].match(conll_tokens[int(maybe_article)].text) is not None for maybe_article in children[mark.head.id]+[mark.head.id])
+			children_are_articles = (lex.filters["definite_articles"].match(conll_tokens[int(maybe_article)].text) is not None for maybe_article in children[mark.head.id]+[mark.head.id]+[mark.start])
 			if any(children_are_articles):
 				definiteness = "def"
 			else:
@@ -351,7 +356,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			# DEBUG POINT
 			if current_markable.text.strip() in lex.debug:
 				pass
-			if antecedent_prohibited(current_markable, conll_tokens, lex) or (current_markable.definiteness == "indef" and  lex.filters["apposition_func"].match(current_markable.head.func) is None):
+			if antecedent_prohibited(current_markable, conll_tokens, lex) or (current_markable.definiteness == "indef" and  lex.filters["apposition_func"].match(current_markable.head.func) is None and not lex.filters["allow_indef_anaphor"]):
 				antecedent = None
 			else:
 				antecedent = find_antecedent(current_markable, markables, lex)
@@ -460,7 +465,7 @@ for myline in infile:
 if sentlength > 0:  # Leftover sentence did not have trailing newline
 	process_sentence(conll_tokens, tokoffset, current_sentence, child_funcs, child_strings)
 
-postprocess_coref(markables, lex, markstart_dict, markend_dict,markables_by_head)
+postprocess_coref(markables, lex, markstart_dict, markend_dict,markables_by_head, conll_tokens)
 
 marks_to_kill = []
 for mark in markables:

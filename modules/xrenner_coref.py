@@ -44,7 +44,7 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
 										return candidate
-								elif markable.entity == candidate.entity and (isa(markable, candidate, lex) or isa(candidate, markable, lex)) and agree_compatible(markable, candidate, lex):
+								elif markable.entity == candidate.entity and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
 									if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
@@ -55,7 +55,7 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 										if propagate.startswith("propagate"):
 											propagate_entity(markable, candidate, propagate)
 										return candidate
-								elif entities_compatible(markable, candidate, lex) and (isa(markable, candidate, lex) or isa(candidate, markable, lex)) and agree_compatible(markable, candidate, lex):
+								elif entities_compatible(markable, candidate, lex) and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
 										if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
 											if merge_entities(markable, candidate, previous_markables, lex):
 												if propagate.startswith("propagate"):

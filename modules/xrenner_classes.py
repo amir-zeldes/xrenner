@@ -4,6 +4,7 @@ Basic classes for parsed tokens, markables and sentences.
 Author: Amir Zeldes
 """
 
+import sys
 
 class ParsedToken:
 	def __init__(self, tok_id, text, lemma, pos, morph, head, func, sentence, modifiers, child_funcs, child_strings, lex, quoted=False):
@@ -65,10 +66,16 @@ class Sentence:
 		self.mood = mood
 
 
-def get_descendants(parent, children_dict):
+def get_descendants(parent, children_dict, seen_tokens, sent_num, conll_tokens):
 	my_descendants = []
 	my_descendants += children_dict[parent]
 	for child in children_dict[parent]:
+		if child in seen_tokens:
+			sys.stderr.write("\nCycle detected in syntax tree in sentence " + str(sent_num) + " (child of token: '" + conll_tokens[int(parent)].text + "')\n")
+			sys.exit("Exiting due to invalid input\n")
+		else:
+			seen_tokens += [child]
+	for child in children_dict[parent]:
 		if child in children_dict:
-			my_descendants += get_descendants(child, children_dict)
+			my_descendants += get_descendants(child, children_dict, seen_tokens, sent_num, conll_tokens)
 	return my_descendants
