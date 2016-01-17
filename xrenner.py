@@ -297,11 +297,12 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			mark.agree = mark.alt_agree[0]
 		else:
 			mark.alt_agree = []
-
 		if mark.agree != mark.head.morph and mark.head.morph != "_" and mark.head.morph != "--":
 			mark.agree = mark.head.morph
 			mark.agree_certainty = "mark_head_morph"
 			mark.alt_agree.append(mark.head.morph)
+		if mark.cardinality == 0:
+			mark.cardinality = resolve_cardinality(mark,lex)
 
 		resolve_mark_entity(mark, conll_tokens, lex)
 		if "/" in mark.entity:  # Lexicalized agreement information appended to entity

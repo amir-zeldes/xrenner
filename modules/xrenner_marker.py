@@ -211,7 +211,10 @@ def resolve_mark_agree(mark, lex):
 
 
 def resolve_cardinality(mark,lex):
-	pass
+	for mod in mark.head.modifiers:
+		if mod.text in lex.numbers:
+			return int(lex.numbers[mod.text][0])
+	return 0
 
 
 
