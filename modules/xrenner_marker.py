@@ -214,6 +214,9 @@ def resolve_cardinality(mark,lex):
 	for mod in mark.head.modifiers:
 		if mod.text in lex.numbers:
 			return int(lex.numbers[mod.text][0])
+		elif re.search("\d+",mod.text):
+			return int(mod.text)
+
 	return 0
 
 

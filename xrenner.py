@@ -301,6 +301,8 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			mark.agree = mark.head.morph
 			mark.agree_certainty = "mark_head_morph"
 			mark.alt_agree.append(mark.head.morph)
+
+		#cardinality resolve
 		if mark.cardinality == 0:
 			mark.cardinality = resolve_cardinality(mark,lex)
 

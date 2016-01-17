@@ -156,7 +156,13 @@ def create_envelope(first,second, conll_tokens):
 	alt_entities=first.alt_entities
 	alt_subclasses=first.alt_subclasses
 	alt_agree=first.alt_agree
+	cardinality=0
+	if first.cardinality!=0:
+		if first.cardinality == second.cardinality:
+			cardinality = first.cardinality
 
-	envelope = Markable(mark_id, head, form, definiteness, start, end, text, entity, entity_certainty, subclass, infstat, agree, sentence, antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree)
+
+
+	envelope = Markable(mark_id, head, form, definiteness, start, end, text, entity, entity_certainty, subclass, infstat, agree, sentence, antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree, cardinality)
 
 	return envelope

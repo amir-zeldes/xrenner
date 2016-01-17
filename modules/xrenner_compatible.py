@@ -32,10 +32,11 @@ def entities_compatible(mark1, mark2, lex):
 
 
 def cardinality_compatible(mark1,mark2):
-	if mark1.cardinality !=mark2.cardinality:
-		return False
-	else:
-		return True
+	if mark1.cardinality!=0 and mark2.cardinality!=0:
+		if mark1.cardinality != mark2.cardinality:
+			return False
+
+	return True
 
 
 
