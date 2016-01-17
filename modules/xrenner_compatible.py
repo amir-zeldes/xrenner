@@ -30,6 +30,18 @@ def entities_compatible(mark1, mark2, lex):
 	return False
 
 
+
+def cardinality_compatible(mark1,mark2):
+	if mark1.cardinality !=mark2.cardinality:
+		return False
+	else:
+		return True
+
+
+
+
+
+
 def modifiers_compatible(markable, candidate, lex):
 	"""
 	Checks whether the dependents of two markables are compatible for possible coreference
@@ -38,6 +50,9 @@ def modifiers_compatible(markable, candidate, lex):
 	:param lex: the LexData object with gazetteer information and model settings
 	:return: bool
 	"""
+
+	if not cardinality_compatible(markable,candidate):
+		return False
 
 	# Check if markable and candidate have modifiers that are in the antonym list together,
 	# e.g. 'the good news' should not be coreferent with 'the bad news'

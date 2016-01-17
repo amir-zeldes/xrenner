@@ -33,6 +33,7 @@ class LexData:
 		self.coref = self.read_delim('coref.tab')
 		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
 		self.pronouns= self.read_delim('pronouns.tab', 'double')
+		self.numbers=self.read_delim('numbers.tab','double')
 		self.affix_tokens = self.read_delim('affix_tokens.tab')
 
 		self.filters = self.get_filters(override)

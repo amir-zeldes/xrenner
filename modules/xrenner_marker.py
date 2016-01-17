@@ -208,6 +208,15 @@ def resolve_mark_agree(mark, lex):
 				mark.alt_agree.append(entry[entry.find("/") + 1:])
 
 
+
+
+def resolve_cardinality(mark,lex):
+	pass
+
+
+
+
+
 def recognize_prefix(mark, prefix_dict):
 	"""
 	Attempt to recognize entity type based on a prefix

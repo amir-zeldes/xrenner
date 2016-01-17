@@ -215,6 +215,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			# Check whether this head is the beginning of a coordination and needs its own sub-markable too
 			make_submark = False
 			submark_id = ""
+			cardi=0
 			for child_id in children[tok.id]:
 				child = conll_tokens[int(child_id)]
 				if child.coordinate:
@@ -231,6 +232,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 							descendants[tok.id].remove(child.id)
 					# Build a composite id for the large head from coordinate children id's separated by underscore
 					submark_id += "_" + child.id
+					cardi+=1
 			if make_submark:
 				# Assign aggregate/coordinate agreement class to large markable if desired
 				if lex.filters["aggregate_agree"] != "_":
@@ -244,7 +246,9 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 
 				# Make the small markable and recall the big markable
 				small_markable = make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex)
+				mark_candidates_by_head[tok.id].cardinality=cardi+1
 				big_markable = mark_candidates_by_head[tok.id]
+
 
 				# Switch the id's so that the big markable has the 1_2_3 style id, and the small has just the head id
 				mark_candidates_by_head[tok.id + submark_id] = big_markable
@@ -344,7 +348,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 		this_markable = Markable("referent_" + str(markcounter), tok, mark.form,
 		                         definiteness, mark.start, mark.end, mark.text, mark.entity, mark.entity_certainty,
 		                         subclass, "new", mark.agree, mark.sentence, "none", "none", groupcounter,
-		                         mark.alt_entities, mark.alt_subclasses, mark.alt_agree)
+		                         mark.alt_entities, mark.alt_subclasses, mark.alt_agree,mark.cardinality)
 		markables.append(this_markable)
 		markables_by_head[mark_id] = this_markable
 		markstart_dict[this_markable.start].append(this_markable)

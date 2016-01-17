@@ -32,7 +32,7 @@ class ParsedToken:
 
 class Markable:
 	def __init__(self, mark_id, head, form, definiteness, start, end, text, entity, entity_certainty, subclass, infstat, agree, sentence,
-				 antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree):
+				 antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree,cardinality=0):
 		self.id = mark_id
 		self.head = head
 		self.form = form
@@ -58,6 +58,7 @@ class Markable:
 		self.alt_agree = alt_agree
 		self.alt_entities = alt_entities
 		self.alt_subclasses = alt_subclasses
+		self.cardinality=cardinality
 
 
 class Sentence:
