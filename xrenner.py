@@ -302,7 +302,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			mark.agree_certainty = "mark_head_morph"
 			mark.alt_agree.append(mark.head.morph)
 
-		#cardinality resolve
+		#cardinality resolve, only resolve here if it hasn't been set before (as in coordination markable)
 		if mark.cardinality == 0:
 			mark.cardinality = resolve_cardinality(mark,lex)
 
@@ -498,4 +498,3 @@ elif out_format == "conll":
 	output_conll(conll_tokens, markstart_dict, markend_dict, options.file)
 else:
 	output_SGML(conll_tokens, markstart_dict, markend_dict)
-
