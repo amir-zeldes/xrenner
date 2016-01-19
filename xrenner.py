@@ -16,7 +16,7 @@ from modules.xrenner_lex import *
 from modules.xrenner_postprocess import postprocess_coref
 from modules.depedit import run_depedit
 
-__version__ = "1.2.0"
+__version__ = "1.2.0.1"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
