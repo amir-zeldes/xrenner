@@ -1,4 +1,6 @@
 import re
+from xrenner_marker import remove_suffix_tokens
+from math import log
 
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
@@ -20,7 +22,7 @@ def entities_compatible(mark1, mark2, lex):
 		return True
 	elif mark1.entity is None or mark2.entity is None:
 		return True
-	if mark1.form == "pronoun" and not (mark1.entity == lex.filters["person_def_entity"] and mark2.entity != lex.filters["person_def_entity"]):
+	if mark1.form == "pronoun" and (not (mark1.entity == lex.filters["person_def_entity"] and mark2.entity != lex.filters["person_def_entity"]) or mark1.entity_certainty == ''):
 		return True
 	if mark1.entity in mark2.alt_entities and mark1.entity != mark2.entity and (mark2.entity_certainty == "uncertain" or mark2.entity_certainty == "propagated"):
 		return True
@@ -38,6 +40,21 @@ def modifiers_compatible(markable, candidate, lex):
 	:param lex: the LexData object with gazetteer information and model settings
 	:return: bool
 	"""
+
+	# Do strict 'no new modifiers' check if desired
+	if lex.filters["no_new_modifiers"]:
+		if markable.start > candidate.start:
+			first = candidate
+			second = markable
+		else:
+			first = markable
+			second = candidate
+		first_mods = (comp_mod.text for comp_mod in first.head.modifiers)
+		for mod in second.head.modifiers:
+			if lex.filters["det_func"].match(mod.func) is None:  # Exclude determiners from this check
+				if mod.text not in first_mods:
+					return False
+
 
 	# Check if markable and candidate have modifiers that are in the antonym list together,
 	# e.g. 'the good news' should not be coreferent with 'the bad news'
@@ -76,10 +93,17 @@ def modifiers_compatible(markable, candidate, lex):
 				markable.non_antecdent_groups.add(candidate.group)
 				return False
 
+	# Check that heads are not antonyms themselves
+	if markable.head.lemma in lex.antonyms:
+		if candidate.head.lemma in lex.antonyms[markable.head.lemma]:
+			return False
+		if candidate.head.lemma.isupper() and candidate.head.lemma.lower() in lex.antonyms[markable.head.lemma]:
+			return False
+
 	# Recursive check through antecedent ancestors in group
 	if candidate.antecedent != "none":
-		antecdent_compatible = modifiers_compatible(markable, candidate.antecedent, lex)
-		if antecdent_compatible:
+		antecedent_compatible = modifiers_compatible(markable, candidate.antecedent, lex) and modifiers_compatible(candidate.antecedent, markable, lex)
+		if not antecedent_compatible:
 			return False
 
 	return True
@@ -117,10 +141,11 @@ def agree_compatible(mark1, mark2, lex):
 
 def merge_entities(mark1, mark2, previous_markables, lex):
 	"""
-	Negotiates entity mismtaches across coreferent markables and their groups.
-	Returns True if merging has occured.
+	Negotiates entity mismatches across coreferent markables and their groups.
+	Returns True if merging has occurred.
 	:param mark1: the first of two markables to merge entities for
 	:param mark2: the second of two markables to merge entities for
+	:param previous_markables: all previous markables which may need to inherit from the model/host
 	:param lex: the LexData object with gazetteer information and model settings
 	:return: bool
 	"""
@@ -192,16 +217,22 @@ def isa(markable, candidate, lex):
 			if markable.form == "proper" and candidate.definiteness == "indef":
 				return False
 		else:
-			if markable.definiteness == "indef" and candidate.form =="proper":
+			if markable.definiteness == "indef" and candidate.form == "proper":
 				return False
 
 
 	# Subclass based isa match - check agreement too
-	for subclass in markable.alt_subclasses:
+	for subclass in markable.alt_subclasses + [markable.subclass]:
 		if subclass in lex.isa:
-			if candidate.head.lemma.lower() in lex.isa[subclass] or candidate.text.lower().strip() in lex.isa[subclass]:
-				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
-					if agree_compatible(markable, candidate, lex):
+			if lex.isa[subclass][-1] == "*":
+				subclass_isa = lex.isa[subclass][:-1]
+				check_agree = False
+			else:
+				subclass_isa = lex.isa[subclass]
+				check_agree = True
+			if candidate.head.lemma.lower() in subclass_isa or candidate.text.lower().strip() in subclass_isa:
+				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma or markable.isa_partner_head == candidate.head.lemma:
+					if agree_compatible(markable, candidate, lex) or check_agree is False:
 						candidate.isa_partner_head = markable.head.lemma
 						return True
 
@@ -213,7 +244,33 @@ def isa(markable, candidate, lex):
 				return True
 	# TODO: add prefix/suffix stripped version to catch '*the* United States' = 'America'
 
-	# Head isa match - no agreement matching is carried out
+	# Core text isa match - no agreement matching is carried out
+	if markable.core_text.strip() in lex.isa:
+		if candidate.core_text.strip() in lex.isa[markable.core_text.strip()] or candidate.head.lemma in lex.isa[markable.core_text.strip()]:
+			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
+				candidate.isa_partner_head = markable.head.lemma
+				return True
+		# Head-core text isa match - no agreement matching is carried out
+		# Note this next check is unidirectional
+		elif candidate.head.text.strip() in lex.isa[markable.core_text.strip()]:
+			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
+				candidate.isa_partner_head = markable.head.lemma
+				return True
+	elif markable.core_text.strip().isupper():  # Try to title case on all caps entity
+		if markable.core_text.strip().title() in lex.isa:
+			if candidate.core_text.strip() in lex.isa[markable.core_text.strip().title()] or candidate.head.lemma in lex.isa[markable.core_text.strip().title()]:
+				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
+					candidate.isa_partner_head = markable.head.lemma
+					return True
+
+	# Handle cases where a prefix like an article is part of the entity name, but a suffix like a possessive isn't
+	if remove_suffix_tokens(markable.text.strip(),lex) in lex.isa:
+		if candidate.head.text.strip() in lex.isa[remove_suffix_tokens(markable.text.strip(),lex)]:
+			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
+				candidate.isa_partner_head = markable.head.lemma
+				return True
+
+	# Head-head isa match - no agreement matching is carried out
 	if markable.head.text.strip() in lex.isa:
 		if candidate.head.text.strip() in lex.isa[markable.head.text.strip()] or candidate.head.text.strip() in lex.isa[markable.head.text.strip()]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
@@ -227,4 +284,72 @@ def isa(markable, candidate, lex):
 				if agree_compatible(markable, candidate, lex):
 					candidate.isa_partner_head = markable.head.lemma
 					return True
+
+	# First name-full name match
+	if markable.form == "proper" and markable.entity == lex.filters["person_def_entity"]:
+		if (markable.text.strip() in lex.first_names and candidate.text.startswith(markable.text.strip()+" ")) or \
+		(candidate.text.strip() in lex.first_names and markable.text.startswith(candidate.text.strip()+" ")):
+			return True
+
 	return False
+
+
+def group_agree_compatible(markable,candidate,previous_markables,lex):
+	"""
+	:param markable: markable whose group the candidate might be joined to
+	:param candidate: candidate to check for compatibility with all group members
+	:param previous_markables: all previous markables which may need to inherit from the model/host
+	:param lex: the LexData object with gazetteer information and model settings
+	:return: bool
+	"""
+	if "+" in lex.filters["never_agree_pairs"]:
+		never_agreement_pairs = lex.filters["never_agree_pairs"].split(";")
+		agreements = []
+		for mark in previous_markables:
+			if mark.group == markable.group or mark.group == candidate.group:
+				agreements.append(mark.agree)
+
+		for pair in never_agreement_pairs:
+			class1, class2 = pair.split("+")
+			if class1 in agreements and class2 in agreements:
+				return False
+	return True
+
+
+def best_candidate(markable,candidate_list,lex):
+	"""
+	:param markable: markable to find best antecedent for
+	:param candidate_list: list of markables which are possible antecedents based on some coref_rule
+	:param lex: the LexData object with gazetteer information and model settings
+	:return: Markable object or None (the selected best antecedent markable, if available)
+	"""
+	anaphor_parent = markable.head.head_text
+	candidate_scores = {}
+	entity_dep_scores = {}
+	best = None
+	if anaphor_parent in lex.entity_deps:
+		if markable.head.func in lex.entity_deps[anaphor_parent]:
+			for entity in lex.entity_deps[anaphor_parent][markable.head.func]:
+				entity_dep_scores[entity] = lex.entity_deps[anaphor_parent][markable.head.func][entity]
+	for candidate in candidate_list:
+		candidate_scores[candidate] = 0 - (markable.sentence.sent_num - candidate.sentence.sent_num)
+		candidate_scores[candidate] -= (markable.start - candidate.end) * 0
+		if candidate.entity in entity_dep_scores:
+			candidate_scores[candidate] += log(entity_dep_scores[candidate.entity]+1)
+		if candidate.entity == lex.filters["person_def_entity"]:  # Introduce slight bias to persons
+			candidate_scores[candidate] += 0.1
+		if candidate.entity == lex.filters["subject_func"]:  # Introduce slight bias to subjects
+			candidate_scores[candidate] += 0.95
+
+	max_score = ''
+	for candidate in candidate_scores:
+		if max_score == '':
+			max_score = candidate_scores[candidate]
+			best = candidate
+		elif candidate_scores[candidate] > max_score:
+			max_score = candidate_scores[candidate]
+			best = candidate
+
+	markable.entity = best.entity
+	markable.entity_certainty = "propagated"
+	return best

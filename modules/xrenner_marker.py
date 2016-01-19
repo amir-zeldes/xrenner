@@ -52,6 +52,7 @@ def remove_suffix_tokens(marktext, lex):
 	else:
 		tokens = marktext.strip().split(" ")
 		suffix_candidate = ""
+
 		for token in reversed(tokens):
 			suffix_candidate = token + " " + suffix_candidate
 			if suffix_candidate.strip() in lex.affix_tokens:
@@ -61,9 +62,9 @@ def remove_suffix_tokens(marktext, lex):
 
 
 def remove_prefix_tokens(marktext, lex):
-	re_prefix_tokens = re.compile(" ?([Tt]he|an?|some|all|many) ?")
+	re_prefix_tokens = re.compile(" ?([Tt]h([oe](se)?|is|at)|an?|some|all|many)( |$)")
 	if re_prefix_tokens.match(marktext) is not None:
-		return re.sub(r"^ ?([Tt]he|an?|some|all|many) ?", "", marktext)
+		return re.sub(r"^ ?([Tt]h([oe](se)?|is|at)|an?|some|all|many)( |$)", "", marktext)
 	else:
 		tokens = marktext.strip().split(" ")
 		prefix_candidate = ""
@@ -77,30 +78,39 @@ def remove_prefix_tokens(marktext, lex):
 
 def resolve_mark_entity(mark, token_list, lex):
 	entity = ""
+	parent_text = token_list[int(mark.head.head)].text
+	token_list[int(mark.head.id)].head_text = parent_text  # Save parent text for later dependency check
 	if mark.form == "pronoun":
-		if mark.agree == "male" or mark.agree == "female":
+		if re.search(r'[12]',mark.agree):  # Explicit 1st or 2nd person pronoun
+			entity = lex.filters["person_def_entity"]
+			mark.entity_certainty = 'certain'
+		elif mark.agree == "male" or mark.agree == "female":  # Possibly human 3rd person
 			entity = lex.filters["person_def_entity"]
 			#mark.alt_entities.append("animal")
 			mark.entity_certainty = 'uncertain'
 		else:
-			entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
+			if parent_text in lex.entity_deps:
+				if mark.head.func in lex.entity_deps[parent_text]:
+					entity = get_key_by_max_val(lex.entity_deps[parent_text][mark.head.func])
+			else:
+				entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
 	else:
 		if entity == "":
 			if re.match(r'(1[456789][0-9][0-9]|20[0-9][0-9])', mark.core_text) is not None:
 				entity = lex.filters["time_def_entity"]
 		if entity == "":
-			if re.match(r'(([0-9]+[.,]?)+)', mark.core_text) is not None:
+			if re.match(r'^(([0-9]+[.,]?)+)$', mark.core_text) is not None:
 				entity = lex.filters["quantity_def_entity"]
 		if entity == "":
-			entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
+			entity = resolve_entity_cascade(mark.text.strip(), mark, lex)
 		if entity == "":
 			entity = resolve_entity_cascade(replace_head_with_lemma(mark), mark, lex)
 		if entity == "":
-			entity = resolve_entity_cascade(remove_suffix_tokens(mark.core_text, lex).strip(), mark, lex)
+			entity = resolve_entity_cascade(remove_suffix_tokens(mark.text.strip(),lex), mark, lex)
 		if entity == "":
-			entity = resolve_entity_cascade(remove_prefix_tokens(mark.core_text, lex).strip(), mark, lex)
+			entity = resolve_entity_cascade(remove_prefix_tokens(mark.text.strip(), lex), mark, lex)
 		if entity == "":
-			entity = resolve_entity_cascade(remove_suffix_tokens(remove_prefix_tokens(mark.core_text, lex), lex).strip(), mark, lex)
+			entity = resolve_entity_cascade(mark.core_text, mark, lex)
 		if entity == "":
 			entity = recognize_prefix(mark, lex.entity_mods)
 		if entity == "" and mark.head.text.istitle():
@@ -125,8 +135,7 @@ def resolve_mark_entity(mark, token_list, lex):
 		parent_text = token_list[int(mark.head.head)].text
 		if parent_text in lex.entity_deps:
 			if mark.head.func in lex.entity_deps[parent_text]:
-				#pass
-				entity = lex.entity_deps[parent_text][mark.head.func][0]
+				entity = get_key_by_max_val(lex.entity_deps[parent_text][mark.head.func])
 
 	mark.entity = entity
 
@@ -136,6 +145,7 @@ def resolve_entity_cascade(entity_text, mark, lex):
 	entity = ""
 	if entity_text in lex.entities:
 		entity = lex.entities[entity_text][0]
+		mark.entity_certainty = "entities_match"
 		for alt in lex.entities[entity_text]:
 			alt_no_agree = re.sub(r"/.*", "", alt)
 			if "\t" in alt_no_agree:
@@ -144,6 +154,7 @@ def resolve_entity_cascade(entity_text, mark, lex):
 			else:
 				mark.alt_entities.append(alt_no_agree)
 	if entity_text in lex.entity_heads:
+		mark.entity_certainty = "entity_heads_match"
 		if entity == "":
 			entity = lex.entity_heads[entity_text][0]
 			for alt in lex.entity_heads[entity_text]:
@@ -165,6 +176,7 @@ def resolve_entity_cascade(entity_text, mark, lex):
 		if entity_text[0].istitle() or not lex.filters["cap_names"]:
 			if entity == "":
 				entity = lex.filters["person_def_entity"]
+				mark.entity_certainty = "names_match"
 			elif not lex.filters["person_def_entity"] in mark.alt_entities:
 				mark.alt_entities.append(lex.filters["person_def_entity"])
 	if 0 < entity_text.count(" ") < 3:
@@ -225,6 +237,8 @@ def recognize_prefix(mark, prefix_dict):
 			substr += token + " "
 			if substr.strip() in prefix_dict:
 				return prefix_dict[substr.strip()]
+			elif substr.lower().strip() in prefix_dict:
+				return prefix_dict[substr.lower().strip()]
 	return ""
 
 
@@ -375,7 +389,7 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 						marktext += span_token.text + " "
 					break
 
-	core_text = marktext
+	core_text = marktext.strip()
 	# DEBUG POINT
 	if marktext.strip() in lex.debug:
 		pass
@@ -410,6 +424,34 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 			start -= 1
 
 
-	this_markable = Markable("", tok, "", "", start, end, core_text, "", "", "", "new", "", sentence, "none", "none", 0, [], [], [])
+	this_markable = Markable("", tok, "", "", start, end, core_text, core_text, "", "", "", "new", "", sentence, "none", "none", 0, [], [], [])
+	this_markable.core_text = remove_suffix_tokens(remove_prefix_tokens(this_markable.core_text,lex),lex)
+	if this_markable.core_text == '':  # Check in case suffix removal has left no core_text
+		this_markable.core_text = marktext.strip()
 	this_markable.text = marktext  # Update core_text with potentially modified markable text
 	return this_markable
+
+
+def get_key_by_max_val(dict_of_ints):
+	max_val = ''
+	for potential_key in dict_of_ints:
+		if max_val == '':
+			max_val = dict_of_ints[potential_key]
+			return_key = potential_key
+		elif dict_of_ints[potential_key] > max_val:
+			max_score = dict_of_ints[potential_key]
+			return_key = potential_key
+	return return_key
+
+
+def lookup_has_entity(text, lemma, entity, lex):
+	found = []
+	if text in lex.entities:
+		found = [i for i, x in enumerate(lex.entities[text]) if re.search(entity + '\t', x)]
+	elif lemma in lex.entities:
+		found = [i for i, x in enumerate(lex.entities[lemma]) if re.search(entity + '\t', x)]
+	elif text in lex.entity_heads:
+		found = [i for i, x in enumerate(lex.entity_heads[text]) if re.search(entity + '\t', x)]
+	elif lemma in lex.entity_heads:
+		found = [i for i, x in enumerate(lex.entity_heads[lemma]) if re.search(entity + '\t', x)]
+	return len(found) > 0

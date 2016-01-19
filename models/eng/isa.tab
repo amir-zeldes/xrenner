@@ -2,10 +2,14 @@
 # 1: From major class to comma separated lemmas (place -> place,location)
 # 2: From subclass to comma separated lemmas (city -> place,location,burg,metropolis...)
 # 3: From markable string to comma separated markable strings (United States -> USA,US,America...)
-# Sources: PPDB, Amir Zeldes (see licenses)
+# Suffix a ,* to an entry to show that it may ignore morphological agreement matching for subclass search
+# Sources: PPDB, Freebase, Amir Zeldes (see licenses)
 µl	μl
 µs	μs
+Álvaro Uribe	president
+Éamon de Valera	president
 éditions	editions
+Ōkuma Shigenobu	prime minister
 μl	µl
 μs	µs
 €	euros
@@ -44,13 +48,17 @@ $	dollars
 64bit	64-bit
 6th	sixth
 9th	ninth
+A. V. Bellarmin	member of parliament
 a.i.	acting
 a.k.a.	alias
 a.m.	p.m.
+Aaron Burr	vice president,senator
+Aaron Peskin	councillor
 aau	aaus
 aaus	aau
 abattoir	slaughterhouse
 abattoirs	slaughterhouses
+Abbott	member of parliament,prime minister
 abd	abdel
 abd	abdul
 abdallah	abdullah
@@ -62,15 +70,23 @@ abductor	kidnapper
 abdul	abd
 abdul	abdel
 abdullah	abdallah
+Abel Maldonado	lieutenant governor
+Abelardo L. Rodríguez	president
 ability	capacity
 abnds	ands
 abnormalities	anomalies
 abnormality	anomaly
+Abolhassan Banisadr	president
 aboriginal	indigenous
+Abraham Lincoln	president
+Abram Hewitt	mayor
 abrasions	scrapes
 absence	lack
 absorption	uptake
 abstention	forbearance
+Abu Dhabi	UAE
+Abu Dhabi	United Arab Emirates
+Abuja	Nigeria
 acadian	acadien
 acadian	acadienne
 acadians	acadiens
@@ -83,6 +99,7 @@ acclimation	acclimatization
 acclimatization	acclimation
 accomplishments	achievements
 accordance	conformity
+Accra	Ghana
 accuracy	precision
 acetic	anhydride
 achievements	accomplishments
@@ -92,10 +109,13 @@ acknowledges	recognizes
 acorns	tassels
 act	law
 acting	a.i.
+acting president	Raúl Castro,Castro,Hamid Karzai,Karzai,Robert Kocharyan,Kocharyan
+acting prime minister	Raúl Castro,Castro,Ehud Olmert,Olmert
 actor	man
 actor	player
 actors	players
 actress	woman
+Adams	president,member of congress,ambassador,secretary of state,senator,president,vice president,ambassador,delegate,member of parliament
 adapter	adaptor
 adapters	adaptors
 adaptor	adapter
@@ -104,7 +124,9 @@ add-ins	add-ons
 add-ins	snap-ins
 add-ons	add-ins
 add-ons	snap-ins
+Addis Ababa	Ethiopia
 addressee	consignee
+Aderholt	member of congress
 adiós	adios
 adios	adiós
 adjudicator	arbitrator
@@ -114,6 +136,7 @@ admixtures	adjuvants
 adolescent	adolescents
 adolescents	adolescent
 adolescents	teenagers
+Adolph Sutro	mayor
 adrenalin	adrenaline
 adrenaline	adrenalin
 adult	adults
@@ -131,6 +154,7 @@ aerodrome	airfield
 aerodromes	airfields
 aetiology	etiology
 affiliates	subsidiaries
+Afghanistan	Kabul
 afraid	scared
 ageing	aging
 agent	officer
@@ -149,16 +173,24 @@ agrochemicals	agro-chemicals
 agroecosystems	agro-ecosystems
 agroforestry	agro-forestry
 agronomists	agriculturalists
+Aguinaldo	president
+Ahern	prime minister,deputy prime minister
+Ahmad Tejan Kabbah	president
 aid	assistance
 aide-mémoire	aide-memoire
 aide-memoire	aide-mémoire
+Aiken	deputy prime minister
 aim	objective
 aircraft	planes
 airfield	aerodrome
 airfields	aerodromes
+airline	airliner,carrier,company,airline
 airmen	aviators
 airship	dirigible
 airworthiness	navigability
+Aiyar	member of parliament
+Akaka	senator,member of congress
+Al Gore	vice president
 al-ahli	al-ahly
 al-ahly	al-ahli
 al-asad	al-assad
@@ -171,6 +203,7 @@ al-chaab	al-sha'b
 al-fallujah	fallujah
 al-hariri	hariri
 al-islam	islam
+al-Jaafari	prime minister
 al-jazeera	aljazeera
 al-mahdi	mahdi
 al-nahayan	al-nahyan
@@ -198,18 +231,40 @@ al-yawer	al-yawar
 al-zarqawi	zarqawi
 al-zawahiri	al-zawahri
 al-zawahri	al-zawahiri
+Alain Juppé	prime minister
+Alan Griffin	member of parliament
+Alan Johnson	member of parliament
+Alan Lowenthal	state senator,member of congress
+Alan Milburn	member of parliament
+Albanese	member of parliament,deputy prime minister
+Albert Reynolds	prime minister
+Alberto Gonzales	attorney general
+Alby Schultz	member of parliament
 alcoholates	alkoxides
+Alec Douglas-Home	prime minister,member of parliament
 alewife	gaspereau
+Alex Hawke	member of parliament
+Alex Somlyay	member of parliament
+Alexander Downer	member of parliament
+Alexander Ramsey	governor,senator
+Alexandros Zaimis	president
 alfa	alpha
+Algiers	Algiria
+Algiria	Algiers
+Ali	prime minister
+Ali Mohamed Shein	vice president
 alias	a.k.a.
 alias	aliases
 aliases	alias
 aliens	foreigners
+Alioto-Pier	councillor
 aljazeera	al-jazeera
 alkali	alkaline
 alkaline	alkali
 alkoxides	alcoholates
 all-in-one	multifunction
+Allan Rocher	member of parliament
+Allard	senator
 allele	allelic
 allelic	allele
 alligators	crocodiles
@@ -225,9 +280,15 @@ alpha	alfa
 altitude	elevation
 aluminium	aluminum
 aluminum	aluminium
+Amanda Rishworth	member of parliament
+Ambareesh	member of parliament,member of parliament
+ambassador	Edward Livingston,Livingston,Robert Roosevelt,Roosevelt,Vijaya Lakshmi Pandit,Pandit,John Quincy Adams,Adams,John Adams,Adams,James Buchanan,Buchanan,James A. Bayard,Bayard
 America	United States,US,USA
+Amin	prime minister,vice president
 amir	emir
+Amman	Jordan
 amman	oman
+Ammiano	councillor
 amortization	depreciation
 amounts	quantities
 amphidiploids	amphiploids
@@ -250,13 +311,24 @@ ancestors	forefathers
 ancestry	descent
 anchor	cribbing
 andré	andre
+Andrés Pastrana Arango	president
 andre	andré
+Andrew Jackson	governor,president,member of congress,senator
+Andrew Johnson	president,governor,vice president
+Andrew Laming	member of parliament
+Andrew Lansley	member of parliament
+Andrew Robb	member of parliament
+Andrew Ryan McGill	governor
+Andrew Southcott	member of parliament
+Andrews	member of parliament
 ands	abnds
 anemia	anaemia
 anesthesia	anaesthesia
 anesthesiologist	anaesthetist
 anesthetic	anaesthetic
 anesthetics	anaesthetics
+Aneurin Bevan	member of parliament
+Angela Merkel	chancellor,minister
 angio	angiogram
 angiogram	angio
 angiogram	angiography
@@ -265,6 +337,11 @@ anguillans	anguillians
 anguillians	anguillans
 anhydride	acetic
 animal	animal,beast,creature,vertebrate,insect
+Ankara	Turkey
+Ann Richards	governor
+Anna Burke	member of parliament
+Anne Milton	member of parliament
+Annette Ellis	member of parliament
 annex	appendix
 annexes	appendices
 anniversaries	birthdays
@@ -272,12 +349,15 @@ anniversary	birthday
 annulment	cancellation
 anomalies	abnormalities
 anomaly	abnormality
+Anote Tong	president
 answer	reply
 answer	response
 answers	replies
 answers	responses
 antenatal	prenatal
 anthem	hymn
+Anthony Albanese	member of parliament,deputy prime minister
+Anthony Byrne	member of parliament
 anti-depressants	antidepressants
 anti-doping	antidoping
 anti-dumping	antidumping
@@ -309,7 +389,9 @@ apf	csa
 api	apis
 apiculture	beekeeping
 apis	api
+Apisai Ielemia	prime minister
 app	apa
+Appadurai	member of parliament
 apparel	clothing
 appellations	designations
 appendectomy	appy
@@ -320,30 +402,43 @@ application	request
 appraiser	evaluator
 appropriations	credits
 appy	appendectomy
+Aquino	president
 arab	arabic
 arabic	arab
+Arango	president
 arbiter	arbitrator
 arbitrator	adjudicator
 arbitrator	arbiter
 arc	cra
+Arch Bevis	member of parliament
 archaeologists	archeologists
 archeologists	archaeologists
 archive	archiving
 archiving	archive
+Ardolph L. Kline	mayor
 area	field
 area	zone
 areas	fields
 areas	zones
 argentina	argentine
+Argentina	Buenos Aires
 argentine	argentina
+Arlen Specter	senator
 armistice	truce
 arms	weapons
+Arnold Naudain	senator
+Arnold Schwarzenegger	governor
 arrowto	iconto
 artefacts	artifacts
+Arthur	president,vice president
+Arthur Chung	president
+Arthur Griffith	president
+Arthur Samuel, 1st Baron Mancroft	member of parliament
 article	rule
 article	section
 artifacts	artefacts
 artisans	craftsmen
+Artur Davis	member of congress
 asa	saa
 asci	ascus
 ascus	asci
@@ -370,6 +465,7 @@ assignor	transferor
 assignors	transferors
 assistance	aid
 assistant	deputy
+assistant secretary	Theodore Roosevelt,Roosevelt,Franklin D. Roosevelt,Roosevelt
 assumption	hypothesis
 assumptions	hypotheses
 assurance	insurance
@@ -379,13 +475,16 @@ asymmetric	asymmetrical
 asymmetrical	asymmetric
 async	asynchronous
 asynchronous	async
+Athithan	member of parliament
 atr	rta
 attackers	assailants
 attendee	presence
 attenuator	fader
 attorney	prosecutor
+attorney general	Ken Salazar,Salazar,Joe Lieberman,Lieberman,Alberto Gonzales,Gonzales,Bill Lockyer,Lockyer,Robert F. Kennedy,Kennedy,Jerry Brown,Brown,Pat Brown,Brown,George Deukmejian,Deukmejian,Janet Napolitano,Napolitano,Frank Murphy,Murphy,John Cochrane,Cochrane,Eliot Spitzer,Spitzer,John Marshall Harlan II,II,Nicola Roxon,Roxon,Roger Brooke Taney,Taney,Earl Warren,Warren,Caesar Augustus Rodney,Rodney,Harry M. Daugherty,Daugherty
 attract	attracting
 attracting	attract
+Aubyn	member of parliament
 audio-visual	audiovisual
 audiovisual	audio-visual
 audit	auditing
@@ -396,6 +495,9 @@ aunt	woman
 auntie	aunt
 aunties	aunts
 aunts	aunties
+Auriol	president,prime minister
+Austin	governor
+Austin Lane Crothers	governor
 authorisation	authorization
 authorization	authorisation
 authors	perpetrators
@@ -410,12 +512,14 @@ awareness	awareness-raising
 awareness-raising	awareness
 axis	shaft
 axle	shaft
+Ayub Khan	president
 aziz	al-aziz
 b13a	b13as
 b13as	b13a
 baby-sitter	babysitter
 babysitter	baby-sitter
 babysitter	sitter
+Bachus	member of congress
 back-end	backend
 back-pressure	backpressure
 backcross	backcrossing
@@ -431,18 +535,32 @@ bacteria	bacterium
 bacterium	bacteria
 bag	purse
 baggage	luggage
+Baghdad	Iraq
+Bailey	member of parliament
+Baker	mayor
+Bakoyannis	mayor,culture minister,member of parliament
+Balakh Sher Mazari	prime minister
 balance	equilibrium
+Baldwin	member of congress,senator,member of parliament
 balkanisation	balkanization
 balkanization	balkanisation
 ball	bullet
-ban	prohibition
+balloting	election,elections
+ban	prohibition,moratorium
+Banana	president
 bandleader	conductor
 banelings	stenches
+Bangkok	Thailand
+Bangladesh	Dhaka
 bangles	bracelets
+Banisadr	president
 bank	banking
 banking	bank
 bans	prohibitions
 baptisms	christenings
+Barack Obama	senator,president
+Barak	prime minister,defence minister,foreign minister
+Barbara Boxer	senator,member of congress
 barbaric	barbarous
 barbarism	barbarity
 barbarity	barbarism
@@ -451,10 +569,18 @@ barbecue	barbeque
 barbecues	barbeques
 barbeque	barbecue
 barbeques	barbecues
+Baronet	member of parliament,member of parliament
+Barrette	member of parliament
 barriers	obstacles
+Barry	deputy prime minister
+Barry Haase	member of parliament
+Bartlett	governor,mayor
+Barton	prime minister,member of parliament
 base	basis
 basement	cellar
 basis	base
+Bass	speaker,member of congress
+Bassett	governor,senator
 bathers	swimmers
 bathrobe	robe
 bathtub	tub
@@ -464,6 +590,7 @@ batsmen	batsman
 battlefield	battleground
 battleground	battlefield
 bay	wan
+Bayard	secretary of state,senator,senator,ambassador,member of congress
 bays	berries
 bdu	bdus
 bdus	bdu
@@ -483,29 +610,59 @@ behalf	name
 behavior	behaviour
 behaviour	behavior
 beheading	decapitation
+Beijing	China
+Beirut	Lebanon
+Belarus	Minsk
+Belgium	Brussels
+Belgrade	Serbia
+Belinda Neal	member of parliament
+Bellarmin	member of parliament
 belligerence	belligerency
 belligerency	belligerence
 ben	bin
+Ben-Gurion	prime minister
+Benazir Bhutto	prime minister
 beneficiaries	recipients
 beneficiary	recipient
 benefits	advantages
+Benjamin Franklin	speaker
+Benjamin Harrison	president
 berger	shepherd
 berglax	grenadier
+Berlin	Germany
+Bernie Ripoll	member of parliament
 berries	bays
+Bert Hazell	member of parliament
 berthage	mooring
+Bertie Ahern	prime minister,deputy prime minister
 betrayal	treason
 betrayer	traitor
+Bevan	member of parliament
+Bevan Dufty	councillor
 beverages	drinks
+Bevis	member of parliament
+Bharatsinh Madhavsinh Solanki	member of parliament
+Bhutto	prime minister,president,prime minister
 bidder	tenderer
 bidders	tenderers
+Biden	senator,councillor,vice president
+Bidgood	member of parliament
 biennia	bienniums
 bienniums	biennia
+Bigler	governor
 bike	motorcycle
 bile	biliary
 biliary	bile
+Bill Clements	governor
+Bill Clinton	president,governor
+Bill Lockyer	delegate to party convention,attorney general
+Bill Nelson	senator,member of congress
+Bill Richardson	governor
+Bill Shorten	member of parliament
 bill-to	billing
 billing	bill-to
 billing	invoicing
+Billson	member of parliament
 bin	ben
 bin	ibn
 bio-diesel	biodiesel
@@ -534,13 +691,20 @@ biosecurity	biosafety
 biosynthesis	biosynthetic
 biosynthetic	biosynthesis
 bioterrorism	bio-terrorism
+Bird	member of parliament
 birders	birdwatchers
 birdwatchers	birders
+Birgitta Dahl	speaker
 birthday	anniversary
 birthdays	anniversaries
 biscuits	cookies
+Bishop	member of parliament,member of parliament
 bison	buffalo
 bitch	slut
+Björn von Sydow	speaker
+Blair	prime minister,member of parliament
+Blanche Lincoln	senator,member of congress
+Blanshard	governor
 blast	explosion
 blasts	explosions
 blends	mixtures
@@ -555,20 +719,31 @@ blonde	blond
 bloodsuckers	leeches
 blower	fan
 bluffs	cliffs
+Blum	president,prime minister
 board	council
 boat	vessel
 boats	vessels
+Bob Baldwin	member of parliament
+Bob Casey, Jr.	senator
+Bob Debus	member of parliament
+Bob Katter	member of parliament
+Bob McMullan	member of parliament
 bodies	organs
 body	organ
 bog	peatland
 bogeyman	boogeyman
+Boggs	senator,governor,member of congress
+Bogra	prime minister
 bogs	peatlands
+Bohemia	monarch
 bolt	screw
 bolts	screws
 bombardment	bombing
 bombing	bombardment
 bombings	explosions
+Bonar Law	prime minister
 bone-setter	masseur
+Bonner	member of congress
 boobs	breasts
 boobs	tits
 boogeyman	bogeyman
@@ -576,19 +751,27 @@ booklet	brochure
 booklets	brochures
 bookshop	bookstore
 bookstore	bookshop
+Booth	governor,senator
 border	frontier
 borders	boundaries
 borders	frontiers
+Boris Johnson	mayor,member of parliament
+Bosnia and Herzegovina	Sarajevo
 botanical	botany
 botany	botanical
 bottles	cylinders
+Bottomley	member of parliament
 boundaries	borders
+Bounnhang Vorachith	vice president,prime minister
 bovine	veal
 bowel	intestinal
+Boxer	senator,member of congress
 boy	child,kid
 bpdu	bpdus
 bpdus	bpdu
 bracelets	bangles
+Bradbury	member of parliament
+Bradford	member of parliament
 brandies	cognacs
 brandy	cognac
 breach	violation
@@ -597,6 +780,13 @@ breastfeeding	breast-feeding
 breasts	boobs
 breasts	tits
 breathing	respiration
+Brendan Corish	deputy prime minister
+Brendan Nelson	member of parliament
+Brendan O'Connor	member of parliament
+Brett Raguse	member of parliament
+Brian Cowen	deputy prime minister,prime minister
+Brian Lenihan, Jr.	member of parliament
+Brian Lenihan, Sr.	deputy prime minister
 bridge	jumper
 Britain	UK,United Kingdom
 brochure	booklet
@@ -608,22 +798,37 @@ brokering	brokerage
 bromide	methyl
 bronchi	bronchus
 bronchus	bronchi
+Bronwyn Bishop	member of parliament
 broom	broomstick
 broomstick	broom
 brotherhood	fraternity
+Brown	secretary of state,mayor,governor,attorney general,governor,attorney general,mayor,speaker,member of parliament,prime minister
+Brownley	member of congress
 browser	explorer
 browser	navigator
+Bruce Billson	member of parliament
+Bruce Scott	member of parliament
+Brussels	Belgium
+Bruton	prime minister
+Bryant	member of parliament
 bst	tsb
+Buchanan	president,senator,ambassador,secretary of state,member of congress
+Bucharest	Romania
+Buckley	senator
+Budapest	Hungary
+Budd	governor
 buddhism	buddhist
 buddhist	buddhism
 budget	budgetary
 budgetary	budget
+Buenos Aires	Argentina
 buffalo	bison
 bugle	bugler
 bugler	bugle
 bugs	insects
 building	construction
 building	house,building
+Bulgaria	Sofia
 bullet	ball
 bulletin	newsletter
 bulletins	newsletters
@@ -631,13 +836,20 @@ bullying	intimidation
 bunnies	rabbits
 bunny	rabbit
 bureau	office
+Buren	president,senator,governor,vice president,secretary of state
 burgers	hamburgers
 burka	burqa
+Burke	member of parliament,member of parliament
+Burnell	councillor
 burner	recorder
+Burnett	governor
 burqa	burka
+Burr	vice president,senator
 burros	mules
+Bush	president,governor,president,member of congress,vice president
 businesses	companies
 businesses	enterprises
+Butler	member of parliament
 buy	purchase
 buybacks	redemptions
 buyer	purchaser
@@ -650,10 +862,15 @@ bycatch	by-catch
 bye	goodbye
 bylaws	by-laws
 byproducts	by-products
+Byrd	governor,senator
+Byrne	member of parliament
+Byrnes	secretary of state,governor
 cégeps	cegeps
 côte	coast
+C. C. Young	governor
 c.p.	p.c.
 cab	taxi
+cabinet secretary	Woodrow Wilson,Wilson,John Forsyth,Forsyth
 cable	wire
 cables	wires
 cabling	wiring
@@ -661,17 +878,27 @@ cacao	cocoa
 cachots	dungeons
 cacti	cactus
 cactus	cacti
+Caesar Augustus Rodney	senator,member of congress,attorney general
+Caesar Rodney	governor
 café	coffee
 cafés	coffees
+Cairo	Egypt
 calcareous	limestone
+Calderón	president
 calendar	timetable
 calf	veal
+Callaghan	prime minister
 calli	callus
 callus	calli
+Calmy-Rey	swiss federal council
+Calvin Coolidge	president,governor,vice president
 calyx	chalice
 camaraderie	comradeship
+Camillo Serafini	governor
+Campbell	member of parliament,prime minister
 campground	camping
 camping	campground
+Canaan Banana	president
 canal	channel
 canals	channels
 canceler	canceller
@@ -694,6 +921,7 @@ capital	city,metropolis,municipality,borough,capital,place
 caprine	goatmeat
 captioning	subtitling
 car	vehicle
+Caracas	Venezuela
 carbonation	gasification
 carbons	coals
 carburetor	carburettor
@@ -705,43 +933,56 @@ carcasses	carcases
 card	map
 cardboard	paperboard
 cardigans	sweatshirts
+Cardowan	member of parliament
 cards	maps
 caricatures	cartoons
+Carlos P. Garcia	president
+Carmen Chu	councillor
 carnations	eyelets
 carnivore	carnivorous
 carnivorous	carnivore
 carolina	caroline
 caroline	carolina
+Carper	senator,member of congress
 carpet	rug
 carriage	transport
 carrots	cores
+Carter	president,governor
 cartographer	mapmaker
 cartography	mapping
 cartoons	caricatures
 cartridge	canister
+Carvel	governor
 carver	sculptor
 carvers	sculptors
 carvings	sculptures
 cascade	cascading
 cascading	cascade
 case-law	jurisprudence
+Casimir-Perier	prime minister
 casket	coffin
 caskets	coffins
 cassava	manioc
 cassettes	tapes
 castle	château
 castle	chateau
+Castro	president,premier,president,vice president,acting president,acting prime minister,prime minister
 catastrophe	disaster
 catastrophes	disasters
+Catherine Baker Knoll	lieutenant governor
+Catherine King	member of parliament
 catkins	kittens
 causality	causation
 causation	causality
 caution	prudence
+Cazayoux	member of congress
 cbc	src
 cc	dc
 cdc	dcc
+Cearbhall \u00d3 Dálaigh	president
 cease-fire	ceasefire
 ceasefire	cease-fire
+Ceballos	president
 cegeps	cégeps
 cellar	basement
 cellulite	cellulitis
@@ -776,21 +1017,23 @@ chairpersons	chairmen
 chairpersons	presidents
 chalice	calyx
 chambers	rooms
+Chambliss	senator,member of congress
 chameleon	shape-shifter
 champ	champion
 champion	champ
+Champion	member of parliament
 chan	chen
 chance	luck
 chance	opportunity
 chancelleries	chanceries
 chancellery	chancery
+chancellor	Walter Scheel,Scheel,Franz von Papen,Papen,Kurt von Schleicher,Schleicher,Angela Merkel,Merkel
 chanceries	chancelleries
 chancery	chancellery
 chandelier	candlestick
 chandelier	lustre
-chang	zhang
-change	changes
-changes	change
+Chandler	governor
+Chaney	mayor
 channel	canal
 channels	canals
 character	nature
@@ -798,43 +1041,78 @@ characterisation	characterization
 characteristics	features
 characterization	characterisation
 charger	shipper
+Charlemagne	emperor,emperor,monarch,monarch
+Charles Clarke	member of parliament
+Charles de Gaulle	prime minister,president
+Charles Evans Hughes	governor,secretary of state
+Charles Gairdner	governor
+Charles Haughey	prime minister
+Charles L. Terry, Jr.	governor
+Charles Rabemananjara	prime minister
+Charles XII of Sweden	monarch
 chart	graph
 chart	graphic
 charter	letter
+Chase	governor,senator
 chateau	castle
+Chatterjee	member of parliament
+Chaudhry	president
+Chaudhry Muhammad Ali	prime minister
+Chaudhry Shujaat Hussain	prime minister
 checkbook	chequebook
 checks	controls
+Cheeseman	member of parliament
 chelating	chelation
 chelation	chelating
 chemical	chemical,substance,material
 chen	chan
+Cheney	vice president
 chequebook	checkbook
-cheung	zhang
+Chester A. Arthur	president,vice president
 chevalier	knight
 chf	cso
 chiasma	chiasmata
 chiasmata	chiasma
 chickenpox	varicella
 chief	head
+chief executive	Donald Tsang,Tsang
 chiefs	heads
 child	girl,boy,kid
+Childers	president,deputy prime minister
 chillers	coolers
 chimp	chimpanzee
 chimpanzee	chimp
 chimpanzees	chimps
 chimps	chimpanzees
+China	Beijing
 china	chinese
 chinese	china
 chipmunk	squirrel
+Chirac	president,mayor,minister,prime minister
+Chitthan	member of parliament
 choir	chorus
 chorus	choir
+Choummaly Sayasone	president,vice president
+Chrétien	prime minister
+Chris Daly	councillor
+Chris Dodd	senator
+Chris Hayes	member of parliament
+Chris Huhne	member of parliament
+Chris Patten	governor
+Chris Pearce	member of parliament
+Chris Trevor	member of parliament
 christenings	baptisms
+Christopher Pyne	member of parliament
 chromatographic	chromatography
 chromatography	chromatographic
 chrome	chrome-plated
 chrome-plated	chrome
+Chu	councillor
 chu	zhu
+Chundrigar	prime minister
+Chung	president
 church	church,cathedral,abbey
+Churchill	prime minister,member of parliament
 cia	cla
 cilantro	coriander
 cip	pac
@@ -851,14 +1129,19 @@ civilians	civilian
 civilisation	civilization
 civilization	civilisation
 cla	cia
+Clare	member of parliament
+Clarke	member of parliament,minister,member of parliament
 clashes	confrontations
 clavicle	collarbone
+Clayton	senator,secretary of state,senator,member of congress
 clean-up	cleaning
 cleaning	clean-up
 cleaning	cleansing
 cleansing	cleaning
 clemency	leniency
+Clements	governor
 clerk	registrar
+Cleveland	president,governor
 client	customer
 clients	customers
 cliffs	bluffs
@@ -866,6 +1149,7 @@ climber	mountaineer
 climbers	mountaineers
 clinic	clinical
 clinical	clinic
+Clinton	senator,secretary of state,first lady,president,governor,mayor,governor,state senator,senator
 cloaks	capes
 closet	cupboard
 clothes	clothing
@@ -873,6 +1157,7 @@ clothing	apparel
 clothing	clothes
 cloths	rags
 clotting	coagulation
+Clough	governor
 clumps	tufts
 cma	dpr
 cmd	mdc
@@ -907,6 +1192,7 @@ co-operation	cooperation
 co-operatives	cooperatives
 co-ordinator	coordinator
 co-ordinators	coordinators
+co-prince	Nicolas Sarkozy,Sarkozy
 co-production	coproduction
 co-productions	coproductions
 co-regulation	coregulation
@@ -915,6 +1201,8 @@ coagulation	clotting
 coals	carbons
 coast	côte
 cob	dba
+Cobb	member of parliament
+Cochrane	mayor,attorney general
 cock	dick
 cockroaches	roaches
 cocoa	cacao
@@ -932,6 +1220,7 @@ cofinancing	co-financing
 cogeneration	co-generation
 cognac	brandy
 cognacs	brandies
+Cohen	councillor
 coherence	consistency
 coherent	consistent
 coincineration	co-incineration
@@ -944,7 +1233,9 @@ colegislator	co-legislator
 colegislators	co-legislators
 collarbone	clavicle
 college	university
+Colley	deputy prime minister
 collier	necklace
+Collins	member of parliament
 colones	colons
 colons	colones
 color	colour
@@ -958,6 +1249,7 @@ comanagement	co-management
 combat	combating
 combatants	fighters
 combating	combat
+Combet	member of parliament
 comitology	commitology
 comma	coma
 commandoes	commandos
@@ -1019,6 +1311,7 @@ condensing	condensation
 condiments	seasonings
 conditioner	conditioning
 conditioning	conditioner
+Condoleezza Rice	secretary of state
 conductor	bandleader
 conf.207/1	conf.207/4
 conf.207/4	conf.207/1
@@ -1031,6 +1324,7 @@ confiscation	forfeiture
 conformity	accordance
 conformity	compliance
 confrontations	clashes
+Congo	Kinshasa
 congruence	congruency
 congruency	congruence
 conifer	coniferous
@@ -1061,10 +1355,12 @@ convective	convection
 convent	nunnery
 converged	convergent
 convergent	converged
+Cook	member of congress,state representative
 cookies	biscuits
 cooking	kitchen
 coolant	refrigerant
 coolers	chillers
+Coolidge	president,governor,vice president
 coop	co-op
 cooperation	co-operation
 cooperatives	co-operatives
@@ -1073,24 +1369,35 @@ coordination	coordinating
 coordinator	co-ordinator
 coordinators	co-ordinators
 cop	cp
+Copenhagen	Denmark
 coproduction	co-production
 coproductions	co-productions
+Corazon Aquino	president
 coregulation	co-regulation
 cores	carrots
 coriander	cilantro
+Corish	deputy prime minister
 corn	maize
+Cornelius Lawrence	mayor
 corporatisation	corporatization
 corporatization	corporatisation
 corrective	remedial
 corrosiveness	corrosivity
 corrosivity	corrosiveness
+Corzine	governor,senator
 cosponsors	co-sponsors
+Costello	member of parliament
 costume	suit
 cottonwood	poplar
+Coty	president
 couch	sofa
+Couchepin	swiss federal council
 cough	coughing
 coughing	cough
+Coughlan	deputy prime minister
+Coulton	member of parliament
 council	board
+councillor	Gavin Newsom,Newsom,Michela Alioto-Pier,Alioto-Pier,Aaron Peskin,Peskin,Dianne Feinstein,Feinstein,Joe Biden,Biden,Chris Daly,Daly,Jeanne K. Krieger,Krieger,Peter C. J. Kelley,Kelley,Norman P. Cohen,Cohen,Hank Manz,Manz,George A. Burnell,Burnell,Gerardo Sandoval,Sandoval,Jake McGoldrick,McGoldrick,Sophie Maxwell,Maxwell,Tom Ammiano,Ammiano,Bevan Dufty,Dufty,Sean Elsbernd,Elsbernd,Ross Mirkarimi,Mirkarimi,Carmen Chu,Chu,Ed Jew,Jew
 counsellor	adviser
 counsellor	advisor
 counter-attacks	counterattacks
@@ -1101,11 +1408,7 @@ counterattacks	counter-attacks
 counterclaim	counter-claim
 counterclaims	counter-claims
 counterproposal	counter-proposal
-countries	country
-countries.	country.
-country	countries
-country	country,land,region,state,realm,duchy,nation,place
-country.	countries.
+country	country,land,region,state,realm,duchy,nation,place,territory
 countryman	compatriot
 couples	pairs
 court	tribunal
@@ -1113,6 +1416,7 @@ courts	tribunals
 couture	sewing
 covenant	pact
 covenants	pacts
+Cowen	deputy prime minister,prime minister
 cp	cop
 cpi	ipc
 cpp	rpc
@@ -1122,7 +1426,12 @@ cr	vc
 cra	arc
 crafts	handicrafts
 craftsmen	artisans
+Craig	senator
+Craig Emerson	member of parliament
+Craig Thomson	member of parliament
+Crapo	senator,member of congress
 crayons	pencils
+Crean	member of parliament
 creation	establishment
 credits	appropriations
 cree	crees
@@ -1135,6 +1444,7 @@ crime	offence
 crimes	offences
 criminal	penal
 crl	lcr
+Croatia	Zagreb
 crocodiles	alligators
 crocs	fangs
 crops	cultures
@@ -1146,6 +1456,7 @@ cross-member	crossmember
 cross-sectoral	cross-cutting
 cross-sectoral	intersectoral
 crossmember	cross-member
+Crothers	governor
 crows	ravens
 cry	crying
 crying	cry
@@ -1154,14 +1465,18 @@ crystallization	crystallisation
 csa	apf
 cso	chf
 ct	tc
+Cuba	Havana
 cube	hub
 cuffs	handcuffs
+Culbert Olson	governor
+culture minister	Dora Bakoyannis,Bakoyannis
 cultures	crops
 cupboard	closet
 cups	mugs
 curator	conservative
 cure-all	panacea
 curtains	drapes
+Cushman Kellogg Davis	governor,senator
 customer	client
 customers	clients
 customization	customizing
@@ -1179,9 +1494,14 @@ cybercafés	cybercafes
 cybercafes	cybercafés
 cyberterrorism	cyber-terrorism
 cylinders	bottles
+Cynthia McKinney	member of congress
+Cyrankiewicz	prime minister
 czar	tsar
+Dálaigh	president
 dæmon	daemon
 dæmons	daemons
+D'Ath	member of parliament
+d'Estaing	president
 d-4	m-4
 d-7	m-7
 dad	daddy
@@ -1191,17 +1511,44 @@ daddy	dad
 daddy	papa
 daemon	dæmon
 daemons	dæmons
+Dahl	speaker
+Dahmer	member of parliament
 dairy	milk
+Dakar	Senegal
+Dale E. Wolf	governor
+Dalton McGuinty	premier
+Daly	councillor
 damage	harm
+Damian Hale	member of parliament
+Danby	member of parliament
 dance	dancing
 dancing	dance
 dangerous	hazardous
 dangers	hazards
+Daniel François Malan	prime minister
+Daniel Inouye	senator,member of congress
+Daniel Kahikina Akaka	senator,member of congress
+Daniel Ortega	president
+Danna Vale	member of parliament
 darling	honey
+Darren Cheeseman	member of parliament
+Daryl Melham	member of parliament
 dashboard	under-dash
+Daszyński	prime minister
+Daugherty	attorney general
 daughter	girl
 daughter-in-law	stepdaughter
 dauphin	dolphin
+David Ben-Gurion	prime minister
+David Bradbury	member of parliament
+David Dinkins	mayor
+David Evennett	member of parliament
+David Hawker	member of parliament
+David Marston Clough	governor
+David Paterson	lieutenant governor,governor
+David Renton, Baron Renton	member of parliament
+David Waddington, Baron Waddington	governor
+Davis	member of congress,governor,senator,governor,governor-general
 dba	cob
 dc	cc
 dcc	cdc
@@ -1223,6 +1570,7 @@ death	dead
 debate	discussion
 debates	discussions
 debug	purge
+Debus	member of parliament
 deca-bde	decabde
 decabde	deca-bde
 decapitation	beheading
@@ -1245,6 +1593,7 @@ deduplication	dedupe
 defamation	libel
 defective	faulty
 defence	defense
+defence minister	Ehud Barak,Barak
 defense	defence
 deficiencies	shortcomings
 deflector	spoiler
@@ -1256,6 +1605,8 @@ deindustrialisation	de-industrialisation
 deindustrialisation	de-industrialization
 deindustrialization	de-industrialization
 deinstitutionalization	de-institutionalization
+delegate	John Adams,Adams
+delegate to party convention	Bill Lockyer,Lockyer
 demagoguery	demagogy
 demagogy	demagoguery
 demining	mine-clearance
@@ -1269,6 +1620,10 @@ demutualisation	demutualization
 demutualization	demutualisation
 denaturation	denaturing
 denaturing	denaturation
+Denham	member of congress
+Denmark	Copenhagen
+Dennis Jensen	member of parliament
+Dennis Kucinich	member of congress,mayor
 denormalization	destandardization
 dent	tooth
 dentifrices	toothpastes
@@ -1286,6 +1641,9 @@ deposit	filing
 depreciation	amortization
 deputy	assistant
 deputy	vice
+deputy premier	Wu Yi,Yi,Zeng Peiyan,Peiyan
+deputy prime minister	Seán T. O'Kelly,O'Kelly,Erskine Hamilton Childers,Childers,Bertie Ahern,Ahern,Seán Lemass,Lemass,William Norton,Norton,Brian Cowen,Cowen,Seán MacEntee,MacEntee,Frank Aiken,Aiken,Brendan Corish,Corish,George Colley,Colley,Michael O'Leary,O'Leary,Ray MacSharry,MacSharry,Dick Spring,Spring,Peter Barry,Barry,Brian Lenihan, Sr.,Sr.,John P. Wilson,Wilson,Mary Harney,Harney,Michael McDowell,McDowell,Julia Gillard,Gillard,Anthony Albanese,Albanese,Wayne Swan,Swan,Mary Coughlan,Coughlan
+Desai	prime minister
 descendants	descendents
 descendents	descendants
 descent	ancestry
@@ -1303,7 +1661,11 @@ detachments	secondments
 detective	inspector
 deterrence	deterrent
 deterrent	deterrence
+Deukmejian	governor,attorney general
+Deval Patrick	governor
+DeWitt Clinton	mayor,governor,state senator,senator
 deworming	de-worming
+Dhaka	Bangladesh
 dhp-mps	dhpmps
 dhpmps	dhp-mps
 diagnoses	diagnostics
@@ -1312,6 +1674,7 @@ diagnostic	diagnosis
 diagnostics	diagnoses
 dialog	dialogue
 dialogue	dialog
+Dianne Feinstein	councillor,senator,mayor
 diarrhea	diarrhoea
 diarrhoea	diarrhea
 diarrhoea	diarrhoeal
@@ -1319,6 +1682,9 @@ diarrhoeal	diarrhoea
 diastereoisomers	diastereomers
 diastereomers	diastereoisomers
 dick	cock
+Dick Adams	member of parliament
+Dick Cheney	vice president
+Dick Spring	deputy prime minister
 dieticians	dietitians
 dietitians	dieticians
 diffusion	dissemination
@@ -1330,12 +1696,16 @@ dike	dyke
 dikes	dykes
 dilatation	dilation
 dilation	dilatation
+Dileita	prime minister
+Dileita Mohamed Dileita	prime minister
 diluents	thinners
 dimer	dimeric
 dimeric	dimer
 dinitrogen	tetroxide
+Dinkins	mayor
 dinner	supper
 dio	oid
+Diosdado Macapagal	president,vice president
 dipolar	dipole
 dipole	dipolar
 dirham	dirhams
@@ -1381,27 +1751,49 @@ distrust	mistrust
 dive	diving
 diving	dive
 djakarta	jakarta
+Dobson	member of parliament
 doc	rfso
 dock	wharf
 doctor	physician
 doctors	physicians
 document	paper
 documents	records
+Dodd	senator
+Doha	Qatar
+Doherty	member of parliament
 dollars	$
 dolphin	dauphin
+Dominique de Villepin	prime minister
 don	donation
 don	gift
+Don Cazayoux	member of congress
+Don Randall	member of parliament
+Donald L. Ritter	member of congress
+Donald Tsang	chief executive
+Donald W. Riegle, Jr.	member of congress,senator
+Donald Young	member of congress
 donation	don
 donations	gifts
 donut	doughnut
 donuts	doughnuts
 door-keepers	doormen
 doormen	door-keepers
+Dora Bakoyannis	mayor,culture minister,member of parliament
+Doris Leuthard	swiss federal council
+Dorrell	member of parliament
+Doug LaMalfa	state representative,member of congress
 doughnut	donut
 doughnuts	donuts
+Doughty	member of parliament
+Douglas	governor
+Douglas Hyde	president
+Douglas-Home	prime minister,member of parliament
+Doumergue	prime minister
+Downer	member of parliament
+Downey	governor
 download	downloading
 downloading	download
-dozens	tens
+Doyle	governor
 dp	rfp
 dpr	cma
 dr	dr.
@@ -1414,6 +1806,8 @@ draftswoman	draftsperson
 dramatist	playwright
 dramatists	playwrights
 drapes	curtains
+Drees	prime minister
+Dreyfus	member of parliament
 drier	driest
 driest	drier
 drink	drink,beverage,libation,liquid
@@ -1439,14 +1833,23 @@ dry	sec
 dsp	dsps
 dsps	dsp
 dts	sdrs
+Duane	mayor
+Dud Lastrapes	mayor
+Dudley-Williams	member of parliament
+Dufty	councillor
 dummy	manikin
 dunams	dunums
+Duncan Kerr	member of parliament
 dungeons	cachots
 dunums	dunams
+Dutton	member of parliament
+Duvall	member of congress
 dwarf	midget
 dwarfs	dwarves
 dwarves	dwarfs
 dwarves	midgets
+Dwight D. Eisenhower	president
+Dwight F. Davis	governor-general
 dyeing	tincture
 dyke	dike
 dykes	dikes
@@ -1460,11 +1863,13 @@ e-mail	email
 e-mails	emails
 e-text	etext
 e.	excellency
+E. V. K. S. Elangovan	member of parliament
 e.cfm	e.cfm.
 e.cfm.	e.cfm
 e.html	e.html.
 e.html.	e.html
 ea	ee
+Earl Warren	governor,attorney general
 earthquake	quake
 easement	servitude
 ebooks	e-books
@@ -1482,11 +1887,18 @@ ectomycorrhiza	ectomycorrhizae
 ectomycorrhizae	ectomycorrhiza
 ecu	ecus
 ecus	ecu
+Ed Jew	councillor
+Ed Koch	mayor,member of congress
+Ed Rendell	governor
 eddies	vortices
 edf	fed
 edit	editing
 editing	edit
 editions	éditions
+Edmund Barton	prime minister,member of parliament
+Edward Frederick Lindley Wood, 1st Earl of Halifax	governor-general
+Edward Heath	prime minister
+Edward Livingston	mayor,secretary of state,member of congress,ambassador,senator
 ee	ea
 eeurope	e-europe
 effective	efficient
@@ -1500,13 +1912,21 @@ egoism	selfishness
 egotism	egoism
 egotism	selfishness
 egovernment	e-government
+Egypt	Cairo
 ehealth	e-health
+Ehud Barak	prime minister,defence minister,foreign minister
+Ehud Olmert	prime minister,acting prime minister
+Eisenhower	president
 ekg	ecg
+Eknath Gaikwad	member of parliament
+El Salvador	San Salvador
 el-sheikh	sheikh
+Elangovan	member of parliament
+Elbert N. Carvel	governor
 elders	seniors
-election	elections
+election	elections,balloting
 election	electoral
-elections	election
+elections	election,balloting
 electoral	election
 electors	voters
 electric	electrical
@@ -1514,19 +1934,32 @@ electrical	electric
 elevation	altitude
 elevators	silos
 elimination	eradication
+Eliot Spitzer	governor,attorney general
 elite	elites
 elites	elite
+Elizabeth II	monarch
+Elizabeth Stuart, Queen of Bohemia	monarch
 elk	wapiti
+Ellen Johnson Sirleaf	finance minister,president
+Elliot	member of parliament
 ellipse	oval
+Ellis	member of parliament,member of parliament
+Ellsworth	senator
+Elpidio Quirino	president
+Elsbernd	councillor
 em.25/3	em.26/3
 em.26/3	em.25/3
 email	e-mail
 emails	e-mails
 embolism	embolus
 embolus	embolism
+Emerson	member of parliament
 emi	ime
+Emilio Aguinaldo	president
 emir	amir
 emitters	transmitters
+emperor	Charlemagne,Charlemagne,Otto IV, Holy Roman Emperor,Emperor
+Emperor	emperor,monarch
 emphasizes	stresses
 emphasizing	stressing
 en	fr
@@ -1564,8 +1997,11 @@ equivalency	equivalence
 eradication	elimination
 erakat	erekat
 erekat	erakat
+Ernest Bai Koroma	president
+Erola	member of parliament
 error	mistake
 errors	mistakes
+Erskine Hamilton Childers	president,deputy prime minister
 eru	erus
 erus	eru
 erw	reg
@@ -1574,10 +2010,13 @@ esophagus	oesophagus
 espionage	spy
 espionage	spying
 establishment	creation
+Estonia	Tallinn
 estonian	kroon
+Estrada	president,vice president
 estradiol	oestradiol
 etching	engraving
 etext	e-text
+Ethiopia	Addis Ababa
 ethno-cultural	ethnocultural
 ethnocultural	ethno-cultural
 etiology	aetiology
@@ -1599,10 +2038,13 @@ evaluations	assessments
 evaluator	appraiser
 evaluator	assessor
 evaluators	assessors
+Evan Mecham	governor
 evangelism	evangelization
 evangelization	evangelism
 evaporators	vaporizers
+Eveline Widmer-Schlumpf	swiss federal council,president
 evening	night
+Evennett	member of parliament
 event	event
 everybody	everyone
 everyone	everybody
@@ -1656,6 +2098,7 @@ eyelets	carnations
 führer	fuhrer
 façade	facade
 façades	facades
+Fabian Núñez	speaker
 fabric	tissue
 fabrics	tissues
 facade	façade
@@ -1686,7 +2129,9 @@ famine	starvation
 fan	blower
 fangs	crocs
 farm	agricultural
+Farmer	member of parliament
 farming	agriculture
+Farooq Leghari	president
 fastener	retainer
 fasteners	retainers
 fate	destiny
@@ -1701,6 +2146,7 @@ favorite	favourite
 favourite	favorite
 favouritism	patronage
 fax	facsimile
+Fazal Ilahi Chaudhry	president
 fbi	fbl
 fbl	fbi
 fc	cf
@@ -1712,9 +2158,15 @@ fed	edf
 federalisation	federalization
 federalization	federalisation
 feelings	sentiments
+Feinstein	councillor,senator,mayor
+Felipe Calderón	president
 fellowships	scholarships
 feminisation	feminization
 feminization	feminisation
+Ferdinand Marcos	president
+Ferguson	member of parliament,member of parliament
+Fernando Wood	mayor
+Feroz Khan Noon	prime minister
 fertilisers	fertilizers
 fertility	fecundity
 fertilizers	fertilisers
@@ -1728,6 +2180,8 @@ fibers	fibres
 fibre	fiber
 fibres	fibers
 fiddle	violin
+Fidel Castro	president,premier
+Fidel V. Ramos	president
 field	area
 fields	areas
 fight	struggle
@@ -1736,14 +2190,19 @@ fighters	militants
 filiation	parentage
 filing	deposit
 fillets	nets
+Fillmore	president,vice president
 film	movie
 films	movies
+Filoimea Telito	governor-general
+finance minister	Nicolas Sarkozy,Sarkozy,Ellen Johnson Sirleaf,Sirleaf
 financing	funding
 findings	conclusions
 fingernails	nails
+Finland	Helsinki
 fins	flippers
 fiord	fjord
 fiords	fjords
+Fiorello H. La Guardia	mayor
 firearm	firearms
 firearms	firearm
 firefighter	fireman
@@ -1753,6 +2212,7 @@ firemen	firefighters
 firewood	fuelwood
 firm	company,firm
 firms	companies
+first lady	Hillary Rodham Clinton,Clinton
 fisheries	fishery
 fisheries	fishing
 fishermen	fishers
@@ -1762,6 +2222,8 @@ fishing	fisheries
 fissile	fissionable
 fissionable	fissile
 fitters	installers
+FitzGerald	prime minister
+Fitzgibbon	member of parliament
 fjord	fiord
 fjords	fiords
 flammable	inflammable
@@ -1802,8 +2264,11 @@ footwear	shoes
 fora	forums
 forage	fodder
 forbearance	abstention
+Forbes	governor-general
 forces	troops
+Ford	president,vice president
 forefathers	ancestors
+foreign minister	Ehud Barak,Barak
 foreigners	aliens
 forest	forestry
 forestry	forest
@@ -1813,22 +2278,42 @@ formal	official
 format	formatting
 formatting	format
 former	ex
+Forrest	premier,member of parliament,member of parliament
+Forsyth	member of congress,governor,senator,cabinet secretary
 forums	fora
 founder	founding
 founding	founder
 foundries	smelters
 foundry	smelter
 fountain	fontaine
+Fowler	member of congress
 fr	en
 frac-out	fracturing
 fracturing	frac-out
+François Mitterrand	president
+Fran Bailey	member of parliament
+Francis Burton Harrison	governor-general
+Francis Harrison Pierpont	governor
 francisation	francization
 francization	francisation
 franco-ontarians	franco-ontariens
 franco-ontariens	franco-ontarians
+Frank Aiken	deputy prime minister
+Frank Dobson	member of parliament
+Frank McCoppin	mayor
+Frank Merriam	governor
+Frank Murphy	attorney general,mayor,governor-general,governor
+Franklin	speaker
+Franklin D. Roosevelt	president,assistant secretary,governor,state senator
+Franklin Pierce	president,member of congress,senator
+Franz von Papen	chancellor
 fraternity	brotherhood
 freak	monster
 freaks	monsters
+Frederick Frelinghuysen	senator
+Frederick Low	governor
+Frederick V, Elector Palatine	monarch
+Fredrik Reinfeldt	prime minister
 free-form	freeform
 freedom	liberty
 freedoms	liberties
@@ -1836,8 +2321,10 @@ freeform	free-form
 freeze	freezing
 freeze-drying	lyophilization
 freezing	freeze
+Frelinghuysen	senator
 fridge	refrigerator
 fridges	refrigerators
+Friend Richardson	governor
 frog	grenouille
 front-line	frontline
 frontier	border
@@ -1850,7 +2337,9 @@ fte	ftes
 ftes	fte
 fuelwood	firewood
 fuhrer	führer
+Fukuda	prime minister,prime minister
 fumes	vapours
+Fumimaro Konoe	prime minister
 fund-raising	fundraising
 funding	financing
 fundraising	fund-raising
@@ -1861,19 +2350,37 @@ furnaces	ovens
 fuses	fuzes
 fusion	merger
 fuzes	fuses
+Göran Persson	prime minister,minister
 g-20	g20
 g-7	g7
 g-8	g8
 g20	g-20
 g7	g-7
 g8	g-8
+Gabriel Duvall	member of congress
+Gage	governor
+Gaikwad	member of parliament
 gaines	sheaths
+Gairdner	governor
 gallate	propyl
+Galloway	member of parliament
+Gandhi	prime minister,prime minister
 garages	lay-bys
+Garamendi	lieutenant governor,member of congress
+Garcia	president
+Garfield	president
+Garret FitzGerald	prime minister
+Garrett	member of parliament
+Gary Gray	member of parliament
 gas-freeing	degassing
+Gash	member of parliament
 gasification	carbonation
 gasoline	petrol
 gaspereau	alewife
+Gaston Doumergue	prime minister
+Gaulle	prime minister,president
+Gavin Newsom	councillor,lieutenant governor,mayor
+Gaylord Nelson	senator,governor
 geese	goose
 gelatin	gelatine
 gelatine	gelatin
@@ -1884,23 +2391,54 @@ genius	engineering
 geo-strategic	geostrategic
 geologic	geological
 geological	geologic
+Georganas	member of parliament
+George	member of parliament
+George A. Burnell	councillor
+George B. McClellan, Jr.	mayor
+George Clement Perkins	governor
+George Colley	deputy prime minister
+George Deukmejian	governor,attorney general
+George Galloway	member of parliament
+George H. W. Bush	president,member of congress,vice president
+George Pardee	governor
+George Stoneman	governor
+George W. Bush	president,governor
+George Washington	president
+Georges Pompidou	president,prime minister
+Georgia	Tbilisi
+Georgiou	member of parliament
 geostrategic	geo-strategic
+Gerald Ford	president,vice president
+Gerardo Sandoval	councillor
+Germany	Berlin
 gers	yurts
+Ghana	Accra
 gherkins	pickles
 ghettoes	ghettos
 ghettos	ghettoes
 ghost	phantom
 ghosts	phantoms
+Ghulam Ishaq Khan	president
+Ghulam Mustafa Jatoi	prime minister
+Gibbons	member of parliament
+Gideon Lee	mayor
 gift	don
 gifts	donations
+Gilbert Barrette	member of parliament
+Gillard	deputy prime minister,member of parliament,prime minister
+Gillett	governor
 girders	beams
+Girija Prasad Koirala	prime minister
 girl	child,kid
 girl	daughter
+Giuliani	mayor
 glass	drink
 glasses	goggles
 globalisation	globalization
 globalization	globalisation
 gloria	glory
+Gloria Macapagal-Arroyo	president,vice president,senator
+Gloria Negrete McLeod	state senator,member of congress
 glory	gloria
 glossaries	lexicons
 glucocorticoids	glucocorticosteroids
@@ -1913,21 +2451,31 @@ goal	objective
 goals	objectives
 goatmeat	caprine
 goggles	glasses
+Golda Meir	prime minister
 goldeneyes	tourniquets
 goma	rubber
 gonaïves	gonaives
 gonaives	gonaïves
 gonorrhea	gonorrhoea
 gonorrhoea	gonorrhea
+Gonzales	attorney general
 good-bye	goodbye
 goodbye	bye
 goodbye	good-bye
+Goodwin Knight	governor
 goose	geese
+Gordon Brown	member of parliament,prime minister
+Gore	vice president
 gorge	throat
 governess	housekeeper
+government	gov\'t
 government-wide	whole-of-government
+governor	George W. Bush,Bush,Grover Cleveland,Cleveland,Woodrow Wilson,Wilson,William Howard Taft,Taft,William McKinley,McKinley,William Henry Harrison,Harrison,Theodore Roosevelt,Roosevelt,Thomas Jefferson,Jefferson,Rutherford B. Hayes,Hayes,Bill Clinton,Clinton,Arnold Schwarzenegger,Schwarzenegger,Andrew Jackson,Jackson,Ronald Reagan,Reagan,Knute Nelson,Nelson,Alexander Ramsey,Ramsey,Cushman Kellogg Davis,Davis,Jon Corzine,Corzine,Jodi Rell,Rell,Rick Perry,Perry,Tim Pawlenty,Pawlenty,Henry Hastings Sibley,Sibley,Henry Adoniram Swift,Swift,Stephen Miller,Miller,Horace Austin,Austin,John S. Pillsbury,Pillsbury,Lucius Frederick Hubbard,Hubbard,Andrew Ryan McGill,McGill,William Rush Merriam,Merriam,David Marston Clough,Clough,John Lind,Lind,Samuel Rinnah Van Sant,Sant,Bill Richardson,Richardson,James Douglas,Douglas,Richard Blanshard,Blanshard,John Forsyth,Forsyth,Hirohiko Izumida,Izumida,Yukiko Kada,Kada,Gray Davis,Davis,Jerry Brown,Brown,Pat Brown,Brown,Pete Wilson,Wilson,George Deukmejian,Deukmejian,Herbert H. Lehman,Lehman,Evan Mecham,Mecham,Janet Napolitano,Napolitano,Frank Murphy,Murphy,Paul V. McNutt,McNutt,Jennifer Granholm,Granholm,DeWitt Clinton,Clinton,Franklin D. Roosevelt,Roosevelt,David Paterson,Paterson,Eliot Spitzer,Spitzer,Gaylord Nelson,Nelson,Jim Doyle,Doyle,Theodore F. Green,Green,Thomas Posey,Posey,James F. Byrnes,Byrnes,Andrew Johnson,Johnson,James Monroe,Monroe,Martin Van Buren,Buren,John Tyler,Tyler,James K. Polk,Polk,Jimmy Carter,Carter,Calvin Coolidge,Coolidge,Camillo Serafini,Serafini,Deval Patrick,Patrick,Robert McClelland,McClelland,Per Unckel,Unckel,Charles Gairdner,Gairdner,John Sanderson,Sanderson,James Mitchell,Mitchell,Ed Rendell,Rendell,Bill Clements,Clements,Mark White,White,Ann Richards,Richards,John Jay,Jay,Salmon P. Chase,Chase,Charles Evans Hughes,Hughes,Earl Warren,Warren,Milton Latham,Latham,C. C. Young,Young,Hiram Johnson,Johnson,William Stephens,Stephens,Goodwin Knight,Knight,Frank Merriam,Merriam,William Irwin,Irwin,Henry Markham,Markham,George Pardee,Pardee,Culbert Olson,Olson,John Bigler,Bigler,Henry Gage,Gage,George Stoneman,Stoneman,Frederick Low,Low,Friend Richardson,Richardson,James Gillett,Gillett,James Budd,Budd,James Rolph,Rolph,Newton Booth,Booth,George Clement Perkins,Perkins,John B. Weller,Weller,J. Neely Johnson,Johnson,John G. Downey,Downey,Leland Stanford,Stanford,Peter Hardeman Burnett,Burnett,John McDougall,McDougall,Romualdo Pacheco,Pacheco,Washington Bartlett,Bartlett,Chris Patten,Patten,Austin Lane Crothers,Crothers,Caesar Rodney,Rodney,Happy Chandler,Chandler,David Waddington, Baron Waddington,Waddington,Richard Bassett,Bassett,Harry F. Byrd,Byrd,Francis Harrison Pierpont,Pierpont,Russell W. Peterson,Peterson,Dale E. Wolf,Wolf,Sherman W. Tribbitt,Tribbitt,Charles L. Terry, Jr.,Jr.,J. Caleb Boggs,Boggs,James Sykes,Sykes,Elbert N. Carvel,Carvel,Nathaniel Mitchell,Mitchell,Robert J. Reynolds,Reynolds
+governor-general	William Howard Taft,Taft,Frank Murphy,Murphy,Theodore Roosevelt, Jr.,Jr.,Dwight F. Davis,Davis,Henry L. Stimson,Stimson,Leonard Wood,Wood,Francis Burton Harrison,Harrison,William Cameron Forbes,Forbes,James Francis Smith,Smith,Henry Clay Ide,Ide,Luke Edward Wright,Wright,Edward Frederick Lindley Wood, 1st Earl of Halifax,Halifax,Filoimea Telito,Telito
+gov\'t	government
 gpu	gpus
 gpus	gpu
+Graham Perrett	member of parliament
 grandchildren	grandkids
 grandfather	grandpa
 grandfather	man
@@ -1936,6 +2484,8 @@ grandma	grandmother
 grandmother	grandma
 grandmother	woman
 grandpa	grandfather
+Granholm	governor
+Grant	president
 grant	subsidy
 grants	subsidies
 granules	pellets
@@ -1945,33 +2495,46 @@ grasshoppers	locusts
 grassland	prairie
 grasslands	prairies
 grave-sweepers	rave-sweepers
+Gravel	speaker
 gravestone	headstone
 gravestones	headstones
 graveyard	cemetery
 gravity	seriousness
 gravity	severity
 gravy	sauce
+Gray	member of parliament
+Gray Davis	governor
 grayscale	greyscale
 grazing	pasture
+Green	governor
 green	verde
 greens	verts
+Greg Combet	member of parliament
+Greg Hunt	member of parliament
 grenada	grenade
 grenade	grenada
 grenadier	berglax
 grenouille	frog
 greyscale	grayscale
+Grierson	member of parliament
+Griffin	member of parliament
+Griffith	president
 grille	louver
 groove	slot
 grooves	slots
 groundhog	marmot
 grounds	reasons
 group	panel
+Grover Cleveland	president,governor
 gs	sg
 guantánamo	guantanamo
 guantanamo	guantánamo
 guarantees	safeguards
+Guardia	mayor
+Guelleh	president
 gui	mistletoe
 guidance	orientation
+Gulzarilal Nanda	prime minister
 gun	weapon
 gunmen	militants
 gurney	stretcher
@@ -1983,6 +2546,7 @@ gynaecology	gynecology
 gynecologist	gynaecologist
 gynecologists	gynaecologists
 gynecology	gynaecology
+Haase	member of parliament
 haematocrit	hematocrit
 haematology	hematology
 haemocytes	hemocytes
@@ -1994,11 +2558,16 @@ haemorrhagic	hemorrhagic
 haemorrhoids	hemorrhoids
 hajj	pilgrimage
 hajjis	pilgrims
+Hale	member of parliament
 half-brother	stepbrother
 half-carcases	half-carcasses
 half-carcasses	half-carcases
 half-sister	stepsister
+Halifax	governor-general
+Hall	member of parliament
 hamburgers	burgers
+Hamid Karzai	acting president,president
+Hammurabi	monarch,monarch
 hand-holds	handholds
 handbook	manual
 handcuffs	cuffs
@@ -2006,23 +2575,46 @@ handholds	hand-holds
 handicrafts	crafts
 hanger	eyelet
 hangman	executioner
+Hank Manz	councillor
+Hanoi	Vietnam
+Hanrahan	member of parliament
+Hans-Rudolf Merz	swiss federal council
+Happy Chandler	governor
+Harare	Zimbabwe
 harbour	port
 harbours	ports
 hard-liners	hardliners
+Harding	president,lieutenant governor
 hardliners	hard-liners
 hardwood	deciduous
 hariri	al-hariri
 harm	damage
 harmonisation	harmonization
 harmonization	harmonisation
+Harney	deputy prime minister
+Harold Wilson	prime minister,member of parliament
+Harrison	president,president,governor,senator,member of congress,governor-general
+Harry F. Byrd	governor,senator
+Harry Jenkins, Sr.	member of parliament
+Harry M. Daugherty	attorney general
+Harry S. Truman	president,vice president
+Hartsuyker	member of parliament
 harvest	harvesting
 harvesting	harvest
+Hasina	prime minister
 hatching	incubation
 hate	hatred
 hatred	hate
+Haughey	prime minister
+Havana	Cuba
+Havel	president
+Hawke	member of parliament
+Hawker	member of parliament
+Hayes	president,governor,member of parliament
 haying	mowing
 hazardous	dangerous
 hazards	dangers
+Hazell	member of parliament
 hc	sc
 hch	hchs
 hchs	hch
@@ -2033,6 +2625,7 @@ headset	headphone
 headstone	gravestone
 headstones	gravestones
 headstones	tombstones
+Heath	prime minister
 heathens	pagans
 heaven	paradise
 hegemonism	hegemonist
@@ -2045,6 +2638,7 @@ heliport	helipad
 helix	propeller
 hello	hi
 helmsman	steersman
+Helsinki	Finland
 hematocrit	haematocrit
 hematology	haematology
 hemocytes	haemocytes
@@ -2054,12 +2648,24 @@ hemolymph	haemolymph
 hemophilia	haemophilia
 hemorrhagic	haemorrhagic
 hemorrhoids	haemorrhoids
+Henry Adoniram Swift	governor
+Henry Clay Ide	governor-general
+Henry Gage	governor
+Henry Hastings Sibley	governor
+Henry John Temple, 3rd Viscount Palmerston	prime minister
+Henry L. Stimson	governor-general,secretary of state
+Henry Markham	governor
+Henry Pelham	prime minister
 hepatic	liver
 heraldic	heraldry
 heraldry	heraldic
+Herbert H. Lehman	senator,governor,lieutenant governor
+Herbert Hoover	president
 herd	flock
 herd-books	stud-books
 herds	flocks
+Herzog	president
+Hewitt	mayor,member of parliament
 hex	hexadecimal
 hexadecimal	hex
 hezbollah	hizbollah
@@ -2069,13 +2675,19 @@ hieroglyphs	hieroglyphics
 high-tech	high-technology
 high-technology	high-tech
 hill	shan
+Hillary Rodham Clinton	senator,secretary of state,first lady
+Hillery	president
 hippo	hippopotamus
 hippopotamus	hippo
+Hiram Johnson	governor,senator
+Hirobumi	prime minister
+Hirohiko Izumida	governor
 historic	historical
 historical	historic
 history	story
 hive	beehive
 hizbollah	hezbollah
+Hockey	member of parliament
 homers	homeruns
 homeruns	homers
 homes	houses
@@ -2084,8 +2696,10 @@ honor	honour
 honour	honor
 hoofs	hooves
 hookers	whores
+Hoover	president
 hooves	hoofs
 hopelessness	despair
+Horace Austin	governor
 hose	sleeve
 hot-plug	hot-pluggable
 hot-pluggable	hot-plug
@@ -2093,13 +2707,21 @@ hot-swap	hot-swappable
 hot-swappable	hot-swap
 housekeeper	governess
 houses	homes
+Howard	prime minister,member of parliament
 hpb-dgps	hpbdgps
 hpbdgps	hpb-dgps
 hs	sh
+Hu Jintao	president,vice president
 huang	wong
 hub	concentrator
 hub	cube
+Hubbard	governor
 hubs	concentrators
+Huffman	member of congress
+Hugh Hanrahan	member of parliament
+Hughes	governor,secretary of state
+Huhne	member of parliament
+Hull	member of parliament
 humanisation	humanization
 humanity	humankind
 humanity	mankind
@@ -2109,13 +2731,18 @@ humankind	mankind
 humidity	moisture
 humor	humour
 humour	humor
+Hungary	Budapest
 hunger	famine
 hunt	hunting
+Hunt	member of parliament,member of parliament
 hunting	hunt
+Huseyn Shaheed Suhrawardy	prime minister
 hussain	hussein
+Hussain	prime minister
 hussein	hussain
 hutu	hutus
 hutus	hutu
+Hyde	president
 hydrazide	maleic
 hydrologic	hydrological
 hydrological	hydrologic
@@ -2126,18 +2753,28 @@ hypoglycaemia	hypoglycemia
 hypoglycemia	hypoglycaemia
 hypotheses	assumptions
 hypothesis	assumption
+I	monarch
+Iain Duncan Smith	member of parliament
+Ian Macfarlane	member of parliament
 ibn	bin
+Ibrahim al-Jaafari	prime minister
+Ibrahim Ismail Chundrigar	prime minister
+Iceland	Reykjavík
 iconto	arrowto
 ict	icts
 icts	ict
 id	identifier
+Ide	governor-general
 identifier	id
 ideologists	ideologues
 ideologues	ideologists
 idu	idus
 idus	idu
+Ielemia	prime minister
 if-	who-
+Ignacy Daszyński	prime minister
 igp	pgi
+II	attorney general,monarch
 ill-treatment	maltreatment
 ill-treatment	mistreatment
 illegal	unlawful
@@ -2186,10 +2823,13 @@ indecision	indecisiveness
 indecisiveness	indecision
 indexation	indexing
 indexing	indexation
+India	New Delhi
 indigenous	aboriginal
 indignation	outrage
+Indira Gandhi	prime minister
 individualisation	individualization
 individualization	individualisation
+Indonesia	Jakarta
 ineffectiveness	inefficiency
 inefficiency	ineffectiveness
 ineligible	non-eligible
@@ -2207,6 +2847,7 @@ inhibitor	inhibitory
 inhibitory	inhibitor
 injured	wounded
 inn	iuu
+Inouye	senator,member of congress
 inquiry	investigation
 insects	bugs
 insomnia	sleeplessness
@@ -2277,14 +2918,23 @@ ionization	ionisation
 ionizing	ionising
 iowa	lowa
 ipc	cpi
+Iran	Tehran
+Iraq	Baghdad
 iraqi	iraqis
 iraqis	iraqi
 iris	lris
+Irons	member of parliament
 irrespective	regardless
 irritant	irritating
 irritating	irritant
+Irwin	member of parliament,governor
+Isaac L. Varian	mayor
+Isakson	senator,member of congress
+Iskander Mirza	president
 islam	al-islam
+Islamabad	Pakistan
 island	island,place
+Ismaïl Omar Guelleh	president
 isoenzymes	isozymes
 isolation	insulation
 isomerisation	isomerization
@@ -2298,49 +2948,228 @@ issuer	transmitter
 issuers	transmitters
 issues	matters
 issues	questions
+Itō Hirobumi	prime minister
 iu	ui
 iuu	inn
 ivan	lvan
 ivy	lvy
+Izumida	governor
+Józef Cyrankiewicz	prime minister
+J. Caleb Boggs	senator,governor,member of congress
+J. M. Aaroon Rashid	member of parliament
+J. Neely Johnson	governor
+Jackie Speier	member of congress
+Jackson	governor,president,member of congress,senator,member of parliament
+Jacques Chirac	president,mayor,minister,prime minister
+Jacqui Smith	member of parliament
 jail	prison
 jails	prisons
 jakarta	djakarta
+Jakarta	Indonesia
+Jakaya Kikwete	president
+Jake McGoldrick	councillor
+Jamali	prime minister
+James A. Bayard	senator,ambassador,member of congress
+James A. Garfield	president
+James Bidgood	member of parliament
+James Buchanan	president,senator,ambassador,secretary of state,member of congress
+James Budd	governor
+James Callaghan	prime minister
+James D. Phelan	senator,mayor
+James Douglas	governor
+James Duane	mayor
+James F. Byrnes	secretary of state,governor
+James Francis Smith	governor-general
+James Gillett	governor
+James K. Polk	president,governor,speaker
+James L. Buckley	senator
+James Madison	president,secretary of state,member of congress
+James Mitchell	premier,governor
+James Monroe	president,secretary of state,governor,senator
+James Rolph	governor,mayor
+James Sykes	governor
+James Taom	member of parliament
+James VI and I	monarch
+Janelle Saffin	member of parliament
+Janet Napolitano	governor,attorney general
 janitor	concierge
+Japan	Tokyo
+Jared Huffman	member of congress
+Jason Clare	member of parliament
+Jason Wood	member of parliament
+Jatoi	prime minister
+Jawaharlal Nehru	prime minister
+Jay	governor,secretary of state
+Jayakumar	prime minister
+Jean Casimir-Perier	prime minister
+Jean Chrétien	prime minister
+Jeanne K. Krieger	councillor
 jeddah	jiddah
+Jeff Denham	member of congress
+Jefferson	president,governor,secretary of state,vice president
+Jefferson Sessions	senator
+Jennie George	member of parliament
+Jennifer Granholm	governor
+Jensen	member of parliament
+Jeremy Hunt	member of parliament
+Jerry Brown	secretary of state,mayor,governor,attorney general
+Jew	councillor
 jeweler	jeweller
 jeweller	jeweler
 jewellery	jewelry
 jewelry	jewellery
+Jiabao	premier
 jiddah	jeddah
 jigsaw	puzzle
+Jill Hall	member of parliament
+Jim Doyle	governor
+Jim Mays	mayor
+Jim Turnour	member of parliament
+Jimmy Carter	president,governor
+Jimmy Walker	mayor
+Jintao	president,vice president
 jirga	loya
 jj	dd
+Jo Leinen	member of parliament
+Joanna Gash	member of parliament
+Jodi Rell	governor
+Jodie Campbell	member of parliament
+Joe Biden	senator,councillor,vice president
+Joe Hockey	member of parliament
+Joe Lieberman	senator,attorney general
+Joe Simitian	supervisor
+Joel Fitzgibbon	member of parliament
+John Adams	president,vice president,ambassador,delegate
+John B. Weller	governor,senator
+John Bigler	governor
+John Bruton	prime minister
+John Cobb	member of parliament
+John Cochrane	mayor,attorney general
+John Dahmer	member of parliament
+John F. Kennedy	president
+John F. Street	mayor
+John Forrest	premier,member of parliament,member of parliament
+John Forsyth	member of congress,governor,senator,cabinet secretary
+John G. Downey	governor
+John Garamendi	lieutenant governor,member of congress
+John Hardy Isakson	senator,member of congress
+John Howard	prime minister,member of parliament
+John J. Williams	senator
+John Jay	governor,secretary of state
+John Kerry	senator,secretary of state
+John Lind	governor
+John Lindsay	mayor
+John M. Clayton	senator,secretary of state
+John Major	prime minister
+John Marshall	secretary of state,member of congress
+John Marshall Harlan II	attorney general
+John McCain	senator,member of congress
+John McDougall	governor
+John McKinley	senator
+John Murphy	member of parliament
+John P. Wilson	deputy prime minister
+John Penrose	member of parliament
+John Quincy Adams	president,member of congress,ambassador,secretary of state,senator
+John Reid, Baron Reid of Cardowan	member of parliament
+John S. Pillsbury	governor
+John Sanderson	governor
+John Shelley	mayor
+John Shimkus	member of congress
+John Tyler	president,governor,senator,vice president,member of congress
+John Vining	member of congress,senator
+John W. Johnston	senator
+Johnson	president,senator,member of congress,vice president,senate majority leader,mayor,member of parliament,president,governor,vice president,member of parliament,member of parliament,governor,senator,governor
+Johnston	senator
 joint	common
+Jon Corzine	governor,senator
+Jon Kyl	senator,member of congress
+Jon Porter	member of congress
+Jon Sullivan	member of parliament
+Jordan	Amman
+José López Portillo	president
+José P. Laurel	president
+Joseph Estrada	president,vice president
+Joseph Msika	second vice-president
+Joseph Stalin	premier
+Josiah Bonner	member of congress
+Jospin	prime minister
 journal	newspaper
+Jr.	governor-general,mayor,mayor,mayor,senator,member of congress,senator,senator,member of congress,member of parliament,governor
+Juan Bautista Ceballos	president
 judgement	judgment
 judgment	judgement
+Judi Moylan	member of parliament
+Judy Erola	member of parliament
 juice	jus
+Julia Brownley	member of congress
+Julia Gillard	deputy prime minister,member of parliament,prime minister
+Julia Irwin	member of parliament
+Julie Bishop	member of parliament
+Julie Collins	member of parliament
+Julie Owens	member of parliament
 jumper	bridge
+Junejo	prime minister
+Junichiro Koizumi	prime minister
+Juppé	prime minister
 jurisprudence	case-law
 jus	juice
 justification	rationale
+Justine Elliot	member of parliament
 jvm	fmv
+Jyotirmoyee Sikdar	member of parliament
+K. Rani	member of parliament
+K. Subbarayan	member of parliament
+K. V. Thangkabalu	member of parliament
+Kabbah	president
+Kabul	Afghanistan
+Kada	governor
 kafala	kafalah
 kafalah	kafala
+Kamal Nath	member of parliament
 kaolin	kaolinite
 kaolinite	kaolin
+Karen Bass	speaker,member of congress
+Karzai	acting president,president
+Katō Takaaki	prime minister
+Kate Ellis	member of parliament
+Kathleen Wynne	premier
+Katter	member of parliament
+Kautoa	member of parliament
+Kay Hull	member of parliament
 kayak	kayaking
 kayaking	kayak
+Kelley	councillor
+Kelly	member of parliament
+Kelvin Thomson	member of parliament
+Ken Livingstone	mayor
+Ken Salazar	attorney general,senator
+Kennedy	president,attorney general,senator
+Kenneth Clarke	member of parliament,minister
+Kenya	Nairobi
 kernels	almonds
+Kerr	member of parliament
+Kerry	senator,secretary of state
+Kerry Rea	member of parliament
+Kevin Andrews	member of parliament
+Kevin Rudd	prime minister,member of parliament
 keyboard	keypad
 keymaker	keymaster
 keymaster	disciple
 keymaster	keymaker
 keypad	keyboard
 kg	kilograms
+Khamtai Siphandon	president,prime minister
+Khan	president,prime minister,president,president
+Khandu Wangchuk	prime minister
+Khartoum	Sudan
+Kharventhan	member of parliament
+Khattigna	vice president
+Khawaja Nazimuddin	prime minister
 kidnapper	abductor
 kidnapping	abduction
 kidnappings	abductions
+Kiev	Ukraine
+Kikwete	president
 killer	murderer
 killers	murderers
 killings	murders
@@ -2356,26 +3185,48 @@ kilometres	kilometers
 kilometres	km
 kilotonnes	kilotons
 kilotons	kilotonnes
+Kim Campbell	prime minister
 kind	type
 kinds	types
+King	member of parliament
 kings	reyes
+Kinmochi	prime minister
+Kinshasa	Congo
+Kirsten Livermore	member of parliament
 kitchen	cooking
 kittens	catkins
+Kline	mayor
 km	kilometers
 km	kilometres
 knight	chevalier
+Knight	governor
 knock	toc
+Knoll	lieutenant governor
+Knute Nelson	governor,senator
+Koch	mayor,member of congress
+Kocharyan	acting president,president,prime minister
+Koirala	prime minister
+Koizumi	prime minister
+Konoe	prime minister
+Koroma	president
+Kouramaere Kautoa	member of parliament
 kpi	kpis
 kpis	kpi
+Krieger	councillor
 kroon	estonian
+Kuala Lumpur	Malaysia
+Kucinich	member of congress,mayor
+Kulasegaran	member of parliament
 kurdish	kurds
 kurds	kurdish
+Kurt von Schleicher	chancellor
+Kyl	senator,member of congress
+Léon Blum	president,prime minister
 l.111	l.112
 l.112	l.111
+L.A.	Los Angeles,LA
 l1s	n1
 LA	Los Angeles,L.A.
-Los Angeles	LA,L.A.
-L.A.	Los Angeles,LA
 lab	laboratory
 label	tag
 labelers	labellers
@@ -2388,29 +3239,45 @@ labyrinth	maze
 lac	lake
 lack	absence
 lake	lac
+Lal Bahadur Shastri	prime minister
 lam	lin
+LaMalfa	state representative,member of congress
+Laming	member of parliament
 lamps	lights
 lana	wool
 language	linguistic
+Lansley	member of parliament
 lanyards	loins
 laptop	notebook
 laptop	portable
 laptops	notebooks
 larch	tamarack
+Larry Craig	senator
+Larry O'Brien	mayor
 larvae	larval
 larval	larvae
+Lastrapes	mayor
+Latham	governor,senator
 lats	latvian
+Latvia	Riga
 latvian	lats
-law	act
+Laura Richardson	member of congress
+Laurel	president
+Laurent	prime minister
+Laurie Ferguson	member of parliament
+law	act,rule
+Law	prime minister
 law	right
 lawfulness	legality
 lawlessness	anarchy
 lawmakers	legislators
+Lawrence	mayor
 lay-bys	garages
 layout	design
 lb	lbs
 lbs	lb
 lcr	crl
+leader	ruler
 leaf	foliar
 leaflets	pamphlets
 leak	leakage
@@ -2418,28 +3285,41 @@ leakage	leak
 lease	rental
 least	less
 leatherback	lute
+Lebanon	Beirut
 lee	li
+Lee	mayor
 leeches	bloodsuckers
 legalisation	legalization
 legality	lawfulness
 legalization	legalisation
+Leghari	president
 legibility	readability
 legible	readable
 legislators	lawmakers
+Lehman	senator,governor,lieutenant governor
+Leinen	member of parliament
 leisure	recreation
+Leland Stanford	governor
+Lemass	deputy prime minister
 leniency	clemency
 lenses	lentils
 lentils	lenses
+Leonard Wood	governor-general
 less	least
 lessee	tenant
+Lester B. Pearson	prime minister
 letter	charter
 leucocytes	leukocytes
+Leuenberger	swiss federal council
 leukaemia	leukemia
 leukemia	leukaemia
 leukocytes	leucocytes
+Leuthard	swiss federal council
 lexicons	glossaries
+Ley	member of parliament
 li	lee
 liability	responsibility
+Liaquat Ali Khan	prime minister
 libel	defamation
 liberalisation	liberalization
 liberalization	liberalisation
@@ -2447,10 +3327,13 @@ liberia	liberian
 liberian	liberia
 liberties	freedoms
 liberty	freedom
+Libya	Tripoli
 licence	license
 licences	licenses
 license	licence
 licenses	licences
+Lieberman	senator,attorney general
+lieutenant governor	Gavin Newsom,Newsom,Warren G. Harding,Harding,Abel Maldonado,Maldonado,John Garamendi,Garamendi,Herbert H. Lehman,Lehman,David Paterson,Paterson,Catherine Baker Knoll,Knoll
 life	living
 lighthouse	phare
 lighting	illumination
@@ -2460,24 +3343,37 @@ limestone	calcareous
 limo	limousine
 limousine	limo
 lin	lam
+Lincoln	senator,member of congress,president
+Lind	governor
+Lindsay	mayor,member of parliament
+Lindsay Tanner	member of parliament
 linguistic	language
 linkages	links
 links	linkages
+Lionel Jospin	prime minister
 liquid	fluid
 liras	lire
 lire	liras
+Lisa Murkowski	senator
+Lisbon	Portugal
 liters	litres
 lithograph	lithography
 lithography	lithograph
+Lithuania	Vilnius
 litres	liters
 liver	hepatic
+Livermore	member of parliament
 living	life
+Livingston	mayor,secretary of state,member of congress,ambassador,senator
+Livingstone	mayor
+Ljubljana	Slovenia
 load	loading
 loading	load
 loci	locus
 lock-outs	lockouts
 locket	medallion
 lockouts	lock-outs
+Lockyer	delegate to party convention,attorney general
 locus	loci
 locusts	grasshoppers
 logic	logical
@@ -2494,19 +3390,31 @@ logons	logins
 logout	logoff
 loins	lanyards
 lollipop	pacifier
+London	the UK
+London	the United Kingdom
 loneliness	solitude
 long-liners	longliners
 longliners	long-liners
 looting	plundering
+lord mayor	Manfred Rommel,Rommel
 lordship	seigneury
 lorries	trucks
+Los Angeles	LA,L.A.
+Louis St. Laurent	prime minister
+Louise Markus	member of parliament
 louver	grille
+Low	governor
 lowa	iowa
+Lowenthal	state senator,member of congress
 loya	jirga
 lp	sq
 lris	iris
+Lucius Frederick Hubbard	governor
 luck	chance
 luggage	baggage
+Luke Edward Wright	governor-general
+Luke Hartsuyker	member of parliament
+Luke Simpkins	member of parliament
 lunch	luncheon
 luncheon	lunch
 lung	pulmonary
@@ -2521,29 +3429,50 @@ lvan	ivan
 lvy	ivy
 lymph	lymphatic
 lymphatic	lymph
+Lyndon B. Johnson	president,senator,member of congress,vice president,senate majority leader
 lyophilization	freeze-drying
 métis	metis
 m-4	d-4
 m-7	d-7
 m.	mr.
+M. Appadurai	member of parliament
+M. Kulasegaran	member of parliament
 m.b.a.	mba
 m.d.	md
 mac	pimp
 macao	macau
+Macapagal	president,vice president
+Macapagal-Arroyo	president,vice president,senator
 macau	macao
+Macedonia	Skopje
+MacEntee	deputy prime minister
+Macfarlane	member of parliament
+Maciej Rataj	president
+Macmillan	member of parliament
 macro-economic	macroeconomic
 macro-region	macroregion
 macro-regions	macroregions
 macroeconomic	macro-economic
 macroregion	macro-region
 macroregions	macro-regions
+MacSharry	deputy prime minister
+Madison	president,secretary of state,member of congress
 madrasas	madrassas
 madrassas	madrasas
+Madrid	president
+Madrid	Spain
 magnitudes	amplitudes
+Magsaysay	president
 mahdi	al-mahdi
 maiming	mutilation
 main	principal
 maize	corn
+Major	prime minister
+Mal Washer	member of parliament
+Malan	prime minister
+Malaysia	Kuala Lumpur
+Malcolm Turnbull	member of parliament
+Maldonado	lieutenant governor
 maleic	hydrazide
 maltreatment	ill-treatment
 mama	mom
@@ -2551,19 +3480,27 @@ mammogram	mammography
 mammography	mammogram
 manat	manats
 manats	manat
+Mancroft	member of parliament
 mandatory	compulsory
+Mandela	president
+Manfred Rommel	lord mayor
 manhood	virility
+Mani Shankar Aiyar	member of parliament
 manicure	manicurist
 manicurist	manicure
 manikin	dummy
+Manila	Philippines
 manioc	cassava
 mankind	humanity
 mankind	humankind
 manual	handbook
 manual	manuel
 manuel	manual
+Manuel L. Quezon	president
+Manuel Roxas	president
 manufacture	manufacturing
 manufacturing	manufacture
+Manz	councillor
 map	card
 mapmaker	cartographer
 mapper	allocator
@@ -2571,37 +3508,88 @@ mapping	cartography
 maps	cards
 maquila	maquiladora
 maquiladora	maquila
+Marc Ravalomanana	president
+Marcos	president
+Marcus Stephen	president
+Margaret May	member of parliament
 marginalisation	marginalization
 marginalization	marginalisation
+Maria Vamvakinou	member of parliament
 marianne	marion
 marihuana	marijuana
 marijuana	marihuana
 marine	maritime
 marine	navy
+Marino	member of parliament
 marion	marianne
 maritime	marine
+Mark Butler	member of parliament
+Mark Coulton	member of parliament
+Mark Dreyfus	member of parliament
+Mark Oaten	member of parliament
+Mark Pryor	senator
+Mark Vaile	member of parliament
+Mark White	governor
 marketing	commercialization
+Markham	governor
+Markus	member of parliament
+Marles	member of parliament
 marmot	groundhog
 marmots	woodchucks
 marriage	wedding
+Marshall	secretary of state,member of congress
+Martin Ferguson	member of parliament
+Martin Van Buren	president,senator,governor,vice president,secretary of state
+Mary Coughlan	deputy prime minister
+Mary Harney	deputy prime minister
+Mary McAleese	president
+Mary Robinson	president
+Masayoshi	prime minister
 masseur	bone-setter
+Massey	prime minister
 material	materials
 materialism	materialist
 materialist	materialism
 materials	material
 maternity	motherhood
+Matsukata Masayoshi	prime minister
 matter	issue
 matters	issues
 maturation	ripening
 maurice	mauritius
+Maurice Macmillan	member of parliament
 mauritius	maurice
+Maxine McKew	member of parliament
+Maxwell	councillor
+May	member of parliament
+mayor	Gavin Newsom,Newsom,Dianne Feinstein,Feinstein,Dennis Kucinich,Kucinich,Rudy Giuliani,Giuliani,John Lindsay,Lindsay,Paul Soglin,Soglin,Nancy Chaney,Chaney,Philip Mitman,Mitman,Jerry Brown,Brown,Frank Murphy,Murphy,Willie Brown,Brown,Norman Mineta,Mineta,Abram Hewitt,Hewitt,James Duane,Duane,Fernando Wood,Wood,John Cochrane,Cochrane,George B. McClellan, Jr.,Jr.,DeWitt Clinton,Clinton,William Paulding, Jr.,Jr.,Smith Ely, Jr.,Jr.,David Dinkins,Dinkins,Isaac L. Varian,Varian,Cornelius Lawrence,Lawrence,Ardolph L. Kline,Kline,Ed Koch,Koch,Fiorello H. La Guardia,Guardia,Jimmy Walker,Walker,Gideon Lee,Lee,Edward Livingston,Livingston,Frank McCoppin,McCoppin,John Shelley,Shelley,Adolph Sutro,Sutro,James D. Phelan,Phelan,Dud Lastrapes,Lastrapes,Boris Johnson,Johnson,Jim Mays,Mays,John F. Street,Street,Nicolas Sarkozy,Sarkozy,Jacques Chirac,Chirac,Newton D. Baker,Baker,Ken Livingstone,Livingstone,Larry O'Brien,O'Brien,James Rolph,Rolph,Washington Bartlett,Bartlett,Dora Bakoyannis,Bakoyannis
+Mays	mayor
+Mazari	prime minister
 maze	labyrinth
 mb	mo
 mba	m.b.a.
+McAleese	president
+McCain	senator,member of congress
+McClelland	governor
+McClintock	state senator,member of congress,member of the legislative assembly
+McCoppin	mayor
+McDougall	governor
+McDowell	deputy prime minister
+McGauran	member of parliament
+McGill	governor
+McGoldrick	councillor
+McGuinty	premier
+McKew	member of parliament
+McKinley	president,governor,senator
+McKinney	member of congress
+McLeod	state senator,member of congress
+McMullan	member of parliament
+McNutt	governor
 md	m.d.
 mdc	cmd
 mdma	motapm
 measures	steps
+Mecham	governor
 medallion	concho
 medallion	locket
 mediator	ombudsman
@@ -2614,7 +3602,13 @@ megatonnes	megatons
 megatons	megatonnes
 meiosis	meiotic
 meiotic	meiosis
+Meir	prime minister
+Melham	member of parliament
+Melissa Parke	member of parliament
 member	members
+member of congress	Robert Aderholt,Aderholt,Spencer Bachus,Bachus,Josiah Bonner,Bonner,Artur Davis,Davis,Michael D. Rogers,Rogers,Richard Shelby,Shelby,Donald Young,Young,John McCain,McCain,Jon Kyl,Kyl,Blanche Lincoln,Lincoln,Barbara Boxer,Boxer,Tom Carper,Carper,Dennis Kucinich,Kucinich,Bill Nelson,Nelson,Saxby Chambliss,Chambliss,John Hardy Isakson,Isakson,Daniel Kahikina Akaka,Akaka,Daniel Inouye,Inouye,Michael Dean Crapo,Crapo,Lyndon B. Johnson,Johnson,William Henry Harrison,Harrison,Ron Paul,Paul,George H. W. Bush,Bush,Andrew Jackson,Jackson,Nancy Pelosi,Pelosi,Jon Porter,Porter,Doug LaMalfa,LaMalfa,Jared Huffman,Huffman,Julia Brownley,Brownley,Karen Bass,Bass,Laura Richardson,Richardson,Paul Cook,Cook,Gloria Negrete McLeod,McLeod,Alan Lowenthal,Lowenthal,Tom McClintock,McClintock,Jeff Denham,Denham,John Garamendi,Garamendi,John Forsyth,Forsyth,Mike Simpson,Simpson,Ed Koch,Koch,Edward Livingston,Livingston,Robert Roosevelt,Roosevelt,Jackie Speier,Speier,Tammy Baldwin,Baldwin,John Quincy Adams,Adams,John Vining,Vining,Gabriel Duvall,Duvall,Don Cazayoux,Cazayoux,James Madison,Madison,John Tyler,Tyler,James Buchanan,Buchanan,Franklin Pierce,Pierce,Cynthia McKinney,McKinney,John Shimkus,Shimkus,Donald L. Ritter,Ritter,John Marshall,Marshall,Donald W. Riegle, Jr.,Jr.,William V. Roth, Jr.,Jr.,Caesar Augustus Rodney,Rodney,James A. Bayard,Bayard,J. Caleb Boggs,Boggs,Tillie K. Fowler,Fowler,Thomas Clayton,Clayton
+member of parliament	John Howard,Howard,Peter Garrett,Garrett,Julie Bishop,Bishop,Allan Rocher,Rocher,Jo Leinen,Leinen,M. Kulasegaran,Kulasegaran,Kevin Rudd,Rudd,Bert Hazell,Hazell,John Dahmer,Dahmer,Scott Thorkelson,Thorkelson,Walter Scott-Elliot,Scott-Elliot,Otho Prior-Palmer,Prior-Palmer,Judy Erola,Erola,Robert Bradford,Bradford,John Penrose,Penrose,David Evennett,Evennett,Tom Steele,Steele,Sir John Arbuthnot, 1st Baronet,Baronet,Pat Doherty,Doherty,Gilbert Barrette,Barrette,William Wilberforce,Wilberforce,David Renton, Baron Renton,Renton,Hugh Hanrahan,Hanrahan,Boris Johnson,Johnson,N. S. V. Chitthan,Chitthan,Jyotirmoyee Sikdar,Sikdar,Ambareesh,Ambareesh,Bharatsinh Madhavsinh Solanki,Solanki,K. Rani,Rani,K. V. Thangkabalu,Thangkabalu,R. Prabhu,Prabhu,E. V. K. S. Elangovan,Elangovan,S. K. Kharventhan,Kharventhan,J. M. Aaroon Rashid,Rashid,R. Dhanuskodi Athithan,Athithan,P. Mohan,Mohan,A. V. Bellarmin,Bellarmin,K. Subbarayan,Subbarayan,M. Appadurai,Appadurai,Rolf Dudley-Williams,Dudley-Williams,Julia Gillard,Gillard,Dick Adams,Adams,Tony Abbott,Abbott,Kevin Andrews,Andrews,Anthony Albanese,Albanese,Jennie George,George,Fran Bailey,Bailey,Bob Baldwin,Baldwin,Arch Bevis,Bevis,Sharon Bird,Bird,Bronwyn Bishop,Bishop,David Bradbury,Bradbury,Anna Burke,Burke,Tony Burke,Burke,Mark Butler,Butler,Anthony Byrne,Byrne,Nick Champion,Champion,Darren Cheeseman,Cheeseman,Jason Clare,Clare,John Cobb,Cobb,Julie Collins,Collins,Greg Combet,Combet,Peter Costello,Costello,Mark Coulton,Coulton,Simon Crean,Crean,Michael Danby,Danby,Yvette D'Ath,D'Ath,Bob Debus,Debus,Alexander Downer,Downer,Mark Dreyfus,Dreyfus,Peter Dutton,Dutton,Justine Elliot,Elliot,Annette Ellis,Ellis,Kate Ellis,Ellis,Craig Emerson,Emerson,Pat Farmer,Farmer,Laurie Ferguson,Ferguson,Martin Ferguson,Ferguson,Joel Fitzgibbon,Fitzgibbon,John Forrest,Forrest,Joanna Gash,Gash,Steve Georganas,Georganas,Jodie Campbell,Campbell,James Bidgood,Bidgood,Bruce Billson,Billson,Sharryn Jackson,Jackson,Petro Georgiou,Georgiou,Steve Gibbons,Gibbons,Gary Gray,Gray,Sharon Grierson,Grierson,Alan Griffin,Griffin,Barry Haase,Haase,Damian Hale,Hale,Jill Hall,Hall,Luke Hartsuyker,Hartsuyker,Alex Hawke,Hawke,David Hawker,Hawker,Chris Hayes,Hayes,Joe Hockey,Hockey,Kay Hull,Hull,Greg Hunt,Hunt,Steve Irons,Irons,Julia Irwin,Irwin,Paul Neville,Neville,Harry Jenkins, Sr.,Sr.,Dennis Jensen,Jensen,Michael Johnson,Johnson,Bob Katter,Katter,Mike Kelly,Kelly,Duncan Kerr,Kerr,Catherine King,King,Andrew Laming,Laming,Sussan Ley,Ley,Peter Lindsay,Lindsay,Kirsten Livermore,Livermore,Nola Marino,Marino,Richard Marles,Marles,Ian Macfarlane,Macfarlane,Peter McGauran,McGauran,Maxine McKew,McKew,Bob McMullan,McMullan,Louise Markus,Markus,Margaret May,May,Daryl Melham,Melham,Sophie Mirabella,Mirabella,Scott Morrison,Morrison,Judi Moylan,Moylan,John Murphy,Murphy,Belinda Neal,Neal,Brendan Nelson,Nelson,Rowan Ramsey,Ramsey,Shayne Neumann,Neumann,Brendan O'Connor,O'Connor,Julie Owens,Owens,Melissa Parke,Parke,Chris Pearce,Pearce,Graham Perrett,Perrett,Tanya Plibersek,Plibersek,Roger Price,Price,Christopher Pyne,Pyne,Brett Raguse,Raguse,Don Randall,Randall,Bill Shorten,Shorten,Kerry Rea,Rea,Bernie Ripoll,Ripoll,Amanda Rishworth,Rishworth,Andrew Robb,Robb,Stuart Robert,Robert,Nicola Roxon,Roxon,Philip Ruddock,Ruddock,Janelle Saffin,Saffin,Alby Schultz,Schultz,Bruce Scott,Scott,Patrick Secker,Secker,Sid Sidebottom,Sidebottom,Wayne Swan,Swan,Luke Simpkins,Simpkins,Peter Slipper,Slipper,Stephen Smith,Smith,Tony Smith,Smith,Warren Snowdon,Snowdon,Alex Somlyay,Somlyay,Andrew Southcott,Southcott,Sharman Stone,Stone,Jon Sullivan,Sullivan,Tony Zappia,Zappia,Mike Symon,Symon,Lindsay Tanner,Tanner,Craig Thomson,Thomson,Kelvin Thomson,Thomson,Chris Trevor,Trevor,Warren Truss,Truss,Wilson Tuckey,Tuckey,Malcolm Turnbull,Turnbull,Jim Turnour,Turnour,Mark Vaile,Vaile,Danna Vale,Vale,Maria Vamvakinou,Vamvakinou,Mal Washer,Washer,Tony Windsor,Windsor,Jason Wood,Wood,Edmund Barton,Barton,Anne Milton,Milton,Sue Doughty,Doughty,Nick St Aubyn,Aubyn,George Galloway,Galloway,John Forrest,Forrest,Jeremy Hunt,Hunt,Maurice Macmillan,Macmillan,Virginia Bottomley,Bottomley,Alan Johnson,Johnson,Gordon Brown,Brown,Winston Churchill,Churchill,Alan Milburn,Milburn,Kenneth Clarke,Clarke,John Reid, Baron Reid of Cardowan,Cardowan,Stephen Dorrell,Dorrell,Frank Dobson,Dobson,Patricia Hewitt,Hewitt,Harold Wilson,Wilson,Tony Blair,Blair,Jacqui Smith,Smith,Arthur Samuel, 1st Baron Mancroft,Mancroft,Sir Godfrey Nicholson, 1st Baronet,Baronet,James Taom,Taom,Kouramaere Kautoa,Kautoa,Iain Duncan Smith,Smith,Dora Bakoyannis,Bakoyannis,Aneurin Bevan,Bevan,Alec Douglas-Home,Douglas-Home,Charles Clarke,Clarke,Mark Oaten,Oaten,Andrew Lansley,Lansley,Eknath Gaikwad,Gaikwad,Somnath Chatterjee,Chatterjee,Mani Shankar Aiyar,Aiyar,Chris Huhne,Huhne,Michael Bryant,Bryant,Brian Lenihan, Jr.,Jr.,Kamal Nath,Nath
+member of the legislative assembly	Theodore Roosevelt,Roosevelt,Tom McClintock,McClintock
 members	member
 memoranda	memorandums
 memorandums	memoranda
@@ -2624,8 +3618,11 @@ mentorship	mentoring
 mercenaries	mercenary
 mercenary	mercenaries
 merger	fusion
+Merkel	chancellor,minister
 mermaid	siren
 mermaids	sirens
+Merriam	governor,governor
+Merz	swiss federal council
 metal	metallic
 metallic	metal
 metalloproteases	metalloproteinases
@@ -2643,6 +3640,15 @@ mi-8	mi-17
 mic	microphone
 micellar	micelle
 micelle	micellar
+Michael Bryant	member of parliament
+Michael D. Rogers	member of congress
+Michael Danby	member of parliament
+Michael Dean Crapo	senator,member of congress
+Michael Johnson	member of parliament
+Michael McDowell	deputy prime minister
+Michael O'Leary	deputy prime minister
+Michela Alioto-Pier	councillor
+Micheline Calmy-Rey	swiss federal council
 micro-algae	microalgae
 micro-architecture	microarchitecture
 micro-businesses	micro-enterprises
@@ -2690,21 +3696,39 @@ midpoint	mid-point
 midsession	mid-session
 midsummer	mid-summer
 midterm	mid-term
+Mieczysław Rakowski	prime minister
 migrant	migrants
 migrants	migrant
+Miguel de la Madrid	president
+Mike Gravel	speaker
+Mike Kelly	member of parliament
+Mike Rann	premier
+Mike Simpson	member of congress,speaker,state representative
+Mike Symon	member of parliament
+Milburn	member of parliament
 militants	fighters
 militants	gunmen
 militarisation	militarization
 militarization	militarisation
 militarization	weaponization
 milk	dairy
+Millard Fillmore	president,vice president
+Miller	governor
 milliliter	millilitre
 millilitre	milliliter
+Milton	member of parliament
+Milton Latham	governor,senator
 mine-clearance	demining
+Mineta	mayor
 miniature	thumbnail
+minister	Göran Persson,Persson,Nicolas Sarkozy,Sarkozy,Jacques Chirac,Chirac,Kenneth Clarke,Clarke,Angela Merkel,Merkel
 ministerial	departmental
 ministries	departments
 ministry	department
+Minsk	Belarus
+Mirabella	member of parliament
+Mirkarimi	councillor
+Mirza	president
 misinformation	disinformation
 missiles	rockets
 mist	fog
@@ -2713,9 +3737,12 @@ mistakes	errors
 mistletoe	gui
 mistreatment	ill-treatment
 mistrust	distrust
+Mitchell	premier,governor,governor
+Mitman	mayor
 mitochondria	mitochondrion
 mitochondrion	mitochondria
 mittens	mitts
+Mitterrand	president
 mitts	mittens
 mixer	switcher
 mixing	mixture
@@ -2733,10 +3760,14 @@ modellers	modelers
 modelling	modeling
 modernisation	modernization
 modernization	modernisation
+Mogadishu	Somalia
 mohamed	mohammad
 mohamed	muhammad
 mohammad	mohamed
 mohammad	muhammad
+Mohammad Ali Bogra	prime minister
+Mohammad-Ali Rajai	president,prime minister
+Mohan	member of parliament
 moist	wet
 moisture	humidity
 mold	mould
@@ -2752,14 +3783,18 @@ mom	mother
 momentum	impetus
 mommy	mom
 mon	monday
+monarch	Ugyen Wangchuck,Wangchuck,James VI and I,I,Elizabeth Stuart, Queen of Bohemia,Bohemia,Frederick V, Elector Palatine,Palatine,Charlemagne,Charlemagne,Charles XII of Sweden,Sweden,Otto IV, Holy Roman Emperor,Emperor,Hammurabi,Hammurabi,Elizabeth II,II
 monday	mon
+Mongolia	Ulaanbaatar
 monitoring	surveillance
 monkey	ape
 monkeys	apes
 monomer	monomeric
 monomeric	monomer
+Monroe	president,secretary of state,governor,senator
 monster	freak
 monsters	freaks
+Montevideo	Uruguay
 month	months
 months	month
 montréal	montreal
@@ -2767,9 +3802,14 @@ montreal	montréal
 moonroof	sunroof
 mooring	berthage
 mop	rp
+Morarji Desai	prime minister
+moratorium	ban,prohibition
 morgue	mortuary
+Moritz Leuenberger	swiss federal council
+Morocco	Rabat
 morphologic	morphological
 morphological	morphologic
+Morrison	member of parliament
 mortuary	morgue
 moss	foam
 mosses	foams
@@ -2800,17 +3840,22 @@ moustache	mustache
 movie	film
 movies	films
 mowing	haying
+Moylan	member of parliament
 mp3	mp3s
 mp3s	mp3
 mpa	zpm
 mr.	m.
+Msika	second vice-president
 mt	tm
 mucous	mucus
 mucus	mucous
 muffler	silencer
+Mugabe	president,prime minister
 mugs	cups
 muhammad	mohamed
 muhammad	mohammad
+Muhammad Khan Junejo	prime minister
+Muhammad Rafiq Tarar	president
 mules	burros
 multi-annual	multi-year
 multi-channel	multichannel
@@ -2844,10 +3889,13 @@ murderer	killer
 murderers	assassins
 murderers	killers
 murders	killings
+Murkowski	senator
+Murphy	attorney general,mayor,governor-general,governor,member of parliament
 musée	museum
 museum	musée
 musharaf	musharraf
 musharraf	musharaf
+Musharraf	president
 mushrooms	fungi
 muskox	muskoxen
 muskoxen	muskox
@@ -2856,6 +3904,7 @@ muslims	muslim
 mussels	moulds
 mustache	moustache
 mutilation	maiming
+Muwanga	president,prime minister,vice president
 mwtps	mwwtps
 mwwtps	mwtps
 mycelia	mycelium
@@ -2863,13 +3912,19 @@ mycelium	mycelia
 mycorrhiza	mycorrhizae
 mycorrhizae	mycorrhiza
 myocardium	infarction
+Núñez	speaker
+N. S. V. Chitthan	member of parliament
 n.a.	n.d.
 n.d.	n.a.
 n03-	no3-
 n1	l1s
 nails	fingernails
+Nairobi	Kenya
 najaf	al-najaf
 name	behalf
+Nancy Chaney	mayor
+Nancy Pelosi	speaker,member of congress
+Nanda	prime minister
 nanjing	nanking
 nanking	nanjing
 nanometer	nanometre
@@ -2878,6 +3933,9 @@ nanometre	nanometer
 nanometres	nanometers
 napkin	towel
 napkins	towels
+Napolitano	governor,attorney general
+Nath	member of parliament
+Nathaniel Mitchell	governor
 nationalisation	nationalization
 nationalization	nationalisation
 naturalisation	naturalization
@@ -2885,21 +3943,28 @@ naturalisations	naturalizations
 naturalization	naturalisation
 naturalizations	naturalisations
 nature	character
+Naudain	senator
 navigability	airworthiness
 navigator	browser
 navy	marine
 nazi	nazis
+Nazimuddin	prime minister
 nazis	nazi
 ncc	scc
+Neal	member of parliament
 necklace	collier
+Neelam Sanjiva Reddy	president
 neglect	negligence
 negligence	neglect
 negotiating	negotiation
 negotiation	negotiating
+Nehru	prime minister
 neighbor	neighbour
 neighbors	neighbours
 neighbour	neighbor
 neighbours	neighbors
+Nelson	senator,member of congress,governor,senator,senator,governor,member of parliament
+Nelson Mandela	president
 neo-colonialism	neocolonialism
 neo-cons	neo-conservatives
 neo-conservatives	neo-cons
@@ -2911,14 +3976,25 @@ neocolonialism	neo-colonialism
 neoliberal	neo-liberal
 neoliberalism	neo-liberalism
 nets	fillets
+Neumann	member of parliament
 neurones	neurons
 neurons	neurones
+Neville	member of parliament
+New Delhi	India
 newbie	probie
 newsletter	bulletin
 newsletters	bulletins
+Newsom	councillor,lieutenant governor,mayor
 newspaper	journal,newspaper
+Newton Booth	governor,senator
+Newton D. Baker	mayor
 newts	tritons
 nicin	nisin
+Nick Champion	member of parliament
+Nick St Aubyn	member of parliament
+Nicola Roxon	member of parliament,attorney general
+Nicolas Sarkozy	president,co-prince,minister,president of the general council,finance minister,mayor
+Nigeria	Abuja
 night	evening
 nightdresses	nightshirts
 nightgowns	nightshirts
@@ -2926,7 +4002,9 @@ nightshirts	nightdresses
 nightshirts	nightgowns
 ninth	9th
 nisin	nicin
+Nixon	president,vice president,senator
 no3-	n03-
+Nola Marino	member of parliament
 non-disruptive	nondisruptive
 non-eligible	ineligible
 non-extension	non-renewal
@@ -2952,13 +4030,19 @@ nonmetals	non-metals
 nonparticipants	non-participants
 nonprescription	over-the-counter
 nonusers	non-users
+Noon	prime minister
 normalcy	normality
 normality	normalcy
+Norman Mineta	mayor
+Norman P. Cohen	councillor
 norms	standards
+North Koreak	Pyongyang
 north-east	northeast
 north-west	northwest
 northeast	north-east
 northwest	north-west
+Norton	deputy prime minister
+Norway	Oslo
 not-for-profit	non-profit
 notebook	laptop
 notebooks	laptops
@@ -2970,8 +4054,15 @@ nucleolus	nucleolar
 nucleophile	nucleophilic
 nucleophilic	nucleophile
 nunnery	convent
+Nurul Amin	prime minister,vice president
+O'Brien	mayor
+O'Connor	member of parliament
+O'Kelly	president,deputy prime minister
+O'Leary	deputy prime minister
 oat	oats
+Oaten	member of parliament
 oats	oat
+Obama	senator,president
 object	thing
 objective	aim
 objective	goal
@@ -2981,6 +4072,7 @@ observations	comments
 obstacles	barriers
 occasion	opportunity
 occupations	professions
+ocean	sea
 octabde	oktabde
 odour	smell
 oesophagus	esophagus
@@ -2997,6 +4089,9 @@ ohms	ohm
 oid	dio
 oil	petroleum
 oktabde	octabde
+Oliver Ellsworth	senator
+Olmert	prime minister,acting prime minister
+Olson	governor
 oman	amman
 ombudsman	mediator
 omelet	omelette
@@ -3004,6 +4099,7 @@ omelette	omelet
 on-line	online
 one-person-enterprises	opes
 online	on-line
+Onorio	vice president
 opes	one-person-enterprises
 opinions	views
 opossum	possum
@@ -3036,11 +4132,17 @@ orogen	orogeny
 orogeny	orogen
 orphaned	orphans
 orphans	orphaned
+Ortega	president
 orthopaedic	orthopedic
 orthopaedics	orthopedics
 orthopedic	orthopaedic
 orthopedics	orthopaedics
 osb	tso
+Oslo	Norway
+Osmeña	president
+Otho Prior-Palmer	member of parliament
+Otto IV, Holy Roman Emperor	emperor,monarch
+Oudom Khattigna	vice president
 outcast	pariah
 outcome	result
 outcomes	results
@@ -3072,12 +4174,15 @@ overruns	exceedances
 overwrite	overwriting
 overwriting	overwrite
 ovine	sheep
+Owens	member of parliament
 ownership	property
 oxidising	oxidizing
 oxidizing	oxidising
+P. Mohan	member of parliament
 p.c.	c.p.
 p.m.	a.m.
 pac	cip
+Pacheco	governor
 pacifier	lollipop
 package	packet
 packager	packer
@@ -3102,9 +4207,11 @@ paintings	paints
 paints	paintings
 pairs	couples
 pajamas	pyjamas
+Pakistan	Islamabad
 palace	palais
 palaeontology	paleontology
 palais	palace
+Palatine	monarch
 paleontology	palaeontology
 palestine	palestinian
 palestinian	palestine
@@ -3113,18 +4220,21 @@ palestinians	palestinian
 palettes	pallets
 pallets	paddles
 pallets	palettes
+Palmerston	prime minister
 pam	wfp
 pamphlet	brochure
 pamphlets	brochures
 pamphlets	leaflets
 panacea	cure-all
 pancakes	crepes
+Pandit	ambassador
 pane	panel
 panel	group
 panel	pane
 pants	trousers
 papa	dad
 papa	daddy
+Papen	chancellor
 paper	document
 paperboard	cardboard
 papilla	papillae
@@ -3138,8 +4248,10 @@ parasite	parasitic
 parasites	pests
 parasitic	parasite
 parcels	plots
+Pardee	governor
 parentage	filiation
 pariah	outcast
+Parke	member of parliament
 parody	travesty
 part	party
 participation	involvement
@@ -3155,6 +4267,7 @@ partition	partitioning
 partitioning	partition
 party	part
 party	party
+Pascal Couchepin	swiss federal council
 passenger-kilometres	passenger-kms
 passenger-kms	passenger-kilometres
 pasta	pulp
@@ -3165,22 +4278,41 @@ pasteurization	pasteurisation
 pasting	paste
 pastor	pasteur
 pasture	grazing
+Pat Brown	governor,attorney general
+Pat Doherty	member of parliament
+Pat Farmer	member of parliament
 paternity	fatherhood
+Paterson	lieutenant governor,governor
 pathogen	pathogenic
 pathogenic	pathogen
+Patricia Hewitt	member of parliament
+Patrick	governor
+Patrick Hillery	president
+Patrick Secker	member of parliament
 patriotes	patriots
 patriots	patriotes
 patrol	patrolling
 patrolling	patrol
 patronage	favouritism
+Patten	governor
+Paul	member of congress
+Paul Cook	member of congress,state representative
+Paul Neville	member of parliament
+Paul Reynaud	prime minister
+Paul Soglin	mayor
+Paul V. McNutt	governor
+Paulo Muwanga	president,prime minister,vice president
 pawl	ratchet
+Pawlenty	governor
 pcp	cfp
 pdb	apb
 peace-building	peacebuilding
 peace-keeping	peacekeeping
 peacebuilding	peace-building
 peacekeeping	peace-keeping
+Pearce	member of parliament
 pearls	beads
+Pearson	prime minister
 peatland	bog
 peatlands	bogs
 pediatrician	paediatrician
@@ -3190,20 +4322,29 @@ pedophilia	paedophilia
 peduncle	stalk
 pee	piss
 peeper	voyeur
+Peiyan	deputy premier
+Pelham	prime minister
 pellets	granules
+Pelosi	speaker,member of congress
 pelts	skins
 penal	criminal
 penalties	sanctions
 pencils	crayons
+Penrose	member of parliament
 people	persons
+Per Unckel	governor
+Per Westerberg	speaker
 percent	%
 perfluorooctane	sulfonate
 perfusion	infusion
+Perkins	governor
 permanent	standing
 permissions	permits
 permits	permissions
 perpetrators	authors
-person	individual,character,human,person
+Perrett	member of parliament
+Perry	governor
+person	individual,character,human,person,guy,girl,man,woman
 personalization	customization
 personalizations	customizations
 personalize	customize
@@ -3211,7 +4352,22 @@ personnel	staff
 persons	people
 perspectives	prospects
 perspiration	transpiration
+Persson	prime minister,minister
+Pervez Musharraf	president
+Peskin	councillor
 pests	parasites
+Pete Wilson	governor,senator
+Peter Barry	deputy prime minister
+Peter C. J. Kelley	councillor
+Peter Costello	member of parliament
+Peter Dutton	member of parliament
+Peter Garrett	member of parliament
+Peter Hardeman Burnett	governor
+Peter Lindsay	member of parliament
+Peter McGauran	member of parliament
+Peter Slipper	member of parliament,speaker
+Peterson	governor
+Petro Georgiou	member of parliament
 petrol	gasoline
 petroleum	oil
 pgi	igp
@@ -3227,8 +4383,12 @@ pharmacovigilance	pharmacosurveillance
 phase	stage
 phases	stages
 phd	ph.d.
+Phelan	senator,mayor
 phenolics	phenols
 phenols	phenolics
+Philip Mitman	mayor
+Philip Ruddock	member of parliament
+Philippines	Manila
 phone	telephone
 phones	telephones
 phosphorous	phosphorus
@@ -3256,10 +4416,14 @@ pictographs	pictograms
 picture	image
 pictures	images
 pictures	photos
+Pierce	president,member of congress,senator
+Pierpont	governor
 pierre	stone
+Pierre Trudeau	prime minister
 pig	pork
 pilgrimage	hajj
 pilgrims	hajjis
+Pillsbury	governor
 pimp	mac
 pimps	procurers
 ping	pyeong
@@ -3285,6 +4449,7 @@ player	actor
 players	actors
 playwright	dramatist
 playwrights	dramatists
+Plibersek	member of parliament
 plot	conspiracy
 plots	parcels
 plug-in	plugin
@@ -3296,16 +4461,19 @@ plundering	looting
 pluralist	pluralistic
 pluralistic	pluralist
 pma	agp
+Poland	Warsaw
 polarisation	polarization
 polarization	polarisation
 policy	political
 polio	poliomyelitis
 poliomyelitis	polio
 political	policy
+Polk	president,governor,speaker
 polyethene	polyethylene
 polyethylene	polyethene
 polymerisation	polymerization
 polymerization	polymerisation
+Pompidou	president,prime minister
 poplar	aspen
 poplar	cottonwood
 porch	veranda
@@ -3317,8 +4485,12 @@ porno	porn
 port	harbour
 portability	transferability
 portable	laptop
+Porter	member of congress
 portfolio	wallet
+Portillo	president
 ports	harbours
+Portugal	Lisbon
+Posey	senator,governor
 positions	posts
 possum	opossum
 post-production	postproduction
@@ -3337,7 +4509,9 @@ ppe	epp
 ppt	tpp
 pqp	rpq
 préfets	prefects
+Prabhu	member of parliament
 praesidium	presidium
+Prague	the Czech Republic
 prairie	grassland
 prairies	grasslands
 pre-accession	preaccession
@@ -3370,6 +4544,7 @@ preface	foreword
 prefeasibility	pre-feasibility
 prefects	préfets
 prefinancing	pre-financing
+premier	Dalton McGuinty,McGuinty,Wen Jiabao,Jiabao,Zhu Rongji,Rongji,Fidel Castro,Castro,Mike Rann,Rann,John Forrest,Forrest,James Mitchell,Mitchell,Joseph Stalin,Stalin,Kathleen Wynne,Wynne
 premix	premixture
 premixes	premixtures
 premixture	premix
@@ -3385,23 +4560,31 @@ preschool	pre-school
 presence	attendee
 presentation	submission
 presidency	chairmanship
+president	Bush,Clinton,Obama,Nixon,Ford,Reagan
 president	chairman
 president	chairperson
+president	Felipe Calderón,Calderón,Pervez Musharraf,Musharraf,George W. Bush,Bush,Grover Cleveland,Cleveland,John F. Kennedy,Kennedy,Gerald Ford,Ford,Benjamin Harrison,Harrison,Harry S. Truman,Truman,Lyndon B. Johnson,Johnson,James A. Garfield,Garfield,Woodrow Wilson,Wilson,William Howard Taft,Taft,Zachary Taylor,Taylor,William McKinley,McKinley,William Henry Harrison,Harrison,Warren G. Harding,Harding,Ulysses S. Grant,Grant,Theodore Roosevelt,Roosevelt,Thomas Jefferson,Jefferson,Rutherford B. Hayes,Hayes,Richard Nixon,Nixon,José López Portillo,Portillo,Bill Clinton,Clinton,George H. W. Bush,Bush,Andrew Jackson,Jackson,George Washington,Washington,Ronald Reagan,Reagan,Barack Obama,Obama,Suharto,Suharto,Fidel Castro,Castro,Raúl Castro,Castro,Emilio Aguinaldo,Aguinaldo,Manuel L. Quezon,Quezon,José P. Laurel,Laurel,Sergio Osmeña,Osmeña,Manuel Roxas,Roxas,Elpidio Quirino,Quirino,Ramon Magsaysay,Magsaysay,Carlos P. Garcia,Garcia,Diosdado Macapagal,Macapagal,Ferdinand Marcos,Marcos,Corazon Aquino,Aquino,Fidel V. Ramos,Ramos,Joseph Estrada,Estrada,Gloria Macapagal-Arroyo,Macapagal-Arroyo,Franklin D. Roosevelt,Roosevelt,Walter Scheel,Scheel,Seán T. O'Kelly,O'Kelly,Mary McAleese,McAleese,Daniel Ortega,Ortega,Douglas Hyde,Hyde,Éamon de Valera,Valera,Erskine Hamilton Childers,Childers,Cearbhall \u00d3 Dálaigh,Dálaigh,Patrick Hillery,Hillery,Mary Robinson,Robinson,Eveline Widmer-Schlumpf,Widmer-Schlumpf,John Quincy Adams,Adams,Ayub Khan,Khan,Zulfikar Ali Bhutto,Bhutto,Nelson Mandela,Mandela,Václav Havel,Havel,Hu Jintao,Jintao,Andrew Johnson,Johnson,John Adams,Adams,James Madison,Madison,James Monroe,Monroe,Martin Van Buren,Buren,John Tyler,Tyler,James Buchanan,Buchanan,James K. Polk,Polk,Millard Fillmore,Fillmore,Jimmy Carter,Carter,Dwight D. Eisenhower,Eisenhower,Herbert Hoover,Hoover,Calvin Coolidge,Coolidge,Chester A. Arthur,Arthur,Abraham Lincoln,Lincoln,Franklin Pierce,Pierce,Nicolas Sarkozy,Sarkozy,Jacques Chirac,Chirac,Álvaro Uribe,Uribe,Andrés Pastrana Arango,Arango,Iskander Mirza,Mirza,Charles de Gaulle,de Gaulle,Georges Pompidou,Pompidou,Valéry Giscard d'Estaing,d'Estaing,François Mitterrand,Mitterrand,René Coty,Coty,Vincent Auriol,Auriol,Arthur Chung,Chung,Robert Mugabe,Mugabe,Canaan Banana,Banana,Marcus Stephen,Stephen,Hamid Karzai,Karzai,Jakaya Kikwete,Kikwete,Ernest Bai Koroma,Koroma,Ahmad Tejan Kabbah,Kabbah,Marc Ravalomanana,Ravalomanana,Anote Tong,Tong,Ismaïl Omar Guelleh,Guelleh,Choummaly Sayasone,Sayasone,Khamtai Siphandon,Siphandon,Ellen Johnson Sirleaf,Sirleaf,Yahya Khan,Khan,Sarvepalli Radhakrishnan,Radhakrishnan,Arthur Griffith,Griffith,Sukarno,Sukarno,Roman Herzog,Herzog,Robert Kocharyan,Kocharyan,Miguel de la Madrid,Madrid,Léon Blum,Blum,Mohammad-Ali Rajai,Rajai,Abolhassan Banisadr,Banisadr,Abelardo L. Rodríguez,Rodríguez,Fazal Ilahi Chaudhry,Chaudhry,Ghulam Ishaq Khan,Khan,Farooq Leghari,Leghari,Muhammad Rafiq Tarar,Tarar,Alexandros Zaimis,Zaimis,Władysław Raczkiewicz,Raczkiewicz,Neelam Sanjiva Reddy,Reddy,Paulo Muwanga,Muwanga,Maciej Rataj,Rataj,Juan Bautista Ceballos,Ceballos
+president of the general council	Nicolas Sarkozy,Sarkozy
+president pro tempore	Theodore Stevens,Stevens
 presidents	chairmen
 presidents	chairpersons
 presidium	praesidium
+Pretoria	South Africa
 pretreatment	pre-treatment
 preventable	avoidable
 preventative	preventive
 preventive	preventative
+Price	member of parliament
 price	prices
 prices	price
+prime minister	Khandu Wangchuk,Wangchuk,John Howard,Howard,Benazir Bhutto,Bhutto,Raúl Castro,Castro,Bertie Ahern,Ahern,Charles Haughey,Haughey,Garret FitzGerald,FitzGerald,Albert Reynolds,Reynolds,John Bruton,Bruton,Brian Cowen,Cowen,Göran Persson,Persson,Kevin Rudd,Rudd,Lester B. Pearson,Pearson,Fredrik Reinfeldt,Reinfeldt,Zulfikar Ali Bhutto,Bhutto,Ehud Olmert,Olmert,Jacques Chirac,Chirac,Liaquat Ali Khan,Khan,Huseyn Shaheed Suhrawardy,Suhrawardy,Yitzhak Rabin,Rabin,Golda Meir,Meir,Ehud Barak,Barak,Charles de Gaulle,Gaulle,Julia Gillard,Gillard,Tony Abbott,Abbott,Yasuo Fukuda,Fukuda,Edmund Barton,Barton,Georges Pompidou,Pompidou,Vincent Auriol,Auriol,Henry John Temple, 3rd Viscount Palmerston,Palmerston,Gordon Brown,Brown,Winston Churchill,Churchill,Robert Mugabe,Mugabe,Harold Wilson,Wilson,John Major,Major,Edward Heath,Heath,Tony Blair,Blair,James Callaghan,Callaghan,Girija Prasad Koirala,Koirala,David Ben-Gurion,Ben-Gurion,Louis St. Laurent,Laurent,Jean Chrétien,Chrétien,Pierre Trudeau,Trudeau,Kim Campbell,Campbell,Apisai Ielemia,Ielemia,Charles Rabemananjara,Rabemananjara,Dileita Mohamed Dileita,Dileita,Bounnhang Vorachith,Vorachith,Khamtai Siphandon,Siphandon,Indira Gandhi,Gandhi,Jawaharlal Nehru,Nehru,Fumimaro Konoe,Konoe,Rajiv Gandhi,Gandhi,Junichiro Koizumi,Koizumi,Itō Hirobumi,Hirobumi,Lionel Jospin,Jospin,Willem Drees,Drees,Lal Bahadur Shastri,Shastri,Dominique de Villepin,Villepin,Henry Pelham,Pelham,Matsukata Masayoshi,Masayoshi,Ōkuma Shigenobu,Shigenobu,Katō Takaaki,Takaaki,Wakatsuki Reijirō,Reijirō,Shigeru Yoshida,Yoshida,Takeo Fukuda,Fukuda,Alec Douglas-Home,Douglas-Home,Jean Casimir-Perier,Casimir-Perier,Bonar Law,Law,Ibrahim al-Jaafari,al-Jaafari,Robert Kocharyan,Kocharyan,Saionji Kinmochi,Kinmochi,Morarji Desai,Desai,Léon Blum,Blum,William Massey,Massey,Zafarullah Khan Jamali,Jamali,Spencer Compton, 1st Earl of Wilmington,Wilmington,Mohammad-Ali Rajai,Rajai,Paul Reynaud,Reynaud,Gaston Doumergue,Doumergue,Roosevelt Skerrit,Skerrit,Daniel François Malan,Malan,Alain Juppé,Juppé,Gulzarilal Nanda,Nanda,Khawaja Nazimuddin,Nazimuddin,Nurul Amin,Amin,Mohammad Ali Bogra,Bogra,Chaudhry Muhammad Ali,Ali,Sheikh Hasina,Hasina,Józef Cyrankiewicz,Cyrankiewicz,Chaudhry Shujaat Hussain,Hussain,S. Jayakumar,Jayakumar,Muhammad Khan Junejo,Junejo,Ghulam Mustafa Jatoi,Jatoi,Feroz Khan Noon,Noon,Mieczysław Rakowski,Rakowski,Ibrahim Ismail Chundrigar,Chundrigar,Balakh Sher Mazari,Mazari,Paulo Muwanga,Muwanga,Ignacy Daszyński,Daszyński
 principal	main
 print	printing
 printable	version
 printing	print
 printmaker	engraver
 prior	before
+Prior-Palmer	member of parliament
 prison	imprisonment
 prison	jail
 prisons	jails
@@ -3423,9 +4606,8 @@ program	programme
 programme	program
 programmes	programs
 programs	programmes
-prohibition	ban
+prohibition	ban,moratorium
 prohibitions	bans
-project	draft
 promoter	proponent
 promoters	proponents
 promulgation	enactment
@@ -3456,6 +4638,7 @@ providers	suppliers
 provisional	interim
 prudence	caution
 prunes	plums
+Pryor	senator
 psycho	psychopath
 psycho-social	psychosocial
 psychopath	psycho
@@ -3479,12 +4662,15 @@ pwgsc.gc.ca.	pwgsc.gc.ca
 pyeong	ping
 pyeong	pyong
 pyjamas	pajamas
+Pyne	member of parliament
 pyong	pyeong
+Pyongyang	North Koreak
 q1	t1
 q2	t2
 q3	t3
 q4	t4
 qassam	al-qassam
+Qatar	Doha
 québec	quebec
 quadrupolar	quadrupole
 quadrupole	quadrupolar
@@ -3505,13 +4691,23 @@ questions	issues
 quetzales	quetzals
 quetzals	quetzales
 queue	cola
+Quezon	president
 quilombolas	quilombos
 quilombos	quilombolas
 quinquiens	quinquies
 quinquies	quinquiens
 quintals	centners
+Quirino	president
+R. Dhanuskodi Athithan	member of parliament
+R. Prabhu	member of parliament
+Raúl Castro	president,vice president,acting president,acting prime minister,prime minister
+Rabat	Morocco
 rabbit	bunny
 rabbits	bunnies
+Rabemananjara	prime minister
+Rabin	prime minister
+Raczkiewicz	president
+Radhakrishnan	president
 radicalisation	radicalization
 radicalization	radicalisation
 radio-navigation	radionavigation
@@ -3519,17 +4715,31 @@ radionavigation	radio-navigation
 radiotelephone	radiotelephony
 radiotelephony	radiotelephone
 rags	cloths
+Raguse	member of parliament
 rail	railway
 railway	rail
 rainfall	precipitation
+Rajai	president,prime minister
+Rajiv Gandhi	prime minister
+Rakowski	prime minister
+Ramon Magsaysay	president
+Ramos	president
+Ramsey	governor,senator,member of parliament
+Randall	member of parliament
 randomisation	randomization
 randomization	randomisation
+Rani	member of parliament
+Rann	premier
 rapeseed	colza
+Rashid	member of parliament
+Rataj	president
 ratchet	pawl
 rationale	justification
 rationalization	streamlining
+Ravalomanana	president
 rave-sweepers	grave-sweepers
 ravens	crows
+Ray MacSharry	deputy prime minister
 rayon	viscose
 re-admissions	readmissions
 re-certification	recertification
@@ -3549,12 +4759,14 @@ re-operations	reoperations
 re-socialization	resocialisation
 re-use	reuse
 re-verification	reverification
+Rea	member of parliament
 reactants	reagents
 reactive	reagent
 reactivity	responsiveness
 readability	legibility
 readable	legible
 readmissions	re-admissions
+Reagan	president,governor
 reagent	reactive
 reagents	reactants
 real-time	realtime
@@ -3591,6 +4803,7 @@ records	documents
 recreation	leisure
 recruiting	recruitment
 recruitment	recruiting
+Reddy	president
 redemptions	buybacks
 redfish	rockfish
 redirect	redirection
@@ -3618,12 +4831,15 @@ regularization	regularisation
 regulation-	regulations-
 regulation-	section-
 regulations-	regulation-
+Reijirō	prime minister
 reimportation	re-importation
+Reinfeldt	prime minister
 reinspection	re-inspection
 reintroduction	re-introduction
 rejustification	re-justification
 relations	relationships
 relationships	relations
+Rell	governor
 reload	recharge
 relocation	resettlement
 remarks	comments
@@ -3633,14 +4849,17 @@ remelting	remelt
 remodeling	remodelling
 remodelling	remodeling
 remover	puller
+René Coty	president
 renaissance	rebirth
 renationalisation	re-nationalisation
 renationalisation	renationalization
 renationalization	renationalisation
+Rendell	governor
 renewable	revolving
 rent	rental
 rental	lease
 rental	rent
+Renton	member of parliament
 reoperation	re-operation
 reoperations	re-operations
 replies	answers
@@ -3699,35 +4918,84 @@ reviewers	examiners
 reviews	examinations
 revolving	renewable
 reyes	kings
+Reykjavík	Iceland
+Reynaud	prime minister
+Reynolds	prime minister,governor
 rfi	ddr
 rfp	dp
 rfso	doc
 rials	riyals
+Rice	secretary of state
+Richard Bassett	governor,senator
+Richard Blanshard	governor
+Richard Marles	member of parliament
+Richard Nixon	president,vice president,senator
+Richard Shelby	senator,member of congress
+Richards	governor
+Richardson	member of congress,governor,governor
 richness	wealth
+Rick Perry	governor
 rifampicin	rifampin
 rifampin	rifampicin
+Riga	Latvia
 right	law
 right-wing	rightist
 rightist	right-wing
 rigidity	stiffness
 riot	anti-riot
 ripening	maturation
+Ripoll	member of parliament
+Rishworth	member of parliament
 rites	rituals
+Ritter	member of congress
 rituals	rites
+Riyadh	Saudi Arabia
 riyals	rials
 rls	epirbs
 roaches	cockroaches
+Robb	member of parliament
 robbers	thieves
 robe	bathrobe
+Robert	member of parliament
+Robert Aderholt	member of congress
+Robert Bradford	member of parliament
+Robert F. Kennedy	attorney general,senator
+Robert J. Reynolds	governor
+Robert Kocharyan	acting president,president,prime minister
+Robert McClelland	governor
+Robert Mugabe	president,prime minister
+Robert Roosevelt	ambassador,member of congress
+Robinson	president
+Rocher	member of parliament
 rockets	missiles
 rockfish	redfish
+Rodney	governor,senator,member of congress,attorney general
+Rodríguez	president
+Roger Brooke Taney	attorney general
+Roger Price	member of parliament
+Rogers	member of congress
+Rolf Dudley-Williams	member of parliament
+Rolph	governor,mayor
+Roman Herzog	president
+Romania	Bucharest
+Rommel	lord mayor
+Romualdo Pacheco	governor
+Ron Paul	member of congress
+Ronald Reagan	president,governor
+Rongji	premier
 roofs	rooftops
 rooftops	roofs
 roomie	roommate
 roommate	flatmate
 roommate	roomie
 rooms	chambers
+Roosevelt	president,assistant secretary,governor,vice president,member of the legislative assembly,president,assistant secretary,governor,state senator,ambassador,member of congress
+Roosevelt Skerrit	prime minister
+Ross Mirkarimi	councillor
 roubles	rubles
+Rowan Ramsey	member of parliament
+Roxas	president
+Roxon	member of parliament,attorney general
 rp	mop
 rpc	cpp
 rpq	pqp
@@ -3737,9 +5005,13 @@ rubber	goma
 rubles	roubles
 rucksack	backpack
 rucksacks	backpacks
+Rudd	prime minister,member of parliament
+Ruddock	member of parliament
+Rudy Giuliani	mayor
 rue	street
 rug	carpet
-rule	article
+rule	law
+ruler	leader
 rumors	rumours
 rumours	rumors
 run-off	runoff
@@ -3748,8 +5020,12 @@ runoff	run-off
 runtime	run-time
 rupees	rupiah
 rupiah	rupees
+Russell W. Peterson	governor
 russeting	scorch
+Rutherford B. Hayes	president,governor
 sámi	sami
+S. Jayakumar	prime minister
+S. K. Kharventhan	member of parliament
 s04	so4
 saa	asa
 sable	sand
@@ -3757,46 +5033,73 @@ sadc	cfdc
 sadr	al-sadr
 safeguards	guarantees
 safety	security
+Saffin	member of parliament
+Saionji Kinmochi	prime minister
 saisons	seasons
 sal	salt
 salaam	salam
 salam	salaam
 salaries	wages
 salary	wage
+Salazar	attorney general,senator
 sale	selling
 salesperson	seller
 salination	salinization
 salinization	salination
+Salmon P. Chase	governor,senator
 salt	sal
 salvadorans	salvadorians
 salvadorians	salvadorans
 sami	sámi
+Samuel Rinnah Van Sant	governor
+Samuel Schmid	swiss federal council
+San Salvador	El Salvador
+Sanaa	Yemen
 sanatorium	sanitarium
 sanctions	penalties
 sanctity	inviolability
 sand	sable
+Sanderson	governor
+Sandoval	councillor
 sandstone	stoneware
 sanitarium	sanatorium
+Sant	governor
+Santo Domingo	the Dominican Republic
+Sarajevo	Bosnia and Herzegovina
 sarcoplasmic	reticulum
 sarge	sergeant
+Sarkozy	president,co-prince,minister,president of the general council,finance minister,mayor
+Sarvepalli Radhakrishnan	president
 sat	saturday
 saturday	sat
 sauce	gravy
+Saudi Arabia	Riyadh
 savannahs	savannas
 savannas	savannahs
 saver	protector
 savior	saviour
 saviour	savior
+Saxby Chambliss	senator,member of congress
+Sayasone	president,vice president
 sc	hc
 scared	afraid
 scc	ncc
 scepticism	skepticism
 sceptics	skeptics
+Scheel	chancellor,president
+Schleicher	chancellor
+Schmid	swiss federal council
 scholarships	fellowships
+Schultz	member of parliament
+Schwarzenegger	governor
 science	sciences
 sciences	science
 scn	sna
 scorch	russeting
+Scott	member of parliament
+Scott Morrison	member of parliament
+Scott Thorkelson	member of parliament
+Scott-Elliot	member of parliament
 scour	scouring
 scouring	scour
 scr	vcc
@@ -3808,17 +5111,25 @@ sculptor	carver
 sculptors	carvers
 sculptures	carvings
 sdrs	dts
+Seán Lemass	deputy prime minister
+Seán MacEntee	deputy prime minister
+Seán T. O'Kelly	president,deputy prime minister
+sea	ocean
 sealant	sealer
 sealer	sealant
+Sean Elsbernd	councillor
 search	research
 seasonings	condiments
 seasons	saisons
 seat-back	backrest
 sec	dry
+Secker	member of parliament
+second vice-president	Joseph Msika,Msika
 secondment	detachment
 secondments	detachments
 secrecy	secret
 secret	secrecy
+secretary of state	Hillary Rodham Clinton,Clinton,John Kerry,Kerry,Thomas Jefferson,Jefferson,John M. Clayton,Clayton,Jerry Brown,Brown,Henry L. Stimson,Stimson,Edward Livingston,Livingston,John Quincy Adams,Adams,James F. Byrnes,Byrnes,James Madison,Madison,James Monroe,Monroe,Martin Van Buren,Buren,James Buchanan,Buchanan,John Jay,Jay,John Marshall,Marshall,Charles Evans Hughes,Hughes,Condoleezza Rice,Rice,Thomas F. Bayard,Bayard
 secretion	secretory
 secretory	secretion
 section	article
@@ -3852,19 +5163,26 @@ selling	sale
 semen	sperm
 semi-colon	semicolon
 semicolon	semi-colon
+senate majority leader	Lyndon B. Johnson,Johnson
+senator	Hillary Rodham Clinton,Clinton,Jefferson Sessions,Sessions,Richard Shelby,Shelby,Lisa Murkowski,Murkowski,Theodore Stevens,Stevens,John Kerry,Kerry,John McCain,McCain,Jon Kyl,Kyl,Blanche Lincoln,Lincoln,Mark Pryor,Pryor,Barbara Boxer,Boxer,Dianne Feinstein,Feinstein,Wayne Allard,Allard,Ken Salazar,Salazar,Chris Dodd,Dodd,Joe Lieberman,Lieberman,Joe Biden,Biden,Tom Carper,Carper,Bill Nelson,Nelson,Saxby Chambliss,Chambliss,John Hardy Isakson,Isakson,Daniel Kahikina Akaka,Akaka,Daniel Inouye,Inouye,Larry Craig,Craig,Michael Dean Crapo,Crapo,Lyndon B. Johnson,Johnson,William Henry Harrison,Harrison,Richard Nixon,Nixon,Andrew Jackson,Jackson,Knute Nelson,Nelson,Alexander Ramsey,Ramsey,Cushman Kellogg Davis,Davis,Barack Obama,Obama,Jon Corzine,Corzine,Robert F. Kennedy,Kennedy,John Forsyth,Forsyth,Arnold Naudain,Naudain,John W. Johnston,Johnston,John M. Clayton,Clayton,Frederick Frelinghuysen,Frelinghuysen,Pete Wilson,Wilson,Herbert H. Lehman,Lehman,Gloria Macapagal-Arroyo,Macapagal-Arroyo,James L. Buckley,Buckley,DeWitt Clinton,Clinton,Edward Livingston,Livingston,James D. Phelan,Phelan,Gaylord Nelson,Nelson,Tammy Baldwin,Baldwin,John Quincy Adams,Adams,John McKinley,McKinley,John Vining,Vining,Thomas Posey,Posey,James Monroe,Monroe,Martin Van Buren,Buren,John Tyler,Tyler,James Buchanan,Buchanan,Franklin Pierce,Pierce,Arlen Specter,Specter,Bob Casey, Jr.,Jr.,Oliver Ellsworth,Ellsworth,Salmon P. Chase,Chase,Milton Latham,Latham,Hiram Johnson,Johnson,Newton Booth,Booth,John B. Weller,Weller,Donald W. Riegle, Jr.,Jr.,Aaron Burr,Burr,Thomas F. Bayard,Bayard,William V. Roth, Jr.,Jr.,Caesar Augustus Rodney,Rodney,Richard Bassett,Bassett,James A. Bayard,Bayard,Harry F. Byrd,Byrd,J. Caleb Boggs,Boggs,John J. Williams,Williams,Thomas Clayton,Clayton
+Senegal	Dakar
 seniors	elders
 sensibilities	sensitivities
 sensitivities	sensibilities
 sentiments	feelings
 seo	xu
+Seoul	South Korea
 separability	severability
 sepsis	septicaemia
 sepsis	septicemia
 septicaemia	sepsis
 septicemia	sepsis
+Serafini	governor
 serb	serbian
+Serbia	Belgrade
 serbian	serb
 sergeant	sarge
+Sergio Osmeña	president
 seriousness	gravity
 serotype	serovar
 serotypes	serovars
@@ -3875,6 +5193,7 @@ serrations	splines
 service	services
 services	service
 servitude	easement
+Sessions	senator
 settings	configuration
 setup	configuration
 severability	separability
@@ -3898,14 +5217,28 @@ shapeshifter	shape-shifter
 shapeshifters	shape-shifters
 sharia	shariah
 shariah	sharia
+Sharman Stone	member of parliament
+Sharon Bird	member of parliament
+Sharon Grierson	member of parliament
+Sharryn Jackson	member of parliament
+Shastri	prime minister
+Shayne Neumann	member of parliament
 shear	shearing
 shearing	shear
 sheaths	gaines
 sheep	ovine
 sheikh	al-sheikh
 sheikh	el-sheikh
+Sheikh Hasina	prime minister
+Shein	vice president
+Shelby	senator,member of congress
+Shelley	mayor
 shepherd	berger
+Sherman W. Tribbitt	governor
 shields	escudos
+Shigenobu	prime minister
+Shigeru Yoshida	prime minister
+Shimkus	member of congress
 ship	vessel
 shipper	charger
 shippers	consignors
@@ -3915,32 +5248,47 @@ shoes	footwear
 shops	stores
 short-wave	shortwave
 shortcomings	deficiencies
+Shorten	member of parliament
 shortwave	short-wave
 si	tr
+Sibley	governor
+Sid Sidebottom	member of parliament
 side-car	sidecar
+Sidebottom	member of parliament
 sidecar	side-car
 signature	signing
 significance	importance
 signing	signature
+Sikdar	member of parliament
 silencer	muffler
 silos	elevators
 siltation	silting
 silting	siltation
+Simitian	supervisor
+Simon Crean	member of parliament
+Simpkins	member of parliament
+Simpson	member of congress,speaker,state representative
 simultaneous	concurrent
 sinew	tendon
 sinter	sintering
 sintering	sinter
+Siphandon	president,prime minister
+Sir Godfrey Nicholson, 1st Baronet	member of parliament
+Sir John Arbuthnot, 1st Baronet	member of parliament
 siren	mermaid
 sirens	mermaids
+Sirleaf	finance minister,president
 sitter	babysitter
 six-party	six-way
 six-way	six-party
 sixth	6th
 skepticism	scepticism
 skeptics	sceptics
+Skerrit	prime minister
 ski	skiing
 skiing	ski
 skins	pelts
+Skopje	Macedonia
 sku	skus
 skus	sku
 slaughterhouse	abattoir
@@ -3955,14 +5303,18 @@ sleeping	sleep
 sleeplessness	insomnia
 sleeve	hose
 sleigh	sled
+Slipper	member of parliament,speaker
 slot	groove
 slots	grooves
+Slovenia	Ljubljana
 slut	bitch
 sm	fs
 smart	intelligent
 smell	odour
 smelter	foundry
 smelters	foundries
+Smith	governor-general,member of parliament,member of parliament,member of parliament,member of parliament
+Smith Ely, Jr.	mayor
 smoke-free	smokeless
 smokeless	smoke-free
 sna	scn
@@ -3972,6 +5324,7 @@ snap-ins	add-ons
 snaps	snapshots
 snapshots	snaps
 sneakers	infiltrators
+Snowdon	member of parliament
 so4	s04
 soccer	football
 socialisation	socialization
@@ -3981,21 +5334,32 @@ socio-economic	socioeconomic
 sociodemographic	socio-demographic
 socioeconomic	socio-economic
 sofa	couch
+Sofia	Bulgaria
+Soglin	mayor
+Solanki	member of parliament
 solitude	loneliness
 solvent	solvents
 solvents	solvent
+Somalia	Mogadishu
 somebody	someone
 someone	somebody
+Somlyay	member of parliament
+Somnath Chatterjee	member of parliament
 somnolence	drowsiness
 somnolence	sleepiness
 son-in-law	stepson
+Sophie Maxwell	councillor
+Sophie Mirabella	member of parliament
 sorceress	witch
 sorcery	witchcraft
+South Africa	Pretoria
+South Korea	Seoul
 south-east	south-eastern
 south-east	southeast
 south-eastern	south-east
 south-eastern	southeast
 south-west	southwest
+Southcott	member of parliament
 southeast	south-east
 southeast	south-eastern
 southwest	south-west
@@ -4008,27 +5372,36 @@ soybean	soya
 soybeans	soya
 space	spatial
 spades	picas
+Spain	Madrid
 spatial	space
+speaker	Benjamin Franklin,Franklin,Nancy Pelosi,Pelosi,Fabian Núñez,Núñez,Karen Bass,Bass,Mike Simpson,Simpson,Willie Brown,Brown,Mike Gravel,Gravel,James K. Polk,Polk,Peter Slipper,Slipper,Per Westerberg,Westerberg,Björn von Sydow,Sydow,Birgitta Dahl,Dahl
 specialisation	specialization
 specialization	specialisation
 specific	concrete
+Specter	senator
+Speier	member of congress
+Spencer Bachus	member of congress
+Spencer Compton, 1st Earl of Wilmington	prime minister
 spending	expenditure
 sperm	semen
 sperm	spermatozoa
 spermatozoa	sperm
 spines	thorns
+Spitzer	governor,attorney general
 splines	serrations
 spoiler	deflector
 sponsor	proponent
 spread	propagation
 spreadsheet	worksheet
 spreadsheets	worksheets
+Spring	deputy prime minister
 sprocket	pinion
 spy	espionage
 spying	espionage
 sq	lp
 squirrel	chipmunk
 sr	rs
+Sr.	deputy prime minister,member of parliament
 src	cbc
 stabilisation	stabilization
 stabilisers	stabilizers
@@ -4039,13 +5412,17 @@ stage	phase
 stages	phases
 stalemate	deadlock
 stalemate	impasse
+Stalin	premier
 stalk	peduncle
 standardisation	standardization
 standardization	standardisation
 standards	norms
 standing	permanent
+Stanford	governor
 starvation	famine
 state	place,state,area,region
+state representative	Doug LaMalfa,LaMalfa,Paul Cook,Cook,Mike Simpson,Simpson
+state senator	Gloria Negrete McLeod,McLeod,Alan Lowenthal,Lowenthal,Tom McClintock,McClintock,DeWitt Clinton,Clinton,Franklin D. Roosevelt,Roosevelt
 state-	stating-
 statement	declaration
 statements	declarations
@@ -4055,6 +5432,7 @@ statistics	statistical
 status	statute
 statute	status
 steam	vapour
+Steele	member of parliament
 steersman	helmsman
 stenches	banelings
 step-parents	stepfathers
@@ -4065,6 +5443,11 @@ stepdaughter	daughter-in-law
 stepfather	father-in-law
 stepfather	stepdad
 stepfathers	step-parents
+Stephen	president
+Stephen Dorrell	member of parliament
+Stephen Miller	governor
+Stephen Smith	member of parliament
+Stephens	governor
 stepmom	mother-in-law
 stepmom	stepmother
 stepmother	mother-in-law
@@ -4074,10 +5457,18 @@ stepsister	half-sister
 stepson	son-in-law
 sterilisation	sterilization
 sterilization	sterilisation
+Steve Georganas	member of parliament
+Steve Gibbons	member of parliament
+Steve Irons	member of parliament
+Stevens	senator,president pro tempore
 stiffness	rigidity
 stigma	stigmatization
 stigmatization	stigma
+Stimson	governor-general,secretary of state
+Stockholm	Sweden
+Stone	member of parliament
 stone	pierre
+Stoneman	governor
 stoneware	sandstone
 stores	shops
 story	history
@@ -4085,6 +5476,7 @@ straightjacket	straitjacket
 straitjacket	straightjacket
 streamlines	optimizes
 streamlining	rationalization
+Street	mayor
 street	rue
 strengthen	strengthening
 strengthening	strengthen
@@ -4095,6 +5487,7 @@ string	chain
 stroma	stromata
 stromata	stroma
 struggle	fight
+Stuart Robert	member of parliament
 stubble	thatch
 stud-books	herd-books
 students	pupils
@@ -4179,6 +5572,7 @@ subactivities	sub-activities
 subarea	sub-area
 subareas	sub-areas
 subassemblies	subsets
+Subbarayan	member of parliament
 subcategories	sub-categories
 subcategory	sub-category
 subchapters	sub-chapters
@@ -4259,8 +5653,13 @@ subtype	sub-type
 subtypes	sub-types
 subunit	sub-unit
 subunits	sub-units
+Sudan	Khartoum
+Sue Doughty	member of parliament
 sufficient	enough
+Suharto	president,president
+Suhrawardy	prime minister
 suit	costume
+Sukarno	president,president
 sulfas	sulfonamides
 sulfate	sulphate
 sulfide	sulphide
@@ -4270,6 +5669,7 @@ sulfonamides	sulphonamides
 sulfonate	perfluorooctane
 sulfur	sulphur
 sulfuric	sulphuric
+Sullivan	member of parliament
 sulphate	sulfate
 sulphide	sulfide
 sulphides	sulfides
@@ -4283,6 +5683,7 @@ super-power	superpower
 super-state	superstate
 superpower	super-power
 superstate	super-state
+supervisor	Joe Simitian,Simitian
 supp	suppl
 supper	dinner
 suppl	supp
@@ -4297,20 +5698,30 @@ surcharge	surtax
 surplus	excess
 surtax	surcharge
 surveillance	monitoring
+Sussan Ley	member of parliament
+Sutro	mayor
+Swan	member of parliament,deputy prime minister
 sweater	sweatshirt
 sweating	transpiration
 sweatshirt	sweater
 sweatshirts	cardigans
+Sweden	monarch
+Sweden	Stockholm
+Swift	governor
 swim	swimming
 swimmers	bathers
 swimming	swim
 swiss	switzerland
+swiss federal council	Moritz Leuenberger,Leuenberger,Pascal Couchepin,Couchepin,Micheline Calmy-Rey,Calmy-Rey,Doris Leuthard,Leuthard,Eveline Widmer-Schlumpf,Widmer-Schlumpf,Hans-Rudolf Merz,Merz,Samuel Schmid,Schmid
 switcher	mixer
 switzerland	swiss
+Sydow	speaker
 syilables	syllables
+Sykes	governor
 syllables	syilables
 symbionts	symbiotes
 symbiotes	symbionts
+Symon	member of parliament
 symposia	symposiums
 symposiums	symposia
 sync	synchronization
@@ -4329,17 +5740,29 @@ tac	tach
 tach	tac
 tach	tachometer
 tachometer	tach
+Taft	president,governor-general,governor
 tag	label
 tags	labels
 tailings	residues
+Taipei	Taiwan
+Taiwan	Taipei
+Takaaki	prime minister
 take-off	takeoff
+Takeo Fukuda	prime minister
 takeoff	take-off
 talabani	al-talabani
 talabani	talbani
 talbani	talabani
+Tallinn	Estonia
 tamarack	larch
+Tammy Baldwin	member of congress,senator
+Taney	attorney general
 tank	reservoir
+Tanner	member of parliament
+Tanya Plibersek	member of parliament
+Taom	member of parliament
 tapes	cassettes
+Tarar	president
 targets	objectives
 tarpaulins	tarps
 tarps	tarpaulins
@@ -4351,12 +5774,17 @@ taxation	tax
 taxi	cab
 taxi	taxis
 taxis	taxi
+Taylor	president
 tb	tuberculosis
+Tbilisi	Georgia
 tc	ct
 tdd	tty
+team	team,*
 technical	techniques
 techniques	technical
 teenagers	adolescents
+Tehran	Iran
+Teima Onorio	vice president
 tele-consultations	teleconsultations
 tele-health	telehealth
 tele-homecare	telehomecare
@@ -4378,6 +5806,7 @@ teletypewriter	teleprinter
 television	tv
 telework	teleworking
 teleworking	telework
+Telito	governor-general
 telomere	telomeric
 telomeres	telomers
 telomeric	telomere
@@ -4389,13 +5818,10 @@ tendency	trend
 tenderer	bidder
 tenderers	bidders
 tendon	sinew
-tens	dozens
 tensile	traction
 tension	voltage
 termini	terminus
 terminus	termini
-terrorist	terrorists
-terrorists	terrorist
 test	testing
 testes	testicles
 testicle	testis
@@ -4405,15 +5831,25 @@ testis	testicle
 tetrads	quartets
 tetroxide	dinitrogen
 théâtre	theatre
+Thailand	Bangkok
 thalassaemia	thalassemia
 thalassemia	thalassaemia
+Thangkabalu	member of parliament
 thatch	stubble
 thaw	thawing
 thawing	thaw
+the Czech Republic	Prague
+the Dominican Republic	Santo Domingo
+the UK	London
+the United Kingdom	London
 theater	theatre
 theatre	théâtre
 theatre	theater
 themes	topics
+Theodore F. Green	governor
+Theodore Roosevelt	president,assistant secretary,governor,vice president,member of the legislative assembly
+Theodore Roosevelt, Jr.	governor-general
+Theodore Stevens	senator,president pro tempore
 theoretician	theorist
 theoreticians	theorists
 theorist	theoretician
@@ -4429,6 +5865,12 @@ thiosulfate	thiosulphate
 thiosulphate	thiosulfate
 thirst	thirsty
 thirsty	thirst
+Thomas Clayton	senator,member of congress
+Thomas F. Bayard	secretary of state,senator
+Thomas Jefferson	president,governor,secretary of state,vice president
+Thomas Posey	senator,governor
+Thomson	member of parliament,member of parliament
+Thorkelson	member of parliament
 thorns	spines
 thrace	thracian
 thracian	thrace
@@ -4437,7 +5879,9 @@ throttle	accelerator
 thu	thursday
 thumbnail	miniature
 thursday	thu
+Tillie K. Fowler	member of congress
 tilt	inclination
+Tim Pawlenty	governor
 timber	wood
 time	period,era
 time-out	timeout
@@ -4454,13 +5898,25 @@ tits	breasts
 tm	mt
 toc	knock
 toilet	washroom
+Tokyo	Japan
+Tom Ammiano	councillor
+Tom Carper	senator,member of congress
+Tom McClintock	state senator,member of congress,member of the legislative assembly
+Tom Steele	member of parliament
 tombstones	headstones
 ton	tonne
 ton-kms	tonne-kilometres
+Tong	president
 tonne	ton
 tonne-kilometres	ton-kms
 tonnes	tons
 tons	tonnes
+Tony Abbott	member of parliament,prime minister
+Tony Blair	prime minister,member of parliament
+Tony Burke	member of parliament
+Tony Smith	member of parliament
+Tony Windsor	member of parliament
+Tony Zappia	member of parliament
 tool	instrument
 tools	instruments
 tooth	dent
@@ -4539,21 +5995,28 @@ treatment	processing
 trend	tendency
 trends	tendencies
 trespassers	intruders
+Trevor	member of parliament
 trialogue	trilogue
 trialogues	trilogues
 triax	triaxial
 triaxial	triax
+Tribbitt	governor
 tribunal	court
 tribunals	courts
 trilogue	trialogue
 trilogues	trialogues
+Tripoli	Libya
 tritons	newts
 troops	forces
 trousers	pants
-truce	armistice
+truce	armistice,cease - fire
 trucks	lorries
+Trudeau	prime minister
+Truman	president,vice president
 truncheons	batons
+Truss	member of parliament
 trust	confidence
+Tsang	chief executive
 tsar	czar
 tsb	bst
 tso	osb
@@ -4566,6 +6029,7 @@ tubercles	tubers
 tuberculosis	tb
 tubers	tubercles
 tubewells	tube-wells
+Tuckey	member of parliament
 tufts	clumps
 tug	tugboat
 tugboat	tug
@@ -4576,21 +6040,33 @@ tumors	tumours
 tumour	tumor
 tumours	tumors
 tunis	tunisia
+Tunis	Tunisia
 tunisia	tunis
+Tunisia	Tunis
 turgidity	turgor
 turgor	turgidity
+Turkey	Ankara
+Turnbull	member of parliament
+Turnour	member of parliament
 tutorial	walkthrough
 tutorials	walkthroughs
 tutsi	tutsis
 tutsis	tutsi
 tv	television
+Tyler	president,governor,senator,vice president,member of congress
 type	kind
 types	kinds
 tyres	tires
+UAE	Abu Dhabi
+Ugyen Wangchuck	monarch
 ui	iu
 UK	Britain,United Kingdom
+Ukraine	Kiev
+Ulaanbaatar	Mongolia
 ultra-liberalism	ultraliberalism
 ultraliberalism	ultra-liberalism
+Ulysses S. Grant	president
+Unckel	governor
 uncle	man
 under-dash	dashboard
 under-development	underdevelopment
@@ -4612,6 +6088,7 @@ uninstalling	uninstall
 unit	unity
 unitar.ny	unitary.ny
 unitary.ny	unitar.ny
+United Arab Emirates	Abu Dhabi
 United Kingdom	Britain
 United States	America,US,USA
 units	drives
@@ -4636,6 +6113,8 @@ urediniospores	urediospores
 urediospores	urediniospores
 urediospores	uredospores
 uredospores	urediospores
+Uribe	president
+Uruguay	Montevideo
 US	United States,America,USA
 USA	United States,America,US
 usable	useable
@@ -4643,9 +6122,15 @@ useable	usable
 usefulness	utility
 uterus	womb
 utility	usefulness
+Václav Havel	president
 vac	acc
 vaccination	immunization
 vagaries	whims
+Vaile	member of parliament
+Valéry Giscard d'Estaing	president
+Vale	member of parliament
+Valera	president
+Vamvakinou	member of parliament
 vapor	vapour
 vaporizers	evaporators
 vapour	steam
@@ -4653,6 +6138,7 @@ vapour	vapor
 vapours	fumes
 variable	variables
 variables	variable
+Varian	mayor
 varicella	chickenpox
 vasodilatation	vasodilation
 vasodilation	vasodilatation
@@ -4667,6 +6153,7 @@ vehicle	vehicles
 vehicles	vehicle
 vendor	seller
 vendors	suppliers
+Venezuela	Caracas
 vengeance	revenge
 veranda	porch
 verde	green
@@ -4687,6 +6174,8 @@ vibration	vibrational
 vibrational	vibration
 vic	civ
 vice	deputy
+vice mayor	Wu Yi,Yi
+vice president	Joe Biden,Biden,Al Gore,Gore,Gerald Ford,Ford,Harry S. Truman,Truman,Lyndon B. Johnson,Johnson,Theodore Roosevelt,Roosevelt,Thomas Jefferson,Jefferson,Richard Nixon,Nixon,George H. W. Bush,Bush,Dick Cheney,Cheney,Raúl Castro,Castro,Diosdado Macapagal,Macapagal,Joseph Estrada,Estrada,Gloria Macapagal-Arroyo,Macapagal-Arroyo,Hu Jintao,Jintao,Andrew Johnson,Johnson,John Adams,Adams,Martin Van Buren,Buren,John Tyler,Tyler,Millard Fillmore,Fillmore,Calvin Coolidge,Coolidge,Chester A. Arthur,Arthur,Ali Mohamed Shein,Shein,Teima Onorio,Onorio,Oudom Khattigna,Khattigna,Choummaly Sayasone,Sayasone,Bounnhang Vorachith,Vorachith,Aaron Burr,Burr,Nurul Amin,Amin,Paulo Muwanga,Muwanga
 vice-chair	vice-president
 vice-chair-cum-rapporteur	vice-chairperson-cum-rapporteur
 vice-chairman	vice-president
@@ -4709,11 +6198,18 @@ victimisation	victimization
 victimization	victimisation
 videoconference	videoconferencing
 videoconferencing	videoconference
+Vietnam	Hanoi
 viewer	viewfinder
 viewfinder	viewer
 views	opinions
+Vijaya Lakshmi Pandit	ambassador
+Villepin	prime minister
+Vilnius	Lithuania
+Vincent Auriol	president,prime minister
+Vining	member of congress,senator
 violation	breach
 violin	fiddle
+Virginia Bottomley	member of parliament
 virility	manhood
 virtualisation	virtualization
 virtualization	virtualisation
@@ -4727,6 +6223,7 @@ volatilization	volatilisation
 voltage	tension
 volunteering	volunteerism
 volunteerism	volunteering
+Vorachith	vice president,prime minister
 vortex	wormhole
 vortices	eddies
 vote	voting
@@ -4735,15 +6232,32 @@ voters	electors
 voting	vote
 voyageur	traveller
 voyeur	peeper
+Władysław Raczkiewicz	president
+Waddington	governor
 wage	salary
 wages	salaries
+Wakatsuki Reijirō	prime minister
+Walker	mayor
 walkie	walkie-talkie
 walkie-talkie	walkie
 walkthrough	tutorial
 walkthroughs	tutorials
 wallet	portfolio
+Walter Scheel	chancellor,president
+Walter Scott-Elliot	member of parliament
 wan	bay
+Wangchuck	monarch
+Wangchuk	prime minister
 wapiti	elk
+war	war,conflict
+Warren	governor,attorney general
+Warren G. Harding	president,lieutenant governor
+Warren Snowdon	member of parliament
+Warren Truss	member of parliament
+Warsaw	Poland
+Washer	member of parliament
+Washington	president
+Washington Bartlett	governor,mayor
 washroom	toilet
 waste	wastes
 wastes	waste
@@ -4752,6 +6266,8 @@ wave-plate	waved-plate
 wave-plates	waved-plates
 waved-plate	wave-plate
 waved-plates	wave-plates
+Wayne Allard	senator
+Wayne Swan	member of parliament,deputy prime minister
 wealth	richness
 weaners	weanlings
 weanlings	weaners
@@ -4765,6 +6281,9 @@ wedding	marriage
 wednesday	wed
 welfare	well-being
 well-being	welfare
+Weller	governor,senator
+Wen Jiabao	premier
+Westerberg	speaker
 wet	moist
 wetter	wettest
 wettest	wetter
@@ -4777,24 +6296,50 @@ wharf	dock
 whims	vagaries
 whiskey	whisky
 whisky	whiskey
+White	governor
 who-	if-
 whole-of-government	government-wide
 whores	hookers
+Widmer-Schlumpf	swiss federal council,president
 wife	woman
+Wilberforce	member of parliament
+Willem Drees	prime minister
+William Cameron Forbes	governor-general
+William Henry Harrison	president,governor,senator,member of congress
+William Howard Taft	president,governor-general,governor
+William Irwin	governor
+William Massey	prime minister
+William McKinley	president,governor
+William Norton	deputy prime minister
+William Paulding, Jr.	mayor
+William Rush Merriam	governor
+William Stephens	governor
+William V. Roth, Jr.	senator,member of congress
+William Wilberforce	member of parliament
+Williams	senator
+Willie Brown	mayor,speaker
+Wilmington	prime minister
+Wilson	president,governor,cabinet secretary,governor,senator,deputy prime minister,prime minister,member of parliament
+Wilson Tuckey	member of parliament
 windscreen	windshield
 windscreens	windshields
 windshield	windscreen
 windshields	windscreens
+Windsor	member of parliament
+Winston Churchill	prime minister,member of parliament
 wire	cable
 wires	cables
 wiring	cabling
 witch	sorceress
 witchcraft	sorcery
+Wolf	governor
 woman	wife
 womb	uterus
 wong	huang
+Wood	governor-general,mayor,member of parliament
 wood	timber
 woodchucks	marmots
+Woodrow Wilson	president,governor,cabinet secretary
 wool	lana
 work	working
 workbench	workspace
@@ -4804,31 +6349,49 @@ worksheets	spreadsheets
 workspace	workbench
 wormhole	vortex
 wounded	injured
+Wright	governor-general
 wristlets	wrists
 wrists	wristlets
 writable	recordable
 writing	written
 written	writing
+Wu Yi	deputy premier,vice mayor
+Wynne	premier
 xu	seo
+Yahya Khan	president
 yasin	yassin
 yassin	yasin
+Yasuo Fukuda	prime minister
 yeah	yes
 year-1	yr-1
+Yemen	Sanaa
 yes	yeah
+Yi	deputy premier,vice mayor
+Yitzhak Rabin	prime minister
 yoghurt	yogurt
 yogurt	yoghurt
+Yoshida	prime minister
+Young	member of congress,governor
 younis	yunis
 yr-1	year-1
+Yukiko Kada	governor
 yunis	younis
 yurts	gers
+Yvette D'Ath	member of parliament
+Zachary Taylor	president
+Zafarullah Khan Jamali	prime minister
+Zagreb	Croatia
+Zaimis	president
 zambia	zambian
 zambian	zambia
+Zappia	member of parliament
 zarqawi	al-zarqawi
+Zeng Peiyan	deputy premier
 zeroes	zeros
 zeros	zeroes
-zhang	chang
-zhang	cheung
-zhu	chu
+Zhu Rongji	premier
+Zimbabwe	Harare
 zone	area
 zones	areas
 zpm	mpa
+Zulfikar Ali Bhutto	president,prime minister
