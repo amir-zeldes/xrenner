@@ -48,11 +48,10 @@ def modifiers_compatible(markable, candidate, lex):
 	:return: bool
 	"""
 
-
 	if not cardinality_compatible(markable,candidate):
 		return False
 
-	# Do strict 'no new modifiers' check if desired
+		# Do strict 'no new modifiers' check if desired
 	if lex.filters["no_new_modifiers"]:
 		if markable.start > candidate.start:
 			first = candidate
