@@ -16,7 +16,7 @@ from modules.xrenner_lex import *
 from modules.xrenner_postprocess import postprocess_coref
 from modules.depedit import run_depedit
 
-__version__ = "1.2.1"
+__version__ = "1.2.x"  # Develop
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
@@ -222,6 +222,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			# Check whether this head is the beginning of a coordination and needs its own sub-markable too
 			make_submark = False
 			submark_id = ""
+			submarks = []
 			cardi=0
 			for child_id in children[tok.id]:
 				child = conll_tokens[int(child_id)]
@@ -240,7 +241,9 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 					# Build a composite id for the large head from coordinate children id's separated by underscore
 					submark_id += "_" + child.id
 					cardi+=1
+					submarks.append(child.id)
 			if make_submark:
+				submarks.append(tok.id)
 				# Assign aggregate/coordinate agreement class to large markable if desired
 				if lex.filters["aggregate_agree"] != "_":
 					this_markable.agree = lex.filters["aggregate_agree"]
@@ -252,14 +255,17 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 							descendants[tok.id].remove(child.id)
 
 				# Make the small markable and recall the big markable
-				small_markable = make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex)
 				mark_candidates_by_head[tok.id].cardinality=cardi+1
 				big_markable = mark_candidates_by_head[tok.id]
-
+				small_markable = make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex)
+				big_markable.submarks = submarks[:]
 
 				# Switch the id's so that the big markable has the 1_2_3 style id, and the small has just the head id
 				mark_candidates_by_head[tok.id + submark_id] = big_markable
 				mark_candidates_by_head[tok.id] = small_markable
+				big_markable = None
+				small_markable = None
+				#submarks = None
 
 
 	# Check for atomicity and remove any subsumed markables if atomic
@@ -359,7 +365,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 		this_markable = Markable("referent_" + str(markcounter), tok, mark.form,
 		                         definiteness, mark.start, mark.end, mark.text, mark.core_text, mark.entity, mark.entity_certainty,
 		                         subclass, "new", mark.agree, mark.sentence, "none", "none", groupcounter,
-		                         mark.alt_entities, mark.alt_subclasses, mark.alt_agree,mark.cardinality)
+		                         mark.alt_entities, mark.alt_subclasses, mark.alt_agree,mark.cardinality,mark.submarks)
 		markables.append(this_markable)
 		markables_by_head[mark_id] = this_markable
 		markstart_dict[this_markable.start].append(this_markable)
@@ -371,6 +377,9 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			# DEBUG POINT
 			if current_markable.text.strip() in lex.debug:
 				pass
+			# Revise coordinate markable entities now that we have resolved all of their constituents
+			if len(current_markable.submarks) > 0:
+				assign_coordinate_entity(current_markable,markables_by_head)
 			if antecedent_prohibited(current_markable, conll_tokens, lex) or (current_markable.definiteness == "indef" and lex.filters["apposition_func"].match(current_markable.head.func) is None and not lex.filters["allow_indef_anaphor"]):
 				antecedent = None
 			else:

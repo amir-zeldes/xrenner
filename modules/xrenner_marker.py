@@ -459,6 +459,14 @@ def get_key_by_max_val(dict_of_ints):
 
 
 def lookup_has_entity(text, lemma, entity, lex):
+	"""
+	Checks if a certain token text or lemma have the specific entity listed in the entities or entity_heads lists
+	:param text: text of the token
+	:param lemma: lemma of the token
+	:param entity: entity to check for
+	:param lex: the LexData object with gazetteer information and model settings
+	:return:
+	"""
 	found = []
 	if text in lex.entities:
 		found = [i for i, x in enumerate(lex.entities[text]) if re.search(entity + '\t', x)]
@@ -469,3 +477,24 @@ def lookup_has_entity(text, lemma, entity, lex):
 	elif lemma in lex.entity_heads:
 		found = [i for i, x in enumerate(lex.entity_heads[lemma]) if re.search(entity + '\t', x)]
 	return len(found) > 0
+
+
+def assign_coordinate_entity(mark,markables_by_head):
+	"""
+	Checks if all constituents of a coordinate markable have the same entity and subclass
+	and if so, propagates these to the coordinate markable.
+	:param mark: a coordinate markable to check the entities of its constituents
+	:param markables_by_head: dictionary of markables by head id
+	:return: void
+	"""
+
+	sub_entities = []
+	sub_subclasses = []
+	for m_id in mark.submarks:
+		if m_id in markables_by_head:
+			sub_entities.append(markables_by_head[m_id].entity)
+			sub_subclasses.append(markables_by_head[m_id].subclass)
+	if len(set(sub_entities)) == 1:  # There is agreement on the entity
+		mark.entity = sub_entities[0]
+	if len(set(sub_subclasses)) == 1:  # There is agreement on the entity
+		mark.subclass = sub_subclasses[0]

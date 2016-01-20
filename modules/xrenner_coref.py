@@ -108,6 +108,8 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 					value = "^" + getattr(anaphor, key).strip() + "$"
 				elif key == "text_lower":
 					value = "^" + getattr(anaphor, "text").lower() + "$"
+				elif key == "cardinality":
+					value = "^" + str(getattr(anaphor, "cardinality")) + "$"
 				elif key == "func" or key == "pos" or key == "lemma":
 					value = "^" + getattr(anaphor.head, key) + "$"
 				elif key == "mod":
@@ -132,6 +134,8 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 				rule_property = getattr(mark, key).strip()
 			elif key == "text_lower":
 				rule_property = getattr(mark, "text").lower().strip()
+			elif key == "cardinality":
+				rule_property = str(getattr(mark, "cardinality"))
 			elif key == "func" or key == "pos" or key == "lemma":
 				rule_property = getattr(mark.head, key)
 			elif key == "quoted":
