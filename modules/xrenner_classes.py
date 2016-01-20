@@ -28,10 +28,11 @@ class ParsedToken:
 		self.child_strings = child_strings
 		self.quoted = quoted
 		self.coordinate = False
+		self.head_text = ""
 
 
 class Markable:
-	def __init__(self, mark_id, head, form, definiteness, start, end, text, entity, entity_certainty, subclass, infstat, agree, sentence,
+	def __init__(self, mark_id, head, form, definiteness, start, end, text, core_text, entity, entity_certainty, subclass, infstat, agree, sentence,
 				 antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree,cardinality=0):
 		self.id = mark_id
 		self.head = head
@@ -40,7 +41,7 @@ class Markable:
 		self.start = start
 		self.end = end
 		self.text = text
-		self.core_text = text  # Holds markable text before any extensions or manipulations
+		self.core_text = core_text  # Holds markable text before any extensions or manipulations
 		self.entity = entity
 		self.subclass = subclass
 		self.infstat = infstat

@@ -7,17 +7,18 @@ Co.	organization
 colonel	person
 Corp.	organization
 corporal	person
+Cyclone	event/inanim
 Dr.	person
-East	place
 Emperor	person
 Father	person
-general	person
 Hurricane	event/inanim
 Inc.	organization
 King	person
+leader	person
 lieutenant	person
 lieutenant	person
 LLC	organization
+minister	person
 Mr	person
 Mr.	person
 Mrs	person
@@ -26,19 +27,17 @@ Ms	person
 Ms.	person
 née	person/female
 nee	person/female
-North	place
 officer	person
 pm	time/inanim
 president	person
-Prime Minister	person
-Prof.	person
-Professor	person
+prime minister	person
+prof.	person
+professor	person
+rep.	person
 sergeant	person
-Sister	person
-South	place
+sister	person
 sulfate	substance/inanim
 USS	object
-Vicar	person
+vicar	person
 vice	person
 vice president	person
-West	place

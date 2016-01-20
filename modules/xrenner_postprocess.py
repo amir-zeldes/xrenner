@@ -29,12 +29,12 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 	# Check for markables to remove in postprocessing
 	if len(lex.filters["remove_head_func"].pattern) > 0:
 		for mark in markables:
-			if lex.filters["remove_head_func"].match(mark.head.func) is not None and (mark.form != "proper" or mark.text.strip() == "U.S."): # Proper restriction matches OntoNotes guidelines; US is interpreted as "American" (amod)
+			if lex.filters["remove_head_func"].match(mark.head.func) is not None and (mark.form != "proper" or mark.text.strip() == "U.S." or mark.text.strip() in lex.first_names): # Proper restriction matches OntoNotes guidelines; US is interpreted as "American" (amod)
 				splice_out(mark, marks_by_group[mark.group])
 	if len(lex.filters["remove_child_func"].pattern) > 0:
 		for mark in markables:
 			for child_func in mark.head.child_funcs:
-				if lex.filters["remove_child_func"].match(child_func) is not None:
+				if lex.filters["remove_child_func"].match(child_func) is not None and mark.head.func != "cata":
 					splice_out(mark, marks_by_group[mark.group])
 
 	# Remove i in i rule (no overlapping markable coreference in group)
@@ -161,8 +161,6 @@ def create_envelope(first,second, conll_tokens):
 		if first.cardinality == second.cardinality:
 			cardinality = first.cardinality
 
-
-
-	envelope = Markable(mark_id, head, form, definiteness, start, end, text, entity, entity_certainty, subclass, infstat, agree, sentence, antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree, cardinality)
+	envelope = Markable(mark_id, head, form, definiteness, start, end, text, text, entity, entity_certainty, subclass, infstat, agree, sentence, antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree, cardinality)
 
 	return envelope

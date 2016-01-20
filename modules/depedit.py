@@ -9,11 +9,11 @@ Author: Amir Zeldes
 
 import argparse
 import re
-import copy
+from copy import copy, deepcopy
 import sys
 from collections import defaultdict
 
-__version__ = "1.1.0"
+__version__ = "1.2.1"
 
 
 class ParsedToken:
@@ -43,7 +43,7 @@ class Transformation:
 			definitions = definition_string.split(";")
 			relations = relation_string.split(";")
 			actions = action_string.split(";")
-			return [definitions, relations,actions]
+			return [definitions, relations, actions]
 
 	@staticmethod
 	def normalize_shorthand(criterion_string):
@@ -72,7 +72,7 @@ class Transformation:
 			for node in nodes:
 				criteria = node.split("&")
 				for criterion in criteria:
-					if not re.match("(text|pos|lemma|morph|func|head)=/[^/=]*/",criterion):
+					if not re.match("(text|pos|lemma|morph|func|head)!?=/[^/=]*/",criterion):
 						report+= "Invalid node definition in column 1: " + criterion
 		for relation in self.relations:
 			if relation == "none" and len(self.relations) == 1:
@@ -106,7 +106,7 @@ def process_sentence(conll_tokens, tokoffset, transformations):
 			found = matches_relation(node_matches, relation, result_sets)
 			if not found:
 				result_sets = []
-		result_sets = merge_sets(result_sets,len(transformation.definitions))
+		result_sets = merge_sets(result_sets,len(transformation.definitions),len(transformation.relations))
 		if len(result_sets) > 0:
 			for action in transformation.actions:
 				execute_action(result_sets, action)
@@ -117,10 +117,19 @@ def matches_definition(token,def_text):
 	defs = def_text.split("&")
 	for def_item in defs:
 		criterion = def_item.split("=")[0]
+		if criterion[-1] == "!":
+			negative_criterion = True
+			criterion = criterion[:-1]
+		else:
+			negative_criterion = False
 		def_value = "^(" + def_item.split("=")[1][1:-1] + ")$"
 		tok_value = getattr(token,criterion)
 		if not re.match(def_value,tok_value):
-			return False
+			if not negative_criterion:
+				return False
+		else:
+			if negative_criterion:
+				return False
 	return True
 
 
@@ -148,6 +157,7 @@ def matches_relation(node_matches, relation, result_sets):
 			result = {}
 			matches[node1].append(tok1)
 			result[node1] = tok1
+			result["rel"] = relation
 			result_sets.append(result)
 	else:
 		node1 = relation.split(operator)[0]
@@ -158,7 +168,7 @@ def matches_relation(node_matches, relation, result_sets):
 		for tok1 in node_matches[node1]:
 			for tok2 in node_matches[node2]:
 				if test_relation(tok1, tok2, operator):
-					result_sets.append({node1: tok1, node2: tok2})
+					result_sets.append({node1: tok1, node2: tok2, "rel": relation})
 					matches[node1].append(tok1)
 					matches[node2].append(tok2)
 					hits += 1
@@ -207,26 +217,47 @@ def test_relation(node1,node2,operator):
 				return False
 
 
-def merge_sets(sets,node_count):
+def merge_sets(sets, node_count, rel_count):
 
 	solutions = []
 	bins = []
 	for set_to_merge in sets:
 		new_set = {}
+		new_set["rels"] = []
 		for key in set_to_merge:
-			new_set[key] = set_to_merge[key]
+			if key != "rel":
+				new_set[key] = set_to_merge[key]
+			else:
+				new_set["rels"].append(set_to_merge[key])
 
-		for bin in copy.copy(bins):
-			if bins_compatible(new_set,bin):
-				candidate = merge_bins(new_set,bin)
-				bins.append(candidate)
-		bins.append(new_set)
+		for my_bin in copy(bins):
+			if bins_compatible(new_set, my_bin):
+				candidate = merge_bins(new_set, my_bin)
+				bins.append(copy(candidate))
+		bins.append(copy(new_set))
 
-	for bin in bins:
-		if len(bin) == node_count:
-			solutions.append(bin)
+	for my_bin in bins:
+		if len(my_bin) == node_count + 1:
+			solutions.append(my_bin)
 
-	return solutions
+	merged_bins = []
+	for solution in solutions:
+		if len(solution["rels"]) < rel_count:
+			for solution2 in solutions:
+				if solution != solution2:
+					same_tokens = (solution[key]==solution2[key] for key in solution if key != 'rels')
+					if all(same_tokens):
+						for rel in solution2["rels"]:
+							if rel not in solution["rels"]:
+								solution["rels"].append(rel)
+						solution["rels"].sort()
+						if solution not in merged_bins:
+							merged_bins.append(solution)
+		else:
+			solution["rels"].sort()
+			if solution not in merged_bins:
+				merged_bins.append(solution)
+	return merged_bins
 
 
 def bins_compatible(bin1, bin2):
@@ -245,9 +276,14 @@ def bins_compatible(bin1, bin2):
 
 def merge_bins(bin1, bin2):
 	for key in bin1:
-		if key not in bin2:
-			bin2[key]= bin1[key]
-			return bin2
+		if key != "rels":
+			if key not in bin2:
+				out_bin = copy(bin2)
+				out_bin[key]= bin1[key]
+				for rel in bin1["rels"]:
+					new_rel = deepcopy(rel)
+					out_bin["rels"] = bin2["rels"]+[new_rel]
+				return out_bin
 
 
 def execute_action(result_sets, action_list):
@@ -273,8 +309,12 @@ def execute_action(result_sets, action_list):
 def serialize_output_tree(tokens, tokoffset):
 	output_tree = ""
 	for tok in tokens:
+		if tok.head == "0":
+			tok_head_string = "0"
+		else:
+			tok_head_string = str(int(tok.head)-tokoffset)
 		output_tree += str(int(tok.id)-tokoffset)+"\t"+tok.text+"\t"+tok.lemma+"\t"+tok.pos+"\t"+tok.pos+"\t"+tok.morph+\
-						"\t"+str(int(tok.head)-tokoffset)+"\t"+tok.func+"\t_\t_\n"
+						"\t"+tok_head_string+"\t"+tok.func+"\t_\t_\n"
 	output_tree += "\n"
 	return output_tree
 
@@ -306,9 +346,11 @@ def run_depedit(infile, config_file):
 
 	conll_tokens.append(0)
 	my_output = ""
+	sentence_string = ""
 
 	for myline in infile:
 		if myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
+			sentence_string += myline
 			cols = myline.split("\t")
 			conll_tokens.append(ParsedToken(str(int(cols[0]) + tokoffset),cols[1],cols[2],cols[3],cols[5],str(int(cols[6]) + tokoffset),cols[7].strip(),[]))
 			sentlength += 1
@@ -321,6 +363,7 @@ def run_depedit(infile, config_file):
 			#		if not func in conll_tokens[id].child_funcs:
 			#			conll_tokens[id].child_funcs.append(func)
 			my_output += process_sentence(conll_tokens,tokoffset,transformations)
+			sentence_string = ""
 			if sentlength > 0:
 				tokoffset += sentlength
 

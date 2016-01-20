@@ -8,6 +8,7 @@ Author: Amir Zeldes
 
 
 def search_prev_markables(markable, previous_markables, rule, lex, max_dist, propagate):
+	candidate_list = []
 	if rule.find("lookahead") > -1:
 		referents_to_loop = previous_markables
 	else:
@@ -22,7 +23,13 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 				if candidate.group not in markable.non_antecdent_groups:
 					if coref_rule_applies(lex, rule, candidate, markable):
 						if not markables_overlap(markable, candidate):
-							if markable.text.strip() == candidate.text.strip() or (len(markable.text) > 4 and (candidate.text.lower() == markable.text.lower())):
+							if markable.form == "pronoun":
+								if agree_compatible(markable, candidate, lex) or (rule.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)):
+									if entities_compatible(markable, candidate, lex):
+										#propagate_entity(markable, candidate)
+										#return candidate
+										candidate_list.append(candidate)
+							elif markable.text.strip() == candidate.text.strip() or (len(markable.text) > 4 and (candidate.text.lower() == markable.text.lower())):
 								propagate_entity(markable, candidate, propagate)
 								return candidate
 							elif markable.text.strip() + "|" + candidate.text.strip() in lex.coref and entities_compatible(
@@ -30,52 +37,50 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 								markable.coref_type = lex.coref[markable.text.strip() + "|" + candidate.text.strip()]
 								propagate_entity(markable, candidate)
 								return candidate
-							else:
-								if markable.form == "pronoun":
-									if agree_compatible(markable, candidate, lex) or rule.find("anyagree") > 0:
-										if entities_compatible(markable, candidate, lex):
-											propagate_entity(markable, candidate)
+							elif markable.entity == candidate.entity  and agree_compatible(markable, candidate, lex) and (markable.head.text == candidate.head.text or
+							(len(markable.head.text) > 4 and (candidate.head.text.lower() == markable.head.text.lower())) or
+							(markable.head.lemma == candidate.head.lemma and lex.filters["lemma_match_pos"].match(markable.head.pos) is not None
+							and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
+								if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
+									if propagate.startswith("propagate"):
+										propagate_entity(markable, candidate, propagate)
+									return candidate
+							elif markable.entity == candidate.entity and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
+								if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
+									if propagate.startswith("propagate"):
+										propagate_entity(markable, candidate, propagate)
+									return candidate
+							elif (markable.head.text == candidate.head.text and agree_compatible(markable,candidate,lex) or (markable.head.lemma == candidate.head.lemma and
+							lex.filters["lemma_match_pos"].match(markable.head.pos) is not None and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
+								if merge_entities(markable, candidate, previous_markables, lex):
+									if propagate.startswith("propagate"):
+										propagate_entity(markable, candidate, propagate)
+									return candidate
+							elif entities_compatible(markable, candidate, lex) and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
+									if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
+										if merge_entities(markable, candidate, previous_markables, lex):
+											if propagate.startswith("propagate"):
+												propagate_entity(markable, candidate, propagate)
 											return candidate
-								elif markable.entity == candidate.entity and (markable.head.text == candidate.head.text or
-								(len(markable.head.text) > 4 and (candidate.head.text.lower() == markable.head.text.lower())) or
-								(markable.head.lemma == candidate.head.lemma and lex.filters["lemma_match_pos"].match(markable.head.pos) is not None
-								and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
+							elif lex.filters["match_acronyms"] and markable.head.text.isupper() or candidate.head.text.isupper():
+								if acronym_match(markable, candidate, lex) or acronym_match(candidate, markable, lex):
 									if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
-										if propagate.startswith("propagate"):
-											propagate_entity(markable, candidate, propagate)
-										return candidate
-								elif markable.entity == candidate.entity and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
-									if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
-										if propagate.startswith("propagate"):
-											propagate_entity(markable, candidate, propagate)
-										return candidate
-								elif (markable.head.text == candidate.head.text or (markable.head.lemma == candidate.head.lemma and
-								lex.filters["lemma_match_pos"].match(markable.head.pos) is not None and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
-									if merge_entities(markable, candidate, previous_markables, lex):
-										if propagate.startswith("propagate"):
-											propagate_entity(markable, candidate, propagate)
-										return candidate
-								elif entities_compatible(markable, candidate, lex) and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
-										if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
-											if merge_entities(markable, candidate, previous_markables, lex):
-												if propagate.startswith("propagate"):
-													propagate_entity(markable, candidate, propagate)
-												return candidate
-								elif lex.filters["match_acronyms"] and markable.head.text.isupper() or candidate.head.text.isupper():
-									if acronym_match(markable, candidate, lex) or acronym_match(candidate, markable, lex):
-										if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
-											if merge_entities(markable, candidate, previous_markables, lex):
-												propagate_entity(markable, candidate, "propagate")
-												return candidate
-								if rule.find("anytext") > -1:
-									if rule.find("anyagree") > -1 or agree_compatible(markable, candidate, lex):
-										if propagate.startswith("propagate"):
-											propagate_entity(markable, candidate, propagate)
-										return candidate
+										if merge_entities(markable, candidate, previous_markables, lex):
+											propagate_entity(markable, candidate, "propagate")
+											return candidate
+							if rule.find("anytext") > -1:
+								if (rule.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)) or agree_compatible(markable, candidate, lex):
+									if propagate.startswith("propagate"):
+										propagate_entity(markable, candidate, propagate)
+									return candidate
 		elif rule.find("lookahead") == -1:
 			# Reached back too far according to max_dist, stop looking
-			return None
-	return None
+			break
+			#return None
+	if len(candidate_list)>0:
+		return best_candidate(markable, candidate_list, lex)
+	else:
+		return None
 
 
 def coref_rule_applies(lex, rule, mark, anaphor=None):
@@ -103,14 +108,15 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 					value = "^" + getattr(anaphor, key).strip() + "$"
 				elif key == "text_lower":
 					value = "^" + getattr(anaphor, "text").lower() + "$"
-				elif key == "func" or key == "pos":
+				elif key == "func" or key == "pos" or key == "lemma":
 					value = "^" + getattr(anaphor.head, key) + "$"
 				elif key == "mod":
 					mods = getattr(anaphor.head, "modifiers")
 					found_mod = False
 					for mod1 in mark.head.modifiers:
 						for mod2 in mods:
-							if mod1.lemma == mod2.lemma:
+							if mod1.lemma == mod2.lemma and lex.filters["det_func"].match(mod1.func) is None and \
+							lex.filters["det_func"].match(mod2.func) is None:
 								found_mod = True
 					if not found_mod:
 						if group_failure and anaphor is not None:
@@ -148,6 +154,18 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 						if group_failure and anaphor is not None:
 							anaphor.non_antecdent_groups.add(mark.group)
 						return False
+			elif key == "child":
+				if "$" in value:
+					if not anaphor.head.head == mark.head.id:
+						if group_failure and mark is not None:
+							mark.non_antecdent_groups.add(anaphor.group)
+						return False
+					rule_property = "$1"
+				else:
+					if re.match(value, anaphor.head.head) is None:
+						if group_failure and mark is not None:
+							mark.non_antecdent_groups.add(anaphor.group)
+						return False
 			elif re.match(r"last\[([^\[]+)\]", key) is not None:
 				match = re.match(r"last\[([^\[]+)\]", key)
 				agree = match.group(1)
@@ -161,11 +179,11 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 			if rule_property is None:
 				rule_property = ""
 
-			if (not value_matcher.search(rule_property) and negative is False) and "$" not in rule_property:
+			if (value_matcher.search(rule_property) is None and negative is False) and "$1" not in rule_property:
 				if group_failure and anaphor is not None:
 					anaphor.non_antecdent_groups.add(mark.group)
 				return False
-			elif (value_matcher.search(rule_property) and negative is True) and "$" not in rule_property:
+			elif (value_matcher.search(rule_property) is not None and negative is True) and "$1" not in rule_property:
 				if group_failure and anaphor is not None:
 					anaphor.non_antecdent_groups.add(mark.group)
 				return False

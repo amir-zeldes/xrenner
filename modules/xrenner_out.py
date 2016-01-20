@@ -1,11 +1,43 @@
+# encoding=utf8
 import sys
 import operator
+import re
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
 Output module for exporting resolved data to one of the supported serialization formats
 Author: Amir Zeldes
 """
+
+def output_onto(conll_tokens, markstart_dict, markend_dict, file_name):
+	"""
+	Outputs analysis results in OntoNotes .coref cormat
+	:param conll_tokens: List of all processed ParsedToken objects in the document
+	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
+	:param markend_dict: Dictionary from markable ending token ids to Markable objects
+	:return: serialized XML
+	"""
+
+	output_string = '<DOC DOCNO="' + file_name + '">\n<TEXT PARTNO="000">\n'
+	for out_tok in conll_tokens:
+		if int(out_tok.id) in markstart_dict:
+			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
+				output_string += '<COREF ID="' + str(out_mark.group) + '" ENTITY="' + out_mark.entity + '" INFSTAT="' + out_mark.infstat
+				if not out_mark.antecedent == "none":
+					output_string += '" TYPE="' + out_mark.coref_type
+				output_string += '">'
+		if int(out_tok.id) > 0:
+			output_string += re.sub("&","&amp;",out_tok.text) if ";" not in out_tok.text else out_tok.text
+		if int(out_tok.id) in markend_dict:
+			for out_mark in markend_dict[int(out_tok.id)]:
+				output_string += "</COREF>"
+		if int(out_tok.id) > 0:
+			output_string += ' '
+
+
+	return output_string + "\n</TEXT>\n</DOC>\n"
 
 
 def output_SGML(conll_tokens, markstart_dict, markend_dict):
@@ -14,21 +46,24 @@ def output_SGML(conll_tokens, markstart_dict, markend_dict):
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
-	:return: void
+	:return: serialized SGML
 	"""
 
+	output_string = ""
 	for out_tok in conll_tokens:
 		if int(out_tok.id) in markstart_dict:
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
-				sys.stdout.write('<referent id="' + out_mark.id + '" entity="' + out_mark.entity + '" group="' + str(out_mark.group))
+				output_string += '<referent id="' + str(out_mark.id) + '" entity="' + out_mark.entity + '" group="' + str(out_mark.group)
 				if not out_mark.antecedent == "none":
-					sys.stdout.write('" antecedent="' + out_mark.antecedent.id + '" type="' + out_mark.coref_type)
-				sys.stdout.write('">\n')
+					output_string += '" antecedent="' + str(out_mark.antecedent.id) + '" type="' + out_mark.coref_type
+				output_string += '">\n'
 		if int(out_tok.id) > 0:
-			print out_tok.text
+			output_string += out_tok.text + "\n"
 		if int(out_tok.id) in markend_dict:
 			for out_mark in markend_dict[int(out_tok.id)]:
-				print "</referent>"
+				output_string += "</referent>\n"
+
+	return output_string
 
 
 def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
@@ -39,9 +74,9 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
 	:param file_name: name of the source file (dependency data) to create header for CoNLL file
-	:return: void
+	:return: serialized conll format in plain text
 	"""
-	print "# begin document " + str(file_name).replace(".conll10", "").replace("_xrenner","").replace("_hyph","")
+	output_string = "# begin document " + str(file_name).replace(".conll10", "").replace("_xrenner","").replace("_hyph","").replace("_deped","")+"\n"
 	i = -1
 	for out_tok in conll_tokens[1:]:
 		i += 1
@@ -64,8 +99,9 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 			coref_col = "_"
 
 		line += coref_col
-		print line
-	print ""
+		output_string += line + "\n"
+	output_string += "# end document\n\n"
+	return output_string
 
 
 def output_HTML(conll_tokens, markstart_dict, markend_dict):
@@ -75,10 +111,10 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict):
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
-	:return: void
+	:return: serialized HTML
 	"""
 
-	print '''<html>
+	output_string = '''<html>
 <head>
 	<link rel="stylesheet" href="./css/renner.css" type="text/css" charset="utf-8"/>
 	<link rel="stylesheet" href="./css/font-awesome-4.2.0/css/font-awesome.min.css"/>
@@ -91,20 +127,22 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict):
 	for out_tok in conll_tokens:
 		if int(out_tok.id) in markstart_dict:
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
+				info_string = "class: " + str(out_mark.entity) + " | subclass: " + str(out_mark.subclass) + \
+				              "&#10;definiteness: " + str(out_mark.definiteness) + " | agree: " + str(out_mark.agree)
 				sys.stdout.write('<div id="' + out_mark.id + '" head="' + out_mark.head.id + '" onmouseover="highlight_group(' +
-				"'" + str(out_mark.group) + "'" + ')" onmouseout="unhighlight_group(' + "'" + str(out_mark.group) + "'" + ')" class="referent" group="' + str(out_mark.group))
+				"'" + str(out_mark.group) + "'" + ')" onmouseout="unhighlight_group(' + "'" + str(out_mark.group) + "'" + ')" class="referent" group="' + str(out_mark.group) + '" title="' + info_string)
 				if not out_mark.antecedent == "none":
 					sys.stdout.write('" antecedent="' + out_mark.antecedent.id)
 				sys.stdout.write('"><span class="entity_type">' + get_glyph(out_mark.entity) + '</span>\n')
 		if int(out_tok.id) > 0:
-			print out_tok.text.replace("-RRB-", ")").replace("-LRB-", "(").replace("-LSB-", "[").replace("-RSB-", "]")
+			output_string += out_tok.text.replace("-RRB-", ")").replace("-LRB-", "(").replace("-LSB-", "[").replace("-RSB-", "]") + "\n"
 		if int(out_tok.id) in markend_dict:
 			for out_mark in markend_dict[int(out_tok.id)]:
-				#print "["+out_mark.definiteness+"]"
-				print "</div>"
-	print '<script>colorize();</script>'
-	print '''</body>
+				output_string += "</div>\n"
+	output_string += '<script>colorize();</script>\n'
+	output_string += '''</body>
 </html>'''
+	return output_string
 
 
 def output_PAULA(conll_tokens, markstart_dict, markend_dict):
@@ -338,7 +376,7 @@ def output_webanno(conll_tokens, markables):
 
 	output += '<cas:View sofa="12000" members="' + all_ids_string.strip() + '"/>\n</xmi:XMI>\n'
 
-	print output
+	return output
 
 
 def get_glyph(entity_type):

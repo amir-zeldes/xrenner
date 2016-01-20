@@ -82,23 +82,13 @@ class LexData:
 						else:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2]]
 				return out_dict
-				# Return dict((rows[0], rows[1]+"\t"+rows[2]) for rows in reader if not rows[0].startswith('#'))
 			elif mode == "quadruple":
 				out_dict = defaultdict(dict)
-				#dep_dict = {}
 				for rows in reader:
 					if rows[0] == "in":
 						pass
 					if not rows[0].startswith('#'):
-						#dep_dict[rows[1]] = [rows[2], rows[3]]
-						if rows[0] in out_dict:
-							if rows[1] in out_dict[rows[0]]:
-								if int(rows[3]) > int(out_dict[rows[0]][rows[1]][1]):
-									out_dict[rows[0]] = {rows[1] :[rows[2], rows[3]]}
-							else:
-								out_dict[rows[0]][rows[1]] =[rows[2], rows[3]]
-						else:
-							out_dict[rows[0]] = ({rows[1] :[rows[2], rows[3]]})
+						out_dict[rows[0]] = {rows[1]:{rows[2] : int(rows[3])}}
 				return out_dict
 			else:
 				return dict((rows[0], rows[1]) for rows in reader if not rows[0].startswith('#'))
