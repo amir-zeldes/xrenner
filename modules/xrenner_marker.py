@@ -11,7 +11,6 @@ Author: Amir Zeldes
 """
 
 
-
 def is_atomic(mark, atoms, lex):
 	"""
 	Checks if nested markables are allowed within this markable
