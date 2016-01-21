@@ -276,7 +276,7 @@ class LexData:
 					if substring in morph:
 						for entity in entity_list:
 							entity_class = entity.split("\t")[0]
-							if entity in morph[substring]:
+							if entity_class in morph[substring]:
 								morph[substring][entity_class] += 1
 							else:
 								morph[substring][entity_class] = 1
