@@ -104,7 +104,7 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 			elif value == "True" or value == "False":
 				pass
 			elif "$" in value and anaphor is not None:
-				if key == "form" or key == "text" or key == "agree" or key == "entity":
+				if key == "form" or key == "text" or key == "agree" or key == "entity" or key == "subclass":
 					value = "^" + getattr(anaphor, key).strip() + "$"
 				elif key == "text_lower":
 					value = "^" + getattr(anaphor, "text").lower() + "$"
@@ -130,7 +130,7 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 			if key == "text_lower":
 				value = value.lower()
 			value_matcher = re.compile(value)
-			if key == "form" or key == "text" or key == "agree" or key == "entity":
+			if key == "form" or key == "text" or key == "agree" or key == "entity" or key == "subclass":
 				rule_property = getattr(mark, key).strip()
 			elif key == "text_lower":
 				rule_property = getattr(mark, "text").lower().strip()
