@@ -23,7 +23,7 @@ class LexData:
 		self.model = model
 		self.atoms = {}
 		self.entities = self.read_delim('entities.tab', 'triple')
-		self.entity_heads = self.read_delim('entity_heads.tab', 'double')
+		self.entity_heads = self.read_delim('entity_heads.tab', 'triple')
 		self.names = self.read_delim('names.tab')
 		self.stop_list = self.read_delim('stop_list.tab', 'low')
 		self.open_close_punct = self.read_delim('open_close_punct.tab')
@@ -275,11 +275,13 @@ class LexData:
 					entity_list = self.entity_heads[head]
 					if substring in morph:
 						for entity in entity_list:
+							entity_class = entity.split("\t")[0]
 							if entity in morph[substring]:
-								morph[substring][entity] += 1
+								morph[substring][entity_class] += 1
 							else:
-								morph[substring][entity] = 1
+								morph[substring][entity_class] = 1
 					else:
 						for entity in entity_list:
-							morph[substring] = {entity:1}
+							entity_class = entity.split("\t")[0]
+							morph[substring] = {entity_class:1}
 		return morph
