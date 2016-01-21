@@ -225,8 +225,11 @@ def resolve_cardinality(mark,lex):
 	for mod in mark.head.modifiers:
 		if mod.text in lex.numbers:
 			return int(lex.numbers[mod.text][0])
-		elif re.search("\d+",mod.text):
-			return int(mod.text)
+		else:
+			pure_number_candidate = re.sub(lex.filters["decimal_sep"]+".*$","",mod.text)
+			pure_number_candidate = re.sub(lex.filters["thousand_sep"],"",pure_number_candidate)
+			if re.match("^\d+$",pure_number_candidate) is not None:
+				return int(mod.text)
 
 	return 0
 
