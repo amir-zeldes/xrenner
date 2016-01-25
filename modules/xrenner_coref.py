@@ -314,7 +314,7 @@ def acronym_match(mark, candidate, lex):
 				calibration = -1
 			elif len(word) > 0:
 				if len(mark.head.text) > position:
-					if word[0].isupper():
+					if word[0].isupper() or word == "&":
 						if word[0] == mark.head.text[position]:
 							position+=1
 						else:

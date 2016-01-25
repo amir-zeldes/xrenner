@@ -20,10 +20,11 @@ def is_atomic(mark, atoms, lex):
 	:return: bool
 	"""
 
-	marktext = mark.core_text
+	marktext = mark.text.strip()
+	#marktext = mark.core_text.strip()
 
 	# Do not accept a markable [New] within atomic [New Zealand]
-	if marktext.strip() in atoms:
+	if marktext in atoms:
 		return True
 	# Remove possible prefix tokens to reject [The [United] Kingdom] if [United Kingdom] in atoms
 	elif remove_prefix_tokens(marktext, lex).strip() in atoms:
@@ -32,7 +33,7 @@ def is_atomic(mark, atoms, lex):
 	elif remove_suffix_tokens(marktext, lex).strip() in atoms:
 		return True
 	# Combination of prefix and suffix to reject [The [United] Kingdom 's]
-	elif remove_prefix_tokens(remove_suffix_tokens(marktext, lex), lex).strip() in atoms:
+	elif mark.core_text in atoms:
 		return True
 	elif replace_head_with_lemma(mark) in atoms:
 		return True
@@ -45,9 +46,8 @@ def is_atomic(mark, atoms, lex):
 
 
 def remove_suffix_tokens(marktext, lex):
-	re_suffix_tokens = re.compile(" ('s|') ?$")
-	if re_suffix_tokens.search(marktext):
-		return re.sub(r" ('s|') ?$", " ", marktext)
+	if lex.filters["core_suffixes"].search(marktext):
+		return re.sub(lex.filters["core_suffixes"].pattern, " ", marktext)
 	else:
 		tokens = marktext.strip().split(" ")
 		suffix_candidate = ""
@@ -61,9 +61,8 @@ def remove_suffix_tokens(marktext, lex):
 
 
 def remove_prefix_tokens(marktext, lex):
-	re_prefix_tokens = re.compile(" ?([Tt]h([oe](se)?|is|at)|an?|some|all|many)( |$)")
-	if re_prefix_tokens.match(marktext) is not None:
-		return re.sub(r"^ ?([Tt]h([oe](se)?|is|at)|an?|some|all|many)( |$)", "", marktext)
+	if lex.filters["core_prefixes"].match(marktext): # NB use initial match here
+		return re.sub(lex.filters["core_prefixes"].pattern, " ", marktext)
 	else:
 		tokens = marktext.strip().split(" ")
 		prefix_candidate = ""
