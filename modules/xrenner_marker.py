@@ -21,7 +21,6 @@ def is_atomic(mark, atoms, lex):
 	"""
 
 	marktext = mark.text.strip()
-	#marktext = mark.core_text.strip()
 
 	# Do not accept a markable [New] within atomic [New Zealand]
 	if marktext in atoms:
@@ -110,7 +109,7 @@ def resolve_mark_entity(mark, token_list, lex):
 		if entity == "":
 			entity = resolve_entity_cascade(mark.core_text, mark, lex)
 		if entity == "":
-			entity = recognize_prefix(mark, lex.entity_mods)
+			entity = recognize_entity_by_mod(mark, lex.entity_mods)
 		if entity == "" and mark.head.text.istitle():
 			entity = resolve_entity_cascade(mark.core_text.lower().strip(), mark, lex)
 		if entity == "" and not mark.head.text.istitle():
@@ -192,10 +191,10 @@ def resolve_entity_cascade(entity_text, mark, lex):
 
 def resolve_mark_agree(mark, lex):
 	if mark.form == "pronoun":
-		if mark.core_text.strip() in lex.pronouns:
-			return lex.pronouns[mark.core_text.strip()]
-		elif mark.core_text.lower().strip() in lex.pronouns:
-			return lex.pronouns[mark.core_text.lower().strip()]
+		if mark.text.strip() in lex.pronouns:
+			return lex.pronouns[mark.text.strip()]
+		elif mark.text.lower().strip() in lex.pronouns:
+			return lex.pronouns[mark.text.lower().strip()]
 	if mark.form == "proper":
 		if mark.core_text.strip() in lex.names:
 			return [lex.names[mark.core_text.strip()]]
@@ -236,26 +235,39 @@ def resolve_cardinality(mark,lex):
 
 
 
-def recognize_prefix(mark, prefix_dict):
+def recognize_entity_by_mod(mark, modifier_lexicon):
 	"""
-	Attempt to recognize entity type based on a prefix
-	:param mark:
-	:return: string (entity type)
+	Attempt to recognize entity type based on modifiers
+	:param mark: Markable for which to identify the entity type
+	:param modifier_lexicon: The LexData object's modifier list
+	:return: String (entity type, possibly including subtype and agreement)
 	"""
-	substr = ""
-	candidate_prefix = ""
 	for mod in mark.head.modifiers:
-		mod_dict = get_mod_ordered_dict(mod)
-		for mod_member in mod_dict:
-			candidate_prefix += mod_dict[mod_member].text + " "
-		tokens = candidate_prefix.strip().split(" ")
-		for token in tokens:
-			substr += token + " "
-			if substr.strip() in prefix_dict:
-				return prefix_dict[substr.strip()]
-			elif substr.lower().strip() in prefix_dict:
-				return prefix_dict[substr.lower().strip()]
+		#if mod.id < mark.head.id:
+		modifier_tokens = construct_modifier_substring(mod)
+		while len(modifier_tokens) > 0:
+			identifying_substr = ""
+			for token in modifier_tokens:
+				identifying_substr += token + " "
+				if identifying_substr.strip() in modifier_lexicon:
+					return modifier_lexicon[identifying_substr.strip()][0]
+				elif identifying_substr.lower().strip() in modifier_lexicon:
+					return modifier_lexicon[identifying_substr.lower().strip()][0]
+			modifier_tokens.pop(0)
 	return ""
+
+
+def construct_modifier_substring(modifier):
+	"""
+	Creats a list of tokens representing a modifier and all of its submodifiers in sequence
+	:param modifier: A ParsedToken object from the modifier list of the head of some markable
+	:return: List of tokens giving the text of that modifier together with its modifiers
+	"""
+	candidate_prefix = ""
+	mod_dict = get_mod_ordered_dict(modifier)
+	for mod_member in mod_dict:
+		candidate_prefix += mod_dict[mod_member].text + " "
+	return candidate_prefix.strip().split(" ")
 
 
 def stoplist_prefix_tokens(mark, prefix_dict, keys_to_pop):
@@ -277,8 +289,12 @@ def stoplist_prefix_tokens(mark, prefix_dict, keys_to_pop):
 					i += 1
 
 
-
 def get_mod_ordered_dict(mod):
+	"""
+	Retrieves the (sub)modifiers of a modifier token
+	:param mod: A ParsedToken object representing a modifier of the head of some markable
+	:return: Recursive ordered dictionary of that modifier's own modifiers
+	"""
 	mod_dict = collections.OrderedDict()
 	mod_dict[mod.id] = mod
 	if len(mod.modifiers) > 0:

@@ -4,6 +4,8 @@ form=/proper/;form=/proper/&text=$1;100;nopropagate
 text=/^(him|her|my|y?our|it|them)sel(f|ves)$/&func=/advmod/;child=$1&anytext&anyagree;0;propagate
 text=/^(him|her|my|y?our|it|them)sel(f|ves)$/;func=/nsubj(pass)?/&sameparent&anytext&anyagree;0;propagate
 #cataphor rules
+#text=/^[Ii]t$/&func=/nsubj(pass)?/;func=/xcomp/&pos=/^V[VB]$/&has_child_func=/nsubj(pass)?/&anytext&anyagree&lookahead;0;propagate
+#text=/^[Ii]t$/&func=/nsubj(pass)?/;pos=/^JJ$/&has_child_func=/cop/&has_child_func=/nsubj(pass)?/&has_child_func=/ccomp/&anytext&anyagree&lookahead;0;propagate
 text=/^[Ii]t$/&func=/nsubj(pass)?/;func=/cata/&sameparent&anytext&anyagree&lookahead;0;propagate
 # possessive pronouns try to agree with possessive Markable in same sentence
 form=/pronoun/&func=/poss/;func=/poss/;0;propagate_forward
@@ -13,17 +15,18 @@ form=/pronoun/&text=/^(I|[Ww]e)/&mood!=/question/;mood=/question/&text=/^[Yy]our
 func=/appos/&anytext;child=$1&anytext&anyagree;0;propagate
 #prefer pronouns to corefer to identical pronouns in same sentence
 form=/pronoun/;text_lower=$1&!sameparent;0;nopropagate
-#prefer pronouns to corefer to identical pronouns in same sentence
 #prefer inanimate pronouns to corefer with the subject up to one sentence back, if the last inanimate is a place or time
-form=/pronoun/&agree=/inanim/&last[inanim]=/place|time|organization|abstract/;func=/nsubj(pass)?/&!sameparent;1;nopropagate
+form=/pronoun/&agree=/inanim/&last[inanim]=/place|time|organization|abstract/;func=/nsubj(pass)?/&subclass!=/time-unit/&!sameparent;1;nopropagate
 #prefer inanimate pronouns to corefer not with an oblique pobj, if the last inanimate is an abstract (weaker version of the place/time constraint, allowing e.g. dobj and not forcing only subj)
-form=/pronoun/&agree=/inanim/&last[inanim]=/abstract/;func!=/pobj|nn/&!sameparent;1;nopropagate
+form=/pronoun/&agree=/inanim/&last[inanim]=/abstract/;func!=/pobj|nn/&subclass!=/time-unit/&!sameparent;1;nopropagate
 #identify coreferent light heads based on identical modifiers
 lemma=/^one$/;mod=$1&anytext&form!=/proper/&!sameparent;4;nopropagate
+#lemma=/^one$/;anytext&form=/common/;1;propagate_forward
 anytext&form!=/proper/;lemma=/^one$/&mod=$1&anytext&!sameparent;4;nopropagate
 text=/^[Mm]any$/;agree=/plural/&anytext&!sameparent;1;propagate
 #allow coreference between nouns and their nsubj(pass)? dependents (copula coreference; filter out for OntoNotes style no-copula-coreference)
 pos=/NN?P?S?/&has_child_func=/cop/&has_child_func!=/neg/;func=/nsubj(pass)?/&head=$1&anytext&anyagree;0;propagate
+#pos=/NN?P?S?/&func=/xcomp/;func=/nsubj(pass)?/&head=$1&anytext&anyagree;0;propagate
 #allow coreference between quoted first person and unquoted third person
 form=/pronoun/&text=/^I|[Mm]e|[Mm]y|[Mm]ine$/&quoted=True;func=/nsubj(pass)?/&text=/[Ss]?[Hh]e/&anytext&anyagree&quoted=False;1;nopropagate
 form=/pronoun/&text=/^I|[Mm]e|[Mm]y|[Mm]ine$/&quoted=True;func=/nsubj(pass)?/&entity=/person/&anytext&anyagree&quoted=False;1;nopropagate
@@ -32,15 +35,17 @@ func=/nsubj(pass)?/&entity=/person/&quoted=False;form=/pronoun/&text=/^I|[Mm]e|[
 form=/pronoun/&text=/[Yy]our?s?/&quoted=True;func=/nsubj(pass)?/&text=/^I|[Mm]e|[Mm]y|[Mm]ine$/&anytext&anyagree&quoted=False;1;nopropagate
 #prefer pronouns to corefer to agreeing pronouns in same sentence
 form=/pronoun/;form=/pronoun/&agree=$1&!sameparent;0;propagate_forward
-#prefer pronouns to corefer to non-compound modifiers
-form=/pronoun/;func!=/nn/&!sameparent*;1;propagate_forward
-#allow nouns to refer back to a compatible pronoun in previous sentence
-#form!=/pronoun/&func!=/nn;form=/pronoun/&entity=$1&agree=$1&anytext&!sameparent;1;nopropagate
-#allow long distance coreference for proper noun headed locations with identical text
+#prefer pronouns to corefer to non-compound modifiers that are not time-units
+form=/pronoun/;func!=/nn/&subclass!=/time-unit/&!sameparent*;1;propagate_forward
+#allow long distance coreference for proper noun headed lemma matches
 form=/proper/;form=/proper/&lemma=$1;100;nopropagate
+#cardinality match rule - prefer coreference with matching cardinality
+cardinality=/[^0].*/;cardinality=$1&!sameparent;40;propagate
 #final default rule without nn
-none;func!=/nn/&!sameparent;20;nopropagate
+subclass!=/time-unit/;func!=/nn/&!sameparent;20;nopropagate
 #final default rule
-none;!sameparent;20;nopropagate
+subclass!=/time-unit/;!sameparent;20;nopropagate
+#identical time-unit rule
+subclass=/time-unit/;subclass=/time-unit/&text=$1&!sameparent;20;nopropagate
 #salvage unmatched pronouns - cataphoric cases like "in her speech, the chairwoman..."
 text=/^(his|her|its)$/;form!=/pronoun/&func=/nsubj/&lookahead;0;propagate_invert

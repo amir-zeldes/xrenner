@@ -25,7 +25,7 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 						if not markables_overlap(markable, candidate):
 							if markable.form == "pronoun":
 								if agree_compatible(markable, candidate, lex) or (rule.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)):
-									if entities_compatible(markable, candidate, lex):
+									if entities_compatible(markable, candidate, lex) and cardinality_compatible(markable, candidate):
 										#propagate_entity(markable, candidate)
 										#return candidate
 										candidate_list.append(candidate)
