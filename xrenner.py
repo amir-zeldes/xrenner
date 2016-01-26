@@ -245,8 +245,6 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			if make_submark:
 				submarks.append(tok.id)
 				# Assign aggregate/coordinate agreement class to large markable if desired
-				if lex.filters["aggregate_agree"] != "_":
-					this_markable.agree = lex.filters["aggregate_agree"]
 				# Remove coordination tokens, such as 'and', 'or' based on coord_func setting
 				for child_id in children[tok.id]:
 					child = conll_tokens[int(child_id)]
@@ -259,6 +257,9 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 				big_markable = mark_candidates_by_head[tok.id]
 				small_markable = make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex)
 				big_markable.submarks = submarks[:]
+				if lex.filters["aggregate_agree"] != "_":
+					big_markable.agree = lex.filters["aggregate_agree"]
+					big_markable.agree_certainty = "coordinate_aggregate_plural"
 
 				# Switch the id's so that the big markable has the 1_2_3 style id, and the small has just the head id
 				mark_candidates_by_head[tok.id + submark_id] = big_markable
@@ -277,7 +278,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 				# Note that the key may contain underscores if it's a composite, but those can't be atomic
 				if key != mark.head.id and mark.start <= int(re.sub('_.*','',key)) <= mark.end and '_' not in key:
 					keys_to_pop.append(key)
-		elif len(recognize_prefix(mark, lex.entity_mods)) > 1:
+		elif len(recognize_entity_by_mod(mark, lex.entity_mods)) > 1:
 			stoplist_prefix_tokens(mark, lex.entity_mods, keys_to_pop)
 
 	for key in keys_to_pop:
@@ -306,12 +307,14 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			else:
 				definiteness = "indef"
 
-		mark.alt_agree = resolve_mark_agree(mark, lex)
-		if mark.alt_agree is not None:
+		# Find agreement alternatives unless cardinality has set agreement explicitly already (e.g. to 'plural'/'dual' etc.)
+		if mark.cardinality == 0 or mark.agree == '':
+			mark.alt_agree = resolve_mark_agree(mark, lex)
+		if mark.alt_agree is not None and mark.agree == '':
 			mark.agree = mark.alt_agree[0]
-		else:
+		elif mark.alt_agree is None:
 			mark.alt_agree = []
-		if mark.agree != mark.head.morph and mark.head.morph != "_" and mark.head.morph != "--":
+		if mark.agree != mark.head.morph and mark.head.morph != "_" and mark.head.morph != "--" and mark.agree != lex.filters["aggregate_agree"]:
 			mark.agree = mark.head.morph
 			mark.agree_certainty = "mark_head_morph"
 			mark.alt_agree.append(mark.head.morph)
@@ -328,7 +331,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 				mark.alt_agree.append(mark.agree)
 				mark.agree = mark.entity.split("/")[1]
 			mark.entity = mark.entity.split("/")[0]
-		elif mark.entity == lex.filters["person_def_entity"] and mark.agree == lex.filters["default_agree"]:
+		elif mark.entity == lex.filters["person_def_entity"] and mark.agree == lex.filters["default_agree"] and mark.form != "pronoun":
 			mark.agree = lex.filters["person_def_agree"]
 		subclass = ""
 		if "\t" in mark.entity:  # This is a subclass bearing solution
@@ -393,7 +396,9 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 						current_markable = temp
 					current_markable.antecedent = antecedent
 					current_markable.group = antecedent.group
-					if lex.filters["apposition_func"].match(current_markable.head.func) is not None:
+					# Check for apposition function if both markables are in the same sentence
+					if lex.filters["apposition_func"].match(current_markable.head.func) is not None and \
+							current_markable.sentence.sent_num == antecedent.sentence.sent_num:
 						current_markable.coref_type = "appos"
 					elif current_markable.form == "pronoun":
 						current_markable.coref_type = "ana"
