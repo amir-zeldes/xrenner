@@ -20,13 +20,17 @@ def entities_compatible(mark1, mark2, lex):
 
 	if mark1.entity == mark2.entity:
 		return True
-	elif mark1.entity is None or mark2.entity is None:
+	elif mark1.entity is None or mark2.entity is None or mark1.entity == "" or mark2.entity == "":
 		return True
 	if mark1.form == "pronoun" and (not (mark1.entity == lex.filters["person_def_entity"] and mark2.entity != lex.filters["person_def_entity"]) or mark1.entity_certainty == ''):
 		return True
 	if mark1.entity in mark2.alt_entities and mark1.entity != mark2.entity and (mark2.entity_certainty == "uncertain" or mark2.entity_certainty == "propagated"):
 		return True
 	elif mark2.entity in mark1.alt_entities and mark1.entity != mark2.entity and (mark1.entity_certainty == "uncertain" or mark1.entity_certainty == "propagated"):
+		return True
+	elif mark2.entity == lex.filters["default_entity"] and mark2.entity_certainty in ["","propagated","uncertain"] and mark1.entity != mark2.entity:
+		return True
+	elif mark1.entity == lex.filters["default_entity"] and mark1.entity_certainty in ["","propagated","uncertain"] and mark1.entity != mark2.entity:
 		return True
 
 	return False
@@ -39,7 +43,7 @@ def cardinality_compatible(mark1,mark2):
 	return True
 
 
-def modifiers_compatible(markable, candidate, lex):
+def modifiers_compatible(markable, candidate, lex, proper_mod_must_match=True):
 	"""
 	Checks whether the dependents of two markables are compatible for possible coreference
 	:param markable: one of two markables to compare dependents for
@@ -66,7 +70,7 @@ def modifiers_compatible(markable, candidate, lex):
 					return False
 
 	# Check if markable and candidate have modifiers that are in the antonym list together,
-	# e.g. 'the good news' should not be coreferent with 'the bad news'
+	# e.g. 'the good news' should not be coreferent with 'the bad news',
 	for mod in markable.head.modifiers:
 		if mod.text.lower() in lex.antonyms:
 			for candidate_mod in candidate.head.modifiers:
@@ -77,6 +81,15 @@ def modifiers_compatible(markable, candidate, lex):
 			for candidate_mod in candidate.head.modifiers:
 				if candidate_mod.lemma.lower() in lex.antonyms[mod.lemma.lower()]:
 					markable.non_antecdent_groups.add(candidate.group)
+					return False
+		# Check that the two markables do not have non-identical proper noun modifiers
+		if lex.filters["proper_pos"].match(mod.pos):
+			candidate_proper_mod_texts = []
+			for mod2 in candidate.head.modifiers:
+				if lex.filters["proper_pos"].match(mod2.pos):
+					candidate_proper_mod_texts.append(mod2.text)
+			if mod.text not in candidate_proper_mod_texts and len(candidate_proper_mod_texts) > 0:
+				if proper_mod_must_match:
 					return False
 
 	# Check if markable and candidate have modifiers that are different place names
@@ -222,6 +235,12 @@ def isa(markable, candidate, lex):
 				return False
 
 		# Don't allow a proper markable to have an indefinite antecedent via isa relation
+		# unless there's corroborating evidence
+		#if markable.cardinality == candidate.cardinality and markable.cardinality != 0:
+		#	pass  # Explicit cardinality match, forgo indefinite antecedent prohibition
+		#elif markable.subclass == candidate.subclass and markable.agree == candidate.agree:
+		#	pass  # Explicit subclass and agree match, forgo indefinite antecedent prohibition
+		#else: TODO: re-examine indefinite isa antecedents in natural data
 		if markable.start > candidate.start:
 			if markable.form == "proper" and candidate.definiteness == "indef":
 				return False
@@ -232,6 +251,9 @@ def isa(markable, candidate, lex):
 
 	# Subclass based isa match - check agreement too
 	for subclass in markable.alt_subclasses + [markable.subclass]:
+		if subclass == candidate.head.lemma:
+			if agree_compatible(markable, candidate, lex):
+				return True
 		if subclass in lex.isa:
 			if lex.isa[subclass][-1] == "*":
 				subclass_isa = lex.isa[subclass][:-1]
@@ -362,3 +384,11 @@ def best_candidate(markable,candidate_list,lex):
 	markable.entity = best.entity
 	markable.entity_certainty = "propagated"
 	return best
+
+
+def stems_compatible(verb, noun, lex):
+	verb_stem = re.sub(lex.filters["stemmer_deletes"],"",verb.text.strip())
+	noun_stem = re.sub(lex.filters["stemmer_deletes"],"",noun.text.strip())
+	if verb_stem == noun_stem and len(noun_stem)>3:
+		return True
+	return False

@@ -29,7 +29,9 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 	# Check for markables to remove in postprocessing
 	if len(lex.filters["remove_head_func"].pattern) > 0:
 		for mark in markables:
-			if lex.filters["remove_head_func"].match(mark.head.func) is not None and (mark.form != "proper" or mark.text.strip() == "U.S." or mark.text.strip() in lex.first_names): # Proper restriction matches OntoNotes guidelines; US is interpreted as "American" (amod)
+			if lex.filters["remove_head_func"].match(mark.head.func) is not None and (mark.form != "proper" or \
+						mark.entity == "abstract" or \
+						mark.text.strip() == "U.S." or mark.text.strip() in lex.first_names): # Proper restriction matches OntoNotes guidelines; US is interpreted as "American" (amod); forbid abstract nn modifier even if proper
 				splice_out(mark, marks_by_group[mark.group])
 	if len(lex.filters["remove_child_func"].pattern) > 0:
 		for mark in markables:
@@ -56,6 +58,23 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 				mark.id = "0"
 				if mark.antecedent != "none":
 					mark.antecedent.id = "0"
+
+	# Remove coordination envelopes if desired
+	if lex.filters["remove_coordinate_envelopes"]:
+		for group in marks_by_group:
+			coordination_text = ""
+			wipe_coord = False
+			for mark in marks_by_group[group]:
+				if mark.coordinate:
+					coordination_text = mark.core_text
+					wipe_coord = True
+			if coordination_text != "":
+				for mark in marks_by_group[group]:
+					if mark.core_text != coordination_text:  # This group has multiple text realizations
+						wipe_coord = False
+			if wipe_coord:
+				for mark in marks_by_group[group]:
+					mark.id = "0"
 
 	# Inactivate singletons if desired by setting their id to 0
 	if lex.filters["remove_singletons"]:
@@ -92,6 +111,10 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 							next_id = envlop.end + 1
 							lex.open_close_punct[","] = "," # Add trailing comma option to envelope to match OntoNotes behavior
 							if markable_extend_punctuation(envlop.text, conll_tokens[next_id], lex.open_close_punct, "trailing"):
+								envlop.text += conll_tokens[next_id].text + " "
+								envlop.end += 1
+							# Idiosyncratic "years old" behavior
+							elif conll_tokens[envlop.end].text == "years" and conll_tokens[next_id].text == "old":
 								envlop.text += conll_tokens[next_id].text + " "
 								envlop.end += 1
 
@@ -164,3 +187,4 @@ def create_envelope(first,second, conll_tokens):
 	envelope = Markable(mark_id, head, form, definiteness, start, end, text, text, entity, entity_certainty, subclass, infstat, agree, sentence, antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree, cardinality)
 
 	return envelope
+

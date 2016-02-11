@@ -1,13 +1,14 @@
+# Sources: Amir Zeldes
 about	quantity	quantity
 captain	person	person
-carbonate	substance	substance/inanim
+carbonate	substance	substance/inanim@
 chief	person	person
 chief executive officer	person	person
-Co	organization	company
-Co.	organization	company
+Co	organization	company@
+Co.	organization	company@
 colonel	person	person
-Corp	organization	company
-Corp.	organization	company
+Corp	organization	company@
+Corp.	organization	company@
 corporal	person	person
 Cyclone	event	event/inanim
 Dr.	person	person
@@ -16,15 +17,16 @@ Duke	person	person/male
 Emperor	person	person/male
 Empress	person	person/female
 Father	person	person/male
-Hurricane	event	event/inanim
-Inc.	organization	company
+Hurricane	event	event/inanim@
+Inc	organization	company@
+Inc.	organization	company@
 King	person	person/male
 leader	person	person
 lieutenant	person	person
 lieutenant	person	person
-LLC	organization	company
-Ltd	organization	company
-Ltd.	organization	company
+LLC	organization	company@
+Ltd	organization	company@
+Ltd.	organization	company@
 minister	person	person
 Mr	person	person/male
 Mr.	person	person/male
@@ -47,7 +49,7 @@ rep.	person	person
 sergeant	person	person
 sister	person	person/female
 sulfate	substance	substance/inanim
-USS	object	object
+USS	object	object@
 vicar	person	person/male
 vice	person	person
 vice president	person	person

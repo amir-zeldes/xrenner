@@ -22,13 +22,14 @@ class LexData:
 	def __init__(self, model,override=None):
 		self.model = model
 		self.atoms = {}
+		self.mod_atoms = {}
 		self.entities = self.read_delim('entities.tab', 'triple')
 		self.entity_heads = self.read_delim('entity_heads.tab', 'triple')
 		self.names = self.read_delim('names.tab')
 		self.stop_list = self.read_delim('stop_list.tab', 'low')
 		self.open_close_punct = self.read_delim('open_close_punct.tab')
 		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
-		self.entity_mods = self.read_delim('entity_mods.tab', 'triple')
+		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms')
 		self.entity_deps = self.read_delim('entity_deps.tab','quadruple')
 		self.coref = self.read_delim('coref.tab')
 		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
@@ -54,7 +55,11 @@ class LexData:
 
 		self.debug = self.read_delim('debug.tab')
 
-	def read_delim(self, filename, mode="normal"):
+	def read_delim(self, filename, mode="normal", atom_list_name="atoms"):
+		if atom_list_name == "atoms":
+			atom_list = self.atoms
+		elif atom_list_name == "mod_atoms":
+			atom_list = self.mod_atoms
 		with open(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + filename, 'rb') as csvfile:
 			reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
 			if mode == "low":
@@ -76,7 +81,7 @@ class LexData:
 					if not rows[0].startswith('#'):
 						if rows[2].endswith('@'):
 							rows[2] = rows[2][0:-1]
-							self.atoms[rows[0]] = rows[1]
+							atom_list[rows[0]] = rows[1]
 						if rows[0] in out_dict:
 							out_dict[rows[0]].append(rows[1] + "\t" + rows[2])
 						else:
@@ -158,7 +163,6 @@ class LexData:
 				sys.stderr.write("\nNo section " +  override + " in override.ini in model " + self.model + "\n")
 				sys.exit()
 
-
 		for option in options:
 			if override and option in options_ovrd:
 				try:
@@ -179,11 +183,6 @@ class LexData:
 					print("exception on %s!" % option)
 					filters[option] = None
 				continue
-
-
-
-
-
 			try:
 				option_string = config.get("main", option)
 				if option_string == -1:

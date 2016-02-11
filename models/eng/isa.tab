@@ -1283,7 +1283,7 @@ comorbidity	co-morbidity
 companies	businesses
 companies	enterprises
 companies	firms
-company	firm,company
+company	firm,company,maker,manufacturer
 compatriot	countryman
 complementary	supplementary
 compliance	conformity
@@ -4435,6 +4435,7 @@ pivottable	pivot
 pk	pharmacokinetic
 place	place,location
 planes	aircraft
+planet	planet,celestial body
 plantation	planting
 plantations	plantings
 planting	plantation
@@ -6395,3 +6396,54 @@ zone	area
 zones	areas
 zpm	mpa
 Zulfikar Ali Bhutto	president,prime minister
+Alabama	AL,Al.,Al,Ala.
+Alaska	AK,Ak.,Ak
+Arizona	AZ,Az.,Az,Ariz.
+Arkansas	AR,Ar.,Ar,Ark.
+California	CA,Ca.,Ca,Calif.
+Colorado	CO,Co,Colo.
+Connecticut	CT,Ct.,Ct,Conn.
+Delaware	DE,De.,De,Del.
+Florida	FL,Fl.,Fl,Fla.
+Georgia	GA,Ga.,Ga
+Hawaii	HI,Hi.,Hi
+Idaho	ID,Id.,Id
+Illinois	IL,Il.,Il,Ill.
+Indiana	IN,In.,In,Ind.
+Iowa	IA,Ia.,Ia
+Kansas	KS,Ks.,Ks,Kans.
+Kentucky	KY,Ky.,Ky
+Louisiana	LA,La.,La
+Maine	ME,Me.
+Maryland	MD,Md.,Md
+Massachusetts	MA,Ma.,Ma,Mass.
+Michigan	MI,Mi.,Mi,Mich.
+Minnesota	MN,Mn.,Mn,Minn.
+Mississippi	MS,Ms.,Ms,Miss.
+Missouri	MO,Mo.,Mo
+Montana	MT,Mt.,Mt,Mont.
+Nebraska	NE,Ne.,Ne,Nebr.
+Nevada	NV,Nv.,Nv,Nev.
+New Hampshire	NH,Nh.,Nh,N.H.
+New Jersey	NJ,Nj.,Nj,N.J.
+New Mexico	NM,Nm.,Nm,N.M.
+New York	NY,Ny.,Ny,N.Y.
+North Carolina	NC,Nc.,Nc,N.C.
+North Dakota	ND,Nd.,Nd,N.D.
+Ohio	OH,Oh.
+Oklahoma	OK,Ok.,Ok,Okla.
+Oregon	OR,Or.,Or,Ore.
+Pennsylvania	PA,Pa.,Pa
+Rhode Island	RI,R.I.
+South Carolina	SC,S.C.
+South Dakota	SD,S.D.
+Tennessee	TN,Tn.,Tn,Tenn.
+Texas	TX,Tx.,Tx,Tex.
+Utah	UT,Ut.,Ut
+Vermont	VT,Vt.,Vt
+Virginia	VA,Va.,Va
+Washington	WA,Wa.,Wa,Wash.
+West Virginia	WV,Wv.,Wv,W.Va.
+Wisconsin	WI,Wi.,Wi,Wis.
+Wyoming	WY,Wy.,Wy,Wyo.
+DC	D.C.

@@ -83,18 +83,21 @@ def resolve_mark_entity(mark, token_list, lex):
 			mark.entity_certainty = 'certain'
 		elif mark.agree == "male" or mark.agree == "female":  # Possibly human 3rd person
 			entity = lex.filters["person_def_entity"]
-			#mark.alt_entities.append("animal")
 			mark.entity_certainty = 'uncertain'
 		else:
 			if parent_text in lex.entity_deps:
 				if mark.head.func in lex.entity_deps[parent_text]:
 					entity = get_key_by_max_val(lex.entity_deps[parent_text][mark.head.func])
 			else:
-				entity = resolve_entity_cascade(mark.core_text.strip(), mark, lex)
+				entity = lex.filters["default_entity"]
+				mark.entity_certainty = "uncertain"
 	else:
 		if entity == "":
 			if re.match(r'(1[456789][0-9][0-9]|20[0-9][0-9])', mark.core_text) is not None:
 				entity = lex.filters["time_def_entity"]
+				mark.subclass = "time-unit" # TODO: de-hardwire this
+				mark.definiteness = "def"  # literal year numbers are considered definite like 'proper names'
+				mark.form = "proper"  # literal year numbers are considered definite like 'proper names'
 		if entity == "":
 			if re.match(r'^(([0-9]+[.,]?)+)$', mark.core_text) is not None:
 				entity = lex.filters["quantity_def_entity"]
@@ -109,7 +112,7 @@ def resolve_mark_entity(mark, token_list, lex):
 		if entity == "":
 			entity = resolve_entity_cascade(mark.core_text, mark, lex)
 		if entity == "":
-			entity = recognize_entity_by_mod(mark, lex.entity_mods)
+			entity = recognize_entity_by_mod(mark, lex)
 		if entity == "" and mark.head.text.istitle():
 			entity = resolve_entity_cascade(mark.core_text.lower().strip(), mark, lex)
 		if entity == "" and not mark.head.text.istitle():
@@ -127,7 +130,11 @@ def resolve_mark_entity(mark, token_list, lex):
 		if entity == "":
 			if (mark.head.text.istitle() or not lex.filters["cap_names"]):
 				if mark.head.text in lex.last_names or mark.head.text in lex.first_names:
-					entity = lex.filters["person_def_entity"]
+					modifiers_match_definite = (lex.filters["definite_articles"].match(mod.text) is not None for mod in mark.head.modifiers)
+					modifiers_match_article = (lex.filters["articles"].match(mod.text) is not None for mod in mark.head.modifiers)
+					modifiers_match_def_entity = (re.sub(r"\t.*","",lex.entity_heads[mod.text.strip().lower()][0]) == lex.filters["default_entity"] for mod in mark.head.modifiers if mod.text.strip().lower() in lex.entity_heads)
+					if not (any(modifiers_match_article) or any(modifiers_match_definite) or any(modifiers_match_def_entity)):
+						entity = lex.filters["person_def_entity"]
 	if entity == "":
 		parent_text = token_list[int(mark.head.head)].text
 		if parent_text in lex.entity_deps:
@@ -179,12 +186,13 @@ def resolve_entity_cascade(entity_text, mark, lex):
 	if 0 < entity_text.count(" ") < 3:
 		if entity_text.split(" ")[0] in lex.first_names and entity_text.split(" ")[-1] in lex.last_names:
 			if entity_text[0].istitle() or not lex.filters["cap_names"]:
-				if lex.filters["articles"].match(mark.core_text.split(" ")[0]) is None:
+				if lex.filters["articles"].match(mark.text.split(" ")[0]) is None:
 					if entity == "":
 						entity = lex.filters["person_def_entity"]
 						mark.agree = lex.first_names[entity_text.split(" ")[0]]
 					elif not lex.filters["person_def_entity"] in mark.alt_entities:
 						mark.alt_entities.append(lex.filters["person_def_entity"])
+
 	return entity
 
 
@@ -223,51 +231,69 @@ def resolve_cardinality(mark,lex):
 	for mod in mark.head.modifiers:
 		if mod.text in lex.numbers:
 			return int(lex.numbers[mod.text][0])
+		elif mod.text.lower() in lex.numbers:
+			return int(lex.numbers[mod.text.lower()][0])
 		else:
-			pure_number_candidate = re.sub(lex.filters["decimal_sep"]+".*$","",mod.text)
-			pure_number_candidate = re.sub(lex.filters["thousand_sep"],"",pure_number_candidate)
-			if re.match("^\d+$",pure_number_candidate) is not None:
-				return int(mod.text)
+			thousand_sep = r"\." if lex.filters["thousand_sep"] == "." else lex.filters["thousand_sep"]
+			pure_number_candidate = re.sub(thousand_sep,"",mod.text)
 
+			decimal_sep = lex.filters["decimal_sep"]
+			if decimal_sep != ".":
+				pure_number_candidate = re.sub(decimal_sep,".",pure_number_candidate)
+			if re.match("^(\d+(\.\d+)?|(\.\d+))$",pure_number_candidate) is not None:
+				return float(pure_number_candidate)
+			else:
+				parts = re.match("^(\d+)/(\d+)$",pure_number_candidate)
+				if parts is not None: # Fraction with slash division
+					numerator = float(parts.groups()[0])
+					denominator = float(parts.groups()[1])
+					return numerator/denominator
 	return 0
 
 
 
 
 
-def recognize_entity_by_mod(mark, modifier_lexicon):
+def recognize_entity_by_mod(mark, lex, mark_atoms=False):
 	"""
 	Attempt to recognize entity type based on modifiers
 	:param mark: Markable for which to identify the entity type
 	:param modifier_lexicon: The LexData object's modifier list
 	:return: String (entity type, possibly including subtype and agreement)
 	"""
+	modifier_lexicon = lex.entity_mods
+	mod_atoms = lex.mod_atoms
 	for mod in mark.head.modifiers:
-		#if mod.id < mark.head.id:
-		modifier_tokens = construct_modifier_substring(mod)
+		modifier_tokens = [mod.text] + [construct_modifier_substring(mod)]
 		while len(modifier_tokens) > 0:
 			identifying_substr = ""
 			for token in modifier_tokens:
 				identifying_substr += token + " "
 				if identifying_substr.strip() in modifier_lexicon:
-					return modifier_lexicon[identifying_substr.strip()][0]
+					if identifying_substr.strip() in mod_atoms and mark_atoms:
+						return modifier_lexicon[identifying_substr.strip()][0] + "@"
+					else:
+						return modifier_lexicon[identifying_substr.strip()][0]
 				elif identifying_substr.lower().strip() in modifier_lexicon:
-					return modifier_lexicon[identifying_substr.lower().strip()][0]
+					if identifying_substr.lower().strip() in mod_atoms and mark_atoms:
+						return modifier_lexicon[identifying_substr.lower().strip()][0] + "@"
+					else:
+						return modifier_lexicon[identifying_substr.lower().strip()][0]
 			modifier_tokens.pop(0)
 	return ""
 
 
 def construct_modifier_substring(modifier):
 	"""
-	Creats a list of tokens representing a modifier and all of its submodifiers in sequence
+	Creates a list of tokens representing a modifier and all of its submodifiers in sequence
 	:param modifier: A ParsedToken object from the modifier list of the head of some markable
-	:return: List of tokens giving the text of that modifier together with its modifiers
+	:return: Text of that modifier together with its modifiers in sequence
 	"""
 	candidate_prefix = ""
 	mod_dict = get_mod_ordered_dict(modifier)
 	for mod_member in mod_dict:
 		candidate_prefix += mod_dict[mod_member].text + " "
-	return candidate_prefix.strip().split(" ")
+	return candidate_prefix.strip()
 
 
 def stoplist_prefix_tokens(mark, prefix_dict, keys_to_pop):
@@ -296,7 +322,7 @@ def get_mod_ordered_dict(mod):
 	:return: Recursive ordered dictionary of that modifier's own modifiers
 	"""
 	mod_dict = collections.OrderedDict()
-	mod_dict[mod.id] = mod
+	mod_dict[int(mod.id)] = mod
 	if len(mod.modifiers) > 0:
 		for mod2 in mod.modifiers:
 			mod_dict.update(get_mod_ordered_dict(mod2))
@@ -382,7 +408,7 @@ def pos_func_combo(pos, func, pos_func_heads_string):
 
 
 def replace_head_with_lemma(mark):
-	head = mark.head.text
+	head = re.escape(mark.head.text)
 	lemma = mark.head.lemma
 	return re.sub(head, lemma, mark.core_text).strip()
 

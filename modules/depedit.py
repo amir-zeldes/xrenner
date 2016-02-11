@@ -13,7 +13,15 @@ from copy import copy, deepcopy
 import sys
 from collections import defaultdict
 
-__version__ = "1.3.0"
+__version__ = "1.3.2"
+
+
+def escape(string,symbol_to_mask,border_marker):
+	border = border_marker
+	symbol = symbol_to_mask
+	pattern = "=" + border + "[^"+ border +"]*" + symbol + "[^"+ border +"]*" + border
+	replacement = "=" + border + "[^"+ border +"]*" + "%%%%%" + "[^"+ border +"]*" + border
+	return re.sub(pattern,replacement,string)
 
 
 class ParsedToken:
@@ -40,10 +48,14 @@ class Transformation:
 			action_string = split_trans[2]
 			relation_string = self.normalize_shorthand(relation_string)
 			action_string = self.normalize_shorthand(action_string)
+			definition_string = escape(definition_string,";","/")
 			definitions = definition_string.split(";")
+			escaped_definitions = []
+			for _def in definitions:
+				escaped_definitions.append(_def.replace("%%%%%",";"))
 			relations = relation_string.split(";")
 			actions = action_string.split(";")
-			return [definitions, relations, actions]
+			return [escaped_definitions, relations, actions]
 
 	@staticmethod
 	def normalize_shorthand(criterion_string):
@@ -70,7 +82,9 @@ class Transformation:
 		for definition in self.definitions:
 			nodes = definition.split(";")
 			for node in nodes:
+				node = escape(node,"&","/")
 				criteria = node.split("&")
+				criteria = (_crit.replace("%%%%%","&") for _crit in criteria)
 				for criterion in criteria:
 					if not re.match("(text|pos|lemma|morph|func|head)!?=/[^/=]*/",criterion):
 						report+= "Invalid node definition in column 1: " + criterion
@@ -97,7 +111,7 @@ class Transformation:
 class DefinitionMatcher:
 
 	def __init__(self, token, def_text, def_index):
-		self.def_text = def_text
+		self.def_text = escape(def_text,"&","/")
 		self.def_index = def_index
 		self.token = token
 		self.groups = []
@@ -106,13 +120,19 @@ class DefinitionMatcher:
 	def matches_definition(self):
 		defs = self.def_text.split("&")
 		for def_item in defs:
+			def_item = def_item.replace("%%%%%","&")
 			criterion = def_item.split("=")[0]
 			if criterion[-1] == "!":
 				negative_criterion = True
 				criterion = criterion[:-1]
 			else:
 				negative_criterion = False
-			def_value = "^" + def_item.split("=")[1][1:-1] + "$"
+			def_value = def_item.split("=")[1][1:-1]
+			# Ensure regex is anchored
+			if def_value[0] != "^":
+				def_value = "^" + def_value
+			if def_value[-1] != "$":
+				def_value += "$"
 			tok_value = getattr(self.token,criterion)
 			match_obj = re.match(def_value,tok_value)
 			if match_obj is None:
@@ -257,7 +277,7 @@ def merge_sets(sets, node_count, rel_count):
 		bins.append(copy(new_set))
 
 	for my_bin in bins:
-		if len(my_bin) == node_count + 1:
+		if len(my_bin) == node_count + 2:
 			solutions.append(my_bin)
 
 	merged_bins = []
@@ -393,7 +413,8 @@ def execute_action(result_sets, action_list):
 						node2 = int(action.split(operator)[1].replace("#", ""))
 						tok1 = result[node1]
 						tok2 = result[node2]
-						tok2.head = tok1.id
+						if tok1 != tok2:
+							tok2.head = tok1.id
 
 
 def serialize_output_tree(tokens, tokoffset):

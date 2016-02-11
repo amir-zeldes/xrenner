@@ -76,7 +76,7 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 	:param file_name: name of the source file (dependency data) to create header for CoNLL file
 	:return: serialized conll format in plain text
 	"""
-	output_string = "# begin document " + str(file_name).replace(".conll10", "").replace("_xrenner","").replace("_hyph","").replace("_deped","")+"\n"
+	output_string = "# begin document " + str(file_name).replace(".conll10", "").replace("_xrenner","").replace("_hyph","").replace("_deped","").replace("_decyc","")+"\n"
 	i = -1
 	for out_tok in conll_tokens[1:]:
 		i += 1
@@ -94,6 +94,9 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 				if out_mark in markstart_dict[int(out_tok.id)]:
 					coref_col += ")"
 				else:
+					if len(coref_col) > 0:
+						if coref_col[-1].isdigit():
+							coref_col += "|"  # Use pipe to separate group 1 opening and 2 closing leading to (12) -> (1|2)
 					coref_col += str(out_mark.group) + ")"
 		if int(out_tok.id) not in markstart_dict and int(out_tok.id) not in markend_dict:
 			coref_col = "_"
@@ -129,7 +132,9 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict):
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
 				info_string = "class: " + str(out_mark.entity) + " | subclass: " + str(out_mark.subclass) + \
 				              "&#10;definiteness: " + str(out_mark.definiteness) + " | agree: " + str(out_mark.agree) + \
-				              "&#10;cardinality: " + str(out_mark.cardinality)
+				              "&#10;cardinality: " + str(out_mark.cardinality) + " | form: "+ str(out_mark.form)
+				if not out_mark.antecedent == "none":
+					info_string += '&#10;coref_type: ' + out_mark.coref_type
 				output_string += '<div id="' + out_mark.id + '" head="' + out_mark.head.id + '" onmouseover="highlight_group(' + \
 				"'" + str(out_mark.group) + "'" + ')" onmouseout="unhighlight_group(' + "'" + str(out_mark.group) + "'" + ')" class="referent" group="' + str(out_mark.group) + '" title="' + info_string
 				if not out_mark.antecedent == "none":
@@ -411,3 +416,4 @@ def get_glyph(entity_type):
 		return '<i title="' + entity_type + '" class="fa fa-flask"></i>'
 	else:
 		return '<i title="' + entity_type + '" class="fa fa-question"></i>'
+
