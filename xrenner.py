@@ -375,6 +375,11 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 		if mark.agree == "" and mark.entity == lex.filters["default_entity"]:
 			mark.agree = lex.filters["default_agree"]
 
+		if "ablations" in lex.debug:
+			if "no_subclasses" in lex.debug["ablations"]:
+				subclass = mark.entity
+				mark.alt_subclasses = mark.alt_entities
+
 		markcounter += 1
 		groupcounter += 1
 		this_markable = Markable("referent_" + str(markcounter), tok, mark.form,
@@ -434,7 +439,6 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 				lex.last[current_markable.agree] = current_markable
 			else:
 				pass
-				#lex.last[lex.filters["default_agree"]] = current_markable
 
 
 parser = argparse.ArgumentParser()
@@ -450,8 +454,8 @@ out_format = options.format
 model = options.model
 override = options.override
 lex = LexData(model, override)
-infile = open(options.file)
 
+infile = open(options.file)
 depedit_config = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + "models" + os.sep + options.model + os.sep + "depedit.ini")
 
 infile = run_depedit(infile, depedit_config)
@@ -567,6 +571,8 @@ elif out_format == "paula":
 elif out_format == "webanno":
 	print output_webanno(conll_tokens[1:], markables)
 elif out_format == "conll":
-	print output_conll(conll_tokens, markstart_dict, markend_dict, options.file)
+	print output_conll(conll_tokens, markstart_dict, markend_dict, options.file, True)
+elif out_format == "onto":
+	print output_onto(conll_tokens, markstart_dict, markend_dict, options.file)
 else:
 	print output_SGML(conll_tokens, markstart_dict, markend_dict)

@@ -1,7 +1,9 @@
 from xrenner_marker import *
 from xrenner_compatible import *
+from xrenner_propagate import *
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
+modules/xrenner_coref.py
 Coreference resolution module. Iterates through markables to find possible matches based on rules.
 Author: Amir Zeldes
 """
@@ -31,6 +33,17 @@ def find_antecedent(markable, previous_markables, lex, restrict_rule=""):
 
 
 def search_prev_markables(markable, previous_markables, rule, lex, max_dist, propagate):
+	"""
+	Search for antecedent to specified markable using a specified rule
+	:param markable: The markable object to find an antecedent for
+	:param previous_markables: The list of know markables up to and including the current sentence;
+								markables beyond current markable but in its sentence are included for cataphora.
+	:param rule: The antecedent specification part of the coref rule being checked
+	:param lex: the LexData object with gazetteer information and model settings
+	:param max_dist: Maximum distance in sentences for the antecedent search (0 for search within sentence)
+	:param propagate: Whether to progpagate features upon match and in which direction
+	:return: the selected candidate Markable object
+	"""
 	candidate_list = []
 	if rule.find("lookahead") > -1:
 		referents_to_loop = previous_markables
@@ -50,7 +63,7 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 						if not markables_overlap(markable, candidate):
 							if markable.form == "pronoun":
 								if agree_compatible(markable, candidate, lex) or (rule.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)):
-									if entities_compatible(markable, candidate, lex) and cardinality_compatible(markable, candidate):
+									if entities_compatible(markable, candidate, lex) and cardinality_compatible(markable, candidate, lex):
 										candidate_list.append(candidate)
 							elif markable.text.strip() == candidate.text.strip() or (len(markable.text) > 4 and (candidate.text.lower() == markable.text.lower())):
 								propagate_entity(markable, candidate, propagate)
@@ -94,7 +107,7 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 											return candidate
 							if rule.find("anytext") > -1:
 								if (rule.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)) or agree_compatible(markable, candidate, lex):
-									if (rule.find("anycardinality") > -1 or cardinality_compatible(markable,candidate)):
+									if (rule.find("anycardinality") > -1 or cardinality_compatible(markable,candidate,lex)):
 										if (rule.find("anyentity") > -1 or entities_compatible(markable,candidate,lex)):
 											if propagate.startswith("propagate"):
 												propagate_entity(markable, candidate, propagate)
@@ -102,7 +115,6 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 		elif rule.find("lookahead") == -1:
 			# Reached back too far according to max_dist, stop looking
 			break
-			#return None
 	if len(candidate_list)>0:
 		candidates_to_remove = []
 		for candidate_item in candidate_list:
@@ -122,6 +134,14 @@ def search_prev_markables(markable, previous_markables, rule, lex, max_dist, pro
 
 
 def coref_rule_applies(lex, rule, mark, anaphor=None):
+	"""
+	Check whether a markable definition from a coref rule applies to this markable
+	:param lex: the LexData object with gazetteer information and model settings
+	:param rule: the constraints defining the relevant Markable
+	:param mark: the Markable object to check constraints against
+	:param anaphor: if this is an antecedent check, the anaphor is passed for $1-style constraint checks
+	:return: Boolean: True if 'mark' fits all constraints, False if any of them fail
+	"""
 	if rule is None or rule == "none":
 		return True
 	constraints = rule.split("&")
@@ -142,13 +162,11 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 			elif value == "True" or value == "False":
 				pass
 			elif value.startswith("$") and anaphor is not None:
-				if key == "form" or key == "text" or key == "agree" or key == "entity" or key == "subclass":
-					value = "^" + re.escape(getattr(anaphor, key).strip()) + "$"
+				if key in ["form", "text", "agree", "entity", "subclass", "cardinality"]:
+					value = "^" + re.escape(str(getattr(anaphor, key)).strip()) + "$"
 				elif key == "text_lower":
 					value = "^" + re.escape(getattr(anaphor, "text").lower()) + "$"
-				elif key == "cardinality":
-					value = "^" + re.escape(str(getattr(anaphor, "cardinality"))) + "$"
-				elif key == "func" or key == "pos" or key == "lemma":
+				elif key in ["func", "pos", "lemma"]:
 					value = "^" + re.escape(getattr(anaphor.head, key)) + "$"
 				elif key == "mod":
 					mods = getattr(anaphor.head, "modifiers")
@@ -168,13 +186,11 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 			if key == "text_lower":
 				value = value.lower()
 			value_matcher = re.compile(value)
-			if key == "form" or key == "text" or key == "agree" or key == "entity" or key == "subclass":
-				rule_property = getattr(mark, key).strip()
+			if key in ["form", "text", "agree", "entity", "subclass", "cardinality"]:
+				rule_property = str(getattr(mark, key)).strip()
 			elif key == "text_lower":
 				rule_property = getattr(mark, "text").lower().strip()
-			elif key == "cardinality":
-				rule_property = str(getattr(mark, "cardinality"))
-			elif key == "func" or key == "pos" or key == "lemma":
+			elif key in ["func", "pos", "lemma"]:
 				rule_property = getattr(mark.head, key)
 			elif key == "quoted":
 				rule_property = str(getattr(mark.head, "quoted"))
@@ -230,14 +246,14 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 					anaphor.non_antecdent_groups.add(mark.group)
 				return False
 		elif constraint == "sameparent":
-			if mark.head.head == anaphor.head.head:
+			if mark.head.head == anaphor.head.head and not mark.head.head == '0':
 				return True
 			else:
 				if group_failure and anaphor is not None:
 					anaphor.non_antecdent_groups.add(mark.group)
 				return False
 		elif constraint == "!sameparent":
-			if mark.head.head == anaphor.head.head:
+			if mark.head.head == anaphor.head.head and not mark.head.head == '0':
 				if group_failure and anaphor is not None:
 					anaphor.non_antecdent_groups.add(mark.group)
 				return False
@@ -246,70 +262,14 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 	return True
 
 
-def propagate_entity(markable, candidate, direction="propagate"):
-	# Check for rule explicit instructions
-	if direction == "propagate_forward":
-		markable.entity = candidate.entity
-		markable.subclass = candidate.subclass
-		markable.entity_certainty = "propagated"
-		propagate_agree(candidate, markable)
-	elif direction == "propagate_back":
-		candidate.entity = markable.entity
-		candidate.subclass = markable.subclass
-		candidate.entity_certainty = "propagated"
-		propagate_agree(markable, candidate)
-	else:
-		# Prefer nominal propagates to pronoun
-		if markable.form == "pronoun" and candidate.entity_certainty != "uncertain":
-			markable.entity = candidate.entity
-			markable.subclass = candidate.subclass
-			propagate_agree(candidate, markable)
-			markable.entity_certainty = "propagated"
-		elif candidate.form == "pronoun" and markable.entity_certainty != "uncertain":
-			candidate.entity = markable.entity
-			candidate.subclass = markable.subclass
-			candidate.entity_certainty = "propagated"
-			propagate_agree(markable, candidate)
-		else:
-			# Prefer certain propagates to uncertain
-			if candidate.entity_certainty == "uncertain":
-				candidate.entity = markable.entity
-				candidate.subclass = markable.subclass
-				candidate.entity_certainty = "propagated"
-				propagate_agree(markable, candidate)
-			elif markable.entity_certainty == "uncertain":
-				markable.entity = candidate.entity
-				markable.subclass = candidate.subclass
-				markable.entity_certainty = "propagated"
-				propagate_agree(candidate, markable)
-			else:
-				# Prefer to propagate to satisfy alt_entity
-				if markable.entity != candidate.entity and markable.entity in candidate.alt_entities:
-					candidate.entity = markable.entity
-					candidate.subclass = markable.subclass
-					candidate.entity_certainty = "certain"
-					propagate_agree(markable, candidate)
-				elif markable.entity != candidate.entity and candidate.entity in markable.alt_entities:
-					markable.entity = candidate.entity
-					markable.subclass = candidate.subclass
-					markable.entity_certainty = "certain"
-					propagate_agree(candidate, markable)
-				else:
-					# Prefer to propagate backwards
-					candidate.entity = markable.entity
-					candidate.subclass = markable.subclass
-					candidate.entity_certainty = "propagated"
-					propagate_agree(markable, candidate)
-
-
-def propagate_agree(markable, candidate):
-	if (candidate.agree == '' or candidate.agree is None) and not (markable.agree == '' or markable.agree is None):
-		candidate.agree = markable.agree
-	else:
-		markable.agree = candidate.agree
-
-
 def antecedent_prohibited(markable, conll_tokens, lex):
+	"""
+	Check whether a Markable object is prohibited from having an antecedent
+	:param markable: The Markable object to check
+	:param conll_tokens: The list of ParsedToken objects up to and including the current sentence
+	:param lex: the LexData object with gazetteer information and model settings
+	:return: Boolean
+	"""
 	mismatch = True
 	if "/" in lex.filters["no_antecedent"]:
 		constraints = lex.filters["no_antecedent"].split(";")
@@ -351,28 +311,5 @@ def antecedent_prohibited(markable, conll_tokens, lex):
 	else:
 		return True
 
-
-def acronym_match(mark, candidate, lex):
-	position = 0
-	calibration = 0
-	if mark.head.text.isupper() and len(mark.head.text) > 2:
-		for word in candidate.core_text.split(" "):
-			if lex.filters["articles"].match(word):
-				calibration = -1
-			elif len(word) > 0:
-				if len(mark.head.text) > position:
-					if word[0].isupper() or word == "&":
-						if word[0] == mark.head.text[position]:
-							position+=1
-						else:
-							return False
-				else:
-					return False
-		if (position == len(candidate.core_text.strip().split(" ")) + calibration) and position > 2:
-			return True
-		else:
-			return False
-	else:
-		return False
 
 

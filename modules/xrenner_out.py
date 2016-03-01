@@ -7,6 +7,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
+modules/xrenner_out.py
 Output module for exporting resolved data to one of the supported serialization formats
 Author: Amir Zeldes
 """
@@ -66,7 +67,7 @@ def output_SGML(conll_tokens, markstart_dict, markend_dict):
 	return output_string
 
 
-def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
+def output_conll(conll_tokens, markstart_dict, markend_dict, file_name, output_infstat=False):
 	"""
 	Outputs analysis results in CoNLL format, one token per line and markables with opening
 	and closing numbered brackets. Compatible with CoNLL scorer.
@@ -74,6 +75,7 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
 	:param file_name: name of the source file (dependency data) to create header for CoNLL file
+	:param output_infstat: whether to append the infstat property of each markable in a separate column (default False)
 	:return: serialized conll format in plain text
 	"""
 	output_string = "# begin document " + str(file_name).replace(".conll10", "").replace("_xrenner","").replace("_hyph","").replace("_deped","").replace("_decyc","")+"\n"
@@ -82,9 +84,14 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 		i += 1
 		coref_col = ""
 		line = str(i) + "\t" + out_tok.text + "\t"
+		infstat_col = ""
+		if output_infstat:
+			infstat_col = "_"
 		if int(out_tok.id) in markstart_dict:
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
 				coref_col += "(" + str(out_mark.group)
+				if output_infstat:
+					infstat_col = out_mark.infstat
 				if int(out_tok.id) in markend_dict:
 					if out_mark in markend_dict[int(out_tok.id)]:
 						coref_col += ")"
@@ -101,7 +108,7 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 		if int(out_tok.id) not in markstart_dict and int(out_tok.id) not in markend_dict:
 			coref_col = "_"
 
-		line += coref_col
+		line += infstat_col + "\t" + coref_col
 		output_string += line + "\n"
 	output_string += "# end document\n\n"
 	return output_string

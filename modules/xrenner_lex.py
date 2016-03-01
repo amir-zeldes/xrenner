@@ -8,6 +8,7 @@ from collections import defaultdict
 
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
+modules/xrenner_lex.py
 LexData class - container object for lexical information, gazetteers etc.
 Author: Amir Zeldes
 """

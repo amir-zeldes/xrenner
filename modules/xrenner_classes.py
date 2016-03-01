@@ -1,5 +1,6 @@
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
+modules/xrenner_classes.py
 Basic classes for parsed tokens, markables and sentences.
 Author: Amir Zeldes
 """
@@ -30,6 +31,8 @@ class ParsedToken:
 		self.coordinate = False
 		self.head_text = ""
 
+	def __repr__(self):
+		return str(self.text) + " (" + str(self.pos) + "/" + str(self.lemma) + ") " + "<-" + str(self.func) + "- " + str(self.head_text)
 
 class Markable:
 	def __init__(self, mark_id, head, form, definiteness, start, end, text, core_text, entity, entity_certainty, subclass, infstat, agree, sentence,
@@ -64,11 +67,23 @@ class Markable:
 		self.submarks = submarks
 		self.coordinate = coordinate
 
+	def __repr__(self):
+		agree = "no-agr" if self.agree == "" else self.agree
+		defin = "no-def" if self.definiteness == "" else self.definiteness
+		card = "no-card" if self.cardinality == 0 else self.cardinality
+		func = "no-func" if self.head.func == "" else self.head.func
+		return str(self.entity) + "/" + str(self.subclass) + ': "' + self.text + '" (' + agree + "/" + defin + "/" + func + "/" + str(card) + ")"
+
+
 class Sentence:
 	def __init__(self, sent_num, start_offset, mood=""):
 		self.sent_num = sent_num
 		self.start_offset = start_offset
 		self.mood = mood
+
+	def __repr__(self):
+		mood = "(no mood info)" if self.mood == "" else self.mood
+		return "S" + str(self.sent_num) + " from T" + str(self.start_offset + 1) + ", mood: " + mood
 
 
 def get_descendants(parent, children_dict, seen_tokens, sent_num, conll_tokens):

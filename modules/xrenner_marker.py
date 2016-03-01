@@ -75,6 +75,11 @@ def remove_prefix_tokens(marktext, lex):
 
 def resolve_mark_entity(mark, token_list, lex):
 	entity = ""
+	use_entity_deps = True
+	if "ablations" in lex.debug:
+		if "no_entity_dep" in lex.debug["ablations"]:
+			use_entity_deps = False
+
 	parent_text = token_list[int(mark.head.head)].text
 	token_list[int(mark.head.id)].head_text = parent_text  # Save parent text for later dependency check
 	if mark.form == "pronoun":
@@ -85,7 +90,7 @@ def resolve_mark_entity(mark, token_list, lex):
 			entity = lex.filters["person_def_entity"]
 			mark.entity_certainty = 'uncertain'
 		else:
-			if parent_text in lex.entity_deps:
+			if parent_text in lex.entity_deps and use_entity_deps:
 				if mark.head.func in lex.entity_deps[parent_text]:
 					entity = get_key_by_max_val(lex.entity_deps[parent_text][mark.head.func])
 			else:
@@ -137,7 +142,7 @@ def resolve_mark_entity(mark, token_list, lex):
 						entity = lex.filters["person_def_entity"]
 	if entity == "":
 		parent_text = token_list[int(mark.head.head)].text
-		if parent_text in lex.entity_deps:
+		if parent_text in lex.entity_deps and use_entity_deps:
 			if mark.head.func in lex.entity_deps[parent_text]:
 				entity = get_key_by_max_val(lex.entity_deps[parent_text][mark.head.func])
 
