@@ -7,6 +7,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
+modules/xrenner_out.py
 Output module for exporting resolved data to one of the supported serialization formats
 Author: Amir Zeldes
 """
@@ -66,7 +67,7 @@ def output_SGML(conll_tokens, markstart_dict, markend_dict):
 	return output_string
 
 
-def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
+def output_conll(conll_tokens, markstart_dict, markend_dict, file_name, output_infstat=False):
 	"""
 	Outputs analysis results in CoNLL format, one token per line and markables with opening
 	and closing numbered brackets. Compatible with CoNLL scorer.
@@ -74,17 +75,23 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
 	:param file_name: name of the source file (dependency data) to create header for CoNLL file
+	:param output_infstat: whether to append the infstat property of each markable in a separate column (default False)
 	:return: serialized conll format in plain text
 	"""
-	output_string = "# begin document " + str(file_name).replace(".conll10", "").replace("_xrenner","").replace("_hyph","").replace("_deped","")+"\n"
+	output_string = "# begin document " + str(file_name).replace(".conll10", "").replace("_xrenner","").replace("_hyph","").replace("_deped","").replace("_decyc","")+"\n"
 	i = -1
 	for out_tok in conll_tokens[1:]:
 		i += 1
 		coref_col = ""
 		line = str(i) + "\t" + out_tok.text + "\t"
+		infstat_col = ""
+		if output_infstat:
+			infstat_col = "_"
 		if int(out_tok.id) in markstart_dict:
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
 				coref_col += "(" + str(out_mark.group)
+				if output_infstat:
+					infstat_col = out_mark.infstat
 				if int(out_tok.id) in markend_dict:
 					if out_mark in markend_dict[int(out_tok.id)]:
 						coref_col += ")"
@@ -94,11 +101,14 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name):
 				if out_mark in markstart_dict[int(out_tok.id)]:
 					coref_col += ")"
 				else:
+					if len(coref_col) > 0:
+						if coref_col[-1].isdigit():
+							coref_col += "|"  # Use pipe to separate group 1 opening and 2 closing leading to (12) -> (1|2)
 					coref_col += str(out_mark.group) + ")"
 		if int(out_tok.id) not in markstart_dict and int(out_tok.id) not in markend_dict:
 			coref_col = "_"
 
-		line += coref_col
+		line += infstat_col + "\t" + coref_col
 		output_string += line + "\n"
 	output_string += "# end document\n\n"
 	return output_string
@@ -128,7 +138,10 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict):
 		if int(out_tok.id) in markstart_dict:
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
 				info_string = "class: " + str(out_mark.entity) + " | subclass: " + str(out_mark.subclass) + \
-				              "&#10;definiteness: " + str(out_mark.definiteness) + " | agree: " + str(out_mark.agree)
+				              "&#10;definiteness: " + str(out_mark.definiteness) + " | agree: " + str(out_mark.agree) + \
+				              "&#10;cardinality: " + str(out_mark.cardinality) + " | form: "+ str(out_mark.form)
+				if not out_mark.antecedent == "none":
+					info_string += '&#10;coref_type: ' + out_mark.coref_type
 				output_string += '<div id="' + out_mark.id + '" head="' + out_mark.head.id + '" onmouseover="highlight_group(' + \
 				"'" + str(out_mark.group) + "'" + ')" onmouseout="unhighlight_group(' + "'" + str(out_mark.group) + "'" + ')" class="referent" group="' + str(out_mark.group) + '" title="' + info_string
 				if not out_mark.antecedent == "none":
@@ -410,3 +423,4 @@ def get_glyph(entity_type):
 		return '<i title="' + entity_type + '" class="fa fa-flask"></i>'
 	else:
 		return '<i title="' + entity_type + '" class="fa fa-question"></i>'
+

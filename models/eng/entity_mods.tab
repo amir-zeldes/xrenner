@@ -1,43 +1,55 @@
-about	quantity
-captain	person
-carbonate	substance/inanim
-chief	person
-chief executive officer	person
-Co.	organization
-colonel	person
-Corp.	organization
-corporal	person
-Cyclone	event/inanim
-Dr.	person
-Emperor	person
-Father	person
-Hurricane	event/inanim
-Inc.	organization
-King	person
-leader	person
-lieutenant	person
-lieutenant	person
-LLC	organization
-minister	person
-Mr	person
-Mr.	person
-Mrs	person
-Mrs.	person
-Ms	person
-Ms.	person
-née	person/female
-nee	person/female
-officer	person
-pm	time/inanim
-president	person
-prime minister	person
-prof.	person
-professor	person
-rep.	person
-sergeant	person
-sister	person
-sulfate	substance/inanim
-USS	object
-vicar	person
-vice	person
-vice president	person
+# Sources: Amir Zeldes
+about	quantity	quantity
+captain	person	person
+carbonate	substance	substance/inanim@
+chief	person	person
+chief executive officer	person	person
+Co	organization	company@
+Co.	organization	company@
+colonel	person	person
+Corp	organization	company@
+Corp.	organization	company@
+corporal	person	person
+Cyclone	event	event/inanim
+Dr.	person	person
+Duchess	person	person/female
+Duke	person	person/male
+Emperor	person	person/male
+Empress	person	person/female
+Father	person	person/male
+Hurricane	event	event/inanim@
+Inc	organization	company@
+Inc.	organization	company@
+King	person	person/male
+leader	person	person
+lieutenant	person	person
+lieutenant	person	person
+LLC	organization	company@
+Ltd	organization	company@
+Ltd.	organization	company@
+minister	person	person
+Mr	person	person/male
+Mr.	person	person/male
+Mrs	person	person/female
+Mrs.	person	person/female
+Ms	person	person/female
+Ms.	person	person/female
+née	person	person/female
+nee	person	person/female
+officer	person	person
+pm	time	time/inanim
+president	person	person
+prime minister	person	person
+prince	person	person/male
+princess	person	person/female
+prof.	person	person
+professor	person	person
+Queen	person	person/female
+rep.	person	person
+sergeant	person	person
+sister	person	person/female
+sulfate	substance	substance/inanim
+USS	object	object@
+vicar	person	person/male
+vice	person	person
+vice president	person	person

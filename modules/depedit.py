@@ -13,7 +13,15 @@ from copy import copy, deepcopy
 import sys
 from collections import defaultdict
 
-__version__ = "1.2.1"
+__version__ = "1.3.2"
+
+
+def escape(string,symbol_to_mask,border_marker):
+	border = border_marker
+	symbol = symbol_to_mask
+	pattern = "=" + border + "[^"+ border +"]*" + symbol + "[^"+ border +"]*" + border
+	replacement = "=" + border + "[^"+ border +"]*" + "%%%%%" + "[^"+ border +"]*" + border
+	return re.sub(pattern,replacement,string)
 
 
 class ParsedToken:
@@ -40,10 +48,14 @@ class Transformation:
 			action_string = split_trans[2]
 			relation_string = self.normalize_shorthand(relation_string)
 			action_string = self.normalize_shorthand(action_string)
+			definition_string = escape(definition_string,";","/")
 			definitions = definition_string.split(";")
+			escaped_definitions = []
+			for _def in definitions:
+				escaped_definitions.append(_def.replace("%%%%%",";"))
 			relations = relation_string.split(";")
 			actions = action_string.split(";")
-			return [definitions, relations, actions]
+			return [escaped_definitions, relations, actions]
 
 	@staticmethod
 	def normalize_shorthand(criterion_string):
@@ -70,7 +82,9 @@ class Transformation:
 		for definition in self.definitions:
 			nodes = definition.split(";")
 			for node in nodes:
+				node = escape(node,"&","/")
 				criteria = node.split("&")
+				criteria = (_crit.replace("%%%%%","&") for _crit in criteria)
 				for criterion in criteria:
 					if not re.match("(text|pos|lemma|morph|func|head)!?=/[^/=]*/",criterion):
 						report+= "Invalid node definition in column 1: " + criterion
@@ -94,43 +108,63 @@ class Transformation:
 		return report
 
 
+class DefinitionMatcher:
+
+	def __init__(self, token, def_text, def_index):
+		self.def_text = escape(def_text,"&","/")
+		self.def_index = def_index
+		self.token = token
+		self.groups = []
+		self.match = self.matches_definition()
+
+	def matches_definition(self):
+		defs = self.def_text.split("&")
+		for def_item in defs:
+			def_item = def_item.replace("%%%%%","&")
+			criterion = def_item.split("=")[0]
+			if criterion[-1] == "!":
+				negative_criterion = True
+				criterion = criterion[:-1]
+			else:
+				negative_criterion = False
+			def_value = def_item.split("=")[1][1:-1]
+			# Ensure regex is anchored
+			if def_value[0] != "^":
+				def_value = "^" + def_value
+			if def_value[-1] != "$":
+				def_value += "$"
+			tok_value = getattr(self.token,criterion)
+			match_obj = re.match(def_value,tok_value)
+			if match_obj is None:
+				if not negative_criterion:
+					return False
+			else:
+				if negative_criterion:
+					return False
+				if len(match_obj.groups()) > 0:
+					self.groups.append(match_obj.groups())
+		return True
+
+
 def process_sentence(conll_tokens, tokoffset, transformations):
 	for transformation in transformations:
 		node_matches = defaultdict(list)
 		for def_index, def_text in enumerate(transformation.definitions):
 			for token in conll_tokens[tokoffset+1:]:
-				if matches_definition(token,def_text):
-					node_matches[def_index+1].append(token)
+				def_matcher = DefinitionMatcher(token,def_text,def_index + 1)
+				if def_matcher.match:
+					node_matches[def_index+1].append(def_matcher)
 		result_sets = []
 		for relation in transformation.relations:
 			found = matches_relation(node_matches, relation, result_sets)
 			if not found:
 				result_sets = []
 		result_sets = merge_sets(result_sets,len(transformation.definitions),len(transformation.relations))
+		add_groups(result_sets)
 		if len(result_sets) > 0:
 			for action in transformation.actions:
 				execute_action(result_sets, action)
 	return serialize_output_tree(conll_tokens[tokoffset + 1:], tokoffset)
-
-
-def matches_definition(token,def_text):
-	defs = def_text.split("&")
-	for def_item in defs:
-		criterion = def_item.split("=")[0]
-		if criterion[-1] == "!":
-			negative_criterion = True
-			criterion = criterion[:-1]
-		else:
-			negative_criterion = False
-		def_value = "^(" + def_item.split("=")[1][1:-1] + ")$"
-		tok_value = getattr(token,criterion)
-		if not re.match(def_value,tok_value):
-			if not negative_criterion:
-				return False
-		else:
-			if negative_criterion:
-				return False
-	return True
 
 
 def matches_relation(node_matches, relation, result_sets):
@@ -152,7 +186,8 @@ def matches_relation(node_matches, relation, result_sets):
 	hits=0
 	if relation == "none": # Unary operation on one node
 		node1 = 1
-		for tok1 in node_matches[node1]:
+		for matcher1 in node_matches[node1]:
+			tok1 = matcher1.token
 			hits += 1
 			result = {}
 			matches[node1].append(tok1)
@@ -165,21 +200,23 @@ def matches_relation(node_matches, relation, result_sets):
 
 		node1=int(node1.replace("#", ""))
 		node2=int(node2.replace("#", ""))
-		for tok1 in node_matches[node1]:
-			for tok2 in node_matches[node2]:
+		for matcher1 in node_matches[node1]:
+			tok1 = matcher1.token
+			for matcher2 in node_matches[node2]:
+				tok2 = matcher2.token
 				if test_relation(tok1, tok2, operator):
-					result_sets.append({node1: tok1, node2: tok2, "rel": relation})
+					result_sets.append({node1: tok1, node2: tok2, "rel": relation, "matchers": [matcher1, matcher2] })
 					matches[node1].append(tok1)
 					matches[node2].append(tok2)
 					hits += 1
 
 		for option in [node1,node2]:
-			tokens_to_remove = []
-			for token in node_matches[option]:
-				if token not in matches[option]:
-					tokens_to_remove.append(token)
-			for token in tokens_to_remove:
-				node_matches[option].remove(token)
+			matchers_to_remove = []
+			for matcher in node_matches[option]:
+				if matcher.token not in matches[option]:
+					matchers_to_remove.append(matcher)
+			for matcher in matchers_to_remove:
+				node_matches[option].remove(matcher)
 
 	if hits == 0:  # No solutions found for this relation
 		return False
@@ -224,11 +261,14 @@ def merge_sets(sets, node_count, rel_count):
 	for set_to_merge in sets:
 		new_set = {}
 		new_set["rels"] = []
+		new_set["matchers"] = []
 		for key in set_to_merge:
-			if key != "rel":
-				new_set[key] = set_to_merge[key]
-			else:
+			if key == "rel":
 				new_set["rels"].append(set_to_merge[key])
+			elif key == "matchers":
+				new_set["matchers"] += set_to_merge[key]
+			else:
+				new_set[key] = set_to_merge[key]
 
 		for my_bin in copy(bins):
 			if bins_compatible(new_set, my_bin):
@@ -237,27 +277,50 @@ def merge_sets(sets, node_count, rel_count):
 		bins.append(copy(new_set))
 
 	for my_bin in bins:
-		if len(my_bin) == node_count + 1:
+		if len(my_bin) == node_count + 2:
 			solutions.append(my_bin)
 
 	merged_bins = []
 	for solution in solutions:
-		if len(solution["rels"]) < rel_count:
-			for solution2 in solutions:
-				if solution != solution2:
-					same_tokens = (solution[key]==solution2[key] for key in solution if key != 'rels')
-					if all(same_tokens):
-						for rel in solution2["rels"]:
-							if rel not in solution["rels"]:
-								solution["rels"].append(rel)
-						solution["rels"].sort()
-						if solution not in merged_bins:
-							merged_bins.append(solution)
-		else:
-			solution["rels"].sort()
-			if solution not in merged_bins:
-				merged_bins.append(solution)
+		merge_solutions(solution,merged_bins,rel_count)
+	prune_merged_bins(merged_bins,rel_count)
 	return merged_bins
+
+
+def merge_solutions(solution, merged, rel_count):
+	merges_to_add = []
+	if solution not in merged:
+		merged.append(solution)
+	if len(solution["rels"]) == rel_count:
+		# This solution is completed
+		pass
+	else:
+		# This is an incomplete solution, try to merge it into the merged solutions list
+		for candidate in merged:
+			if candidate != solution:
+				for key in solution:
+					if key != "rels" and key !="matchers":
+						if key in candidate:  # This is a position, e.g. #1, that is also in the candidate in merged
+							if solution[key] == candidate[key]:  # Check that they are compatible, e.g. #1 is the same token
+								rels_in_candidate = (rel in candidate["rels"] for rel in solution["rels"])
+								if not all(rels_in_candidate):
+									rels = solution["rels"]+candidate["rels"]
+									matchers = []
+									for matcher in solution["matchers"]:
+										matchers.append(matcher)
+									for matcher in candidate["matchers"]:
+										if matcher not in matchers:
+											matchers.append(matcher)
+									merged_solution = copy(solution)
+									merged_solution.update(candidate)
+									merged_solution["rels"] = rels
+									merged_solution["matchers"] = matchers
+									merges_to_add.append(merged_solution)
+	if len(merges_to_add)>0:
+		for merge_to_add in merges_to_add:
+			merged.append(merge_to_add)
+	solution["rels"].sort()
+
 
 
 def bins_compatible(bin1, bin2):
@@ -286,6 +349,32 @@ def merge_bins(bin1, bin2):
 				return out_bin
 
 
+def prune_merged_bins(merged_bins,rel_count):
+	"""
+	Deletes bins with too few relationships matched after merging is complete
+	:param merged_bins: candidates for bins representing complete related chains of nodes
+	:param rel_count: how many relations the current transformation has - any bins with less will be discarded now
+	:return: void
+	"""
+	bins_to_delete = []
+	for merged_bin in merged_bins:
+		if len(merged_bin["rels"]) < rel_count:
+			bins_to_delete.append(merged_bin)
+	for bin_to_delete in bins_to_delete:
+		merged_bins.remove(bin_to_delete)
+
+
+def add_groups(result_sets):
+	for result in result_sets:
+		groups = []
+		sorted_matchers = sorted(result["matchers"], key=lambda x: x.def_index)
+		for matcher in sorted_matchers:
+			if len(matcher.groups) > 0:
+				for group in matcher.groups:
+					groups.append(group[0])
+		result["groups"] = groups[:]
+
+
 def execute_action(result_sets, action_list):
 	actions = action_list.split(";")
 	for result in result_sets:
@@ -295,6 +384,27 @@ def execute_action(result_sets, action_list):
 					node_position = int(action[1:action.find(":")])
 					property = action[action.find(":")+1:action.find("=")]
 					value = action[action.find("=")+1:].strip()
+					group_num_match = re.search(r"(\$[0-9]+[LU]?)",value)
+					if group_num_match is not None:
+						no_dollar = group_num_match.groups(0)[0][1:]
+						case = ""
+						if no_dollar[-1] == "U":
+							case = "upper"
+							no_dollar = no_dollar[0:-1]
+						elif no_dollar[-1] == "L":
+							case = "lower"
+							no_dollar = no_dollar[0:-1]
+						group_num = int(no_dollar)
+						try:
+							group_value = result["groups"][group_num - 1]
+							if case == "lower":
+								group_value = group_value.lower()
+							elif case == "upper":
+								group_value = group_value.upper()
+						except IndexError:
+							sys.stderr.write("The action '" + action + "' refers to a missing regex bracket group '$" + str(group_num) + "'\n")
+							sys.exit()
+						value = re.sub(r"\$[0-9]+[LR]?",group_value,value)
 					setattr(result[node_position],property,value)
 				else:  # Binary instruction
 					if ">" in action:  # Head relation
@@ -303,7 +413,8 @@ def execute_action(result_sets, action_list):
 						node2 = int(action.split(operator)[1].replace("#", ""))
 						tok1 = result[node1]
 						tok2 = result[node2]
-						tok2.head = tok1.id
+						if tok1 != tok2:
+							tok2.head = tok1.id
 
 
 def serialize_output_tree(tokens, tokoffset):

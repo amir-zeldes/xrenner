@@ -4,6 +4,7 @@ from math import log
 
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
+modules/xrenner_compatible.py
 Module for checking compatibility of various features between markables
 Author: Amir Zeldes
 """
@@ -20,7 +21,7 @@ def entities_compatible(mark1, mark2, lex):
 
 	if mark1.entity == mark2.entity:
 		return True
-	elif mark1.entity is None or mark2.entity is None:
+	elif mark1.entity is None or mark2.entity is None or mark1.entity == "" or mark2.entity == "":
 		return True
 	if mark1.form == "pronoun" and (not (mark1.entity == lex.filters["person_def_entity"] and mark2.entity != lex.filters["person_def_entity"]) or mark1.entity_certainty == ''):
 		return True
@@ -28,18 +29,25 @@ def entities_compatible(mark1, mark2, lex):
 		return True
 	elif mark2.entity in mark1.alt_entities and mark1.entity != mark2.entity and (mark1.entity_certainty == "uncertain" or mark1.entity_certainty == "propagated"):
 		return True
+	elif mark2.entity == lex.filters["default_entity"] and mark2.entity_certainty in ["","propagated","uncertain"] and mark1.entity != mark2.entity:
+		return True
+	elif mark1.entity == lex.filters["default_entity"] and mark1.entity_certainty in ["","propagated","uncertain"] and mark1.entity != mark2.entity:
+		return True
 
 	return False
 
 
-def cardinality_compatible(mark1,mark2):
+def cardinality_compatible(mark1,mark2,lex):
+	if "ablations" in lex.debug:
+		if "no_cardinality" in lex.debug["ablations"]:
+			return True
 	if mark1.cardinality!=0 and mark2.cardinality!=0:
 		if mark1.cardinality != mark2.cardinality:
 			return False
 	return True
 
 
-def modifiers_compatible(markable, candidate, lex):
+def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=True):
 	"""
 	Checks whether the dependents of two markables are compatible for possible coreference
 	:param markable: one of two markables to compare dependents for
@@ -48,10 +56,15 @@ def modifiers_compatible(markable, candidate, lex):
 	:return: bool
 	"""
 
-	if not cardinality_compatible(markable,candidate):
+	if allow_force_proper_mod_match:
+		proper_mod_must_match = lex.filters["proper_mod_must_match"]
+	else:
+		proper_mod_must_match = False
+
+	if not cardinality_compatible(markable,candidate,lex):
 		return False
 
-		# Do strict 'no new modifiers' check if desired
+	# Do strict 'no new modifiers' check if desired
 	if lex.filters["no_new_modifiers"]:
 		if markable.start > candidate.start:
 			first = candidate
@@ -66,18 +79,32 @@ def modifiers_compatible(markable, candidate, lex):
 					return False
 
 	# Check if markable and candidate have modifiers that are in the antonym list together,
-	# e.g. 'the good news' should not be coreferent with 'the bad news'
-	for mod in markable.head.modifiers:
-		if mod.text.lower() in lex.antonyms:
-			for candidate_mod in candidate.head.modifiers:
-				if candidate_mod.text.lower() in lex.antonyms[mod.text.lower()]:
-					markable.non_antecdent_groups.add(candidate.group)
-					return False
-		elif mod.lemma.lower() in lex.antonyms:
-			for candidate_mod in candidate.head.modifiers:
-				if candidate_mod.lemma.lower() in lex.antonyms[mod.lemma.lower()]:
-					markable.non_antecdent_groups.add(candidate.group)
-					return False
+	# e.g. 'the good news' should not be coreferent with 'the bad news',
+	antonym_check = True
+	if "ablations" in lex.debug:
+		if "no_antonyms" in lex.debug["ablations"]:
+			antonym_check = False
+	if antonym_check:
+		for mod in markable.head.modifiers:
+			if mod.text.lower() in lex.antonyms:
+				for candidate_mod in candidate.head.modifiers:
+					if candidate_mod.text.lower() in lex.antonyms[mod.text.lower()]:
+						markable.non_antecdent_groups.add(candidate.group)
+						return False
+			elif mod.lemma.lower() in lex.antonyms:
+				for candidate_mod in candidate.head.modifiers:
+					if candidate_mod.lemma.lower() in lex.antonyms[mod.lemma.lower()]:
+						markable.non_antecdent_groups.add(candidate.group)
+						return False
+			# Check that the two markables do not have non-identical proper noun modifiers
+			if lex.filters["proper_pos"].match(mod.pos):
+				candidate_proper_mod_texts = []
+				for mod2 in candidate.head.modifiers:
+					if lex.filters["proper_pos"].match(mod2.pos):
+						candidate_proper_mod_texts.append(mod2.text)
+				if mod.text not in candidate_proper_mod_texts and len(candidate_proper_mod_texts) > 0:
+					if proper_mod_must_match:
+						return False
 
 	# Check if markable and candidate have modifiers that are different place names
 	# e.g. 'Georgetown University' is incompatible with 'Boston University' even if those entities are not in lexicon
@@ -212,6 +239,10 @@ def isa(markable, candidate, lex):
 	:return: bool
 	"""
 
+	if "ablations" in lex.debug:
+		if "no_isa" in lex.debug["ablations"]:
+			return False
+
 	if not lex.filters["allow_indef_anaphor"]:
 		# Don't allow an indefinite to have a definite antecedent via isa relation
 		if markable.start > candidate.start:
@@ -222,6 +253,12 @@ def isa(markable, candidate, lex):
 				return False
 
 		# Don't allow a proper markable to have an indefinite antecedent via isa relation
+		# unless there's corroborating evidence
+		#if markable.cardinality == candidate.cardinality and markable.cardinality != 0:
+		#	pass  # Explicit cardinality match, forgo indefinite antecedent prohibition
+		#elif markable.subclass == candidate.subclass and markable.agree == candidate.agree:
+		#	pass  # Explicit subclass and agree match, forgo indefinite antecedent prohibition
+		#else: TODO: re-examine indefinite isa antecedents in natural data
 		if markable.start > candidate.start:
 			if markable.form == "proper" and candidate.definiteness == "indef":
 				return False
@@ -229,9 +266,24 @@ def isa(markable, candidate, lex):
 			if markable.definiteness == "indef" and candidate.form == "proper":
 				return False
 
+	if not lex.filters["allow_indef_isa"]:
+		# Don't allow an indefinite to have any antecedent via isa relation if forbidden by configuration
+		if markable.start > candidate.start:
+			if markable.definiteness == "indef":
+				return False
+		else:
+			if candidate.definiteness =="indef":
+				return False
+
+	# Forbid isa head matching for two distinct proper names; NB: use coref table for these if desired
+	if markable.form == "proper" and candidate.form == "proper":
+		return False
 
 	# Subclass based isa match - check agreement too
 	for subclass in markable.alt_subclasses + [markable.subclass]:
+		if subclass == candidate.head.lemma:
+			if agree_compatible(markable, candidate, lex):
+				return True
 		if subclass in lex.isa:
 			if lex.isa[subclass][-1] == "*":
 				subclass_isa = lex.isa[subclass][:-1]
@@ -336,13 +388,19 @@ def best_candidate(markable,candidate_list,lex):
 	candidate_scores = {}
 	entity_dep_scores = {}
 	best = None
-	if anaphor_parent in lex.entity_deps:
+
+	use_entity_deps = True
+	if "ablations" in lex.debug:
+		if "no_entity_dep" in lex.debug["ablations"]:
+			use_entity_deps = False
+
+	if anaphor_parent in lex.entity_deps and use_entity_deps:
 		if markable.head.func in lex.entity_deps[anaphor_parent]:
 			for entity in lex.entity_deps[anaphor_parent][markable.head.func]:
 				entity_dep_scores[entity] = lex.entity_deps[anaphor_parent][markable.head.func][entity]
 	for candidate in candidate_list:
 		candidate_scores[candidate] = 0 - (markable.sentence.sent_num - candidate.sentence.sent_num)
-		candidate_scores[candidate] -= (markable.start - candidate.end) * 0
+		candidate_scores[candidate] -= ((markable.start - candidate.end) * 0.00001 + (markable.start - candidate.start) * 0.000001) # Break ties via proximity
 		if candidate.entity in entity_dep_scores:
 			candidate_scores[candidate] += log(entity_dep_scores[candidate.entity]+1)
 		if candidate.entity == lex.filters["person_def_entity"]:  # Introduce slight bias to persons
@@ -362,3 +420,42 @@ def best_candidate(markable,candidate_list,lex):
 	markable.entity = best.entity
 	markable.entity_certainty = "propagated"
 	return best
+
+
+def stems_compatible(verb, noun, lex):
+	verb_stem = re.sub(lex.filters["stemmer_deletes"],"",verb.text.strip())
+	noun_stem = re.sub(lex.filters["stemmer_deletes"],"",noun.text.strip())
+	if verb_stem == noun_stem and len(noun_stem)>3:
+		return True
+	return False
+
+
+def acronym_match(mark, candidate, lex):
+	"""
+	Check whether a Markable's text is an acronym of a candidate Markable's text
+	:param mark: The Markable object to test
+	:param candidate: The candidate Markable with potentially acronym-matching text
+	:param lex: the LexData object with gazetteer information and model settings
+	:return: Boolean
+	"""
+	position = 0
+	calibration = 0
+	if mark.head.text.isupper() and len(mark.head.text) > 2:
+		for word in candidate.core_text.split(" "):
+			if lex.filters["articles"].match(word):
+				calibration = -1
+			elif len(word) > 0:
+				if len(mark.head.text) > position:
+					if word[0].isupper() or word == "&":
+						if word[0] == mark.head.text[position]:
+							position+=1
+						else:
+							return False
+				else:
+					return False
+		if (position == len(candidate.core_text.strip().split(" ")) + calibration) and position > 2:
+			return True
+		else:
+			return False
+	else:
+		return False
