@@ -38,7 +38,8 @@ form=/pronoun/;func!=/nn/&subclass!=/time-unit/&!sameparent*;2;propagate_forward
 form=/proper/;form=/proper/&lemma=$1&subclass!=/time-unit/;100;nopropagate
 #cardinality match rule - prefer coreference with matching cardinality
 cardinality=/[^0].*/;cardinality=$1&!sameparent;40;propagate
-#final default rule without nn
+#final default rule without nn, exact match first
+subclass!=/time-unit/;func!=/nn/&text_lower=$1&!sameparent;20;nopropagate
 subclass!=/time-unit/;func!=/nn/&!sameparent;20;nopropagate
 #final default rule
 subclass!=/time-unit/;!sameparent;20;nopropagate

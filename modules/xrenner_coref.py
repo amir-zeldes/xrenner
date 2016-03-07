@@ -165,7 +165,7 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 				if key in ["form", "text", "agree", "entity", "subclass", "cardinality"]:
 					value = "^" + re.escape(str(getattr(anaphor, key)).strip()) + "$"
 				elif key == "text_lower":
-					value = "^" + re.escape(getattr(anaphor, "text").lower()) + "$"
+					value = "^" + re.escape(getattr(anaphor, "text").lower().strip()) + "$"
 				elif key in ["func", "pos", "lemma"]:
 					value = "^" + re.escape(getattr(anaphor.head, key)) + "$"
 				elif key == "mod":
@@ -183,7 +183,7 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 					else:
 						rule_property = "$1"
 						key = ""
-			if key == "text_lower":
+			if key == "text_lower" and not value.startswith("$"):
 				value = value.lower()
 			value_matcher = re.compile(value)
 			if key in ["form", "text", "agree", "entity", "subclass", "cardinality"]:
