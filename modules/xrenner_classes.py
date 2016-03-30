@@ -76,14 +76,16 @@ class Markable:
 
 
 class Sentence:
-	def __init__(self, sent_num, start_offset, mood=""):
+	def __init__(self, sent_num, start_offset, mood="", speaker=""):
 		self.sent_num = sent_num
 		self.start_offset = start_offset
 		self.mood = mood
+		self.speaker = speaker
 
 	def __repr__(self):
 		mood = "(no mood info)" if self.mood == "" else self.mood
-		return "S" + str(self.sent_num) + " from T" + str(self.start_offset + 1) + ", mood: " + mood
+		speaker = "(no speaker info)" if self.speaker == "" else self.speaker
+		return "S" + str(self.sent_num) + " from T" + str(self.start_offset + 1) + ", mood: " + mood + ", speaker: " + speaker
 
 
 def get_descendants(parent, children_dict, seen_tokens, sent_num, conll_tokens):
