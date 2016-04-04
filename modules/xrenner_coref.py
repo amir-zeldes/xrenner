@@ -259,20 +259,6 @@ def coref_rule_applies(lex, rule, mark, anaphor=None):
 				return False
 			else:
 				return True
-		elif constraint == "samespeaker":
-			if mark.sentence.speaker == anaphor.sentence.speaker and not mark.sentence.speaker == "":
-				return True
-			else:
-				if group_failure and anaphor is not None:
-					anaphor.non_antecdent_groups.add(mark.group)
-				return False
-		elif constraint == "!samespeaker":
-			if mark.sentence.speaker == anaphor.sentence.speaker and not mark.sentence.speaker == "":
-				if group_failure and anaphor is not None:
-					anaphor.non_antecdent_groups.add(mark.group)
-				return False
-			else:
-				return True
 	return True
 
 
