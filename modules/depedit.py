@@ -13,7 +13,7 @@ from copy import copy, deepcopy
 import sys
 from collections import defaultdict
 
-__version__ = "1.3.2"
+__version__ = "1.3.3"
 
 
 def escape(string,symbol_to_mask,border_marker):
