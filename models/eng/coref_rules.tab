@@ -9,6 +9,8 @@ text=/^[Ii]t$/&func=/nsubj(pass)?/;func=/cata/&sameparent&anytext&anyentity&anya
 form=/pronoun/&func=/poss/;func=/poss/;0;propagate_forward
 #allow coreference between "you" in a question and "I/we" in an answer
 form=/pronoun/&text=/^(I|[Ww]e)/&mood!=/question/;mood=/question/&text=/^[Yy]our?s?/&anytext&anyagree;1;nopropagate
+#allow coreference between "you" and "I/we" if speaker is different
+#form=/pronoun/&text=/^(I|[Ww]e|[Mm]e|[Uu]s)$/;!samespeaker&text=/^[Yy]our?s?/&anytext&anyagree;1;nopropagate
 #propagate entity type across apposition
 func=/appos/;child=$1&anytext&anyagree;0;propagate
 func=/appos_pat/;child=$1&anytext&anyagree&anyentity&anycardinality;0;propagate

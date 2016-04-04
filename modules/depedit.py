@@ -467,6 +467,8 @@ def run_depedit(infile, config_file):
 			sentlength += 1
 			children[str(int(cols[6]) + tokoffset)].append(str(int(cols[0]) + tokoffset))
 			child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
+		elif myline.startswith("#"):  # conll hashtag comment line, e.g. speaker information with #speaker="xyz"
+			my_output += myline
 		elif sentlength > 0:
 			# TODO: Add list of all funcs dependent on this token to its child_funcs as a possible further condition
 			#for id in child_funcs:
@@ -479,7 +481,6 @@ def run_depedit(infile, config_file):
 				tokoffset += sentlength
 
 			sentlength = 0
-
 	if sentlength > 0:  # Leftover sentence did not have trailing newline
 		my_output += process_sentence(conll_tokens,tokoffset,transformations)
 
