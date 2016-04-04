@@ -483,9 +483,7 @@ sent_num = 1
 quoted = False
 current_sentence = Sentence(sent_num, tokoffset, "")
 for myline in infile:
-	if "#speaker" in myline: # speaker
-		current_sentence.speaker = myline.split('"')[1]
-	elif myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
+	if myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
 		cols = myline.split("\t")
 		if lex.filters["open_quote"].match(cols[1]) is not None and quoted is False:
 			quoted = True

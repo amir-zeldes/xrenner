@@ -479,8 +479,6 @@ def run_depedit(infile, config_file):
 				tokoffset += sentlength
 
 			sentlength = 0
-		elif re.match(r'#speaker=(.*)', myline):
-			my_output += myline
 
 	if sentlength > 0:  # Leftover sentence did not have trailing newline
 		my_output += process_sentence(conll_tokens,tokoffset,transformations)
