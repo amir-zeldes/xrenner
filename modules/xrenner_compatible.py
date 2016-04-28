@@ -393,11 +393,16 @@ def best_candidate(markable,candidate_list,lex):
 	if "ablations" in lex.debug:
 		if "no_entity_dep" in lex.debug["ablations"]:
 			use_entity_deps = False
+	use_hasa = True
+	if "ablations" in lex.debug:
+		if "no_hasa" in lex.debug["ablations"]:
+			use_hasa = False
 
 	if anaphor_parent in lex.entity_deps and use_entity_deps:
 		if markable.head.func in lex.entity_deps[anaphor_parent]:
 			for entity in lex.entity_deps[anaphor_parent][markable.head.func]:
 				entity_dep_scores[entity] = lex.entity_deps[anaphor_parent][markable.head.func][entity]
+	
 	for candidate in candidate_list:
 		candidate_scores[candidate] = 0 - (markable.sentence.sent_num - candidate.sentence.sent_num)
 		candidate_scores[candidate] -= ((markable.start - candidate.end) * 0.00001 + (markable.start - candidate.start) * 0.000001) # Break ties via proximity
@@ -407,6 +412,9 @@ def best_candidate(markable,candidate_list,lex):
 			candidate_scores[candidate] += 0.1
 		if candidate.entity == lex.filters["subject_func"]:  # Introduce slight bias to subjects
 			candidate_scores[candidate] += 0.95
+		if candidate.head.text in lex.hasa and use_hasa and lex.filters["possessive_func"].search(markable.head.func) is not None:
+			if anaphor_parent in lex.hasa[candidate.head.text]:
+				candidate_scores[candidate] += log(lex.hasa[candidate.head.text][anaphor_parent]+1) * 1.1
 
 	max_score = ''
 	for candidate in candidate_scores:

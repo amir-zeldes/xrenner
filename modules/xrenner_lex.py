@@ -32,6 +32,7 @@ class LexData:
 		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
 		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms')
 		self.entity_deps = self.read_delim('entity_deps.tab','quadruple')
+		self.hasa = self.read_delim('hasa.tab', 'triple_numeric')
 		self.coref = self.read_delim('coref.tab')
 		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
 		self.pronouns= self.read_delim('pronouns.tab', 'double')
@@ -88,11 +89,15 @@ class LexData:
 						else:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2]]
 				return out_dict
+			elif mode == "triple_numeric":
+				out_dict = defaultdict(dict)
+				for rows in reader:
+					if not rows[0].startswith('#'):
+						out_dict[rows[0]] = {rows[1]:int(rows[2])}
+				return out_dict
 			elif mode == "quadruple":
 				out_dict = defaultdict(dict)
 				for rows in reader:
-					if rows[0] == "in":
-						pass
 					if not rows[0].startswith('#'):
 						out_dict[rows[0]] = {rows[1]:{rows[2] : int(rows[3])}}
 				return out_dict
