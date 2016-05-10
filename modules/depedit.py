@@ -13,15 +13,21 @@ from copy import copy, deepcopy
 import sys
 from collections import defaultdict
 
-__version__ = "1.3.3"
+__version__ = "1.4.0"
 
 
 def escape(string,symbol_to_mask,border_marker):
-	border = border_marker
-	symbol = symbol_to_mask
-	pattern = "=" + border + "[^"+ border +"]*" + symbol + "[^"+ border +"]*" + border
-	replacement = "=" + border + "[^"+ border +"]*" + "%%%%%" + "[^"+ border +"]*" + border
-	return re.sub(pattern,replacement,string)
+	inside = False
+	output = ""
+	# Scan the string looking for border or symbol to mask
+	for char in string:
+		if char == border_marker:
+			inside = not inside
+		if char == symbol_to_mask and inside:
+			output += "%%%%%"
+		else:
+			output += char
+	return output
 
 
 class ParsedToken:
@@ -35,6 +41,8 @@ class ParsedToken:
 		self.func = func
 		self.child_funcs = child_funcs
 
+	def __repr__(self):
+		return str(self.text) + " (" + str(self.pos) + "/" + str(self.lemma) + ") " + "<-" + str(self.func)
 
 class Transformation:
 
@@ -49,13 +57,16 @@ class Transformation:
 			relation_string = self.normalize_shorthand(relation_string)
 			action_string = self.normalize_shorthand(action_string)
 			definition_string = escape(definition_string,";","/")
-			definitions = definition_string.split(";")
+			definitions_list = definition_string.split(";")
 			escaped_definitions = []
-			for _def in definitions:
+			for _def in definitions_list:
 				escaped_definitions.append(_def.replace("%%%%%",";"))
+			definitions = []
+			for def_index, esc_string in enumerate(escaped_definitions):
+				definitions.append(DefinitionMatcher(esc_string,def_index + 1))
 			relations = relation_string.split(";")
 			actions = action_string.split(";")
-			return [escaped_definitions, relations, actions]
+			return [definitions, relations, actions]
 
 	@staticmethod
 	def normalize_shorthand(criterion_string):
@@ -80,14 +91,13 @@ class Transformation:
 	def validate(self):
 		report = ""
 		for definition in self.definitions:
-			nodes = definition.split(";")
-			for node in nodes:
-				node = escape(node,"&","/")
-				criteria = node.split("&")
-				criteria = (_crit.replace("%%%%%","&") for _crit in criteria)
-				for criterion in criteria:
-					if not re.match("(text|pos|lemma|morph|func|head)!?=/[^/=]*/",criterion):
-						report+= "Invalid node definition in column 1: " + criterion
+			node = definition.def_text
+			node = escape(node,"&","/")
+			criteria = node.split("&")
+			criteria = (_crit.replace("%%%%%","&") for _crit in criteria)
+			for criterion in criteria:
+				if not re.match("(text|pos|lemma|morph|func|head)!?=/[^/=]*/",criterion):
+					report+= "Invalid node definition in column 1: " + criterion
 		for relation in self.relations:
 			if relation == "none" and len(self.relations) == 1:
 				if len(self.definitions) > 1:
@@ -103,23 +113,21 @@ class Transformation:
 		for action in self.actions:
 			commands = action.split(";")
 			for command in commands:
-				if not re.match("(#[0-9]+>#[0-9]+|#[0-9]+:(func|lemma|text|pos|morph|head)=[^=]*)$",command):
+				if not re.match(r"(#[0-9]+>#[0-9]+|#[0-9]+:(func|lemma|text|pos|morph|head)=[^=]*)$",command):
 					report += "Column 3 invalid action definition: " + command + " and the action was " + action
 		return report
 
 
 class DefinitionMatcher:
 
-	def __init__(self, token, def_text, def_index):
+	def __init__(self, def_text, def_index):
 		self.def_text = escape(def_text,"&","/")
 		self.def_index = def_index
-		self.token = token
 		self.groups = []
-		self.match = self.matches_definition()
+		self.defs = []
 
-	def matches_definition(self):
-		defs = self.def_text.split("&")
-		for def_item in defs:
+		def_items = self.def_text.split("&")
+		for def_item in def_items:
 			def_item = def_item.replace("%%%%%","&")
 			criterion = def_item.split("=")[0]
 			if criterion[-1] == "!":
@@ -133,27 +141,97 @@ class DefinitionMatcher:
 				def_value = "^" + def_value
 			if def_value[-1] != "$":
 				def_value += "$"
-			tok_value = getattr(self.token,criterion)
-			match_obj = re.match(def_value,tok_value)
+			self.defs.append(Definition(criterion,def_value,negative_criterion))
+
+	def __repr__(self):
+		return "#" + str(self.def_index) + ": " + self.def_text
+
+	def match(self, token):
+		potential_groups = []
+		for def_item in self.defs:
+			tok_value = getattr(token,def_item.criterion)
+			match_obj = def_item.match_func(def_item,tok_value)
+
 			if match_obj is None:
-				if not negative_criterion:
-					return False
-			else:
-				if negative_criterion:
-					return False
+				return False
+			elif not match_obj:
+				return False
+			elif match_obj is True:
+				pass
+			elif match_obj is not None:
 				if len(match_obj.groups()) > 0:
-					self.groups.append(match_obj.groups())
+					potential_groups.append(match_obj.groups())
+		self.groups = potential_groups
 		return True
 
+
+class Definition:
+
+	def __init__(self, criterion, value, negative=False):
+		self.criterion = criterion
+		self.value = value
+		self.match_type = ""
+		self.compiled_re = None
+		self.negative = negative
+		self.set_match_type()
+
+	def set_match_type(self):
+		value  = self.value[1:-1]
+
+		if self.value == "^.*$" and not self.negative:
+			self.match_func = self.return_true
+		elif re.escape(value) == value: # No regex operators within  expression
+			if self.negative:
+				self.match_func = self.return_exact_negative
+			else:
+				self.match_func = self.return_exact
+			self.value = value
+		else:  # regex
+			self.compiled_re = re.compile(self.value)
+			if self.negative:
+				self.match_func = self.return_regex_negative
+			else:
+				self.match_func = self.return_regex
+
+	@staticmethod
+	def return_exact(definition,test_val):
+		return test_val == definition.value
+
+	@staticmethod
+	def return_exact_negative(definition,test_val):
+		return test_val != definition.value
+
+	@staticmethod
+	def return_regex(definition,test_val):
+		return definition.compiled_re.search(test_val)
+
+	@staticmethod
+	def return_regex_negative(definition,test_val):
+		return definition.compiled_re.search(test_val) is None
+
+	@staticmethod
+	def return_true(definition,test_val):
+		return True
+
+
+class Match:
+
+	def __init__(self, def_index, token, groups):
+		self.def_index = def_index
+		self.token = token
+		self.groups = groups
+
+	def __repr__(self):
+		return "#" + str(self.def_index) + ": " + self.token.__repr__
 
 def process_sentence(conll_tokens, tokoffset, transformations):
 	for transformation in transformations:
 		node_matches = defaultdict(list)
-		for def_index, def_text in enumerate(transformation.definitions):
+		for def_matcher in transformation.definitions:
 			for token in conll_tokens[tokoffset+1:]:
-				def_matcher = DefinitionMatcher(token,def_text,def_index + 1)
-				if def_matcher.match:
-					node_matches[def_index+1].append(def_matcher)
+				#def_matcher = DefinitionMatcher(def_text,def_index + 1)
+				if def_matcher.match(token):
+					node_matches[def_matcher.def_index].append(Match(def_matcher.def_index, token, def_matcher.groups))
 		result_sets = []
 		for relation in transformation.relations:
 			found = matches_relation(node_matches, relation, result_sets)
@@ -467,8 +545,6 @@ def run_depedit(infile, config_file):
 			sentlength += 1
 			children[str(int(cols[6]) + tokoffset)].append(str(int(cols[0]) + tokoffset))
 			child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
-		elif myline.startswith("#"):  # conll hashtag comment line, e.g. speaker information with #speaker="xyz"
-			my_output += myline
 		elif sentlength > 0:
 			# TODO: Add list of all funcs dependent on this token to its child_funcs as a possible further condition
 			#for id in child_funcs:
@@ -481,6 +557,7 @@ def run_depedit(infile, config_file):
 				tokoffset += sentlength
 
 			sentlength = 0
+
 	if sentlength > 0:  # Leftover sentence did not have trailing newline
 		my_output += process_sentence(conll_tokens,tokoffset,transformations)
 
@@ -498,3 +575,5 @@ if __name__ == "__main__":
 	config_file = open(options.config)
 	output_trees = run_depedit(infile, config_file)
 	print output_trees
+
+
