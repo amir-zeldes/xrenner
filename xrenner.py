@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
+xrenner - eXternally configurable REference and Non-Named Entity Recognizer
+xrenner.py
 Main controller script for entity recognition and coreference resolution
 Author: Amir Zeldes
 """
@@ -12,6 +13,7 @@ import argparse
 from modules.xrenner_out import *
 from modules.xrenner_classes import *
 from modules.xrenner_coref import *
+from modules.xrenner_preprocess import *
 from modules.xrenner_marker import make_markable
 from modules.xrenner_lex import *
 from modules.xrenner_postprocess import postprocess_coref
@@ -34,92 +36,27 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 	global markables_by_head
 	global groupcounter
 
-	# Add list of all funcs dependent on each token to its child_funcs
-	for child_id in child_funcs:
-		for func in child_funcs[child_id]:
-			if func not in conll_tokens[child_id].child_funcs:
-				conll_tokens[child_id].child_funcs.append(func)
-		for tok_text in child_strings[child_id]:
-			if tok_text not in conll_tokens[child_id].child_strings:
-				conll_tokens[child_id].child_strings.append(tok_text)
-
+	# Add list of all dependent funcs and strings to each token
+	add_child_info(conll_tokens, child_funcs, child_strings)
 
 	mark_candidates_by_head = collections.OrderedDict()
 	stop_ids = {}
 	for tok1 in conll_tokens[tokoffset + 1:]:
 		stop_ids[tok1.id] = False  # Assume all tokens are head candidates
 
-	# Post-process parser input based on entity list
+	# Post-process parser input based on entity list if desired
 	if lex.filters["postprocess_parser"]:
-		for tok1 in conll_tokens[tokoffset + 1:]:
-			if tok1.text == "-LSB-" or tok1.text == "-RSB-":
-				tok1.pos = tok1.text
-				tok1.func = "punct"
-				tok1.head = "0"
-			if lex.filters["mark_head_pos"].match(tok1.pos) is not None:
-				entity_candidate = tok1.text + " "
-				for tok2 in conll_tokens[int(tok1.id) + 1:]:
-					if lex.filters["mark_head_pos"].match(tok2.pos) is not None:
-						entity_candidate += tok2.text + " "
-						### DEBUG BREAKPOINT ###
-						if entity_candidate.strip() == lex.debug["ana"]:
-							pass
-						if entity_candidate.strip() in lex.entities:  # Entity matched, check if all tokens are inter-connected
-							for tok3 in conll_tokens[int(tok1.id):int(tok2.id)]:
-								# Ensure right most token has head outside entity:
-								if int(tok2.head) > int(tok2.id) or int(tok2.head) < int(tok1.id):
-									if (int(tok3.head) < int(tok1.id) or int(tok3.head) > int(tok2.id)) and tok3.id in children[tok3.head]:
-										children[tok3.head].remove(tok3.id)
-										tok3.head = tok2.id
-										children[tok3.head].append(tok3.id)
-										break
-					else:
-						break
-			# Check for apposition pointing back to immediately preceding proper noun token -
-			# typical (German model) MaltParser name behavior
-			if lex.filters["apposition_func"].match(tok1.func) is not None and not tok1.id == "1":
-				if lex.filters["proper_pos"].match(conll_tokens[int(tok1.id) - 1].pos) is not None and conll_tokens[
-							int(tok1.id) - 1].id == tok1.head:
-					tok1.func = "xrenner_fix"
-					children[str(int(tok1.id) - 1)].append(tok1.id)
-					stop_ids[tok1.id] = True
-
-			# Check for [city], [state/country] apposition -
-			# typical (English model) Stanford parser behavior
-			if tok1.text == lex.debug["ana"]:
-				pass
-			if lex.filters["apposition_func"].match(tok1.func) is not None and not int(tok1.id) < 3:
-				if conll_tokens[int(tok1.id) - 1].text.strip() == ",":
-					tok_minus2 = conll_tokens[int(tok1.id) - 2]
-					tok1_head = conll_tokens[int(tok1.head)]
-					if lex.filters["proper_pos"].match(tok_minus2.pos) is not None:
-						if (tok_minus2.id == tok1.head and (lookup_has_entity(tok1.text, tok1.lemma, "place", lex) and not lookup_has_entity(tok_minus2.text, tok_minus2.lemma, "place", lex) or \
-							lookup_has_entity(tok_minus2.text, tok_minus2.lemma, "place", lex))) or \
-							not lookup_has_entity(tok1_head.text, tok1_head.lemma, "place", lex) and lookup_has_entity(tok1.text, tok1.lemma, "place", lex):
-								tok1.func = "xrenner_fix"
-								if tok1.id not in children[tok_minus2.id]:
-									children[tok_minus2.id].append(tok1.id)
-
-			# Check for markable projecting beyond an apposition to itself and remove from children on violation
-			if lex.filters["apposition_func"].match(tok1.func) is not None and not tok1.id == "1":
-				for tok2 in conll_tokens[int(tok1.id) + 1:]:
-					if tok2.head == tok1.head and lex.filters["non_link_func"].match(tok2.func) is None and tok2.id in children[tok2.head]:
-						children[tok2.head].remove(tok2.id)
+		postprocess_parser(conll_tokens, tokoffset, children, stop_ids, lex)
 
 	# Revert conj token function to parent function
-	for token in conll_tokens[tokoffset:]:
-		if lex.filters["conjunct_func"].match(token.func) is not None:
-			for child_func in conll_tokens[int(token.head)].child_funcs:
-				token.child_funcs.append(child_func)
-			token.func = conll_tokens[int(token.head)].func
-			token.head = conll_tokens[int(token.head)].head
-			token.coordinate = True
+	replace_conj_func(conll_tokens, tokoffset, lex)
 
-	# Enrich tokens with modifiers
+	# Enrich tokens with modifiers and parent head text
 	for token in conll_tokens[tokoffset:]:
 		for child in children[token.id]:
 			if lex.filters["mod_func"].match(conll_tokens[int(child)].func) is not None:
 				token.modifiers.append(conll_tokens[int(child)])
+		token.head_text = conll_tokens[int(token.head)].text
 
 	# Find dead areas
 	for tok1 in conll_tokens[tokoffset + 1:]:
@@ -170,9 +107,9 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 							# Only do this for the first subordinate markable head found by traversing right to left
 							break
 
-		# Try to construct a longer stop candidate starting with each token in the sentence
+		# Try to construct a longer stop candidate starting with each token in the sentence, max length 5 tokens
 		stop_candidate = ""
-		for tok2 in conll_tokens[int(tok1.id):]:
+		for tok2 in conll_tokens[int(tok1.id):min(len(conll_tokens),int(tok1.id)+4)]:
 			stop_candidate += tok2.text + " "
 			if stop_candidate.strip().lower() in lex.stop_list:  # Stop list matched, flag tokens as impossible markable heads
 				for tok3 in conll_tokens[int(tok1.id):int(tok2.id) + 1]:
@@ -286,8 +223,10 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 
 	for mark_id in mark_candidates_by_head:
 		mark = mark_candidates_by_head[mark_id]
+		mark.text = mark.text.strip()
+		mark.core_text = mark.core_text.strip()
 		# DEBUG POINT
-		if mark.text.strip() == lex.debug["ana"]:
+		if mark.text == lex.debug["ana"]:
 			pass
 		tok = mark.head
 		if lex.filters["proper_pos"].match(tok.pos) is not None:
@@ -345,8 +284,8 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			subclass = mark.entity.split("\t")[1]
 			mark.entity = mark.entity.split("\t")[0]
 		if mark.entity == lex.filters["person_def_entity"] and mark.form != "pronoun":
-			if mark.text.strip() in lex.names:
-				mark.agree = lex.names[mark.text.strip()]
+			if mark.text in lex.names:
+				mark.agree = lex.names[mark.text]
 		if mark.entity == lex.filters["person_def_entity"] and mark.agree is None:
 			no_affix_mark = remove_suffix_tokens(remove_prefix_tokens(mark.text, lex), lex)
 			if no_affix_mark in lex.names:
@@ -356,11 +295,11 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 		if mark.form == "pronoun" and (mark.entity == "abstract" or mark.entity == ""):
 			if mark.head.head in markables_by_head and lex.filters["subject_func"].match(mark.head.func) is not None:
 				mark.entity = markables_by_head[mark.head.head].entity
-		if mark.entity == "" and mark.core_text.upper() == mark.core_text:  # Unknown all caps entity, guess acronym default
+		if mark.entity == "" and mark.core_text.upper() == mark.core_text and re.search("[A-ZÄÖÜ]",mark.core_text) is not None:  # Unknown all caps entity, guess acronym default
 			mark.entity = lex.filters["all_caps_entity"]
 			mark.entity_certainty = "uncertain"
 		if mark.entity == "" and mark.form != "pronoun":  # Unknown entity, guess by affix
-			mark.entity = get_entity_by_affix(mark.head.lemma.strip(), lex)
+			mark.entity = get_entity_by_affix(mark.lemma, lex)
 			mark.entity_certainty = "uncertain"
 		if mark.entity == "":  # Unknown entity, guess default
 			mark.entity = lex.filters["default_entity"]
@@ -370,7 +309,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 				subclass = mark.entity
 			else:
 				subclass = mark.subclass
-		if mark.head.func == "title":
+		if mark.func == "title":
 			mark.entity = lex.filters["default_entity"]
 		if mark.agree == "" and mark.entity == lex.filters["default_entity"]:
 			mark.agree = lex.filters["default_agree"]
@@ -396,7 +335,7 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 		if int(re.sub('_.*','',markable_head_id)) > tokoffset:  # Resolve antecedent for current sentence markables
 			current_markable = markables_by_head[markable_head_id]
 			# DEBUG POINT
-			if current_markable.text.strip() == lex.debug["ana"]:
+			if current_markable.text == lex.debug["ana"]:
 				pass
 			# Revise coordinate markable entities now that we have resolved all of their constituents
 			if len(current_markable.submarks) > 0:
@@ -404,13 +343,13 @@ def process_sentence(conll_tokens, tokoffset, sentence, child_funcs, child_strin
 			if antecedent_prohibited(current_markable, conll_tokens, lex) or (current_markable.definiteness == "indef" and lex.filters["apposition_func"].match(current_markable.head.func) is None and not lex.filters["allow_indef_anaphor"]):
 				antecedent = None
 			elif (current_markable.definiteness == "indef" and lex.filters["apposition_func"].match(current_markable.head.func) is not None and not lex.filters["allow_indef_anaphor"]):
-				antecedent, return_rule = find_antecedent(current_markable, markables, lex, "appos")
+				antecedent, propagation = find_antecedent(current_markable, markables, lex, "appos")
 			else:
-				antecedent, return_rule = find_antecedent(current_markable, markables, lex)
+				antecedent, propagation = find_antecedent(current_markable, markables, lex)
 			if antecedent is not None:
-				if int(antecedent.head.id) < int(current_markable.head.id) or re.search(r'invert',return_rule[3]) is not None:
+				if int(antecedent.head.id) < int(current_markable.head.id) or 'invert' in propagation:
 					# If the rule specifies to invert
-					if re.search(r'invert',return_rule[3]) is not None:
+					if 'invert' in propagation:
 						temp = antecedent
 						antecedent = current_markable
 						current_markable = temp
@@ -445,10 +384,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-o', '--output', action="store", dest="format", default="sgml", help="Output format, default: sgml; alternatives: html, paula, webanno, conll")
 parser.add_argument('-m', '--model', action="store", dest="model", default="eng", help="Input model directory name, in models/")
 parser.add_argument('-x', '--override', action="store", dest="override", default=None, help="provide an override file to run alternative settings for config.ini")
+parser.add_argument('-v', '--verbose', action="store_true", help="output run time and summary")
 parser.add_argument('file', action="store", help="Input file name to process")
 parser.add_argument('--version', action='version', version=xrenner_version)
 
 options = parser.parse_args()
+if options.verbose:
+	import modules.timing
 
 out_format = options.format
 model = options.model
@@ -483,7 +425,6 @@ sent_num = 1
 quoted = False
 current_sentence = Sentence(sent_num, tokoffset, "")
 for myline in infile:
-
 	if "#speaker" in myline: # speaker
 		current_sentence.speaker = myline.split('"')[1]
 	elif myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
@@ -513,9 +454,9 @@ for myline in infile:
 	elif sentlength > 0:
 		process_sentence(conll_tokens, tokoffset, current_sentence, child_funcs, child_strings)
 		sent_num += 1
-		current_sentence = Sentence(sent_num, tokoffset, "")
 		if sentlength > 0:
 			tokoffset += sentlength
+		current_sentence = Sentence(sent_num, tokoffset, "")
 
 		sentlength = 0
 
@@ -553,22 +494,9 @@ for mark in marks_to_add:
 postprocess_coref(markables, lex, markstart_dict, markend_dict,markables_by_head, conll_tokens)
 
 
-marks_to_kill = []
-for mark in markables:
-	if mark.id == "0":  # Markable has been marked for deletion
-		markstart_dict[mark.start].remove(mark)
-		if len(markstart_dict[mark.start]) < 1:
-			del markstart_dict[mark.start]
-		markend_dict[mark.end].remove(mark)
-		if len(markend_dict[mark.start]) < 1:
-			del markend_dict[mark.start]
-		marks_to_kill.append(mark)
-
-for mark in marks_to_kill:
-	markables.remove(mark)
-
 if out_format == "html":
-	print output_HTML(conll_tokens, markstart_dict, markend_dict)
+	rtl = True if model in ["heb","ara"] else False
+	print output_HTML(conll_tokens, markstart_dict, markend_dict, rtl)
 elif out_format == "paula":
 	output_PAULA(conll_tokens, markstart_dict, markend_dict)
 elif out_format == "webanno":
@@ -579,3 +507,7 @@ elif out_format == "onto":
 	print output_onto(conll_tokens, markstart_dict, markend_dict, options.file)
 else:
 	print output_SGML(conll_tokens, markstart_dict, markend_dict)
+
+if options.verbose:
+	sys.stderr.write("="*40 + "\n")
+	sys.stderr.write("Processed " + str(len(conll_tokens)-1) + " tokens in " + str(sent_num-1) + " sentences.\n")

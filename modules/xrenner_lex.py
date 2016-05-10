@@ -5,6 +5,7 @@ import re
 import ConfigParser
 import sys
 from collections import defaultdict
+from xrenner_rule import CorefRule
 
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
@@ -35,6 +36,7 @@ class LexData:
 		self.hasa = self.read_delim('hasa.tab', 'triple_numeric')
 		self.coref = self.read_delim('coref.tab')
 		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
+
 		self.pronouns= self.read_delim('pronouns.tab', 'double')
 		self.numbers=self.read_delim('numbers.tab','double')
 		self.affix_tokens = self.read_delim('affix_tokens.tab')
@@ -267,7 +269,7 @@ class LexData:
 
 		output=[]
 		for rule in rule_list:
-			output.append(rule.split(";"))
+			output.append(CorefRule(rule))
 
 		return output
 

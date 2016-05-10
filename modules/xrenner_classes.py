@@ -10,10 +10,11 @@ import sys
 class ParsedToken:
 	def __init__(self, tok_id, text, lemma, pos, morph, head, func, sentence, modifiers, child_funcs, child_strings, lex, quoted=False):
 		self.id = tok_id
-		self.text = text
+		self.text = text.strip()
+		self.text_lower = text.lower()
 		self.pos = pos
 		if lemma != "_" and lemma != "--":
-			self.lemma = lemma
+			self.lemma = lemma.strip()
 		else:
 			self.lemma = lex.lemmatize(self)
 		self.morph = morph
@@ -43,8 +44,8 @@ class Markable:
 		self.definiteness = definiteness
 		self.start = start
 		self.end = end
-		self.text = text
-		self.core_text = core_text  # Holds markable text before any extensions or manipulations
+		self.text = text.strip()
+		self.core_text = core_text.strip()  # Holds markable text before any extensions or manipulations
 		self.entity = entity
 		self.subclass = subclass
 		self.infstat = infstat
@@ -66,6 +67,7 @@ class Markable:
 		self.cardinality=cardinality
 		self.submarks = submarks
 		self.coordinate = coordinate
+		self.child_func_string = ""  # Convenience property to store semi-colon separated child funcs of head token
 
 	def __repr__(self):
 		agree = "no-agr" if self.agree == "" else self.agree
@@ -73,6 +75,23 @@ class Markable:
 		card = "no-card" if self.cardinality == 0 else self.cardinality
 		func = "no-func" if self.head.func == "" else self.head.func
 		return str(self.entity) + "/" + str(self.subclass) + ': "' + self.text + '" (' + agree + "/" + defin + "/" + func + "/" + str(card) + ")"
+
+	def __getattr__(self, item):
+		# Convenience methods to access head token and containing sentence
+		if item in ["pos","lemma","morph","parent","func","quoted","modifiers","child_funcs","child_strings","text_lower","agree"]:
+			return getattr(self.head,item)
+		elif item in ["mood", "speaker"]:
+			return getattr(self.sentence,item)
+		elif item == "child_func_string":
+			# Check for cached child_func_string
+			if self.child_func_string == "":
+				# Assemble if not yet cached
+				self.child_func_string = ";".join(self.head.child_funcs)
+				if len(self.child_func_string) < 1:
+					self.child_func_string = "_"
+			return self.child_func_string
+		else:
+			raise AttributeError
 
 
 class Sentence:
