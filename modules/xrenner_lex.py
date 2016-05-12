@@ -22,6 +22,7 @@ class LexData:
 	configuration files.
 	"""
 	def __init__(self, model,override=None):
+		gc.disable()
 		self.model = model
 		self.atoms = {}
 		self.mod_atoms = {}
@@ -47,9 +48,7 @@ class LexData:
 		self.isa = self.read_isa()  # isa dictionary, from generic subclass string to list of valid substitutes
 
 		self.atoms = self.get_atoms()
-		first_last = self.get_first_last_names(self.names)
-		self.first_names = first_last[0]
-		self.last_names = first_last[1]
+		self.first_names, self.last_names = self.get_first_last_names(self.names)
 
 		self.pos_agree_mappings = self.get_pos_agree_mappings()
 		self.last = {}
@@ -58,6 +57,7 @@ class LexData:
 		self.func_substitutes_forward, self.func_substitutes_backward = self.get_func_substitutes()
 
 		self.debug = self.read_delim('debug.tab')
+		gc.enable()
 
 	def read_delim(self, filename, mode="normal", atom_list_name="atoms"):
 		if atom_list_name == "atoms":
@@ -92,17 +92,9 @@ class LexData:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2]]
 				return out_dict
 			elif mode == "triple_numeric":
-				out_dict = defaultdict(dict)
-				for rows in reader:
-					if not rows[0].startswith('#'):
-						out_dict[rows[0]] = {rows[1]:int(rows[2])}
-				return out_dict
+				return dict((rows[0], {rows[1]:int(rows[2])}) for rows in reader if not rows[0].startswith('#'))
 			elif mode == "quadruple":
-				out_dict = defaultdict(dict)
-				for rows in reader:
-					if not rows[0].startswith('#'):
-						out_dict[rows[0]] = {rows[1]:{rows[2] : int(rows[3])}}
-				return out_dict
+				return dict((rows[0],{rows[1]:{rows[2] : int(rows[3])}}) for rows in reader)
 			else:
 				return dict((rows[0], rows[1]) for rows in reader if not rows[0].startswith('#'))
 
@@ -123,26 +115,21 @@ class LexData:
 	def get_first_last_names(names):
 		firsts = {}
 		lasts = []
-		gc.disable()
 		for name in names:
 			if " " in name:
 				parts = name.split(" ")
 				firsts[parts[0]] = names[name]  # Get heuristic gender for this first name
 				lasts.append(parts[len(parts)-1])  # Last name is a list, no gender info
-		gc.enable()
 		return [firsts,lasts]
 
 	def read_antonyms(self):
 		set_list = self.read_delim('antonyms.tab', 'low')
-		output = {}
+		output = defaultdict(set)
 		for antoset in set_list:
-			members = antoset.split(",")
+			members = antoset.lower().split(",")
 			for member in members:
-				if member not in output:
-					output[member] = []
-				for member2 in members:
-					if member != member2:
-						output[member].append(member2.lower())
+				output[member].update(members)
+				output[member].remove(member)
 		return output
 
 	def read_isa(self):
