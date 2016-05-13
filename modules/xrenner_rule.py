@@ -13,18 +13,9 @@ class CorefRule:
 		for item in self.ante_spec.split("&"):
 			self.ante_constraints.append(ConstraintMatcher(item))
 
-"""
-class ConstraintSpec:
-	def __init__(self,specification):
-		parts = specification.split("&")
-		self.constraints = []
-		for constraint in parts:
-			self.constraints.append(ConstraintMatcher(constraint))
+	def __repr__(self):
+		return self.ana_spec + " -> " + self.ante_spec + " (" + str(self.max_distance) + ", " + self.propagation + ")"
 
-	def applies(self,anaphor=None):
-		for constraint in self.constraints:
-			if not constraint
-"""
 
 class ConstraintMatcher:
 	def __init__(self,constraint):

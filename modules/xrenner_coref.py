@@ -55,7 +55,7 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 	for candidate in referents_to_loop:  # loop through previous markables backwards
 		#DEBUG breakpoint:
 		if markable.text.strip() == lex.debug["ana"]:
-			pass
+			a = 5
 			if candidate.text.strip() == lex.debug["ante"]:
 				pass
 		if markable.sentence.sent_num - candidate.sentence.sent_num <= max_dist:

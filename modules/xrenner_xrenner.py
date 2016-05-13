@@ -21,19 +21,27 @@ from modules.depedit import run_depedit
 
 class Xrenner:
 
-	def __init__(self, model, override=None):
+	def __init__(self, model="eng", override=None):
+		"""
+		Main class for xrenner coreferencer
+		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
+		:param override: name of a section in models/override.ini if configuration overrides should be applied
+		:return: void
+		"""
 
 		self.model = model
 		self.override = override
 		self.lex = LexData(self.model, self.override)
 
-	def analyze(self, options):
+	def analyze(self, infile, out_format):
+		"""
+		:param infile: String representing a parse file in the conll10 format
+		:param format: format to determine output type, one of: html, paula, webanno, conll, onto, unittest
+		:return: output based on requested format
+		"""
 
-		file = options.file
-		out_format = options.format
 		depedit_config = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + "depedit.ini")
 
-		infile = open(file)
 		infile = run_depedit(infile, depedit_config)
 		infile = infile.split("\n")
 
@@ -138,14 +146,19 @@ class Xrenner:
 
 		if out_format == "paula":
 			try:
-				self.serialize_output(out_format, options)
+				self.serialize_output(out_format)
 				return True
 			except:
 				return False
 		else:
-			return self.serialize_output(out_format, options)
+			return self.serialize_output(out_format, infile)
 
-	def serialize_output(self, out_format, options):
+	def serialize_output(self, out_format, parse=None):
+		"""
+		Return a string representation of the output in some format, or generate PAULA directory structure as output
+		:param out_format: the format to generate, one of: html, paula, webanno, conll, onto, unittest
+		:return: specified output format string, or void for paula
+		"""
 		conll_tokens = self.conll_tokens
 		markables, markstart_dict, markend_dict = self.markables, self.markstart_dict, self.markend_dict
 
@@ -160,10 +173,19 @@ class Xrenner:
 			return output_conll(conll_tokens, markstart_dict, markend_dict, file, True)
 		elif out_format == "onto":
 			return output_onto(conll_tokens, markstart_dict, markend_dict, file)
+		elif out_format == "unittest":
+			from xrenner_test import generate_test
+			return generate_test(conll_tokens, markables, parse, self.model)
 		else:
 			return output_SGML(conll_tokens, markstart_dict, markend_dict)
 
 	def process_sentence(self, tokoffset, sentence):
+		"""
+		Function to analyze a single sentence
+		:param tokoffset: the offset in tokens for the beginning of the current sentence within all input tokens
+		:param sentence: the Sentence object containin mood, speaker and other information about this sentence
+		:return: void
+		"""
 		markables = self.markables
 		markables_by_head = self.markables_by_head
 
@@ -175,7 +197,6 @@ class Xrenner:
 		descendants = self.descendants
 		markstart_dict = self.markstart_dict
 		markend_dict = self.markend_dict
-		self.sent_num
 
 		# Add list of all dependent funcs and strings to each token
 		add_child_info(conll_tokens, child_funcs, child_strings)
@@ -311,7 +332,7 @@ class Xrenner:
 						if tok.id in descendants:
 							if child.id in descendants[tok.id]:
 								descendants[tok.id].remove(child.id)
-						# Build a composite id for the large head from coordinate children id's separated by underscore
+						# Build a composite id for the large head from coordinate children IDs separated by underscore
 						submark_id += "_" + child.id
 						cardi+=1
 						submarks.append(child.id)
