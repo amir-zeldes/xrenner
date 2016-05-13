@@ -5,10 +5,12 @@ Usage:
 xrenner.py [options] INFILE (> OUTFILE)
 
 options:
-  * -o, --output	Output format, default: sgml; alternatives: html, paula, webanno, conll
-  * -m, --model	Input model directory name, in models/
-  * -x, --override Override settings in the specified sections of config.ini by reading from override.ini, default=None; possible values such as 'OntoNotes', 'GUM' 
-  * --version	Print xrenner version and quit
+  * -m, --model	input model directory name, in models/, default 'eng'
+  * -o, --output	output format, default: sgml; alternatives: html, paula, webanno, conll, onto, unittest
+  * -x, --override specify a section in the model's override.ini file with alternative settings, default=None; possible values such as 'OntoNotes', 'GUM' 
+  * -v, --verbose	output run time and summary
+  * -t, --test	run unit tests and quit
+  * --version	print xrenner version and quit
 
 Examples:
 ========
