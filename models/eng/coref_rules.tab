@@ -9,6 +9,8 @@ text=/^[Ii]t$/&func=/nsubj(pass)?/;func=/cata/&sameparent&anytext&anyentity&anya
 form=/pronoun/&func=/poss/;func=/poss/;0;propagate_forward
 #allow coreference between "you" in a question and "I/we" in an answer
 form=/pronoun/&text=/^(I|[Ww]e)/&mood!=/question/;mood=/question/&text=/^[Yy]our?s?/&anytext&anyagree;1;nopropagate
+#allow coreference between "you" and "I/we" if speaker is different
+#form=/pronoun/&text=/^(I|[Ww]e|[Mm]e|[Uu]s)$/;!samespeaker&text=/^[Yy]our?s?/&anytext&anyagree;1;nopropagate
 #propagate entity type across apposition
 func=/appos/;child=$1&anytext&anyagree;0;propagate
 func=/appos_pat/;child=$1&anytext&anyagree&anyentity&anycardinality;0;propagate
@@ -38,7 +40,8 @@ form=/pronoun/;func!=/nn/&subclass!=/time-unit/&!sameparent*;2;propagate_forward
 form=/proper/;form=/proper/&lemma=$1&subclass!=/time-unit/;100;nopropagate
 #cardinality match rule - prefer coreference with matching cardinality
 cardinality=/[^0].*/;cardinality=$1&!sameparent;40;propagate
-#final default rule without nn
+#final default rule without nn, exact match first
+subclass!=/time-unit/;func!=/nn/&text_lower=$1&!sameparent;20;nopropagate
 subclass!=/time-unit/;func!=/nn/&!sameparent;20;nopropagate
 #final default rule
 subclass!=/time-unit/;!sameparent;20;nopropagate

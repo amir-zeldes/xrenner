@@ -5,6 +5,7 @@ import re
 import ConfigParser
 import sys
 from collections import defaultdict
+from xrenner_rule import CorefRule
 
 """
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
@@ -21,6 +22,7 @@ class LexData:
 	configuration files.
 	"""
 	def __init__(self, model,override=None):
+		gc.disable()
 		self.model = model
 		self.atoms = {}
 		self.mod_atoms = {}
@@ -32,8 +34,10 @@ class LexData:
 		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
 		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms')
 		self.entity_deps = self.read_delim('entity_deps.tab','quadruple')
+		self.hasa = self.read_delim('hasa.tab', 'triple_numeric')
 		self.coref = self.read_delim('coref.tab')
 		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
+
 		self.pronouns= self.read_delim('pronouns.tab', 'double')
 		self.numbers=self.read_delim('numbers.tab','double')
 		self.affix_tokens = self.read_delim('affix_tokens.tab')
@@ -44,9 +48,7 @@ class LexData:
 		self.isa = self.read_isa()  # isa dictionary, from generic subclass string to list of valid substitutes
 
 		self.atoms = self.get_atoms()
-		first_last = self.get_first_last_names(self.names)
-		self.first_names = first_last[0]
-		self.last_names = first_last[1]
+		self.first_names, self.last_names = self.get_first_last_names(self.names)
 
 		self.pos_agree_mappings = self.get_pos_agree_mappings()
 		self.last = {}
@@ -55,6 +57,7 @@ class LexData:
 		self.func_substitutes_forward, self.func_substitutes_backward = self.get_func_substitutes()
 
 		self.debug = self.read_delim('debug.tab')
+		gc.enable()
 
 	def read_delim(self, filename, mode="normal", atom_list_name="atoms"):
 		if atom_list_name == "atoms":
@@ -88,14 +91,10 @@ class LexData:
 						else:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2]]
 				return out_dict
+			elif mode == "triple_numeric":
+				return dict((rows[0], {rows[1]:int(rows[2])}) for rows in reader if not rows[0].startswith('#'))
 			elif mode == "quadruple":
-				out_dict = defaultdict(dict)
-				for rows in reader:
-					if rows[0] == "in":
-						pass
-					if not rows[0].startswith('#'):
-						out_dict[rows[0]] = {rows[1]:{rows[2] : int(rows[3])}}
-				return out_dict
+				return dict((rows[0],{rows[1]:{rows[2] : int(rows[3])}}) for rows in reader)
 			else:
 				return dict((rows[0], rows[1]) for rows in reader if not rows[0].startswith('#'))
 
@@ -116,26 +115,21 @@ class LexData:
 	def get_first_last_names(names):
 		firsts = {}
 		lasts = []
-		gc.disable()
 		for name in names:
 			if " " in name:
 				parts = name.split(" ")
 				firsts[parts[0]] = names[name]  # Get heuristic gender for this first name
 				lasts.append(parts[len(parts)-1])  # Last name is a list, no gender info
-		gc.enable()
 		return [firsts,lasts]
 
 	def read_antonyms(self):
 		set_list = self.read_delim('antonyms.tab', 'low')
-		output = {}
+		output = defaultdict(set)
 		for antoset in set_list:
-			members = antoset.split(",")
+			members = antoset.lower().split(",")
 			for member in members:
-				if member not in output:
-					output[member] = []
-				for member2 in members:
-					if member != member2:
-						output[member].append(member2.lower())
+				output[member].update(members)
+				output[member].remove(member)
 		return output
 
 	def read_isa(self):
@@ -262,7 +256,7 @@ class LexData:
 
 		output=[]
 		for rule in rule_list:
-			output.append(rule.split(";"))
+			output.append(CorefRule(rule))
 
 		return output
 
