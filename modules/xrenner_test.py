@@ -131,10 +131,17 @@ class TestCorefMethods(unittest.TestCase):
 
 	def test_affix_morphology(self):
 		# [A blorker] and an animal and a car . Of these , I saw [the person] .
-		print "Run affix morphology test:  ",
+		print "\nRun affix morphology test:  ",
 		target = self.cases["morph_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"affix morph test (a blorker <- the person)")
+
+	def test_verbal_event_stem(self):
+		# John [visited] Spain . [The visit] went well .
+		print "\nRun verbal event coreference test:  ",
+		target = self.cases["verb_test"]
+		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
+		self.assertEqual(target.chains,result.chains,"verbal event stemming (visited <- the visit	)")
 
 
 class Case:
