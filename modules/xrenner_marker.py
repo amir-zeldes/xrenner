@@ -475,12 +475,12 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 					end += 1
 
 	# Extend markable to trailing closing punctuation if it contains opening punctuation
-	if int(tok.id) < len(conll_tokens) - 1:
-		next_id = int(tok.id) + 1
+	if end < len(conll_tokens) - 1:
+		next_id = end + 1
 		if markable_extend_punctuation(marktext, conll_tokens[next_id], lex.open_close_punct, "trailing"):
 			marktext += conll_tokens[next_id].text + " "
 			end += 1
-	if tok.id != "1":
+	if start != "1":
 		prev_id = start - 1
 		if markable_extend_punctuation(marktext, conll_tokens[prev_id], lex.open_close_punct_rev, "leading"):
 			marktext = conll_tokens[prev_id].text + " " + marktext
@@ -547,3 +547,5 @@ def assign_coordinate_entity(mark,markables_by_head):
 		mark.entity = sub_entities[0]
 	if len(set(sub_subclasses)) == 1:  # There is agreement on the entity
 		mark.subclass = sub_subclasses[0]
+
+

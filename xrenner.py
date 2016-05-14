@@ -11,7 +11,7 @@ Author: Amir Zeldes
 import argparse, sys
 from modules.xrenner_xrenner import Xrenner
 
-__version__ = "1.3.0"
+__version__ = "1.3.x"  # Develop
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
