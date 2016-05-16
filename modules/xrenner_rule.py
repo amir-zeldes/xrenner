@@ -136,7 +136,10 @@ class ConstraintMatcher:
 					return True
 		else:
 			if self.key in self.props:
-				test_val = str(getattr(mark, self.key))
+				if self.match_type == "bool":
+					test_val = getattr(mark, self.key)
+				else:
+					test_val = str(getattr(mark, self.key))
 			elif self.key == "LAST":
 				if self.value in lex.last:
 					return op(lex.last[self.value].entity==mark.entity)
