@@ -90,7 +90,7 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 									if propagate.startswith("propagate"):
 										propagate_entity(markable, candidate, propagate)
 									return candidate
-							elif (markable.head.text == candidate.head.text and agree_compatible(markable,candidate,lex) or (markable.head.lemma == candidate.head.lemma and
+							elif agree_compatible(markable,candidate,lex) and ((markable.head.text == candidate.head.text) or (markable.head.lemma == candidate.head.lemma and
 							lex.filters["lemma_match_pos"].match(markable.head.pos) is not None and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
 								if merge_entities(markable, candidate, previous_markables, lex):
 									if propagate.startswith("propagate"):

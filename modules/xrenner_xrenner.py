@@ -201,7 +201,7 @@ class Xrenner:
 		# Add list of all dependent funcs and strings to each token
 		add_child_info(conll_tokens, child_funcs, child_strings)
 
-		mark_candidates_by_head = collections.OrderedDict()
+		mark_candidates_by_head = OrderedDict()
 		stop_ids = {}
 		for tok1 in conll_tokens[tokoffset + 1:]:
 			stop_ids[tok1.id] = False  # Assume all tokens are head candidates
@@ -367,18 +367,19 @@ class Xrenner:
 		# Check for atomicity and remove any subsumed markables if atomic
 		for mark_id in mark_candidates_by_head:
 			mark = mark_candidates_by_head[mark_id]
-			# Check if the markable has a modifier based entity guess
-			modifier_based_entity = recognize_entity_by_mod(mark, lex, True)
-			# Consider for atomicity if in atoms or has @ modifier, but not if it's a single token or a coordinate markable
-			if (is_atomic(mark, lex.atoms, lex) or ("@" in modifier_based_entity and "_" not in mark_id)) and mark.end > mark.start:
-				for index in enumerate(mark_candidates_by_head):
-					key = index[1]
-					# Note that the key may contain underscores if it's a composite, but those can't be atomic
-					if key != mark.head.id and mark.start <= int(re.sub('_.*','',key)) <= mark.end and '_' not in key:
-						if lex.filters["pronoun_pos"].match(conll_tokens[int(re.sub('_.*','',key))].pos) is None:  # Make sure we're not removing a pronoun
-							keys_to_pop.append(key)
-			elif len(modifier_based_entity) > 1:
-				stoplist_prefix_tokens(mark, lex.entity_mods, keys_to_pop)
+			if mark.end > mark.start:  # No atomicity check if single token
+				# Check if the markable has a modifier based entity guess
+				modifier_based_entity = recognize_entity_by_mod(mark, lex, True)
+				# Consider for atomicity if in atoms or has @ modifier, but not if it's a single token or a coordinate markable
+				if (is_atomic(mark, lex.atoms, lex) or ("@" in modifier_based_entity and "_" not in mark_id)) and mark.end > mark.start:
+					for index in enumerate(mark_candidates_by_head):
+						key = index[1]
+						# Note that the key may contain underscores if it's a composite, but those can't be atomic
+						if key != mark.head.id and mark.start <= int(re.sub('_.*','',key)) <= mark.end and '_' not in key:
+							if lex.filters["pronoun_pos"].match(conll_tokens[int(re.sub('_.*','',key))].pos) is None:  # Make sure we're not removing a pronoun
+								keys_to_pop.append(key)
+				elif len(modifier_based_entity) > 1:
+					stoplist_prefix_tokens(mark, lex.entity_mods, keys_to_pop)
 
 		for key in keys_to_pop:
 			mark_candidates_by_head.pop(key, None)
@@ -396,10 +397,11 @@ class Xrenner:
 				mark.definiteness = "def"
 			elif lex.filters["pronoun_pos"].match(tok.pos) is not None:
 				mark.form = "pronoun"
-				mark.definiteness = "def"
-			elif tok.text in lex.pronouns:
-				mark.form = "pronoun"
-				mark.definiteness = "def"
+				# Check for explicit indefinite morphology in morph feature of head token
+				if "indef" in mark.head.morph.lower():
+					mark.definiteness = "indef"
+				else:
+					mark.definiteness = "def"
 			else:
 				mark.form = "common"
 				# Check for explicit definite morphology in morph feature of head token
@@ -459,9 +461,6 @@ class Xrenner:
 					mark.entity = markables_by_head[mark.head.head].entity
 			if mark.entity == "" and mark.core_text.upper() == mark.core_text and re.search("[A-ZÄÖÜ]",mark.core_text) is not None:  # Unknown all caps entity, guess acronym default
 				mark.entity = lex.filters["all_caps_entity"]
-				mark.entity_certainty = "uncertain"
-			if mark.entity == "" and mark.form != "pronoun":  # Unknown entity, guess by affix
-				mark.entity = get_entity_by_affix(mark.lemma, lex)
 				mark.entity_certainty = "uncertain"
 			if mark.entity == "":  # Unknown entity, guess default
 				mark.entity = lex.filters["default_entity"]

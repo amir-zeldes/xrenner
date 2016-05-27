@@ -92,9 +92,17 @@ class LexData:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2]]
 				return out_dict
 			elif mode == "triple_numeric":
-				return dict((rows[0], {rows[1]:int(rows[2])}) for rows in reader if not rows[0].startswith('#'))
+				out_dict = defaultdict(lambda: defaultdict(str))
+				for row in reader:
+					if not row[0].startswith("#"):
+						out_dict[row[0]][row[1]] = int(row[2])
+				return out_dict
 			elif mode == "quadruple":
-				return dict((rows[0],{rows[1]:{rows[2] : int(rows[3])}}) for rows in reader)
+				out_dict = defaultdict(lambda: defaultdict(lambda: defaultdict(str)))
+				for row in reader:
+					if not row[0].startswith("#"):
+						out_dict[row[0]][row[1]][row[2]] = int(row[3])
+				return out_dict
 			else:
 				return dict((rows[0], rows[1]) for rows in reader if not rows[0].startswith('#'))
 
