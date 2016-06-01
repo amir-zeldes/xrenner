@@ -3,7 +3,9 @@
 
 """
 DepEdit - A simple configurable tool for manipulating dependency trees
+
 Input: CoNLL10 (10 columns, tab-delimited, blank line between sentences)
+
 Author: Amir Zeldes
 """
 
@@ -13,7 +15,7 @@ from copy import copy, deepcopy
 import sys
 from collections import defaultdict
 
-__version__ = "1.4.0"
+__version__ = "1.4.2"
 
 
 def escape(string,symbol_to_mask,border_marker):
@@ -31,10 +33,11 @@ def escape(string,symbol_to_mask,border_marker):
 
 
 class ParsedToken:
-	def __init__(self, tok_id, text, lemma, pos, morph, head, func, child_funcs):
+	def __init__(self, tok_id, text, lemma, pos, cpos, morph, head, func, child_funcs):
 		self.id = tok_id
 		self.text = text
 		self.pos = pos
+		self.cpos = cpos
 		self.lemma = lemma
 		self.morph = morph
 		self.head = head
@@ -96,7 +99,7 @@ class Transformation:
 			criteria = node.split("&")
 			criteria = (_crit.replace("%%%%%","&") for _crit in criteria)
 			for criterion in criteria:
-				if not re.match("(text|pos|lemma|morph|func|head)!?=/[^/=]*/",criterion):
+				if not re.match("(text|pos|cpos|lemma|morph|func|head)!?=/[^/=]*/",criterion):
 					report+= "Invalid node definition in column 1: " + criterion
 		for relation in self.relations:
 			if relation == "none" and len(self.relations) == 1:
@@ -113,7 +116,7 @@ class Transformation:
 		for action in self.actions:
 			commands = action.split(";")
 			for command in commands:
-				if not re.match(r"(#[0-9]+>#[0-9]+|#[0-9]+:(func|lemma|text|pos|morph|head)=[^=]*)$",command):
+				if not re.match(r"(#[0-9]+>#[0-9]+|#[0-9]+:(func|lemma|text|pos|cpos|morph|head)=[^=]*)$",command):
 					report += "Column 3 invalid action definition: " + command + " and the action was " + action
 		return report
 
@@ -229,7 +232,6 @@ def process_sentence(conll_tokens, tokoffset, transformations):
 		node_matches = defaultdict(list)
 		for def_matcher in transformation.definitions:
 			for token in conll_tokens[tokoffset+1:]:
-				#def_matcher = DefinitionMatcher(def_text,def_index + 1)
 				if def_matcher.match(token):
 					node_matches[def_matcher.def_index].append(Match(def_matcher.def_index, token, def_matcher.groups))
 		result_sets = []
@@ -416,6 +418,20 @@ def bins_compatible(bin1, bin2):
 		return False
 
 def merge_bins(bin1, bin2):
+	"""
+	Merge bins we know are compatible, e.g. bin1 has #1+#2 and bin2 has #2+#3
+	
+	:param bin1: a bin dictionary mapping indices to tokens, a list of relations 'rels' and matcher objects 'matchers'
+	:param bin2: a bin dictionary mapping indices to tokens, a list of relations 'rels' and matcher objects 'matchers'
+	:return: the merged bin with data from both input bins
+	"""
+	for matcher in bin1["matchers"]:
+		skip = False
+		for matcher2 in bin2["matchers"]:
+			if matcher2.def_index == matcher.def_index:
+				skip = True
+		if not skip:
+			bin2["matchers"].append(matcher)
 	for key in bin1:
 		if key != "rels":
 			if key not in bin2:
@@ -430,6 +446,7 @@ def merge_bins(bin1, bin2):
 def prune_merged_bins(merged_bins,rel_count):
 	"""
 	Deletes bins with too few relationships matched after merging is complete
+	
 	:param merged_bins: candidates for bins representing complete related chains of nodes
 	:param rel_count: how many relations the current transformation has - any bins with less will be discarded now
 	:return: void
@@ -502,9 +519,8 @@ def serialize_output_tree(tokens, tokoffset):
 			tok_head_string = "0"
 		else:
 			tok_head_string = str(int(tok.head)-tokoffset)
-		output_tree += str(int(tok.id)-tokoffset)+"\t"+tok.text+"\t"+tok.lemma+"\t"+tok.pos+"\t"+tok.pos+"\t"+tok.morph+\
+		output_tree += str(int(tok.id)-tokoffset)+"\t"+tok.text+"\t"+tok.lemma+"\t"+tok.pos+"\t"+tok.cpos+"\t"+tok.morph+\
 						"\t"+tok_head_string+"\t"+tok.func+"\t_\t_\n"
-	output_tree += "\n"
 	return output_tree
 
 
@@ -538,28 +554,26 @@ def run_depedit(infile, config_file):
 	sentence_string = ""
 
 	for myline in infile:
-		if myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
-			sentence_string += myline
-			cols = myline.split("\t")
-			conll_tokens.append(ParsedToken(str(int(cols[0]) + tokoffset),cols[1],cols[2],cols[3],cols[5],str(int(cols[6]) + tokoffset),cols[7].strip(),[]))
-			sentlength += 1
-			children[str(int(cols[6]) + tokoffset)].append(str(int(cols[0]) + tokoffset))
-			child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
-		elif sentlength > 0:
-			# TODO: Add list of all funcs dependent on this token to its child_funcs as a possible further condition
-			#for id in child_funcs:
-			#	for func in child_funcs[id]:
-			#		if not func in conll_tokens[id].child_funcs:
-			#			conll_tokens[id].child_funcs.append(func)
+		if sentlength > 0 and "\t" not in myline: 
 			my_output += process_sentence(conll_tokens,tokoffset,transformations)
 			sentence_string = ""
 			if sentlength > 0:
 				tokoffset += sentlength
-
 			sentlength = 0
+		if myline.startswith("#"):  # Preserve comment lines
+				my_output += myline
+		elif myline.strip() == "":
+				my_output += "\n"
+		elif myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
+			sentence_string += myline
+			cols = myline.split("\t")
+			conll_tokens.append(ParsedToken(str(int(cols[0]) + tokoffset),cols[1],cols[2],cols[3],cols[4],cols[5],str(int(cols[6]) + tokoffset),cols[7].strip(),[]))
+			sentlength += 1
+			children[str(int(cols[6]) + tokoffset)].append(str(int(cols[0]) + tokoffset))
+			child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
 
-	if sentlength > 0:  # Leftover sentence did not have trailing newline
-		my_output += process_sentence(conll_tokens,tokoffset,transformations)
+	if sentlength > 0:  # Possible final sentence without trailing new line
+		my_output += process_sentence(conll_tokens, tokoffset, transformations)
 
 	return my_output
 
