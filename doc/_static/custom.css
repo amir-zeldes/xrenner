@@ -1,0 +1,57 @@
+.toggle .header {
+    display: block;
+    clear: both;
+}
+
+.header{margin-bottom: 10px}
+
+.toggle .header:after {
+    content: " ▼";
+}
+
+.toggle .header.open:after {
+    content: " ▲";
+}
+
+.toggle{margin-bottom: 10px; text-indent: 20px}
+
+.section {margin-bottom: 20px}
+.expandable dl dt {display: block; font-weight: normal; text-indent: 10px}
+.expandable dl dd {margin: 0px; text-indent: 20px}
+
+.expandable li,.expandable p,.expandable pre,.expandable div {text-indent: 0px !important; margin-bottom: 20px}
+
+li li:first-child{margin-top:10px}
+li li:last-child{margin-bottom:10px}
+li {margin-top:5px; margin-bottom:5px;}
+
+
+.wy-side-nav-search{background-color: #68AAD2 !important; display:block}
+.wy-side-nav-search a{font-family: Helvetica, sans !important; display:block}
+.wy-side-nav-search a:after {content:  
+"eXternally configurable REference and Non Named Entity Recognizer"; color: black;font-size: x-small; display: block}
+.wy-side-nav-search a:before {content:  "" !important}
+.wy-side-nav-search:first-letter{color: navy}
+
+.icon {display: inline-block !important}
+.icon:first-letter{color: navy !important}
+
+.version{color:navy !important}
+.version:before{content: "v"}
+
+#analysis{ padding: 10px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 2px black, 0 0 2px black;
+  vertical-align: top;
+  background-color: white;
+}
+
+.caption{text-align: center; margin-bottom: 10px; color: gray}
+
+em {color: #409AD5}
+
+h3{margin-top: 20px; margin-bottom: 20px}
+h4{margin-bottom: 0px}
+.section  h4{margin-top: 20px !important}
+
+body {font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important;}

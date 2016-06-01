@@ -1,0 +1,213 @@
+==============
+Using xrenner
+==============
+
+***********
+Basic usage
+***********
+
+To use the default model on English language data, you can run the main script xrenner.py on a text file in the 10 column conll10 format like this:
+
+``> python xrenner.py infile.conll10``
+
+If you have other language models, you can use them like this, for example for German:
+
+``> python xrenner.py -m deu infile.conll10``
+
+The default output format is a simple inline SGML format, but other output formats are available, using the -o option:
+
+``> python xrenner.py -o conll infile.conll10``
+
+If your model includes alternative setting profiles in an override.ini file, you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:
+
+``> python xrenner.py -x gum infile.conll10``
+
+Finally, you can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected.
+
+*************
+Input format
+*************
+
+xrenner uses the 10 column tab delimited conll10 format, with one line per token and a line space between sentences. Columns are (use underscore for missing values):
+
+1. **ID** - token ID within sentence
+
+2. **text** - token text
+
+3. **lemma** - dictionary entry for this token (optional)
+
+4. **pos** - part of speech
+
+5. **cpos** - coarse or alternate part of speech (optional)
+
+6. **morph** - morphological information for this token (optional)
+
+7. **head** - ID of head token
+
+8. **func** – dependency function
+
+9. -- 10. – reserved for alternate trees with multiple parentage (not used)
+
+**Example**:
+
+	.. code-block:: html
+
+		1	Wikinews	Wikinews	NP	NNP	_	2	nsubj	_	_
+		2	interviews	interview	VVZ	VBZ	_	0	root	_	_
+		3	President	president	NN	NN	_	2	dobj	_	_
+		4	of	of	IN	IN	_	3	prep	_	_
+		5	the	the	DT	DT	_	7	det	_	_
+		6	International	international	NP	NNP	_	7	amod	_	_
+		7	Brotherhood	brotherhood	NP	NNP	_	4	pobj	_	_
+		8	of	of	IN	IN	_	7	prep	_	_
+		9	Magicians	magician	NPS	NNPS	_	8	pobj	_	_
+											
+		1	Wednesday	Wednesday	NP	NNP	_	0	root	_	_
+		2	,	,	,	,	_	0	punct	_	_
+		3	October	October	NP	NNP	_	4	nn	_	_
+		4	9	9	CD	CD	_	1	appos	_	_
+		5	,	,	,	,	_	0	punct	_	_
+		6	2013	2013	CD	CD	_	3	tmod	_	_
+
+It is also possible to include comments on lines beginning with the pound sign. These are generally ignored, with the exception of optional speaker annotations, as in the example below, which can be used as part of :ref:`coref_rules.tab <coref_rules_tab>` (e.g. specifying having the same or different speakers as a condition):
+
+	.. code-block:: html
+	
+		#speaker="Mario J. Lucero"
+		1	Heaven	_	NNP	NNP	_	2	nn	_	_
+		2	Sent	_	NNP	NNP	_	3	nn	_	_
+		3	Gaming	_	NNP	NNP	_	6	nsubj	_	_
+		4	is	_	VBZ	VBZ	_	6	cop	_	_
+		5	basically	_	RB	RB	_	6	advmod	_	_
+		6	me	_	PRP	PRP	_	0	root	_	_
+		7	and	_	CC	CC	_	6	cc	_	_
+		8	Isabel	_	NNP	NNP	_	6	conj	_	_
+		9	,	_	,	,	_	0	punct	_	_
+		10	I	_	PRP	PRP	_	14	nsubj	_	_
+		11	'm	_	VBP	VBP	_	14	cop	_	_
+		12	Mario	_	NNP	NNP	_	14	nn	_	_
+		13	J.	_	NNP	NNP	_	14	nn	_	_
+		14	Lucero	_	NNP	NNP	_	6	parataxis	_	_
+		15	.	_	.	.	_	0	punct	_	_
+
+		#speaker="Isabel Ruiz"
+		1	And	_	CC	CC	_	6	cc	_	_
+		2	,	_	,	,	_	0	punct	_	_
+		3	I	_	PRP	PRP	_	6	nsubj	_	_
+		4	'm	_	VBP	VBP	_	6	cop	_	_
+		5	Isabel	_	NNP	NNP	_	6	nn	_	_
+		6	Ruiz	_	NNP	NNP	_	0	root	_	_
+		7	.	_	.	.	_	0	punct	_	_
+
+
+**************
+Output formats
+**************
+
+Using the -o flag, the following output formats are supported:
+
+sgml (default)
+--------------
+
+This is the default output format. Each line is either a token or an opening or closing entity tag.
+
+**Example**:
+
+	.. code-block:: xml
+
+		<referent id="referent_197" entity="person" group="34" antecedent="referent_142" type="coref">
+		Mrs.
+		Hills
+		</referent>
+		said
+		that
+		<referent id="referent_198" entity="place" group="2" antecedent="referent_157" type="coref">
+		the
+		U.S.
+		</referent>
+		is
+		still
+		concerned
+		about
+		``
+		disturbing
+		developments
+		in
+		<referent id="referent_201" entity="place" group="20" antecedent="referent_193" type="coref">
+		Turkey
+		</referent>
+		and
+		continuing
+		slow
+		progress
+		in
+		<referent id="referent_203" entity="place" group="20" antecedent="referent_201" type="coref">
+		Malaysia
+		</referent>
+		.
+		''
+		<referent id="referent_204" entity="person" group="34" antecedent="referent_197" type="ana">
+		She
+		</referent>
+		did
+		n't
+		elaborate
+		
+		
+conll
+------
+
+Standard conll coreference format, one token per line and numbered opening/closing brackets in a separate column to express groups.
+Note that this format only groups mentions but does not represent antecedents and chain types (anaphora, apposition etc.) directly.
+
+**Example**:
+
+	.. code-block:: html
+
+		1	Portrait	_
+		2	shot	_
+		3	of	_
+		4	Dennis	(4
+		5	Hopper	4)
+		6	,	_
+		7	famous	_
+		8	for	_
+		9	his	(4)
+		10	role	_
+		11	in	_
+		12	the	_
+		13	1969	_
+		14	film	_
+		15	Easy	_
+		16	Rider	_
+
+html
+------
+
+Very similar to sgml, but designed to visualize coreferent groups in same colored divs, and some entity icons, all using font awesome and JavaScript (see :doc:`main page <index>` for an example). The css and scripts are available in the utils/ directory. 
+
+onto
+-------
+
+OntoNotes .coref XML format. Coreference types are represented, but only entity groups are used (no exact coref chains).
+
+**Example**:
+
+	.. code-block:: xml
+
+		Portrait shot of 
+		<COREF ID="4" ENTITY="person" INFSTAT="new">Dennis Hopper</COREF> , 
+		famous for <COREF ID="4" ENTITY="person" INFSTAT="giv" TYPE="ana">his</COREF> 
+		role in the 1969 film Easy Rider
+
+paula
+-------
+   
+`PAULA XML <https://www.sfb632.uni-potsdam.de/images/doc/PAULA_P1.1.2013.1.21a.pdf>`_ is a highly expressive, graph-like stand off XML format. Because PAULA documents are directory structures with multiple files, there is no need to specify an output file (> outfile) when using PAULA output. 
+
+The output using PAULA preserves both the exact antecdent chain structure and coreference types, as well as the optional information status annotations designating first mention (*new*) and subsequent mentions (*giv* for 'given').
+
+unittest
+--------
+
+This is an internal format used only to generate test cases for xrenner unit tests.

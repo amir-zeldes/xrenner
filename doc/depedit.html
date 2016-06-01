@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>DepEdit &mdash; xrenner 1.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="xrenner 1.3.0 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> xrenner
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Language Models</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">xrenner</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>DepEdit</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/depedit.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="depedit">
+<h1>DepEdit<a class="headerlink" href="#depedit" title="Permalink to this headline">¶</a></h1>
+<p>The depedit module offers a powerful tool for manipulating input dependency trees before they are analyzed by the system. It is also available as a standalone script at: <a class="reference external" href="http://corpling.uis.georgetown.edu/depedit/">http://corpling.uis.georgetown.edu/depedit/</a></p>
+<p>The manipulations carried out by the script are determined by the file <em>depedit.ini</em> in the model directory, which may be left empty or missing if depedit should not be used (depedit takes a moment to run, so not using it is an option if very high performance on large amounts of documents is desired). Each rule in the depedit file is a tab-delimited triple, with semicolon delimited instructions in this configuration:</p>
+<p><code class="docutils literal"><span class="pre">feature1=/value/;feature2=/value/...</span>&nbsp; <span class="pre">#1op#2;#2op#3...</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="pre">#1:feature3=value;...#1&gt;#2op#3</span></code></p>
+<p>Where features can be:</p>
+<ul class="simple">
+<li><strong>text</strong> - the token text</li>
+<li><strong>lemma</strong> - the token&#8217;s lemma</li>
+<li><strong>pos</strong> - the token&#8217;s POS tag (column 4)</li>
+<li><strong>cpos</strong> - the token&#8217;s coarse/other POS tag (column 5)</li>
+<li><strong>morph</strong> - morphological information (column 6)</li>
+<li><strong>func</strong> - the dependency label</li>
+<li><strong>head</strong> - the parent feature, only used if specifically targeting roots (head=0)</li>
+</ul>
+<p>And operators <em>op</em> are:</p>
+<ul class="simple">
+<li><strong>&gt;</strong> - dominance (#1&gt;#2 means #1 is the head of #2)</li>
+<li><strong>.</strong> - adjacency (#1.#2 means #1 precedes #2)</li>
+<li><strong>.n</strong> - distance (#1.3#2 means #1 is three tokens before #2)</li>
+<li><strong>.n,m</strong> - distance range (#1.3,5#2 means #1 is three-five tokens before #2)</li>
+</ul>
+<p>Below we describe some common scenarios using depedit to preprocess data for coreference resolution; for full documentation see the depedit website.</p>
+<div class="section" id="common-scenarios">
+<h2>Common scenarios<a class="headerlink" href="#common-scenarios" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="fixing-probable-parser-errors">
+<h3>Fixing probable parser errors<a class="headerlink" href="#fixing-probable-parser-errors" title="Permalink to this headline">¶</a></h3>
+<p>If you know of some consistenly wrong or problematic parser output in your language, you can correct it using depedit by defining the subgraph features identifying the problem and manipulating the tree. Here&#8217;s an example:</p>
+<p><strong>discourse marker chains</strong> - sometimes a sequence of discourse markers is recognized at its head with the label <em>discourse</em>, but subsequent dependents are labeled as <em>dep</em>. We could decide to fix this by labeling all <em>dep</em> dependents of <em>discourse</em> as further cases of <em>discourse</em>. If we then rule out <em>discourse</em> as a possible markable head label, we can get rid of the whole chain, regardless of POS tags.</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span># Dep of discourse is also discourse
+func=/discourse/;func=/dep/     #1&gt;#2   #2:func=discourse
+</pre></div>
+</div>
+</div>
+<div class="section" id="flagging-special-constructions">
+<h3>Flagging special constructions<a class="headerlink" href="#flagging-special-constructions" title="Permalink to this headline">¶</a></h3>
+<p>Even if a tree is correct, you may be interested in flagging certain constellations as special with new labels, and catching those labels later on with <em>coref_rules.tab</em> or some other configuration. For example:</p>
+<p><strong>cataphora</strong> - suppose you want to catch &#8216;empty&#8217; or cataphoric pronouns such as <em>it&#8217;s good that she came</em>. You can recognize dependency subgraphs corresponding to these and change the pronoun&#8217;s function to a new one.</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>text=/^[Ii]t$/<span class="ni">&amp;func=/nsubj/;</span>pos=/JJ/;func=/ccomp/       #2&gt;#1;#2&gt;#3     #3:func=cata
+</pre></div>
+</div>
+<p>This token can then be ignored by adding the function to forbidden Mark func in config.ini, or it can be caught with a coref rule in coref_rules.tab.</p>
+</div>
+<div class="section" id="adding-morphological-information">
+<h3>Adding morphological information<a class="headerlink" href="#adding-morphological-information" title="Permalink to this headline">¶</a></h3>
+<p>Above and beyond the rudimentary morphological substitutions that the <em>morph_rules</em> setting in <a class="reference internal" href="config.html"><span class="doc">config.ini</span></a>, depedit can assign morphological
+information based on complex subgraphs. For example:</p>
+<p><strong>possessor definiteness</strong> - suppose you want both the possessor and possessed NP in an example such as <em>the man&#8217;s brother</em> to be treated as definite. You can recognize this subgraph and add a &#8216;def&#8217; feature to the morphology column of the dependency tree on each head:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span># Attach preceding article to the possessor noun and mark as definite
+func=/det/;func=/poss/;pos=/POS/;text=/.*/      #2&gt;#1;#2&gt;#3;#4&gt;#2       #4&gt;#1;#2:morph=def
+</pre></div>
+</div>
+<p>After this rule runs, the fourth token in the definition governs the first (article is attached to the main noun), and the possessor (#2) will be marked as definite, despite the fact that the article is attached to #4.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Amir Zeldes.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

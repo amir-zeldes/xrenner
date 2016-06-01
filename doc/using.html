@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using xrenner &mdash; xrenner 1.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="xrenner 1.3.0 documentation" href="index.html"/>
+        <link rel="next" title="Buliding New Language Models" href="models.html"/>
+        <link rel="prev" title="Welcome to xrenner’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> xrenner
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">     Using xrenner</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-format">Input format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output-formats">Output formats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sgml-default">sgml (default)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#conll">conll</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#html">html</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onto">onto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#paula">paula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unittest">unittest</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">xrenner</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Using xrenner</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/using.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="using-xrenner">
+<h1>Using xrenner<a class="headerlink" href="#using-xrenner" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="basic-usage">
+<h2>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>To use the default model on English language data, you can run the main script xrenner.py on a text file in the 10 column conll10 format like this:</p>
+<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">infile.conll10</span></code></p>
+<p>If you have other language models, you can use them like this, for example for German:</p>
+<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-m</span> <span class="pre">deu</span> <span class="pre">infile.conll10</span></code></p>
+<p>The default output format is a simple inline SGML format, but other output formats are available, using the -o option:</p>
+<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-o</span> <span class="pre">conll</span> <span class="pre">infile.conll10</span></code></p>
+<p>If your model includes alternative setting profiles in an override.ini file, you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:</p>
+<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-x</span> <span class="pre">gum</span> <span class="pre">infile.conll10</span></code></p>
+<p>Finally, you can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected.</p>
+</div>
+<div class="section" id="input-format">
+<h2>Input format<a class="headerlink" href="#input-format" title="Permalink to this headline">¶</a></h2>
+<p>xrenner uses the 10 column tab delimited conll10 format, with one line per token and a line space between sentences. Columns are (use underscore for missing values):</p>
+<ol class="arabic simple">
+<li><strong>ID</strong> - token ID within sentence</li>
+<li><strong>text</strong> - token text</li>
+<li><strong>lemma</strong> - dictionary entry for this token (optional)</li>
+<li><strong>pos</strong> - part of speech</li>
+<li><strong>cpos</strong> - coarse or alternate part of speech (optional)</li>
+<li><strong>morph</strong> - morphological information for this token (optional)</li>
+<li><strong>head</strong> - ID of head token</li>
+<li><strong>func</strong> – dependency function</li>
+<li>&#8211; 10. – reserved for alternate trees with multiple parentage (not used)</li>
+</ol>
+<p><strong>Example</strong>:</p>
+<blockquote>
+<div><div class="highlight-html"><div class="highlight"><pre><span></span>1       Wikinews        Wikinews        NP      NNP     _       2       nsubj   _       _
+2       interviews      interview       VVZ     VBZ     _       0       root    _       _
+3       President       president       NN      NN      _       2       dobj    _       _
+4       of      of      IN      IN      _       3       prep    _       _
+5       the     the     DT      DT      _       7       det     _       _
+6       International   international   NP      NNP     _       7       amod    _       _
+7       Brotherhood     brotherhood     NP      NNP     _       4       pobj    _       _
+8       of      of      IN      IN      _       7       prep    _       _
+9       Magicians       magician        NPS     NNPS    _       8       pobj    _       _
+
+1       Wednesday       Wednesday       NP      NNP     _       0       root    _       _
+2       ,       ,       ,       ,       _       0       punct   _       _
+3       October October NP      NNP     _       4       nn      _       _
+4       9       9       CD      CD      _       1       appos   _       _
+5       ,       ,       ,       ,       _       0       punct   _       _
+6       2013    2013    CD      CD      _       3       tmod    _       _
+</pre></div>
+</div>
+</div></blockquote>
+<p>It is also possible to include comments on lines beginning with the pound sign. These are generally ignored, with the exception of optional speaker annotations, as in the example below, which can be used as part of <a class="reference internal" href="models.html#coref-rules-tab"><span class="std std-ref">coref_rules.tab</span></a> (e.g. specifying having the same or different speakers as a condition):</p>
+<blockquote>
+<div><div class="highlight-html"><div class="highlight"><pre><span></span>#speaker=&quot;Mario J. Lucero&quot;
+1       Heaven  _       NNP     NNP     _       2       nn      _       _
+2       Sent    _       NNP     NNP     _       3       nn      _       _
+3       Gaming  _       NNP     NNP     _       6       nsubj   _       _
+4       is      _       VBZ     VBZ     _       6       cop     _       _
+5       basically       _       RB      RB      _       6       advmod  _       _
+6       me      _       PRP     PRP     _       0       root    _       _
+7       and     _       CC      CC      _       6       cc      _       _
+8       Isabel  _       NNP     NNP     _       6       conj    _       _
+9       ,       _       ,       ,       _       0       punct   _       _
+10      I       _       PRP     PRP     _       14      nsubj   _       _
+11      &#39;m      _       VBP     VBP     _       14      cop     _       _
+12      Mario   _       NNP     NNP     _       14      nn      _       _
+13      J.      _       NNP     NNP     _       14      nn      _       _
+14      Lucero  _       NNP     NNP     _       6       parataxis       _       _
+15      .       _       .       .       _       0       punct   _       _
+
+#speaker=&quot;Isabel Ruiz&quot;
+1       And     _       CC      CC      _       6       cc      _       _
+2       ,       _       ,       ,       _       0       punct   _       _
+3       I       _       PRP     PRP     _       6       nsubj   _       _
+4       &#39;m      _       VBP     VBP     _       6       cop     _       _
+5       Isabel  _       NNP     NNP     _       6       nn      _       _
+6       Ruiz    _       NNP     NNP     _       0       root    _       _
+7       .       _       .       .       _       0       punct   _       _
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="output-formats">
+<h2>Output formats<a class="headerlink" href="#output-formats" title="Permalink to this headline">¶</a></h2>
+<p>Using the -o flag, the following output formats are supported:</p>
+<div class="section" id="sgml-default">
+<h3>sgml (default)<a class="headerlink" href="#sgml-default" title="Permalink to this headline">¶</a></h3>
+<p>This is the default output format. Each line is either a token or an opening or closing entity tag.</p>
+<p><strong>Example</strong>:</p>
+<blockquote>
+<div><div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;referent</span> <span class="na">id=</span><span class="s">&quot;referent_197&quot;</span> <span class="na">entity=</span><span class="s">&quot;person&quot;</span> <span class="na">group=</span><span class="s">&quot;34&quot;</span> <span class="na">antecedent=</span><span class="s">&quot;referent_142&quot;</span> <span class="na">type=</span><span class="s">&quot;coref&quot;</span><span class="nt">&gt;</span>
+Mrs.
+Hills
+<span class="nt">&lt;/referent&gt;</span>
+said
+that
+<span class="nt">&lt;referent</span> <span class="na">id=</span><span class="s">&quot;referent_198&quot;</span> <span class="na">entity=</span><span class="s">&quot;place&quot;</span> <span class="na">group=</span><span class="s">&quot;2&quot;</span> <span class="na">antecedent=</span><span class="s">&quot;referent_157&quot;</span> <span class="na">type=</span><span class="s">&quot;coref&quot;</span><span class="nt">&gt;</span>
+the
+U.S.
+<span class="nt">&lt;/referent&gt;</span>
+is
+still
+concerned
+about
+``
+disturbing
+developments
+in
+<span class="nt">&lt;referent</span> <span class="na">id=</span><span class="s">&quot;referent_201&quot;</span> <span class="na">entity=</span><span class="s">&quot;place&quot;</span> <span class="na">group=</span><span class="s">&quot;20&quot;</span> <span class="na">antecedent=</span><span class="s">&quot;referent_193&quot;</span> <span class="na">type=</span><span class="s">&quot;coref&quot;</span><span class="nt">&gt;</span>
+Turkey
+<span class="nt">&lt;/referent&gt;</span>
+and
+continuing
+slow
+progress
+in
+<span class="nt">&lt;referent</span> <span class="na">id=</span><span class="s">&quot;referent_203&quot;</span> <span class="na">entity=</span><span class="s">&quot;place&quot;</span> <span class="na">group=</span><span class="s">&quot;20&quot;</span> <span class="na">antecedent=</span><span class="s">&quot;referent_201&quot;</span> <span class="na">type=</span><span class="s">&quot;coref&quot;</span><span class="nt">&gt;</span>
+Malaysia
+<span class="nt">&lt;/referent&gt;</span>
+.
+&#39;&#39;
+<span class="nt">&lt;referent</span> <span class="na">id=</span><span class="s">&quot;referent_204&quot;</span> <span class="na">entity=</span><span class="s">&quot;person&quot;</span> <span class="na">group=</span><span class="s">&quot;34&quot;</span> <span class="na">antecedent=</span><span class="s">&quot;referent_197&quot;</span> <span class="na">type=</span><span class="s">&quot;ana&quot;</span><span class="nt">&gt;</span>
+She
+<span class="nt">&lt;/referent&gt;</span>
+did
+n&#39;t
+elaborate
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="conll">
+<h3>conll<a class="headerlink" href="#conll" title="Permalink to this headline">¶</a></h3>
+<p>Standard conll coreference format, one token per line and numbered opening/closing brackets in a separate column to express groups.
+Note that this format only groups mentions but does not represent antecedents and chain types (anaphora, apposition etc.) directly.</p>
+<p><strong>Example</strong>:</p>
+<blockquote>
+<div><div class="highlight-html"><div class="highlight"><pre><span></span>1       Portrait        _
+2       shot    _
+3       of      _
+4       Dennis  (4
+5       Hopper  4)
+6       ,       _
+7       famous  _
+8       for     _
+9       his     (4)
+10      role    _
+11      in      _
+12      the     _
+13      1969    _
+14      film    _
+15      Easy    _
+16      Rider   _
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="html">
+<h3>html<a class="headerlink" href="#html" title="Permalink to this headline">¶</a></h3>
+<p>Very similar to sgml, but designed to visualize coreferent groups in same colored divs, and some entity icons, all using font awesome and JavaScript (see <a class="reference internal" href="index.html"><span class="doc">main page</span></a> for an example). The css and scripts are available in the utils/ directory.</p>
+</div>
+<div class="section" id="onto">
+<h3>onto<a class="headerlink" href="#onto" title="Permalink to this headline">¶</a></h3>
+<p>OntoNotes .coref XML format. Coreference types are represented, but only entity groups are used (no exact coref chains).</p>
+<p><strong>Example</strong>:</p>
+<blockquote>
+<div><div class="highlight-xml"><div class="highlight"><pre><span></span>Portrait shot of
+<span class="nt">&lt;COREF</span> <span class="na">ID=</span><span class="s">&quot;4&quot;</span> <span class="na">ENTITY=</span><span class="s">&quot;person&quot;</span> <span class="na">INFSTAT=</span><span class="s">&quot;new&quot;</span><span class="nt">&gt;</span>Dennis Hopper<span class="nt">&lt;/COREF&gt;</span> ,
+famous for <span class="nt">&lt;COREF</span> <span class="na">ID=</span><span class="s">&quot;4&quot;</span> <span class="na">ENTITY=</span><span class="s">&quot;person&quot;</span> <span class="na">INFSTAT=</span><span class="s">&quot;giv&quot;</span> <span class="na">TYPE=</span><span class="s">&quot;ana&quot;</span><span class="nt">&gt;</span>his<span class="nt">&lt;/COREF&gt;</span>
+role in the 1969 film Easy Rider
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="paula">
+<h3>paula<a class="headerlink" href="#paula" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://www.sfb632.uni-potsdam.de/images/doc/PAULA_P1.1.2013.1.21a.pdf">PAULA XML</a> is a highly expressive, graph-like stand off XML format. Because PAULA documents are directory structures with multiple files, there is no need to specify an output file (&gt; outfile) when using PAULA output.</p>
+<p>The output using PAULA preserves both the exact antecdent chain structure and coreference types, as well as the optional information status annotations designating first mention (<em>new</em>) and subsequent mentions (<em>giv</em> for &#8216;given&#8217;).</p>
+</div>
+<div class="section" id="unittest">
+<h3>unittest<a class="headerlink" href="#unittest" title="Permalink to this headline">¶</a></h3>
+<p>This is an internal format used only to generate test cases for xrenner unit tests.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="models.html" class="btn btn-neutral float-right" title="Buliding New Language Models" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to xrenner’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Amir Zeldes.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

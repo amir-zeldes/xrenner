@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>modules.xrenner_postprocess &mdash; xrenner 1.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="xrenner 1.3.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> xrenner
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">xrenner</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>modules.xrenner_postprocess</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for modules.xrenner_postprocess</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Postprocessing module. Alters results of coreference analysis based on model settings,</span>
+<span class="sd">such as deleting certain markables or re-wiring coreference relations according to a particular</span>
+<span class="sd">annotation scheme</span>
+
+<span class="sd">Author: Amir Zeldes and Shuo Zhang</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">xrenner_classes</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_marker</span> <span class="kn">import</span> <span class="n">markables_overlap</span><span class="p">,</span> <span class="n">markable_extend_punctuation</span>
+
+
+<span class="k">def</span> <span class="nf">postprocess_coref</span><span class="p">(</span><span class="n">markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="n">markstart</span><span class="p">,</span> <span class="n">markend</span><span class="p">,</span> <span class="n">markbyhead</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">):</span>
+	<span class="c1"># Collect markable groups</span>
+	<span class="n">marks_by_group</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">markable</span> <span class="ow">in</span> <span class="n">markables</span><span class="p">:</span>
+		<span class="n">marks_by_group</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">markable</span><span class="p">)</span>
+
+	<span class="c1"># Order markables in each group to ensure backwards chain</span>
+	<span class="c1"># except in the case of cataphors, which point forward</span>
+	<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">:</span>
+		<span class="n">last_mark</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">!=</span> <span class="s2">&quot;cata&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">last_mark</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">=</span> <span class="n">last_mark</span>
+				<span class="n">last_mark</span> <span class="o">=</span> <span class="n">mark</span>
+
+	<span class="c1"># Check for markables to remove in postprocessing</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_head_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">markables</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_head_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">!=</span> <span class="s2">&quot;proper&quot;</span> <span class="ow">or</span> \
+						<span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;abstract&quot;</span> <span class="ow">or</span> \
+						<span class="n">mark</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;U.S.&quot;</span> <span class="ow">or</span> <span class="n">mark</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span><span class="p">):</span> <span class="c1"># TODO: de-hardwire Proper restriction matching OntoNotes guidelines; US is interpreted as &quot;American&quot; (amod); forbid abstract nn modifier even if proper</span>
+				<span class="n">splice_out</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">group</span><span class="p">])</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_child_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">markables</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">child_func</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">child_funcs</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_child_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">child_func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span> <span class="o">!=</span> <span class="s2">&quot;cata&quot;</span><span class="p">:</span>
+					<span class="n">splice_out</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">group</span><span class="p">])</span>
+
+	<span class="c1"># Remove i in i rule (no overlapping markable coreference in group)</span>
+	<span class="c1"># TODO: make this more efficient (iterates all pairwise comparisons)</span>
+	<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">mark1</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+			<span class="k">for</span> <span class="n">mark2</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">mark1</span> <span class="o">==</span> <span class="n">mark2</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">markables_overlap</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">):</span>
+						<span class="k">if</span> <span class="p">(</span><span class="n">mark1</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">mark1</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">mark2</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">mark2</span><span class="o">.</span><span class="n">start</span><span class="p">):</span>
+							<span class="n">splice_out</span><span class="p">(</span><span class="n">mark2</span><span class="p">,</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">])</span>
+						<span class="k">else</span><span class="p">:</span>
+							<span class="n">splice_out</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">])</span>
+
+	<span class="c1"># Remove cataphora if desired</span>
+	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_cataphora&quot;</span><span class="p">]:</span>
+		<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">markables</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">==</span> <span class="s2">&quot;cata&quot;</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+				<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+
+	<span class="c1"># Remove coordination envelopes if desired</span>
+	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_coordinate_envelopes&quot;</span><span class="p">]:</span>
+		<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">:</span>
+			<span class="n">coordination_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+			<span class="n">wipe_coord</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+				<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">coordinate</span><span class="p">:</span>
+					<span class="n">coordination_text</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span>
+					<span class="n">wipe_coord</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="k">if</span> <span class="n">coordination_text</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+					<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span> <span class="o">!=</span> <span class="n">coordination_text</span><span class="p">:</span>  <span class="c1"># This group has multiple text realizations</span>
+						<span class="n">wipe_coord</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="k">if</span> <span class="n">wipe_coord</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+
+	<span class="c1"># Inactivate singletons if desired by setting their id to 0</span>
+	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_singletons&quot;</span><span class="p">]:</span>
+		<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">:</span>
+			<span class="n">wipe_group</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">singleton</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+					<span class="n">singleton</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">singleton_candidate</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+					<span class="k">if</span> <span class="n">singleton_candidate</span><span class="o">.</span><span class="n">antecedent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+						<span class="n">wipe_group</span> <span class="o">=</span> <span class="bp">False</span>
+						<span class="k">break</span>
+				<span class="k">if</span> <span class="n">wipe_group</span><span class="p">:</span>
+					<span class="k">for</span> <span class="n">singleton</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
+						<span class="n">singleton</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+
+
+	<span class="c1"># Add apposition envelopes if desired</span>
+	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;add_appos_envelopes&quot;</span><span class="p">]:</span>
+		<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">marks_by_group</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">]))):</span>
+				<span class="c1"># Print marks_by_group[group]</span>
+				<span class="n">mark</span> <span class="o">=</span> <span class="n">marks_by_group</span><span class="p">[</span><span class="n">group</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+				<span class="n">prev</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span>
+				<span class="k">if</span> <span class="n">prev</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">prev</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">==</span> <span class="s2">&quot;appos&quot;</span> <span class="ow">and</span> <span class="n">prev</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+						<span class="c1"># Two markables in the envelop: prev and prevprev</span>
+						<span class="n">prevprev</span> <span class="o">=</span> <span class="n">prev</span><span class="o">.</span><span class="n">antecedent</span>
+						<span class="n">envlop</span> <span class="o">=</span> <span class="n">create_envelope</span><span class="p">(</span><span class="n">prevprev</span><span class="p">,</span> <span class="n">prev</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">)</span>
+
+						<span class="c1"># Extend markable to trailing closing punctuation if it contains opening punctuation</span>
+						<span class="k">if</span> <span class="n">envlop</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+							<span class="n">next_id</span> <span class="o">=</span> <span class="n">envlop</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span>
+							<span class="n">lex</span><span class="o">.</span><span class="n">open_close_punct</span><span class="p">[</span><span class="s2">&quot;,&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span> <span class="c1"># Add trailing comma option to envelope to match OntoNotes behavior</span>
+							<span class="k">if</span> <span class="n">markable_extend_punctuation</span><span class="p">(</span><span class="n">envlop</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">next_id</span><span class="p">],</span> <span class="n">lex</span><span class="o">.</span><span class="n">open_close_punct</span><span class="p">,</span> <span class="s2">&quot;trailing&quot;</span><span class="p">):</span>
+								<span class="n">envlop</span><span class="o">.</span><span class="n">text</span> <span class="o">+=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">next_id</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+								<span class="n">envlop</span><span class="o">.</span><span class="n">end</span> <span class="o">+=</span> <span class="mi">1</span>
+							<span class="c1"># Idiosyncratic &quot;years old&quot; behavior</span>
+							<span class="k">elif</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">envlop</span><span class="o">.</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;years&quot;</span> <span class="ow">and</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">next_id</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;old&quot;</span><span class="p">:</span>
+								<span class="n">envlop</span><span class="o">.</span><span class="n">text</span> <span class="o">+=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">next_id</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+								<span class="n">envlop</span><span class="o">.</span><span class="n">end</span> <span class="o">+=</span> <span class="mi">1</span>
+
+						<span class="n">markables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">envlop</span><span class="p">)</span>
+						<span class="n">markstart</span><span class="p">[</span><span class="n">envlop</span><span class="o">.</span><span class="n">start</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">envlop</span><span class="p">)</span>
+						<span class="n">markend</span><span class="p">[</span><span class="n">envlop</span><span class="o">.</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">envlop</span><span class="p">)</span>
+
+						<span class="c1"># Markables_by_head</span>
+						<span class="n">head_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">prevprev</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+						<span class="n">markbyhead</span><span class="p">[</span><span class="n">head_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">envlop</span>
+
+						<span class="c1"># Set some fields for the envlop markable</span>
+						<span class="n">envlop</span><span class="o">.</span><span class="n">non_antecdent_groups</span> <span class="o">=</span> <span class="n">prev</span><span class="o">.</span><span class="n">antecedent</span>
+						<span class="c1"># New group number for the two markables inside the envelope</span>
+						<span class="n">ab_group</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">prevprev</span><span class="o">.</span><span class="n">group</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+						<span class="n">prevprev</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">ab_group</span>
+						<span class="n">prev</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">ab_group</span>
+						<span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">=</span> <span class="n">envlop</span>
+						<span class="n">prevprev</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+
+	<span class="n">kill_zero_marks</span><span class="p">(</span><span class="n">markables</span><span class="p">,</span> <span class="n">markstart</span><span class="p">,</span> <span class="n">markend</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="kill_zero_marks"><a class="viewcode-back" href="../../modules.html#modules.xrenner_postprocess.kill_zero_marks">[docs]</a><span class="k">def</span> <span class="nf">kill_zero_marks</span><span class="p">(</span><span class="n">markables</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Removes markables whose id has been set to 0 in postprocessing</span>
+<span class="sd">	</span>
+<span class="sd">	:param markables: All Markable objects</span>
+<span class="sd">	:param markstart_dict: Dictionary of token span start ids to lists of markables starting at that id</span>
+<span class="sd">	:param markend_dict: Dictionary of token span end ids to lists of markables ending at that id</span>
+<span class="sd">	:return: void</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">marks_to_kill</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">markables</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>  <span class="c1"># Markable has been marked for deletion</span>
+			<span class="n">markstart_dict</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">markstart_dict</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="k">del</span> <span class="n">markstart_dict</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">]</span>
+			<span class="n">markend_dict</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">markend_dict</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="k">del</span> <span class="n">markend_dict</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">]</span>
+			<span class="n">marks_to_kill</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">marks_to_kill</span><span class="p">:</span>
+		<span class="n">markables</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">splice_out</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+	<span class="n">min_id</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">mark_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;referent_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+	<span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">member</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">==</span> <span class="n">mark</span><span class="p">:</span>
+			<span class="n">member</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span>
+		<span class="n">member_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;referent_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">min_id</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">min_id</span> <span class="o">&gt;</span> <span class="n">member_id</span><span class="p">)</span> <span class="ow">and</span> <span class="n">member</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">mark</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+			<span class="n">min_id</span> <span class="o">=</span> <span class="n">member_id</span>
+	<span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+	<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mark_id</span><span class="p">)</span> <span class="o">!=</span> <span class="n">mark</span><span class="o">.</span><span class="n">group</span><span class="p">:</span>
+		<span class="n">mark</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mark_id</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">member</span> <span class="o">!=</span> <span class="n">mark</span><span class="p">:</span>
+				<span class="n">member</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">min_id</span><span class="p">)</span>
+	<span class="n">mark</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">create_envelope</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">second</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">):</span>
+	<span class="n">mark_id</span><span class="o">=</span><span class="s2">&quot;env&quot;</span>
+	<span class="n">form</span> <span class="o">=</span> <span class="s2">&quot;proper&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;proper&quot;</span> <span class="ow">or</span> <span class="n">second</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;proper&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;common&quot;</span>
+	<span class="n">head</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">head</span>
+	<span class="n">definiteness</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">definiteness</span>
+	<span class="n">start</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">start</span>
+	<span class="n">end</span><span class="o">=</span><span class="n">second</span><span class="o">.</span><span class="n">end</span>
+	<span class="n">intermediate</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">first</span><span class="o">.</span><span class="n">end</span><span class="o">+</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">second</span><span class="o">.</span><span class="n">start</span><span class="p">:</span> <span class="c1"># Some intervening tokens should be included in the envelope text</span>
+		<span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">first</span><span class="o">.</span><span class="n">end</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">second</span><span class="o">.</span><span class="n">start</span><span class="p">]:</span>
+			<span class="n">intermediate</span> <span class="o">+=</span> <span class="n">tok</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+	<span class="n">text</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">intermediate</span> <span class="o">+</span> <span class="n">second</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+	<span class="n">entity</span><span class="o">=</span><span class="n">second</span><span class="o">.</span><span class="n">entity</span>
+	<span class="n">entity_certainty</span><span class="o">=</span><span class="n">second</span><span class="o">.</span><span class="n">entity_certainty</span>
+	<span class="n">subclass</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">subclass</span>
+	<span class="n">infstat</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">infstat</span>
+	<span class="n">agree</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">agree</span>
+	<span class="n">sentence</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">sentence</span>
+	<span class="n">antecedent</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">antecedent</span>
+	<span class="n">coref_type</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">coref_type</span>
+	<span class="n">group</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">group</span>
+	<span class="n">alt_entities</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">alt_entities</span>
+	<span class="n">alt_subclasses</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">alt_subclasses</span>
+	<span class="n">alt_agree</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">alt_agree</span>
+	<span class="n">cardinality</span><span class="o">=</span><span class="mi">0</span>
+	<span class="k">if</span> <span class="n">first</span><span class="o">.</span><span class="n">cardinality</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">first</span><span class="o">.</span><span class="n">cardinality</span> <span class="o">==</span> <span class="n">second</span><span class="o">.</span><span class="n">cardinality</span><span class="p">:</span>
+			<span class="n">cardinality</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">cardinality</span>
+
+	<span class="n">envelope</span> <span class="o">=</span> <span class="n">Markable</span><span class="p">(</span><span class="n">mark_id</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">definiteness</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">entity_certainty</span><span class="p">,</span> <span class="n">subclass</span><span class="p">,</span> <span class="n">infstat</span><span class="p">,</span> <span class="n">agree</span><span class="p">,</span> <span class="n">sentence</span><span class="p">,</span> <span class="n">antecedent</span><span class="p">,</span> <span class="n">coref_type</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">alt_entities</span><span class="p">,</span> <span class="n">alt_subclasses</span><span class="p">,</span> <span class="n">alt_agree</span><span class="p">,</span> <span class="n">cardinality</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">envelope</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Amir Zeldes.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

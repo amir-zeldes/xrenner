@@ -1,0 +1,695 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>modules.xrenner_compatible &mdash; xrenner 1.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="xrenner 1.3.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> xrenner
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">xrenner</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>modules.xrenner_compatible</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for modules.xrenner_compatible</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">xrenner_marker</span> <span class="kn">import</span> <span class="n">remove_suffix_tokens</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for checking compatibility of various features between markables</span>
+
+<span class="sd">Author: Amir Zeldes</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="entities_compatible"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.entities_compatible">[docs]</a><span class="k">def</span> <span class="nf">entities_compatible</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Checks if the entity property of two markables is compatible for possible coreference</span>
+<span class="sd">	</span>
+<span class="sd">	:param mark1: the first of two markables to compare entities</span>
+<span class="sd">	:param mark2: the second of two markables to compare entities</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">elif</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">if</span> <span class="n">mark1</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;pronoun&quot;</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span> <span class="o">!=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">])</span> <span class="ow">or</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">if</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="ow">in</span> <span class="n">mark2</span><span class="o">.</span><span class="n">alt_entities</span> <span class="ow">and</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">!=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mark2</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">==</span> <span class="s2">&quot;uncertain&quot;</span> <span class="ow">or</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">==</span> <span class="s2">&quot;propagated&quot;</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">elif</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span> <span class="ow">in</span> <span class="n">mark1</span><span class="o">.</span><span class="n">alt_entities</span> <span class="ow">and</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">!=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mark1</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">==</span> <span class="s2">&quot;uncertain&quot;</span> <span class="ow">or</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">==</span> <span class="s2">&quot;propagated&quot;</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">elif</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_entity&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;propagated&quot;</span><span class="p">,</span><span class="s2">&quot;uncertain&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">!=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">elif</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_entity&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;propagated&quot;</span><span class="p">,</span><span class="s2">&quot;uncertain&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">!=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">True</span>
+
+	<span class="k">return</span> <span class="bp">False</span></div>
+
+
+<span class="k">def</span> <span class="nf">cardinality_compatible</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span><span class="n">mark2</span><span class="p">,</span><span class="n">lex</span><span class="p">):</span>
+	<span class="k">if</span> <span class="s2">&quot;ablations&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+		<span class="k">if</span> <span class="s2">&quot;no_cardinality&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ablations&quot;</span><span class="p">]:</span>
+			<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">if</span> <span class="n">mark1</span><span class="o">.</span><span class="n">cardinality</span><span class="o">!=</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">mark2</span><span class="o">.</span><span class="n">cardinality</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">mark1</span><span class="o">.</span><span class="n">cardinality</span> <span class="o">!=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">cardinality</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">False</span>
+	<span class="k">return</span> <span class="bp">True</span>
+
+
+<div class="viewcode-block" id="modifiers_compatible"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.modifiers_compatible">[docs]</a><span class="k">def</span> <span class="nf">modifiers_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="n">allow_force_proper_mod_match</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Checks whether the dependents of two markables are compatible for possible coreference</span>
+<span class="sd">	</span>
+<span class="sd">	:param markable: one of two markables to compare dependents for</span>
+<span class="sd">	:param candidate: the second markable, which is a candidate antecedent for the other markable</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="n">allow_force_proper_mod_match</span><span class="p">:</span>
+		<span class="n">proper_mod_must_match</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;proper_mod_must_match&quot;</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">proper_mod_must_match</span> <span class="o">=</span> <span class="bp">False</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">cardinality_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span><span class="n">candidate</span><span class="p">,</span><span class="n">lex</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="c1"># Do strict &#39;no new modifiers&#39; check if desired</span>
+	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;no_new_modifiers&quot;</span><span class="p">]:</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">candidate</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+			<span class="n">first</span> <span class="o">=</span> <span class="n">candidate</span>
+			<span class="n">second</span> <span class="o">=</span> <span class="n">markable</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">first</span> <span class="o">=</span> <span class="n">markable</span>
+			<span class="n">second</span> <span class="o">=</span> <span class="n">candidate</span>
+		<span class="n">first_mods</span> <span class="o">=</span> <span class="p">(</span><span class="n">comp_mod</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">comp_mod</span> <span class="ow">in</span> <span class="n">first</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">second</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c1"># Exclude determiners from this check</span>
+				<span class="k">if</span> <span class="n">mod</span><span class="o">.</span><span class="n">text</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">first_mods</span><span class="p">:</span>
+					<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="c1"># Check if markable and candidate have modifiers that are in the antonym list together,</span>
+	<span class="c1"># e.g. &#39;the good news&#39; should not be coreferent with &#39;the bad news&#39;,</span>
+	<span class="n">antonym_check</span> <span class="o">=</span> <span class="bp">True</span>
+	<span class="k">if</span> <span class="s2">&quot;ablations&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+		<span class="k">if</span> <span class="s2">&quot;no_antonyms&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ablations&quot;</span><span class="p">]:</span>
+			<span class="n">antonym_check</span> <span class="o">=</span> <span class="bp">False</span>
+	<span class="k">if</span> <span class="n">antonym_check</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">antonyms</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">candidate_mod</span> <span class="ow">in</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">candidate_mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">antonyms</span><span class="p">[</span><span class="n">mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()]:</span>
+						<span class="n">markable</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+						<span class="k">return</span> <span class="bp">False</span>
+			<span class="k">elif</span> <span class="n">mod</span><span class="o">.</span><span class="n">lemma</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">antonyms</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">candidate_mod</span> <span class="ow">in</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">candidate_mod</span><span class="o">.</span><span class="n">lemma</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">antonyms</span><span class="p">[</span><span class="n">mod</span><span class="o">.</span><span class="n">lemma</span><span class="o">.</span><span class="n">lower</span><span class="p">()]:</span>
+						<span class="n">markable</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+						<span class="k">return</span> <span class="bp">False</span>
+			<span class="c1"># Check that the two markables do not have non-identical proper noun modifiers</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;proper_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">pos</span><span class="p">):</span>
+				<span class="n">candidate_proper_mod_texts</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">mod2</span> <span class="ow">in</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;proper_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod2</span><span class="o">.</span><span class="n">pos</span><span class="p">):</span>
+						<span class="n">candidate_proper_mod_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mod2</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">mod</span><span class="o">.</span><span class="n">text</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">candidate_proper_mod_texts</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidate_proper_mod_texts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">proper_mod_must_match</span><span class="p">:</span>
+						<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="c1"># Check if markable and candidate have modifiers that are different place names</span>
+	<span class="c1"># e.g. &#39;Georgetown University&#39; is incompatible with &#39;Boston University&#39; even if those entities are not in lexicon</span>
+	<span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entities</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">istitle</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;cap_names&quot;</span><span class="p">]):</span>
+			<span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">.*&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">lex</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;place_def_entity&quot;</span><span class="p">]:</span>
+				<span class="k">for</span> <span class="n">candidate_mod</span> <span class="ow">in</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">candidate_mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entities</span> <span class="ow">and</span> <span class="p">(</span><span class="n">candidate_mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">istitle</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;cap_names&quot;</span><span class="p">]):</span>
+						<span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">.*&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">lex</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">candidate_mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;place_def_entity&quot;</span><span class="p">]:</span>
+							<span class="n">markable</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+							<span class="k">return</span> <span class="bp">False</span>
+
+
+	<span class="c1"># Check for each possible pair of modifiers with identical function in the ident_mod list whether they are identical,</span>
+	<span class="c1"># e.g. for the num function &#39;the four children&#39; shouldn&#39;t be coreferent with &#39;five other children&#39;</span>
+	<span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">candidate_mod</span> <span class="ow">in</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+			<span class="c1"># TODO: add support for ident_mod pos func combo:</span>
+			<span class="c1"># if lex.filters[&quot;ident_mod_func&quot;].match(mod.func+&quot;+&quot;+mod.pos) and lex.filters[&quot;ident_mod_func&quot;].match(candidate_mod.func+&quot;+&quot;+candidate_mod.pos) and</span>
+			<span class="c1"># mod.text.lower != candidate_mod.text.lower():</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;ident_mod_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;ident_mod_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">candidate_mod</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span> <span class="o">!=</span> <span class="n">candidate_mod</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+				<span class="n">markable</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+				<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="c1"># Check that heads are not antonyms themselves</span>
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">antonyms</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">antonyms</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">]:</span>
+			<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">and</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">antonyms</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">]:</span>
+			<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="c1"># Recursive check through antecedent ancestors in group</span>
+	<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+		<span class="n">antecedent_compatible</span> <span class="o">=</span> <span class="n">modifiers_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="o">.</span><span class="n">antecedent</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">and</span> <span class="n">modifiers_compatible</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">antecedent</span><span class="p">,</span> <span class="n">markable</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">antecedent_compatible</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="k">return</span> <span class="bp">True</span></div>
+
+
+<div class="viewcode-block" id="agree_compatible"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.agree_compatible">[docs]</a><span class="k">def</span> <span class="nf">agree_compatible</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Checks if the agree property of two markables is compatible for possible coreference</span>
+<span class="sd">	</span>
+<span class="sd">	:param mark1: the first of two markables to compare agreement</span>
+<span class="sd">	:param mark2: the second of two markables to compare agreement</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="n">mark1</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="n">mark2</span><span class="o">.</span><span class="n">agree</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">elif</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;no_person_agree&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mark1</span><span class="o">.</span><span class="n">agree</span><span class="p">)</span> <span class="ow">and</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]:</span>
+		<span class="k">return</span> <span class="bp">False</span>
+	<span class="k">elif</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;no_person_agree&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mark2</span><span class="o">.</span><span class="n">agree</span><span class="p">)</span> <span class="ow">and</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]:</span>
+		<span class="k">return</span> <span class="bp">False</span>
+	<span class="k">elif</span> <span class="n">mark1</span><span class="o">.</span><span class="n">agree</span> <span class="ow">in</span> <span class="n">mark2</span><span class="o">.</span><span class="n">alt_agree</span><span class="p">:</span>
+		<span class="n">mark2</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">mark1</span><span class="o">.</span><span class="n">agree</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">elif</span> <span class="n">mark2</span><span class="o">.</span><span class="n">agree</span> <span class="ow">in</span> <span class="n">mark1</span><span class="o">.</span><span class="n">alt_agree</span><span class="p">:</span>
+		<span class="n">mark1</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">agree</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">elif</span> <span class="p">(</span><span class="n">mark1</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">mark1</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mark2</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">mark2</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">elif</span> <span class="p">(((</span><span class="n">mark1</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">mark1</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;agree_with_unknown&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mark2</span><span class="o">.</span><span class="n">agree</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+	<span class="ow">or</span> <span class="p">((</span><span class="n">mark2</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">mark2</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;agree_with_unknown&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mark1</span><span class="o">.</span><span class="n">agree</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)):</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">False</span></div>
+
+
+<div class="viewcode-block" id="merge_entities"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.merge_entities">[docs]</a><span class="k">def</span> <span class="nf">merge_entities</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">,</span> <span class="n">previous_markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Negotiates entity mismatches across coreferent markables and their groups.</span>
+<span class="sd">	Returns True if merging has occurred.</span>
+<span class="sd">	</span>
+<span class="sd">	:param mark1: the first of two markables to merge entities for</span>
+<span class="sd">	:param mark2: the second of two markables to merge entities for</span>
+<span class="sd">	:param previous_markables: all previous markables which may need to inherit from the model/host</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="ow">in</span> <span class="n">mark2</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">update_group</span><span class="p">(</span><span class="n">mark2</span><span class="p">,</span> <span class="n">mark1</span><span class="p">,</span> <span class="n">previous_markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+				<span class="n">mark2</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">mark1</span><span class="o">.</span><span class="n">entity</span>
+				<span class="n">mark2</span><span class="o">.</span><span class="n">subclass</span> <span class="o">=</span> <span class="n">mark1</span><span class="o">.</span><span class="n">subclass</span>
+				<span class="k">return</span> <span class="bp">True</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">update_group</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">,</span> <span class="n">previous_markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+				<span class="n">mark1</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">entity</span>
+				<span class="n">mark1</span><span class="o">.</span><span class="n">subclass</span> <span class="o">=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">subclass</span>
+				<span class="k">return</span> <span class="bp">True</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">True</span></div>
+
+
+<div class="viewcode-block" id="update_group"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.update_group">[docs]</a><span class="k">def</span> <span class="nf">update_group</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">previous_markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Attempts to update entire coreference group of a host markable with information</span>
+<span class="sd">	gathered from a model markable discovered to be possibly coreferent with the host.</span>
+<span class="sd">	If incompatible modifiers are discovered the process fails and returns False.</span>
+<span class="sd">	Otherwise updating succeeds and the update_group returns true</span>
+<span class="sd">	</span>
+<span class="sd">	:param host: the first markable discovered to be coreferent with the model</span>
+<span class="sd">	:param model: the model markable, containing new information for the group</span>
+<span class="sd">	:param previous_markables: all previous markables which may need to inherit from the model/host</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">group</span> <span class="o">=</span> <span class="n">host</span><span class="o">.</span><span class="n">group</span>
+	<span class="k">for</span> <span class="n">markable</span> <span class="ow">in</span> <span class="n">previous_markables</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">group</span><span class="p">:</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">modifiers_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+				<span class="k">return</span> <span class="bp">False</span>
+	<span class="k">for</span> <span class="n">markable</span> <span class="ow">in</span> <span class="n">previous_markables</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">group</span><span class="p">:</span>
+			<span class="n">markable</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">entity</span>
+			<span class="n">markable</span><span class="o">.</span><span class="n">subclass</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">subclass</span>
+	<span class="k">return</span> <span class="bp">True</span></div>
+
+
+<div class="viewcode-block" id="isa"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.isa">[docs]</a><span class="k">def</span> <span class="nf">isa</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Checks whether two markables are compatible for coreference via the isa-relation</span>
+<span class="sd">	</span>
+<span class="sd">	:param markable: one of two markables to compare lexical isa relationship with</span>
+<span class="sd">	:param candidate: the second markable, which is a candidate antecedent for the other markable</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="s2">&quot;ablations&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+		<span class="k">if</span> <span class="s2">&quot;no_isa&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ablations&quot;</span><span class="p">]:</span>
+			<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;allow_indef_anaphor&quot;</span><span class="p">]:</span>
+		<span class="c1"># Don&#39;t allow an indefinite to have a definite antecedent via isa relation</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">candidate</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;indef&quot;</span> <span class="ow">and</span> <span class="n">candidate</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span><span class="s2">&quot;def&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;def&quot;</span> <span class="ow">and</span> <span class="n">candidate</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span><span class="s2">&quot;indef&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+
+		<span class="c1"># Don&#39;t allow a proper markable to have an indefinite antecedent via isa relation</span>
+		<span class="c1"># unless there&#39;s corroborating evidence</span>
+		<span class="c1">#if markable.cardinality == candidate.cardinality and markable.cardinality != 0:</span>
+		<span class="c1">#	pass  # Explicit cardinality match, forgo indefinite antecedent prohibition</span>
+		<span class="c1">#elif markable.subclass == candidate.subclass and markable.agree == candidate.agree:</span>
+		<span class="c1">#	pass  # Explicit subclass and agree match, forgo indefinite antecedent prohibition</span>
+		<span class="c1">#else: TODO: re-examine indefinite isa antecedents in natural data</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">candidate</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;proper&quot;</span> <span class="ow">and</span> <span class="n">candidate</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;indef&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;indef&quot;</span> <span class="ow">and</span> <span class="n">candidate</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;proper&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;allow_indef_isa&quot;</span><span class="p">]:</span>
+		<span class="c1"># Don&#39;t allow an indefinite to have any antecedent via isa relation if forbidden by configuration</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">candidate</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;indef&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span><span class="s2">&quot;indef&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="c1"># Forbid isa head matching for two distinct proper names; NB: use coref table for these if desired</span>
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;proper&quot;</span> <span class="ow">and</span> <span class="n">candidate</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;proper&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">False</span>
+
+	<span class="c1"># Subclass based isa match - check agreement too unless disabled</span>
+	<span class="k">for</span> <span class="n">subclass</span> <span class="ow">in</span> <span class="n">markable</span><span class="o">.</span><span class="n">alt_subclasses</span> <span class="o">+</span> <span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">subclass</span><span class="p">]:</span>
+		<span class="k">if</span> <span class="n">subclass</span> <span class="o">==</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">agree_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">never_agree</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+				<span class="k">return</span> <span class="bp">True</span>
+		<span class="k">if</span> <span class="n">subclass</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">subclass</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+				<span class="n">subclass_isa</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">subclass</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+				<span class="n">check_agree</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">subclass_isa</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">subclass</span><span class="p">]</span>
+				<span class="n">check_agree</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;isa_subclass_agreement&quot;</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">subclass_isa</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">subclass_isa</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">or</span> <span class="n">markable</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">:</span>
+					<span class="k">if</span> <span class="p">(</span><span class="n">agree_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">or</span> <span class="n">check_agree</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">never_agree</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+						<span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span>
+						<span class="k">return</span> <span class="bp">True</span>
+
+	<span class="c1"># Exact text match in isa table - no agreement matching is carried out</span>
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]:</span>
+			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">:</span>
+				<span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span>
+				<span class="k">return</span> <span class="bp">True</span>
+	<span class="c1"># TODO: add prefix/suffix stripped version to catch &#39;*the* United States&#39; = &#39;America&#39;</span>
+
+	<span class="c1"># Core text isa match - no agreement matching is carried out</span>
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]:</span>
+			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">:</span>
+				<span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span>
+				<span class="k">return</span> <span class="bp">True</span>
+		<span class="c1"># Head-core text isa match - no agreement matching is carried out</span>
+		<span class="c1"># Note this next check is unidirectional</span>
+		<span class="k">elif</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]:</span>
+			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">:</span>
+				<span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span>
+				<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">elif</span> <span class="n">markable</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>  <span class="c1"># Try to title case on all caps entity</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">title</span><span class="p">()]</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">title</span><span class="p">()]:</span>
+				<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">:</span>
+					<span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span>
+					<span class="k">return</span> <span class="bp">True</span>
+
+	<span class="c1"># Handle cases where a prefix like an article is part of the entity name, but a suffix like a possessive isn&#39;t</span>
+	<span class="k">if</span> <span class="n">remove_suffix_tokens</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span><span class="n">lex</span><span class="p">)</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">remove_suffix_tokens</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span><span class="n">lex</span><span class="p">)]:</span>
+			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">:</span>
+				<span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span>
+				<span class="k">return</span> <span class="bp">True</span>
+
+	<span class="c1"># Head-head isa match - no agreement matching is carried out</span>
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]:</span>
+			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">:</span>
+				<span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span>
+				<span class="k">return</span> <span class="bp">True</span>
+
+	<span class="c1"># Lemma based isa matching - check agreement too</span>
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">]</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">isa</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">]:</span>
+			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">agree_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+					<span class="n">candidate</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span>
+					<span class="k">return</span> <span class="bp">True</span>
+
+	<span class="c1"># First name-full name match</span>
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;proper&quot;</span> <span class="ow">and</span> <span class="n">markable</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]:</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span> <span class="ow">and</span> <span class="n">candidate</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="p">))</span> <span class="ow">or</span> \
+		<span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span> <span class="ow">and</span> <span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="p">)):</span>
+			<span class="k">return</span> <span class="bp">True</span>
+
+	<span class="k">return</span> <span class="bp">False</span></div>
+
+
+<div class="viewcode-block" id="group_agree_compatible"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.group_agree_compatible">[docs]</a><span class="k">def</span> <span class="nf">group_agree_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span><span class="n">candidate</span><span class="p">,</span><span class="n">previous_markables</span><span class="p">,</span><span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:param markable: markable whose group the candidate might be joined to</span>
+<span class="sd">	:param candidate: candidate to check for compatibility with all group members</span>
+<span class="sd">	:param previous_markables: all previous markables which may need to inherit from the model/host</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;never_agree_pairs&quot;</span><span class="p">]:</span>
+		<span class="n">never_agreement_pairs</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;never_agree_pairs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+		<span class="n">agreements</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">previous_markables</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">group</span> <span class="ow">or</span> <span class="n">mark</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">candidate</span><span class="o">.</span><span class="n">group</span><span class="p">:</span>
+				<span class="n">agreements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">agree</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">never_agreement_pairs</span><span class="p">:</span>
+			<span class="n">class1</span><span class="p">,</span> <span class="n">class2</span> <span class="o">=</span> <span class="n">pair</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">class1</span> <span class="ow">in</span> <span class="n">agreements</span> <span class="ow">and</span> <span class="n">class2</span> <span class="ow">in</span> <span class="n">agreements</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+	<span class="k">return</span> <span class="bp">True</span></div>
+
+
+<span class="k">def</span> <span class="nf">never_agree</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">markable</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="k">if</span> <span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;never_agree_pairs&quot;</span><span class="p">]:</span>
+		<span class="n">never_agreement_list</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;never_agree_pairs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+		<span class="n">never_agreement_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">never_agreement_list</span><span class="p">:</span>
+			<span class="n">never_agreement_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">))</span>
+		<span class="k">if</span> <span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">agree</span><span class="p">,</span> <span class="n">candidate</span><span class="o">.</span><span class="n">agree</span><span class="p">]</span> <span class="ow">in</span> <span class="n">never_agreement_pairs</span> <span class="ow">or</span> <span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">agree</span><span class="p">,</span> <span class="n">markable</span><span class="o">.</span><span class="n">agree</span><span class="p">]</span> <span class="ow">in</span> <span class="n">never_agreement_pairs</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">return</span> <span class="bp">False</span>
+
+
+<div class="viewcode-block" id="best_candidate"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.best_candidate">[docs]</a><span class="k">def</span> <span class="nf">best_candidate</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span><span class="n">candidate_list</span><span class="p">,</span><span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:param markable: markable to find best antecedent for</span>
+<span class="sd">	:param candidate_list: list of markables which are possible antecedents based on some coref_rule</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: Markable object or None (the selected best antecedent markable, if available)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">anaphor_parent</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head_text</span>
+	<span class="n">candidate_scores</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">entity_dep_scores</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">best</span> <span class="o">=</span> <span class="bp">None</span>
+
+	<span class="n">use_entity_deps</span> <span class="o">=</span> <span class="bp">True</span>
+	<span class="k">if</span> <span class="s2">&quot;ablations&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+		<span class="k">if</span> <span class="s2">&quot;no_entity_dep&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ablations&quot;</span><span class="p">]:</span>
+			<span class="n">use_entity_deps</span> <span class="o">=</span> <span class="bp">False</span>
+	<span class="n">use_hasa</span> <span class="o">=</span> <span class="bp">True</span>
+	<span class="k">if</span> <span class="s2">&quot;ablations&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+		<span class="k">if</span> <span class="s2">&quot;no_hasa&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ablations&quot;</span><span class="p">]:</span>
+			<span class="n">use_hasa</span> <span class="o">=</span> <span class="bp">False</span>
+
+	<span class="k">if</span> <span class="n">anaphor_parent</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span> <span class="ow">and</span> <span class="n">use_entity_deps</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span><span class="p">[</span><span class="n">anaphor_parent</span><span class="p">]:</span>
+			<span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span><span class="p">[</span><span class="n">anaphor_parent</span><span class="p">][</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">]:</span>
+				<span class="n">entity_dep_scores</span><span class="p">[</span><span class="n">entity</span><span class="p">]</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span><span class="p">[</span><span class="n">anaphor_parent</span><span class="p">][</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">][</span><span class="n">entity</span><span class="p">]</span>
+	
+	<span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidate_list</span><span class="p">:</span>
+		<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span><span class="p">)</span>
+		<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">-=</span> <span class="p">((</span><span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.00001</span> <span class="o">+</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.000001</span><span class="p">)</span> <span class="c1"># Break ties via proximity</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="ow">in</span> <span class="n">entity_dep_scores</span><span class="p">:</span>
+			<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="n">log</span><span class="p">(</span><span class="n">entity_dep_scores</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">entity</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]:</span>  <span class="c1"># Introduce slight bias to persons</span>
+			<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.1</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;subject_func&quot;</span><span class="p">]:</span>  <span class="c1"># Introduce slight bias to subjects</span>
+			<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.95</span>
+		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">hasa</span> <span class="ow">and</span> <span class="n">use_hasa</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;possessive_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>  <span class="c1"># Text based hasa</span>
+			<span class="k">if</span> <span class="n">anaphor_parent</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="p">]:</span>
+				<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="n">log</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="p">][</span><span class="n">anaphor_parent</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.1</span>
+		<span class="k">elif</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">hasa</span> <span class="ow">and</span> <span class="n">use_hasa</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;possessive_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>  <span class="c1"># Lemma based hasa</span>
+			<span class="k">if</span> <span class="n">anaphor_parent</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">]:</span>
+				<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="n">log</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">][</span><span class="n">anaphor_parent</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.9</span>
+
+	<span class="n">max_score</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+	<span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidate_scores</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">max_score</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+			<span class="n">max_score</span> <span class="o">=</span> <span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span>
+			<span class="n">best</span> <span class="o">=</span> <span class="n">candidate</span>
+		<span class="k">elif</span> <span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_score</span><span class="p">:</span>
+			<span class="n">max_score</span> <span class="o">=</span> <span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span>
+			<span class="n">best</span> <span class="o">=</span> <span class="n">candidate</span>
+
+	<span class="n">markable</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">entity</span>
+	<span class="n">markable</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;propagated&quot;</span>
+	<span class="k">return</span> <span class="n">best</span></div>
+
+
+<span class="k">def</span> <span class="nf">stems_compatible</span><span class="p">(</span><span class="n">verb</span><span class="p">,</span> <span class="n">noun</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="n">verb_stem</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;stemmer_deletes&quot;</span><span class="p">],</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">verb</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+	<span class="n">noun_stem</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;stemmer_deletes&quot;</span><span class="p">],</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">noun</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+	<span class="k">if</span> <span class="n">verb_stem</span> <span class="o">==</span> <span class="n">noun_stem</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">noun_stem</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">True</span>
+	<span class="k">return</span> <span class="bp">False</span>
+
+
+<div class="viewcode-block" id="acronym_match"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.acronym_match">[docs]</a><span class="k">def</span> <span class="nf">acronym_match</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Check whether a Markable&#39;s text is an acronym of a candidate Markable&#39;s text</span>
+<span class="sd">	</span>
+<span class="sd">	:param mark: The Markable object to test</span>
+<span class="sd">	:param candidate: The candidate Markable with potentially acronym-matching text</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">position</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">calibration</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">candidate</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;articles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+				<span class="n">calibration</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+			<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">position</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">or</span> <span class="n">word</span> <span class="o">==</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">position</span><span class="p">]:</span>
+							<span class="n">position</span><span class="o">+=</span><span class="mi">1</span>
+						<span class="k">else</span><span class="p">:</span>
+							<span class="k">return</span> <span class="bp">False</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">position</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span> <span class="o">+</span> <span class="n">calibration</span><span class="p">)</span> <span class="ow">and</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">True</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">False</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="bp">False</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Amir Zeldes.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

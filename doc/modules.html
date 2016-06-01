@@ -1,0 +1,1214 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Developers’ module documentation &mdash; xrenner 1.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="xrenner 1.3.0 documentation" href="index.html"/>
+        <link rel="prev" title="Buliding New Language Models" href="models.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> xrenner
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="using.html">     Using xrenner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">     Building your own language models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">     Developers&#8217; module documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xrenner">Xrenner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parsedtoken">ParsedToken</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#markable">Markable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#corefrule">CorefRule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constraintmatcher">ConstraintMatcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lexdata">LexData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#modules">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-modules.depedit">depedit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modules.xrenner_compatible">xrenner_compatible</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modules.xrenner_coref">xrenner_coref</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modules.xrenner_marker">xrenner_marker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modules.xrenner_postprocess">xrenner_postprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modules.xrenner_preprocess">xrenner_preprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-modules.xrenner_propagate">xrenner_propagate</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#unit-tests">Unit tests</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">xrenner</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Developers&#8217; module documentation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/modules.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="developers-module-documentation">
+<h1>Developers&#8217; module documentation<a class="headerlink" href="#developers-module-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="xrenner">
+<h3>Xrenner<a class="headerlink" href="#xrenner" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="modules.xrenner_xrenner.Xrenner">
+<em class="property">class </em><code class="descclassname">modules.xrenner_xrenner.</code><code class="descname">Xrenner</code><span class="sig-paren">(</span><em>model='eng'</em>, <em>override=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="modules.xrenner_xrenner.Xrenner.analyze">
+<code class="descname">analyze</code><span class="sig-paren">(</span><em>infile</em>, <em>out_format</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner.analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner.analyze" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to run coreference analysis with loaded model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>infile</strong> &#8211; String representing a parse file in the conll10 format</li>
+<li><strong>format</strong> &#8211; format to determine output type, one of: html, paula, webanno, conll, onto, unittest</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">output based on requested format</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_xrenner.Xrenner.process_sentence">
+<code class="descname">process_sentence</code><span class="sig-paren">(</span><em>tokoffset</em>, <em>sentence</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner.process_sentence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner.process_sentence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to analyze a single sentence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tokoffset</strong> &#8211; the offset in tokens for the beginning of the current sentence within all input tokens</li>
+<li><strong>sentence</strong> &#8211; the Sentence object containin mood, speaker and other information about this sentence</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_xrenner.Xrenner.serialize_output">
+<code class="descname">serialize_output</code><span class="sig-paren">(</span><em>out_format</em>, <em>parse=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner.serialize_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner.serialize_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string representation of the output in some format, or generate PAULA directory structure as output</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>out_format</strong> &#8211; the format to generate, one of: html, paula, webanno, conll, onto, unittest</li>
+<li><strong>parse</strong> &#8211; the original parse input fed to xrenner; only needed for unittest output</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">specified output format string, or void for paula</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="parsedtoken">
+<h3>ParsedToken<a class="headerlink" href="#parsedtoken" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="modules.xrenner_classes.ParsedToken">
+<em class="property">class </em><code class="descclassname">modules.xrenner_classes.</code><code class="descname">ParsedToken</code><span class="sig-paren">(</span><em>tok_id</em>, <em>text</em>, <em>lemma</em>, <em>pos</em>, <em>morph</em>, <em>head</em>, <em>func</em>, <em>sentence</em>, <em>modifiers</em>, <em>child_funcs</em>, <em>child_strings</em>, <em>lex</em>, <em>quoted=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_classes.html#ParsedToken"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_classes.ParsedToken" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="markable">
+<h3>Markable<a class="headerlink" href="#markable" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="modules.xrenner_classes.Markable">
+<em class="property">class </em><code class="descclassname">modules.xrenner_classes.</code><code class="descname">Markable</code><span class="sig-paren">(</span><em>mark_id</em>, <em>head</em>, <em>form</em>, <em>definiteness</em>, <em>start</em>, <em>end</em>, <em>text</em>, <em>core_text</em>, <em>entity</em>, <em>entity_certainty</em>, <em>subclass</em>, <em>infstat</em>, <em>agree</em>, <em>sentence</em>, <em>antecedent</em>, <em>coref_type</em>, <em>group</em>, <em>alt_entities</em>, <em>alt_subclasses</em>, <em>alt_agree</em>, <em>cardinality=0</em>, <em>submarks=[]</em>, <em>coordinate=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_classes.html#Markable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_classes.Markable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="corefrule">
+<h3>CorefRule<a class="headerlink" href="#corefrule" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="modules.xrenner_rule.CorefRule">
+<em class="property">class </em><code class="descclassname">modules.xrenner_rule.</code><code class="descname">CorefRule</code><span class="sig-paren">(</span><em>rule_string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_rule.html#CorefRule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_rule.CorefRule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="constraintmatcher">
+<h3>ConstraintMatcher<a class="headerlink" href="#constraintmatcher" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="modules.xrenner_rule.ConstraintMatcher">
+<em class="property">class </em><code class="descclassname">modules.xrenner_rule.</code><code class="descname">ConstraintMatcher</code><span class="sig-paren">(</span><em>constraint</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_rule.html#ConstraintMatcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_rule.ConstraintMatcher" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="lexdata">
+<h3>LexData<a class="headerlink" href="#lexdata" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="class">
+<dt id="modules.xrenner_lex.LexData">
+<em class="property">class </em><code class="descclassname">modules.xrenner_lex.</code><code class="descname">LexData</code><span class="sig-paren">(</span><em>model</em>, <em>override=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to hold lexical information from gazetteers and training data.
+Use model argument to define subdirectory under models/ for reading different sets of
+configuration files.</p>
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.get_atoms">
+<code class="descname">get_atoms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.get_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.get_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to compile atom list for atomic markable recognition. Currently treats listed persons, places,
+organizations and inanimate objects from lexical data as atomic by default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of atoms.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.get_filters">
+<code class="descname">get_filters</code><span class="sig-paren">(</span><em>override=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.get_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.get_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads model settings from config.ini and possibly overrides from override.ini</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>override</strong> &#8211; optional section name in override.ini</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">filters - dictionary of settings from config.ini with possible overrides</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="modules.xrenner_lex.LexData.get_first_last_names">
+<em class="property">static </em><code class="descname">get_first_last_names</code><span class="sig-paren">(</span><em>names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.get_first_last_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.get_first_last_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collects separate first and last name data from the collection in names.tab</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>names</strong> &#8211; The complete names dictionary from names.tab, mapping full name to agreement</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">[firsts, lasts] - list containing dictionary of first names to agreement and set of last names</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.get_func_substitutes">
+<code class="descname">get_func_substitutes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.get_func_substitutes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.get_func_substitutes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for semi-hard-wired function substitutions based on function label and dependency direction.
+Uses func_substitute_forward and func_substitute_backward settings in config.ini</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of compiled substitutions_forward, substitutions_backward</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.get_morph">
+<code class="descname">get_morph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.get_morph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.get_morph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compiles morphlogical affix dictionary based on members of entity_heads.tab</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary from affixes to dictionaries mapping classes to type frequencies</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.get_pos_agree_mappings">
+<code class="descname">get_pos_agree_mappings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.get_pos_agree_mappings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.get_pos_agree_mappings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets dictionary mapping POS categories to default agreement classes, e.g. NNS &gt; plural</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">mapping dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.lemmatize">
+<code class="descname">lemmatize</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.lemmatize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.lemmatize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple lemmatization function using rules from lemma_rules in config.ini</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> &#8211; ParsedToken object to be lemmatized</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string - the lemma</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="modules.xrenner_lex.LexData.parse_coref_rules">
+<em class="property">static </em><code class="descname">parse_coref_rules</code><span class="sig-paren">(</span><em>rule_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.parse_coref_rules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.parse_coref_rules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader function to pass coref_rules.tab into CorefRule objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rule_list</strong> &#8211; textual list of rules</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of compiled CorefRule objects</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.process_morph">
+<code class="descname">process_morph</code><span class="sig-paren">(</span><em>token</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.process_morph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.process_morph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple mechanism for substituting values in morph feature of input tokens. For more elaborate sub-graph
+dependent manipultations, use depedit module</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>token</strong> &#8211; ParsedToken object to edit morph feature</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string - the edited morph feature</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.read_antonyms">
+<code class="descname">read_antonyms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.read_antonyms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.read_antonyms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to created dictionary from each word to all its antonyms in antonyms.tab</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary from words to antonym sets</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.read_delim">
+<code class="descname">read_delim</code><span class="sig-paren">(</span><em>filename</em>, <em>mode='normal'</em>, <em>atom_list_name='atoms'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.read_delim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.read_delim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic file reader for lexical data in model directory</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> &#8211; string - name of the file</li>
+<li><strong>mode</strong> &#8211; single, double, triple, quadruple, triple_numeric or low reading mode</li>
+<li><strong>atom_list_name</strong> &#8211; list of atoms to use for triple reader mode</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">compiled lexical data, usually a structured dictionary or set depending on number of columns</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_lex.LexData.read_isa">
+<code class="descname">read_isa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.read_isa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.read_isa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads isa.tab into a dictionary from words to lists of isa-matches</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary from words to lists of corresponding isa-matches</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-modules.depedit">
+<span id="depedit"></span><h3>depedit<a class="headerlink" href="#module-modules.depedit" title="Permalink to this headline">¶</a></h3>
+<p>DepEdit - A simple configurable tool for manipulating dependency trees</p>
+<p>Input: CoNLL10 (10 columns, tab-delimited, blank line between sentences)</p>
+<p>Author: Amir Zeldes</p>
+<dl class="function">
+<dt id="modules.depedit.merge_bins">
+<code class="descclassname">modules.depedit.</code><code class="descname">merge_bins</code><span class="sig-paren">(</span><em>bin1</em>, <em>bin2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/depedit.html#merge_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.depedit.merge_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge bins we know are compatible, e.g. bin1 has #1+#2 and bin2 has #2+#3</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bin1</strong> &#8211; a bin dictionary mapping indices to tokens, a list of relations &#8216;rels&#8217; and matcher objects &#8216;matchers&#8217;</li>
+<li><strong>bin2</strong> &#8211; a bin dictionary mapping indices to tokens, a list of relations &#8216;rels&#8217; and matcher objects &#8216;matchers&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the merged bin with data from both input bins</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.depedit.prune_merged_bins">
+<code class="descclassname">modules.depedit.</code><code class="descname">prune_merged_bins</code><span class="sig-paren">(</span><em>merged_bins</em>, <em>rel_count</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/depedit.html#prune_merged_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.depedit.prune_merged_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes bins with too few relationships matched after merging is complete</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>merged_bins</strong> &#8211; candidates for bins representing complete related chains of nodes</li>
+<li><strong>rel_count</strong> &#8211; how many relations the current transformation has - any bins with less will be discarded now</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-modules.xrenner_compatible">
+<span id="xrenner-compatible"></span><h3>xrenner_compatible<a class="headerlink" href="#module-modules.xrenner_compatible" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="modules.xrenner_compatible.acronym_match">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">acronym_match</code><span class="sig-paren">(</span><em>mark</em>, <em>candidate</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#acronym_match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.acronym_match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a Markable&#8217;s text is an acronym of a candidate Markable&#8217;s text</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark</strong> &#8211; The Markable object to test</li>
+<li><strong>candidate</strong> &#8211; The candidate Markable with potentially acronym-matching text</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.agree_compatible">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">agree_compatible</code><span class="sig-paren">(</span><em>mark1</em>, <em>mark2</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#agree_compatible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.agree_compatible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the agree property of two markables is compatible for possible coreference</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark1</strong> &#8211; the first of two markables to compare agreement</li>
+<li><strong>mark2</strong> &#8211; the second of two markables to compare agreement</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.best_candidate">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">best_candidate</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate_list</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#best_candidate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.best_candidate" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; markable to find best antecedent for</li>
+<li><strong>candidate_list</strong> &#8211; list of markables which are possible antecedents based on some coref_rule</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Markable object or None (the selected best antecedent markable, if available)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.entities_compatible">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">entities_compatible</code><span class="sig-paren">(</span><em>mark1</em>, <em>mark2</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#entities_compatible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.entities_compatible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the entity property of two markables is compatible for possible coreference</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark1</strong> &#8211; the first of two markables to compare entities</li>
+<li><strong>mark2</strong> &#8211; the second of two markables to compare entities</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.group_agree_compatible">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">group_agree_compatible</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate</em>, <em>previous_markables</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#group_agree_compatible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.group_agree_compatible" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; markable whose group the candidate might be joined to</li>
+<li><strong>candidate</strong> &#8211; candidate to check for compatibility with all group members</li>
+<li><strong>previous_markables</strong> &#8211; all previous markables which may need to inherit from the model/host</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.isa">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">isa</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#isa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.isa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether two markables are compatible for coreference via the isa-relation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; one of two markables to compare lexical isa relationship with</li>
+<li><strong>candidate</strong> &#8211; the second markable, which is a candidate antecedent for the other markable</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.merge_entities">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">merge_entities</code><span class="sig-paren">(</span><em>mark1</em>, <em>mark2</em>, <em>previous_markables</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#merge_entities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.merge_entities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Negotiates entity mismatches across coreferent markables and their groups.
+Returns True if merging has occurred.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark1</strong> &#8211; the first of two markables to merge entities for</li>
+<li><strong>mark2</strong> &#8211; the second of two markables to merge entities for</li>
+<li><strong>previous_markables</strong> &#8211; all previous markables which may need to inherit from the model/host</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.modifiers_compatible">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">modifiers_compatible</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate</em>, <em>lex</em>, <em>allow_force_proper_mod_match=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#modifiers_compatible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.modifiers_compatible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether the dependents of two markables are compatible for possible coreference</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; one of two markables to compare dependents for</li>
+<li><strong>candidate</strong> &#8211; the second markable, which is a candidate antecedent for the other markable</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.update_group">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">update_group</code><span class="sig-paren">(</span><em>host</em>, <em>model</em>, <em>previous_markables</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#update_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.update_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to update entire coreference group of a host markable with information
+gathered from a model markable discovered to be possibly coreferent with the host.
+If incompatible modifiers are discovered the process fails and returns False.
+Otherwise updating succeeds and the update_group returns true</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>host</strong> &#8211; the first markable discovered to be coreferent with the model</li>
+<li><strong>model</strong> &#8211; the model markable, containing new information for the group</li>
+<li><strong>previous_markables</strong> &#8211; all previous markables which may need to inherit from the model/host</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-modules.xrenner_coref">
+<span id="xrenner-coref"></span><h3>xrenner_coref<a class="headerlink" href="#module-modules.xrenner_coref" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="modules.xrenner_coref.antecedent_prohibited">
+<code class="descclassname">modules.xrenner_coref.</code><code class="descname">antecedent_prohibited</code><span class="sig-paren">(</span><em>markable</em>, <em>conll_tokens</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_coref.html#antecedent_prohibited"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_coref.antecedent_prohibited" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a Markable object is prohibited from having an antecedent</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; The Markable object to check</li>
+<li><strong>conll_tokens</strong> &#8211; The list of ParsedToken objects up to and including the current sentence</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_coref.coref_rule_applies">
+<code class="descclassname">modules.xrenner_coref.</code><code class="descname">coref_rule_applies</code><span class="sig-paren">(</span><em>lex</em>, <em>constraints</em>, <em>mark</em>, <em>anaphor=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_coref.html#coref_rule_applies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_coref.coref_rule_applies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a markable definition from a coref rule applies to this markable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+<li><strong>constraints</strong> &#8211; the constraints defining the relevant Markable</li>
+<li><strong>mark</strong> &#8211; the Markable object to check constraints against</li>
+<li><strong>anaphor</strong> &#8211; if this is an antecedent check, the anaphor is passed for $1-style constraint checks</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool: True if &#8216;mark&#8217; fits all constraints, False if any of them fail</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_coref.find_antecedent">
+<code class="descclassname">modules.xrenner_coref.</code><code class="descname">find_antecedent</code><span class="sig-paren">(</span><em>markable</em>, <em>previous_markables</em>, <em>lex</em>, <em>restrict_rule=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_coref.html#find_antecedent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_coref.find_antecedent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for antecedents by cycling through coref rules for previous markables</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; Markable object to find an antecedent for</li>
+<li><strong>previous_markables</strong> &#8211; Markables in all sentences up to and including current sentence</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+<li><strong>restrict_rule</strong> &#8211; a string specifying a subset of rules that should be checked (e.g. only rules with &#8216;appos&#8217;)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">candidate, matching_rule - the best antecedent and the rule that matched it</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_coref.search_prev_markables">
+<code class="descclassname">modules.xrenner_coref.</code><code class="descname">search_prev_markables</code><span class="sig-paren">(</span><em>markable</em>, <em>previous_markables</em>, <em>ante_constraints</em>, <em>ante_spec</em>, <em>lex</em>, <em>max_dist</em>, <em>propagate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_coref.html#search_prev_markables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_coref.search_prev_markables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for antecedent to specified markable using a specified rule</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; The markable object to find an antecedent for</li>
+<li><strong>previous_markables</strong> &#8211; The list of know markables up to and including the current sentence; markables beyond current markable but in its sentence are included for cataphora.</li>
+<li><strong>ante_constraints</strong> &#8211; A list of ContraintMatcher objects describing the antecedent</li>
+<li><strong>ante_spec</strong> &#8211; The antecedent specification part of the coref rule being checked, as a string</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+<li><strong>max_dist</strong> &#8211; Maximum distance in sentences for the antecedent search (0 for search within sentence)</li>
+<li><strong>propagate</strong> &#8211; Whether to progpagate features upon match and in which direction</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the selected candidate Markable object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-modules.xrenner_marker">
+<span id="xrenner-marker"></span><h3>xrenner_marker<a class="headerlink" href="#module-modules.xrenner_marker" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="modules.xrenner_marker.assign_coordinate_entity">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">assign_coordinate_entity</code><span class="sig-paren">(</span><em>mark</em>, <em>markables_by_head</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#assign_coordinate_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.assign_coordinate_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if all constituents of a coordinate markable have the same entity and subclass</p>
+<p>and if so, propagates these to the coordinate markable.
+:param mark: a coordinate markable to check the entities of its constituents
+:param markables_by_head: dictionary of markables by head id
+:return: void</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.construct_modifier_substring">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">construct_modifier_substring</code><span class="sig-paren">(</span><em>modifier</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#construct_modifier_substring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.construct_modifier_substring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a list of tokens representing a modifier and all of its submodifiers in sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modifier</strong> &#8211; A ParsedToken object from the modifier list of the head of some markable</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Text of that modifier together with its modifiers in sequence</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.get_mod_ordered_dict">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">get_mod_ordered_dict</code><span class="sig-paren">(</span><em>mod</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#get_mod_ordered_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.get_mod_ordered_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the (sub)modifiers of a modifier token</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mod</strong> &#8211; A ParsedToken object representing a modifier of the head of some markable</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Recursive ordered dictionary of that modifier&#8217;s own modifiers</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.is_atomic">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">is_atomic</code><span class="sig-paren">(</span><em>mark</em>, <em>atoms</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#is_atomic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.is_atomic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if nested markables are allowed within this markable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark</strong> &#8211; the markable to be checked for atomicity</li>
+<li><strong>atoms</strong> &#8211; list of atomic markable text strings</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.lookup_has_entity">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">lookup_has_entity</code><span class="sig-paren">(</span><em>text</em>, <em>lemma</em>, <em>entity</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#lookup_has_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.lookup_has_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a certain token text or lemma have the specific entity listed in the entities or entity_heads lists</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> &#8211; text of the token</li>
+<li><strong>lemma</strong> &#8211; lemma of the token</li>
+<li><strong>entity</strong> &#8211; entity to check for</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.pos_func_combo">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">pos_func_combo</code><span class="sig-paren">(</span><em>pos</em>, <em>func</em>, <em>pos_func_heads_string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#pos_func_combo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.pos_func_combo" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.recognize_entity_by_mod">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">recognize_entity_by_mod</code><span class="sig-paren">(</span><em>mark</em>, <em>lex</em>, <em>mark_atoms=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#recognize_entity_by_mod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.recognize_entity_by_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to recognize entity type based on modifiers</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark</strong> &#8211; Markable for which to identify the entity type</li>
+<li><strong>modifier_lexicon</strong> &#8211; The LexData object&#8217;s modifier list</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">String (entity type, possibly including subtype and agreement)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-modules.xrenner_postprocess">
+<span id="xrenner-postprocess"></span><h3>xrenner_postprocess<a class="headerlink" href="#module-modules.xrenner_postprocess" title="Permalink to this headline">¶</a></h3>
+<p>Postprocessing module. Alters results of coreference analysis based on model settings,
+such as deleting certain markables or re-wiring coreference relations according to a particular
+annotation scheme</p>
+<p>Author: Amir Zeldes and Shuo Zhang</p>
+<dl class="function">
+<dt id="modules.xrenner_postprocess.kill_zero_marks">
+<code class="descclassname">modules.xrenner_postprocess.</code><code class="descname">kill_zero_marks</code><span class="sig-paren">(</span><em>markables</em>, <em>markstart_dict</em>, <em>markend_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_postprocess.html#kill_zero_marks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_postprocess.kill_zero_marks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes markables whose id has been set to 0 in postprocessing</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markables</strong> &#8211; All Markable objects</li>
+<li><strong>markstart_dict</strong> &#8211; Dictionary of token span start ids to lists of markables starting at that id</li>
+<li><strong>markend_dict</strong> &#8211; Dictionary of token span end ids to lists of markables ending at that id</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-modules.xrenner_preprocess">
+<span id="xrenner-preprocess"></span><h3>xrenner_preprocess<a class="headerlink" href="#module-modules.xrenner_preprocess" title="Permalink to this headline">¶</a></h3>
+<p>modules/xrenner_preprocess.py</p>
+<p>Prepare parser output for entity and coreference resolution</p>
+<p>Author: Amir Zeldes</p>
+<dl class="function">
+<dt id="modules.xrenner_preprocess.add_child_info">
+<code class="descclassname">modules.xrenner_preprocess.</code><code class="descname">add_child_info</code><span class="sig-paren">(</span><em>conll_tokens</em>, <em>child_funcs</em>, <em>child_strings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_preprocess.html#add_child_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_preprocess.add_child_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a list of all dependent functions and token strings to each parent token</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>conll_tokens</strong> &#8211; The ParsedToken list so far</li>
+<li><strong>child_funcs</strong> &#8211; Dictionary from ids to child functions</li>
+<li><strong>child_strings</strong> &#8211; Dictionary from ids to child strings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_preprocess.replace_conj_func">
+<code class="descclassname">modules.xrenner_preprocess.</code><code class="descname">replace_conj_func</code><span class="sig-paren">(</span><em>conll_tokens</em>, <em>tokoffset</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_preprocess.html#replace_conj_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_preprocess.replace_conj_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to replace functions of tokens matching the conjunction function with their parent&#8217;s function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>conll_tokens</strong> &#8211; The ParsedToken list so far</li>
+<li><strong>tokoffset</strong> &#8211; The starting token for this sentence</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-modules.xrenner_propagate">
+<span id="xrenner-propagate"></span><h3>xrenner_propagate<a class="headerlink" href="#module-modules.xrenner_propagate" title="Permalink to this headline">¶</a></h3>
+<p>modules/xrenner_propagate.py</p>
+<p>Feature propagation module. Propagates entity and agreement features for coreferring markables.</p>
+<p>Author: Amir Zeldes</p>
+<dl class="function">
+<dt id="modules.xrenner_propagate.propagate_agree">
+<code class="descclassname">modules.xrenner_propagate.</code><code class="descname">propagate_agree</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_propagate.html#propagate_agree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_propagate.propagate_agree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Progpagate agreement between to markables if one has unknown agreement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; Markable object</li>
+<li><strong>candidate</strong> &#8211; Coreferent antecdedent Markable object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_propagate.propagate_entity">
+<code class="descclassname">modules.xrenner_propagate.</code><code class="descname">propagate_entity</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate</em>, <em>direction='propagate'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_propagate.html#propagate_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_propagate.propagate_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagate class and agreement features between coreferent markables</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; a Markable object</li>
+<li><strong>candidate</strong> &#8211; a coreferent antecedent Markable object</li>
+<li><strong>direction</strong> &#8211; propagation direction; by default, data can be propagated in either direction from the more certain markable to the less certain one, but direction can be forced, e.g. &#8216;propagate_forward&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="unit-tests">
+<h2>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="modules.xrenner_test.TestCorefMethods">
+<em class="property">class </em><code class="descclassname">modules.xrenner_test.</code><code class="descname">TestCorefMethods</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="classmethod">
+<dt id="modules.xrenner_test.TestCorefMethods.setUpClass">
+<em class="property">classmethod </em><code class="descname">setUpClass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.setUpClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_test.TestCorefMethods.test_affix_morphology">
+<code class="descname">test_affix_morphology</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_affix_morphology"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_affix_morphology" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_test.TestCorefMethods.test_appos_envelope">
+<code class="descname">test_appos_envelope</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_appos_envelope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_appos_envelope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_test.TestCorefMethods.test_cardinality">
+<code class="descname">test_cardinality</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_cardinality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_cardinality" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_test.TestCorefMethods.test_entity_dep">
+<code class="descname">test_entity_dep</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_entity_dep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_entity_dep" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_test.TestCorefMethods.test_hasa">
+<code class="descname">test_hasa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_hasa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_hasa" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_test.TestCorefMethods.test_isa">
+<code class="descname">test_isa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_isa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_isa" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="modules.xrenner_test.TestCorefMethods.test_verbal_event_stem">
+<code class="descname">test_verbal_event_stem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_verbal_event_stem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_verbal_event_stem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="modules.xrenner_test.Case">
+<em class="property">class </em><code class="descclassname">modules.xrenner_test.</code><code class="descname">Case</code><span class="sig-paren">(</span><em>case_string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Case"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Case" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="models.html" class="btn btn-neutral" title="Buliding New Language Models" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Amir Zeldes.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>
