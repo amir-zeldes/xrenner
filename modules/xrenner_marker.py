@@ -4,9 +4,9 @@ from modules.xrenner_classes import Markable
 from math import log
 
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
 Marker module for markable entity recognition. Establishes compatibility between entity features
 and determines markable extension in tokens
+
 Author: Amir Zeldes
 """
 
@@ -14,6 +14,7 @@ Author: Amir Zeldes
 def is_atomic(mark, atoms, lex):
 	"""
 	Checks if nested markables are allowed within this markable
+	
 	:param mark: the markable to be checked for atomicity
 	:param atoms: list of atomic markable text strings
 	:param lex: the LexData object with gazetteer information and model settings
@@ -294,6 +295,7 @@ def resolve_cardinality(mark,lex):
 def recognize_entity_by_mod(mark, lex, mark_atoms=False):
 	"""
 	Attempt to recognize entity type based on modifiers
+	
 	:param mark: Markable for which to identify the entity type
 	:param modifier_lexicon: The LexData object's modifier list
 	:return: String (entity type, possibly including subtype and agreement)
@@ -323,6 +325,7 @@ def recognize_entity_by_mod(mark, lex, mark_atoms=False):
 def construct_modifier_substring(modifier):
 	"""
 	Creates a list of tokens representing a modifier and all of its submodifiers in sequence
+	
 	:param modifier: A ParsedToken object from the modifier list of the head of some markable
 	:return: Text of that modifier together with its modifiers in sequence
 	"""
@@ -355,6 +358,7 @@ def stoplist_prefix_tokens(mark, prefix_dict, keys_to_pop):
 def get_mod_ordered_dict(mod):
 	"""
 	Retrieves the (sub)modifiers of a modifier token
+	
 	:param mod: A ParsedToken object representing a modifier of the head of some markable
 	:return: Recursive ordered dictionary of that modifier's own modifiers
 	"""
@@ -434,7 +438,7 @@ def get_entity_by_affix(head_text, lex):
 
 def pos_func_combo(pos, func, pos_func_heads_string):
 	"""
-	:rtype : bool
+	:return: bool
 	"""
 	pos_func_heads = pos_func_heads_string.split(";")
 	if pos + "+" + func in pos_func_heads:
@@ -539,11 +543,12 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 def lookup_has_entity(text, lemma, entity, lex):
 	"""
 	Checks if a certain token text or lemma have the specific entity listed in the entities or entity_heads lists
+	
 	:param text: text of the token
 	:param lemma: lemma of the token
 	:param entity: entity to check for
 	:param lex: the LexData object with gazetteer information and model settings
-	:return:
+	:return: bool
 	"""
 	found = []
 	if text in lex.entities:
@@ -560,6 +565,7 @@ def lookup_has_entity(text, lemma, entity, lex):
 def assign_coordinate_entity(mark,markables_by_head):
 	"""
 	Checks if all constituents of a coordinate markable have the same entity and subclass
+	
 	and if so, propagates these to the coordinate markable.
 	:param mark: a coordinate markable to check the entities of its constituents
 	:param markables_by_head: dictionary of markables by head id

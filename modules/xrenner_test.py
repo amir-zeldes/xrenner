@@ -1,7 +1,8 @@
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
 modules/xrenner_test.py
+
 Module to generate and run unit tests
+
 Author: Amir Zeldes
 """
 

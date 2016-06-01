@@ -1,13 +1,14 @@
-from collections import defaultdict
-from xrenner_classes import *
-from xrenner_marker import markables_overlap, markable_extend_punctuation
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
 Postprocessing module. Alters results of coreference analysis based on model settings,
 such as deleting certain markables or re-wiring coreference relations according to a particular
 annotation scheme
+
 Author: Amir Zeldes and Shuo Zhang
 """
+
+from collections import defaultdict
+from xrenner_classes import *
+from xrenner_marker import markables_overlap, markable_extend_punctuation
 
 
 def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_tokens):
@@ -141,6 +142,7 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 def kill_zero_marks(markables, markstart_dict, markend_dict):
 	"""
 	Removes markables whose id has been set to 0 in postprocessing
+	
 	:param markables: All Markable objects
 	:param markstart_dict: Dictionary of token span start ids to lists of markables starting at that id
 	:param markend_dict: Dictionary of token span end ids to lists of markables ending at that id

@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-xrenner - eXternally configurable REference and Non-Named Entity Recognizer
-xrenner_xrenner.py
 Main class file for Xrenner() class
+
 Author: Amir Zeldes
 """
 
@@ -24,6 +23,7 @@ class Xrenner:
 	def __init__(self, model="eng", override=None):
 		"""
 		Main class for xrenner coreferencer
+		
 		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
 		:param override: name of a section in models/override.ini if configuration overrides should be applied
 		:return: void
@@ -35,6 +35,8 @@ class Xrenner:
 
 	def analyze(self, infile, out_format):
 		"""
+		Method to run coreference analysis with loaded model
+		
 		:param infile: String representing a parse file in the conll10 format
 		:param format: format to determine output type, one of: html, paula, webanno, conll, onto, unittest
 		:return: output based on requested format
@@ -156,7 +158,9 @@ class Xrenner:
 	def serialize_output(self, out_format, parse=None):
 		"""
 		Return a string representation of the output in some format, or generate PAULA directory structure as output
+		
 		:param out_format: the format to generate, one of: html, paula, webanno, conll, onto, unittest
+		:param parse: the original parse input fed to xrenner; only needed for unittest output
 		:return: specified output format string, or void for paula
 		"""
 		conll_tokens = self.conll_tokens
@@ -182,6 +186,7 @@ class Xrenner:
 	def process_sentence(self, tokoffset, sentence):
 		"""
 		Function to analyze a single sentence
+		
 		:param tokoffset: the offset in tokens for the beginning of the current sentence within all input tokens
 		:param sentence: the Sentence object containin mood, speaker and other information about this sentence
 		:return: void

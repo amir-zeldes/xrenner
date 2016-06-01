@@ -1,7 +1,6 @@
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
-modules/xrenner_classes.py
 Basic classes for parsed tokens, markables and sentences.
+
 Author: Amir Zeldes
 """
 

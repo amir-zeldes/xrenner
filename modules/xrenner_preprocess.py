@@ -1,7 +1,8 @@
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
 modules/xrenner_preprocess.py
+
 Prepare parser output for entity and coreference resolution
+
 Author: Amir Zeldes
 """
 
@@ -10,6 +11,7 @@ from xrenner_marker import lookup_has_entity
 def add_child_info(conll_tokens, child_funcs, child_strings):
 	"""
 	Adds a list of all dependent functions and token strings to each parent token
+	
 	:param conll_tokens: The ParsedToken list so far
 	:param child_funcs: Dictionary from ids to child functions
 	:param child_strings: Dictionary from ids to child strings
@@ -84,6 +86,7 @@ def postprocess_parser(conll_tokens, tokoffset, children, stop_ids, lex):
 def replace_conj_func(conll_tokens, tokoffset, lex):
 	"""
 	Function to replace functions of tokens matching the conjunction function with their parent's function
+	
 	:param conll_tokens: The ParsedToken list so far
 	:param tokoffset: The starting token for this sentence
 	:param lex: the LexData object with gazetteer information and model settings
