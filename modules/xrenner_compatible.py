@@ -3,9 +3,8 @@ from xrenner_marker import remove_suffix_tokens
 from math import log
 
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
-modules/xrenner_compatible.py
 Module for checking compatibility of various features between markables
+
 Author: Amir Zeldes
 """
 
@@ -13,6 +12,7 @@ Author: Amir Zeldes
 def entities_compatible(mark1, mark2, lex):
 	"""
 	Checks if the entity property of two markables is compatible for possible coreference
+	
 	:param mark1: the first of two markables to compare entities
 	:param mark2: the second of two markables to compare entities
 	:param lex: the LexData object with gazetteer information and model settings
@@ -50,6 +50,7 @@ def cardinality_compatible(mark1,mark2,lex):
 def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=True):
 	"""
 	Checks whether the dependents of two markables are compatible for possible coreference
+	
 	:param markable: one of two markables to compare dependents for
 	:param candidate: the second markable, which is a candidate antecedent for the other markable
 	:param lex: the LexData object with gazetteer information and model settings
@@ -148,6 +149,7 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 def agree_compatible(mark1, mark2, lex):
 	"""
 	Checks if the agree property of two markables is compatible for possible coreference
+	
 	:param mark1: the first of two markables to compare agreement
 	:param mark2: the second of two markables to compare agreement
 	:param lex: the LexData object with gazetteer information and model settings
@@ -179,6 +181,7 @@ def merge_entities(mark1, mark2, previous_markables, lex):
 	"""
 	Negotiates entity mismatches across coreferent markables and their groups.
 	Returns True if merging has occurred.
+	
 	:param mark1: the first of two markables to merge entities for
 	:param mark2: the second of two markables to merge entities for
 	:param previous_markables: all previous markables which may need to inherit from the model/host
@@ -211,6 +214,7 @@ def update_group(host, model, previous_markables, lex):
 	gathered from a model markable discovered to be possibly coreferent with the host.
 	If incompatible modifiers are discovered the process fails and returns False.
 	Otherwise updating succeeds and the update_group returns true
+	
 	:param host: the first markable discovered to be coreferent with the model
 	:param model: the model markable, containing new information for the group
 	:param previous_markables: all previous markables which may need to inherit from the model/host
@@ -233,6 +237,7 @@ def update_group(host, model, previous_markables, lex):
 def isa(markable, candidate, lex):
 	"""
 	Checks whether two markables are compatible for coreference via the isa-relation
+	
 	:param markable: one of two markables to compare lexical isa relationship with
 	:param candidate: the second markable, which is a candidate antecedent for the other markable
 	:param lex: the LexData object with gazetteer information and model settings
@@ -279,10 +284,10 @@ def isa(markable, candidate, lex):
 	if markable.form == "proper" and candidate.form == "proper":
 		return False
 
-	# Subclass based isa match - check agreement too
+	# Subclass based isa match - check agreement too unless disabled
 	for subclass in markable.alt_subclasses + [markable.subclass]:
 		if subclass == candidate.head.lemma:
-			if agree_compatible(markable, candidate, lex):
+			if agree_compatible(markable, candidate, lex) and not never_agree(markable, candidate, lex):
 				return True
 		if subclass in lex.isa:
 			if lex.isa[subclass][-1] == "*":
@@ -290,10 +295,10 @@ def isa(markable, candidate, lex):
 				check_agree = False
 			else:
 				subclass_isa = lex.isa[subclass]
-				check_agree = True
+				check_agree = lex.filters["isa_subclass_agreement"]
 			if candidate.head.lemma.lower() in subclass_isa or candidate.text.lower().strip() in subclass_isa:
 				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma or markable.isa_partner_head == candidate.head.lemma:
-					if agree_compatible(markable, candidate, lex) or check_agree is False:
+					if (agree_compatible(markable, candidate, lex) or check_agree is False) and not never_agree(markable, candidate, lex):
 						candidate.isa_partner_head = markable.head.lemma
 						return True
 
@@ -377,6 +382,17 @@ def group_agree_compatible(markable,candidate,previous_markables,lex):
 	return True
 
 
+def never_agree(candidate, markable, lex):
+	if "+" in lex.filters["never_agree_pairs"]:
+		never_agreement_list = lex.filters["never_agree_pairs"].split(";")
+		never_agreement_pairs = []
+		for pair in never_agreement_list:
+			never_agreement_pairs.append(pair.split("+"))
+		if [markable.agree, candidate.agree] in never_agreement_pairs or [candidate.agree, markable.agree] in never_agreement_pairs:
+			return True
+	return False
+
+
 def best_candidate(markable,candidate_list,lex):
 	"""
 	:param markable: markable to find best antecedent for
@@ -412,9 +428,12 @@ def best_candidate(markable,candidate_list,lex):
 			candidate_scores[candidate] += 0.1
 		if candidate.entity == lex.filters["subject_func"]:  # Introduce slight bias to subjects
 			candidate_scores[candidate] += 0.95
-		if candidate.head.text in lex.hasa and use_hasa and lex.filters["possessive_func"].search(markable.head.func) is not None:
+		if candidate.head.text in lex.hasa and use_hasa and lex.filters["possessive_func"].search(markable.head.func) is not None:  # Text based hasa
 			if anaphor_parent in lex.hasa[candidate.head.text]:
 				candidate_scores[candidate] += log(lex.hasa[candidate.head.text][anaphor_parent]+1) * 1.1
+		elif candidate.head.lemma in lex.hasa and use_hasa and lex.filters["possessive_func"].search(markable.head.func) is not None:  # Lemma based hasa
+			if anaphor_parent in lex.hasa[candidate.head.lemma]:
+				candidate_scores[candidate] += log(lex.hasa[candidate.head.lemma][anaphor_parent]+1) * 0.9
 
 	max_score = ''
 	for candidate in candidate_scores:
@@ -441,10 +460,11 @@ def stems_compatible(verb, noun, lex):
 def acronym_match(mark, candidate, lex):
 	"""
 	Check whether a Markable's text is an acronym of a candidate Markable's text
+	
 	:param mark: The Markable object to test
 	:param candidate: The candidate Markable with potentially acronym-matching text
 	:param lex: the LexData object with gazetteer information and model settings
-	:return: Boolean
+	:return: bool
 	"""
 	position = 0
 	calibration = 0
