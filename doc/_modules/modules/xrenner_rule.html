@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>modules.xrenner_rule &mdash; xrenner 1.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="xrenner 1.3.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> xrenner
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">xrenner</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>modules.xrenner_rule</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for modules.xrenner_rule</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">operator</span>
+
+<div class="viewcode-block" id="CorefRule"><a class="viewcode-back" href="../../modules.html#modules.xrenner_rule.CorefRule">[docs]</a><span class="k">class</span> <span class="nc">CorefRule</span><span class="p">:</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">rule_string</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">rule_string</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;coref rule does not contain exactly 3 semicolons: &quot;</span> <span class="o">+</span> <span class="n">rule_string</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ana_spec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ante_spec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_distance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagation</span> <span class="o">=</span> <span class="n">rule_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">max_distance</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_distance</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ana_constraints</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ante_constraints</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ana_spec</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">ana_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConstraintMatcher</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ante_spec</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">ante_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConstraintMatcher</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ana_spec</span> <span class="o">+</span> <span class="s2">&quot; -&gt; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ante_spec</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_distance</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagation</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span></div>
+
+
+<div class="viewcode-block" id="ConstraintMatcher"><a class="viewcode-back" href="../../modules.html#modules.xrenner_rule.ConstraintMatcher">[docs]</a><span class="k">class</span> <span class="nc">ConstraintMatcher</span><span class="p">:</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">constraint</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">negative</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">truth</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;exact&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">compiled_re</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">props</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;form&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;agree&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">,</span> <span class="s2">&quot;subclass&quot;</span><span class="p">,</span> <span class="s2">&quot;cardinality&quot;</span><span class="p">,</span><span class="s2">&quot;text_lower&quot;</span><span class="p">,</span><span class="s2">&quot;lemma&quot;</span><span class="p">,</span><span class="s2">&quot;pos&quot;</span><span class="p">,</span><span class="s2">&quot;func&quot;</span><span class="p">,</span><span class="s2">&quot;quoted&quot;</span><span class="p">,</span><span class="s2">&quot;mood&quot;</span><span class="p">])</span>
+
+		<span class="k">if</span> <span class="n">constraint</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="n">constraint</span> <span class="o">=</span> <span class="n">constraint</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">:</span>  <span class="c1"># Key-value constrains</span>
+			<span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;!&quot;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">negative</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">not_</span>
+				<span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+			<span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">):</span>
+				<span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;exact&quot;</span>
+			<span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+				<span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+				<span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>  <span class="c1"># Does not contain special characters but is medial regex</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;exact&quot;</span>
+				<span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;^&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;$&quot;</span><span class="p">):</span>
+					<span class="c1"># Regex only supplies anchors, treat as exact match</span>
+					<span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;exact&quot;</span>
+				<span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">==</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;^&quot;</span><span class="p">):</span>
+					<span class="c1"># Regex only supplies initial anchor, treat as startswith</span>
+					<span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;startswith&quot;</span>
+				<span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">value</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;$&quot;</span><span class="p">):</span>
+					<span class="c1"># Regex only supplies initial anchor, treat as startswith</span>
+					<span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;endswith&quot;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;regex&quot;</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">compiled_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;bool&quot;</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;bool&quot;</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">False</span>
+			<span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;$&quot;</span><span class="p">):</span>
+				<span class="c1"># Antecedent-based spec, can&#39;t precompile value matcher</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;dollar&quot;</span>
+			<span class="k">else</span><span class="p">:</span>  <span class="c1"># String literal without regex</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;exact&quot;</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">!=</span> <span class="s2">&quot;bool&quot;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+		<span class="k">elif</span> <span class="n">constraint</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">or</span> <span class="n">constraint</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;any&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">constraint</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;look&quot;</span><span class="p">):</span>
+			<span class="c1"># This is a &#39;none&#39; matcher or processing instruction, matches anything</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+		<span class="k">elif</span> <span class="s2">&quot;sameparent&quot;</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">:</span>  <span class="c1"># same or !same style constraint - port to $ for backwards compatibility</span>
+			<span class="k">if</span> <span class="n">constraint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;!&quot;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">negative</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">not_</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;dollar&quot;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;parent&quot;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;$1&quot;</span>
+		<span class="k">elif</span> <span class="s2">&quot;samespeaker&quot;</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">:</span>  <span class="c1"># same or !same style constraint - port to $ for backwards compatibility</span>
+			<span class="k">if</span> <span class="n">constraint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;!&quot;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">negative</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">not_</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;dollar&quot;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;speaker&quot;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;$1&quot;</span>
+		<span class="k">elif</span> <span class="n">constraint</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;last[&quot;</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;exact&quot;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;LAST&quot;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">constraint</span><span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+
+	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">negative</span> <span class="o">==</span> <span class="n">operator</span><span class="o">.</span><span class="n">truth</span><span class="p">:</span>
+			<span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;!&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">op</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">+</span> <span class="s2">&quot; &#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mark</span><span class="p">,</span><span class="n">lex</span><span class="p">,</span><span class="n">anaphor</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="n">test_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">negative</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">True</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;dollar&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">anaphor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">))</span>
+				<span class="n">test_val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;head&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;child&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;has_child_func&quot;</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;coref rule &#39;has_child_func=$&#39; : $ identity not implemented for has_child_func&quot;</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span>
+				<span class="n">mods</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">head</span><span class="p">,</span> <span class="s2">&quot;modifiers&quot;</span><span class="p">)</span>
+				<span class="n">found_mod</span> <span class="o">=</span> <span class="bp">False</span>
+				<span class="k">for</span> <span class="n">mod1</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+					<span class="k">for</span> <span class="n">mod2</span> <span class="ow">in</span> <span class="n">mods</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">mod1</span><span class="o">.</span><span class="n">lemma</span> <span class="o">==</span> <span class="n">mod2</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
+						<span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod2</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+							<span class="n">found_mod</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">found_mod</span><span class="p">:</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="ow">and</span> <span class="n">anaphor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+						<span class="n">mark</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+					<span class="k">return</span> <span class="bp">False</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">return</span> <span class="bp">True</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">:</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span><span class="p">:</span>
+					<span class="n">test_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">test_val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;LAST&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">last</span><span class="p">:</span>
+					<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">last</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">entity</span><span class="o">==</span><span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">return</span> <span class="bp">False</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;has_child_func&quot;</span><span class="p">:</span>
+				<span class="n">test_val</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">child_func_string</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;substring&quot;</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;;&quot;</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">+</span><span class="s2">&quot;;&quot;</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span>
+				<span class="n">mods</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+				<span class="n">found_mod</span> <span class="o">=</span> <span class="bp">False</span>
+				<span class="k">for</span> <span class="n">mod1</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+					<span class="k">for</span> <span class="n">mod2</span> <span class="ow">in</span> <span class="n">mods</span><span class="p">:</span>
+						<span class="c1"># Note that mod2 is just a string - not a ParsedToken</span>
+						<span class="k">if</span> <span class="n">mod1</span><span class="o">.</span><span class="n">lemma</span> <span class="o">==</span> <span class="n">mod2</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+							<span class="n">found_mod</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">found_mod</span><span class="p">:</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="ow">and</span> <span class="n">anaphor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+						<span class="n">mark</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+					<span class="k">return</span> <span class="bp">False</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">return</span> <span class="bp">True</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;head&quot;</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;coref rule &#39;head=VAL&#39; : value match not implemented for head&quot;</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;child&quot;</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;coref rule &#39;child=VAL&#39; : value match not implemented for child&quot;</span><span class="p">)</span>
+
+
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;exact&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;substring&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="n">test_val</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;regex&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compiled_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">test_val</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;startswith&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;endswith&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;dollar&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Amir Zeldes.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

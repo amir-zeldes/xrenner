@@ -1,12 +1,12 @@
 import re
-import collections
+from collections import defaultdict, OrderedDict
 from modules.xrenner_classes import Markable
-
+from math import log
 
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
 Marker module for markable entity recognition. Establishes compatibility between entity features
 and determines markable extension in tokens
+
 Author: Amir Zeldes
 """
 
@@ -14,6 +14,7 @@ Author: Amir Zeldes
 def is_atomic(mark, atoms, lex):
 	"""
 	Checks if nested markables are allowed within this markable
+	
 	:param mark: the markable to be checked for atomicity
 	:param atoms: list of atomic markable text strings
 	:param lex: the LexData object with gazetteer information and model settings
@@ -39,8 +40,15 @@ def is_atomic(mark, atoms, lex):
 	# Dynamic generation of proper name pattern
 	elif 0 < marktext.strip().count(" ") < 3 and marktext.strip().split(" ")[0] in lex.first_names and marktext.strip().split(" ")[-1] in lex.last_names:
 		return True
-	# Not an atom, nested markables allowed
 	else:
+		non_essential_modifiers = list(mod.text for mod in mark.head.modifiers if lex.filters["non_essential_mod_func"].match(mod.func))
+		if len(non_essential_modifiers) > 0:
+			mark_unmod_text = mark.core_text
+			for mod in non_essential_modifiers:
+				mark_unmod_text = mark_unmod_text.replace(mod+" ","")
+			if mark_unmod_text in lex.atoms:
+				return True
+		# Not an atom, nested markables allowed
 		return False
 
 
@@ -92,7 +100,7 @@ def resolve_mark_entity(mark, token_list, lex):
 		else:
 			if parent_text in lex.entity_deps and use_entity_deps:
 				if mark.head.func in lex.entity_deps[parent_text]:
-					entity = get_key_by_max_val(lex.entity_deps[parent_text][mark.head.func])
+					entity = max(lex.entity_deps[parent_text][mark.head.func].iterkeys(), key=(lambda key: lex.entity_deps[parent_text][mark.head.func][key]))
 			else:
 				entity = lex.filters["default_entity"]
 				mark.entity_certainty = "uncertain"
@@ -140,11 +148,32 @@ def resolve_mark_entity(mark, token_list, lex):
 					modifiers_match_def_entity = (re.sub(r"\t.*","",lex.entity_heads[mod.text.strip().lower()][0]) == lex.filters["default_entity"] for mod in mark.head.modifiers if mod.text.strip().lower() in lex.entity_heads)
 					if not (any(modifiers_match_article) or any(modifiers_match_definite) or any(modifiers_match_def_entity)):
 						entity = lex.filters["person_def_entity"]
-	if entity == "":
-		parent_text = token_list[int(mark.head.head)].text
-		if parent_text in lex.entity_deps and use_entity_deps:
-			if mark.head.func in lex.entity_deps[parent_text]:
-				entity = get_key_by_max_val(lex.entity_deps[parent_text][mark.head.func])
+		if entity == "":
+			# See what the affix morphology predicts for the head
+			head_text = mark.lemma if mark.lemma != "_" and mark.lemma != "" else mark.head.text
+			morph_probs = get_entity_by_affix(head_text,lex)
+
+			# Now check what the dependencies predict
+			dep_probs = {}
+			parent_text = token_list[int(mark.head.head)].text
+			if parent_text in lex.entity_deps and use_entity_deps:
+				if mark.head.func in lex.entity_deps[parent_text]:
+					dep_probs.update(lex.entity_deps[parent_text][mark.head.func])
+
+			# Compare scores to decide between affix vs. dependency evidence
+			dep_values = list(dep_probs[key] for key in dep_probs)
+			total_deps = float(sum(dep_values))
+			probs = {}
+			for key, value in dep_probs.iteritems():
+				probs[key] = value/total_deps
+			joint_probs = defaultdict(float)
+			joint_probs.update(probs)
+			for entity in morph_probs:
+				joint_probs[entity] += morph_probs[entity]
+			# Bias in favor of default entity to break ties
+			joint_probs[lex.filters["default_entity"]] += 0.0000001
+
+			entity = max(joint_probs.iterkeys(), key = (lambda key: joint_probs[key]))
 
 	mark.entity = entity
 
@@ -203,31 +232,35 @@ def resolve_entity_cascade(entity_text, mark, lex):
 
 
 def resolve_mark_agree(mark, lex):
-	if mark.form == "pronoun":
-		if mark.text.strip() in lex.pronouns:
-			return lex.pronouns[mark.text.strip()]
-		elif mark.text.lower().strip() in lex.pronouns:
-			return lex.pronouns[mark.text.lower().strip()]
-	if mark.form == "proper":
-		if mark.core_text.strip() in lex.names:
-			return [lex.names[mark.core_text.strip()]]
-		elif mark.head.text.strip() in lex.first_names:
-			return [lex.first_names[mark.head.text.strip()]]
-	if mark.head.pos in lex.pos_agree_mappings:
-		mark.agree_certainty = "pos_agree_mappings"
-		return [lex.pos_agree_mappings[mark.head.pos]]
-	elif mark.core_text.strip() in lex.entities:
-		for entry in lex.entities[mark.core_text.strip()]:
-			if "/" in entry:
-				if mark.agree == "":
-					mark.agree = entry[entry.find("/") + 1:]
-				mark.alt_agree.append(entry[entry.find("/") + 1:])
-	elif mark.head.text.strip() in lex.entity_heads:
-		for entry in lex.entity_heads[mark.head.text.strip()]:
-			if "/" in entry:
-				if mark.agree == "":
-					mark.agree = entry[entry.find("/") + 1:]
-				mark.alt_agree.append(entry[entry.find("/") + 1:])
+	if mark.head.morph not in ["","_"]:
+		mark.agree_certainty = "head_morph"
+		return [mark.head.morph]
+	else:
+		if mark.form == "pronoun":
+			if mark.text.strip() in lex.pronouns:
+				return lex.pronouns[mark.text.strip()]
+			elif mark.text.lower().strip() in lex.pronouns:
+				return lex.pronouns[mark.text.lower().strip()]
+		if mark.form == "proper":
+			if mark.core_text.strip() in lex.names:
+				return [lex.names[mark.core_text.strip()]]
+			elif mark.head.text.strip() in lex.first_names:
+				return [lex.first_names[mark.head.text.strip()]]
+		if mark.head.pos in lex.pos_agree_mappings:
+			mark.agree_certainty = "pos_agree_mappings"
+			return [lex.pos_agree_mappings[mark.head.pos]]
+		elif mark.core_text.strip() in lex.entities:
+			for entry in lex.entities[mark.core_text.strip()]:
+				if "/" in entry:
+					if mark.agree == "":
+						mark.agree = entry[entry.find("/") + 1:]
+					mark.alt_agree.append(entry[entry.find("/") + 1:])
+		elif mark.head.text.strip() in lex.entity_heads:
+			for entry in lex.entity_heads[mark.head.text.strip()]:
+				if "/" in entry:
+					if mark.agree == "":
+						mark.agree = entry[entry.find("/") + 1:]
+					mark.alt_agree.append(entry[entry.find("/") + 1:])
 
 
 
@@ -262,6 +295,7 @@ def resolve_cardinality(mark,lex):
 def recognize_entity_by_mod(mark, lex, mark_atoms=False):
 	"""
 	Attempt to recognize entity type based on modifiers
+	
 	:param mark: Markable for which to identify the entity type
 	:param modifier_lexicon: The LexData object's modifier list
 	:return: String (entity type, possibly including subtype and agreement)
@@ -291,6 +325,7 @@ def recognize_entity_by_mod(mark, lex, mark_atoms=False):
 def construct_modifier_substring(modifier):
 	"""
 	Creates a list of tokens representing a modifier and all of its submodifiers in sequence
+	
 	:param modifier: A ParsedToken object from the modifier list of the head of some markable
 	:return: Text of that modifier together with its modifiers in sequence
 	"""
@@ -323,18 +358,18 @@ def stoplist_prefix_tokens(mark, prefix_dict, keys_to_pop):
 def get_mod_ordered_dict(mod):
 	"""
 	Retrieves the (sub)modifiers of a modifier token
+	
 	:param mod: A ParsedToken object representing a modifier of the head of some markable
 	:return: Recursive ordered dictionary of that modifier's own modifiers
 	"""
-	mod_dict = collections.OrderedDict()
+	mod_dict = OrderedDict()
 	mod_dict[int(mod.id)] = mod
 	if len(mod.modifiers) > 0:
 		for mod2 in mod.modifiers:
 			mod_dict.update(get_mod_ordered_dict(mod2))
 	else:
 		return mod_dict
-	return collections.OrderedDict(sorted(mod_dict.items()))
-
+	return OrderedDict(sorted(mod_dict.items()))
 
 
 def markable_extend_punctuation(marktext, adjacent_token, punct_dict, direction):
@@ -383,22 +418,27 @@ def markable_extend_affixes(start, end, conll_tokens, sent_start, lex):
 
 def get_entity_by_affix(head_text, lex):
 	affix_max = 0
+	score = 0
 	entity = ""
+	probs = {}
 	for i in range(1, len(head_text) - 1):
+		candidates = 0
 		if head_text[i:] in lex.morph:
 			options = lex.morph[head_text[i:]]
 			for key, value in options.items():
-				if value > affix_max:
-					entity = key.split("/")[0]
-					affix_max = value
+				candidates += value
+				entity = key.split("/")[0]
+				probs[entity] = float(value)
+			for entity in probs:
+				probs[entity] = probs[entity] / candidates
 		if entity != "":
-			return entity
-	return entity
+			return probs
+	return probs
 
 
 def pos_func_combo(pos, func, pos_func_heads_string):
 	"""
-	:rtype : bool
+	:return: bool
 	"""
 	pos_func_heads = pos_func_heads_string.split(";")
 	if pos + "+" + func in pos_func_heads:
@@ -475,46 +515,40 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 					end += 1
 
 	# Extend markable to trailing closing punctuation if it contains opening punctuation
-	if int(tok.id) < len(conll_tokens) - 1:
-		next_id = int(tok.id) + 1
+	if end < len(conll_tokens) - 1:
+		next_id = end + 1
 		if markable_extend_punctuation(marktext, conll_tokens[next_id], lex.open_close_punct, "trailing"):
 			marktext += conll_tokens[next_id].text + " "
 			end += 1
-	if tok.id != "1":
+	if start != "1":
 		prev_id = start - 1
 		if markable_extend_punctuation(marktext, conll_tokens[prev_id], lex.open_close_punct_rev, "leading"):
 			marktext = conll_tokens[prev_id].text + " " + marktext
 			start -= 1
 
-
 	this_markable = Markable("", tok, "", "", start, end, core_text, core_text, "", "", "", "new", "", sentence, "none", "none", 0, [], [], [])
+	# DEBUG POINT
+	if this_markable.text == lex.debug["ana"]:
+		pass
 	this_markable.core_text = remove_suffix_tokens(remove_prefix_tokens(this_markable.core_text,lex),lex)
+	while this_markable.core_text != core_text:  # Potentially repeat affix stripping as long as core text changes
+		core_text = this_markable.core_text
+		this_markable.core_text = remove_suffix_tokens(remove_prefix_tokens(this_markable.core_text,lex),lex)
 	if this_markable.core_text == '':  # Check in case suffix removal has left no core_text
 		this_markable.core_text = marktext.strip()
 	this_markable.text = marktext  # Update core_text with potentially modified markable text
 	return this_markable
 
 
-def get_key_by_max_val(dict_of_ints):
-	max_val = ''
-	for potential_key in dict_of_ints:
-		if max_val == '':
-			max_val = dict_of_ints[potential_key]
-			return_key = potential_key
-		elif dict_of_ints[potential_key] > max_val:
-			max_score = dict_of_ints[potential_key]
-			return_key = potential_key
-	return return_key
-
-
 def lookup_has_entity(text, lemma, entity, lex):
 	"""
 	Checks if a certain token text or lemma have the specific entity listed in the entities or entity_heads lists
+	
 	:param text: text of the token
 	:param lemma: lemma of the token
 	:param entity: entity to check for
 	:param lex: the LexData object with gazetteer information and model settings
-	:return:
+	:return: bool
 	"""
 	found = []
 	if text in lex.entities:
@@ -531,6 +565,7 @@ def lookup_has_entity(text, lemma, entity, lex):
 def assign_coordinate_entity(mark,markables_by_head):
 	"""
 	Checks if all constituents of a coordinate markable have the same entity and subclass
+	
 	and if so, propagates these to the coordinate markable.
 	:param mark: a coordinate markable to check the entities of its constituents
 	:param markables_by_head: dictionary of markables by head id
@@ -547,3 +582,5 @@ def assign_coordinate_entity(mark,markables_by_head):
 		mark.entity = sub_entities[0]
 	if len(set(sub_subclasses)) == 1:  # There is agreement on the entity
 		mark.subclass = sub_subclasses[0]
+
+

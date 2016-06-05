@@ -1,0 +1,779 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>modules.xrenner_xrenner &mdash; xrenner 1.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="xrenner 1.3.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> xrenner
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">xrenner</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>modules.xrenner_xrenner</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for modules.xrenner_xrenner</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Main class file for Xrenner() class</span>
+
+<span class="sd">Author: Amir Zeldes</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">xrenner_out</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_classes</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_coref</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_preprocess</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_marker</span> <span class="kn">import</span> <span class="n">make_markable</span>
+<span class="kn">from</span> <span class="nn">xrenner_lex</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_postprocess</span> <span class="kn">import</span> <span class="n">postprocess_coref</span>
+<span class="kn">from</span> <span class="nn">depedit</span> <span class="kn">import</span> <span class="n">run_depedit</span>
+<span class="kn">import</span> <span class="nn">ntpath</span><span class="o">,</span> <span class="nn">os</span>
+
+
+<div class="viewcode-block" id="Xrenner"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner">[docs]</a><span class="k">class</span> <span class="nc">Xrenner</span><span class="p">:</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Main class for xrenner coreferencer. Invokes the load method to read model data.</span>
+<span class="sd">		</span>
+<span class="sd">		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)</span>
+<span class="sd">		:param override: name of a section in models/override.ini if configuration overrides should be applied</span>
+<span class="sd">		:return: void</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">override</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Xrenner.load"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.load">[docs]</a>	<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Method to load model data. Normally invoked by constructor, but can be repeated to change models later.</span>
+
+<span class="sd">		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)</span>
+<span class="sd">		:param override: name of a section in models/override.ini if configuration overrides should be applied</span>
+<span class="sd">		:return: void</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">override</span> <span class="o">=</span> <span class="n">override</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lex</span> <span class="o">=</span> <span class="n">LexData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">override</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Xrenner.analyze"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.analyze">[docs]</a>	<span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">,</span> <span class="n">out_format</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Method to run coreference analysis with loaded model</span>
+<span class="sd">		</span>
+<span class="sd">		:param infile: file name of the parse file in the conll10 format, or the pre-read parse itself</span>
+<span class="sd">		:param format: format to determine output type, one of: html, paula, webanno, conll, onto, unittest</span>
+<span class="sd">		:return: output based on requested format</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1"># Check if this is a file name from the main script or a parse delivered in an import or unittest scenario</span>
+		<span class="k">if</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">infile</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>  <span class="c1"># This is a raw parse as string or list, not a file name</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">docpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">))</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="s2">&quot;untitled&quot;</span>
+		<span class="k">else</span><span class="p">:</span>  <span class="c1"># This is a file name, extract document name and path, then read the file</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">docpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="n">clean_filename</span><span class="p">(</span><span class="n">ntpath</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
+			<span class="n">infile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+
+		<span class="n">depedit_config</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;models&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;depedit.ini&quot;</span><span class="p">)</span>
+
+		<span class="n">infile</span> <span class="o">=</span> <span class="n">run_depedit</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">depedit_config</span><span class="p">)</span>
+		<span class="n">infile</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1"># Lists and dictionaries to hold tokens and markables</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">conll_tokens</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">conll_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ParsedToken</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;ROOT&quot;</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;XX&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;NONE&quot;</span><span class="p">,</span> <span class="n">Sentence</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">markables</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">markables_by_head</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">markstart_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">markend_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sentlength</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">markcounter</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">groupcounter</span> <span class="o">=</span> <span class="mi">1</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">descendants</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">child_funcs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">child_strings</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+		<span class="c1"># Dereference object classes to method globals for convenience</span>
+		<span class="n">lex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lex</span>
+		<span class="n">conll_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conll_tokens</span>
+		<span class="n">markstart_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markstart_dict</span>
+		<span class="n">markend_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markend_dict</span>
+
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="n">quoted</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="n">current_sentence</span> <span class="o">=</span> <span class="n">Sentence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sent_num</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">myline</span> <span class="ow">in</span> <span class="n">infile</span><span class="p">:</span>
+			<span class="k">if</span> <span class="s2">&quot;#speaker&quot;</span> <span class="ow">in</span> <span class="n">myline</span><span class="p">:</span> <span class="c1"># speaker</span>
+				<span class="n">current_sentence</span><span class="o">.</span><span class="n">speaker</span> <span class="o">=</span> <span class="n">myline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+			<span class="k">elif</span> <span class="n">myline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Only process lines that contain tabs (i.e. conll tokens)</span>
+				<span class="n">cols</span> <span class="o">=</span> <span class="n">myline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;open_quote&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">quoted</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+					<span class="n">quoted</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="k">elif</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;open_quote&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">quoted</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+					<span class="n">quoted</span> <span class="o">=</span> <span class="bp">False</span>
+				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;question_mark&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">current_sentence</span><span class="o">.</span><span class="n">mood</span> <span class="o">=</span> <span class="s2">&quot;question&quot;</span>
+				<span class="k">if</span> <span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">func_substitutes_forward</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="o">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+					<span class="n">tok_func</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">func_substitutes_forward</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">]][</span><span class="mi">0</span><span class="p">],</span><span class="n">lex</span><span class="o">.</span><span class="n">func_substitutes_forward</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">]][</span><span class="mi">1</span><span class="p">],</span><span class="n">cols</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+				<span class="k">elif</span> <span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">func_substitutes_backward</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+					<span class="n">tok_func</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">func_substitutes_backward</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">]][</span><span class="mi">0</span><span class="p">],</span><span class="n">lex</span><span class="o">.</span><span class="n">func_substitutes_backward</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">]][</span><span class="mi">1</span><span class="p">],</span><span class="n">cols</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">tok_func</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+				<span class="n">head_id</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="k">if</span> <span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">)</span>
+				<span class="n">conll_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ParsedToken</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">),</span> <span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+												<span class="n">head_id</span><span class="p">,</span> <span class="n">tok_func</span><span class="p">,</span> <span class="n">current_sentence</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="n">lex</span><span class="p">,</span> <span class="n">quoted</span><span class="p">))</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">sentlength</span> <span class="o">+=</span> <span class="mi">1</span>
+				<span class="c1"># Check not to add a child if this is a function which discontinues the markable span</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;non_link_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok_func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;non_link_tok&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">):</span>
+					<span class="k">if</span> <span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>  <span class="c1"># Do not add children to the &#39;zero&#39; token</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">))</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">child_funcs</span><span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok_func</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">child_strings</span><span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentlength</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">process_sentence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">,</span> <span class="n">current_sentence</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">+=</span> <span class="mi">1</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentlength</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentlength</span>
+				<span class="n">current_sentence</span> <span class="o">=</span> <span class="n">Sentence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sent_num</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+				<span class="bp">self</span><span class="o">.</span><span class="n">sentlength</span> <span class="o">=</span> <span class="mi">0</span>
+
+		<span class="c1"># Handle leftover sentence which did not have trailing newline</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentlength</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">process_sentence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">,</span> <span class="n">current_sentence</span><span class="p">)</span>
+
+		<span class="n">marks_to_add</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;seek_verb_for_defs&quot;</span><span class="p">]:</span>
+			<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">markables</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;def&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;common&quot;</span> <span class="ow">and</span> \
+				<span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;event_def_entity&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="ow">or</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;abstract_def_entity&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="p">):</span>
+					<span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">]:</span>
+						<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;verb_head_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">pos</span><span class="p">):</span>
+							<span class="k">if</span> <span class="n">stems_compatible</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="p">,</span><span class="n">lex</span><span class="p">):</span>
+								<span class="n">v_antecedent</span> <span class="o">=</span> <span class="n">make_markable</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span><span class="n">conll_tokens</span><span class="p">,{},</span><span class="n">tok</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">start_offset</span><span class="p">,</span><span class="n">tok</span><span class="o">.</span><span class="n">sentence</span><span class="p">,[],</span><span class="n">lex</span><span class="p">)</span>
+								<span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">=</span> <span class="n">v_antecedent</span>
+								<span class="n">mark</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">=</span> <span class="s2">&quot;coref&quot;</span>
+								<span class="n">v_antecedent</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span>
+								<span class="n">v_antecedent</span><span class="o">.</span><span class="n">subclass</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">subclass</span>
+								<span class="n">v_antecedent</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+								<span class="n">v_antecedent</span><span class="o">.</span><span class="n">form</span> <span class="o">=</span> <span class="s2">&quot;verbal&quot;</span>
+								<span class="n">v_antecedent</span><span class="o">.</span><span class="n">infstat</span> <span class="o">=</span> <span class="s2">&quot;new&quot;</span>
+								<span class="n">v_antecedent</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">group</span>
+								<span class="n">v_antecedent</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s2">&quot;referent_&quot;</span> <span class="o">+</span> <span class="n">v_antecedent</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span>
+								<span class="n">marks_to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v_antecedent</span><span class="p">)</span>
+
+
+		<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">marks_to_add</span><span class="p">:</span>
+			<span class="n">markstart_dict</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
+			<span class="n">markend_dict</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">markables_by_head</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">mark</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">markables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
+
+
+		<span class="n">postprocess_coref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">markables_by_head</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;paula&quot;</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">serialize_output</span><span class="p">(</span><span class="n">out_format</span><span class="p">)</span>
+				<span class="k">return</span> <span class="bp">True</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_output</span><span class="p">(</span><span class="n">out_format</span><span class="p">,</span> <span class="n">infile</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Xrenner.serialize_output"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.serialize_output">[docs]</a>	<span class="k">def</span> <span class="nf">serialize_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_format</span><span class="p">,</span> <span class="n">parse</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Return a string representation of the output in some format, or generate PAULA directory structure as output</span>
+<span class="sd">		</span>
+<span class="sd">		:param out_format: the format to generate, one of: html, paula, webanno, conll, onto, unittest</span>
+<span class="sd">		:param parse: the original parse input fed to xrenner; only needed for unittest output</span>
+<span class="sd">		:return: specified output format string, or void for paula</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">conll_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conll_tokens</span>
+		<span class="n">markables</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">markstart_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">markend_dict</span>
+
+		<span class="k">if</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>
+			<span class="n">rtl</span> <span class="o">=</span> <span class="bp">True</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;heb&quot;</span><span class="p">,</span><span class="s2">&quot;ara&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="bp">False</span>
+			<span class="k">return</span> <span class="n">output_HTML</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="n">rtl</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;paula&quot;</span><span class="p">:</span>
+			<span class="n">output_PAULA</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docpath</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;webanno&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">output_webanno</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">markables</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;conll&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">output_conll</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;onto&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">output_onto</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;unittest&quot;</span><span class="p">:</span>
+			<span class="kn">from</span> <span class="nn">xrenner_test</span> <span class="kn">import</span> <span class="n">generate_test</span>
+			<span class="k">return</span> <span class="n">generate_test</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markables</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">output_SGML</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Xrenner.process_sentence"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.process_sentence">[docs]</a>	<span class="k">def</span> <span class="nf">process_sentence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokoffset</span><span class="p">,</span> <span class="n">sentence</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Function to analyze a single sentence</span>
+<span class="sd">		</span>
+<span class="sd">		:param tokoffset: the offset in tokens for the beginning of the current sentence within all input tokens</span>
+<span class="sd">		:param sentence: the Sentence object containin mood, speaker and other information about this sentence</span>
+<span class="sd">		:return: void</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">markables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markables</span>
+		<span class="n">markables_by_head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markables_by_head</span>
+
+		<span class="n">lex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lex</span>
+		<span class="n">conll_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conll_tokens</span>
+		<span class="n">child_funcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child_funcs</span>
+		<span class="n">child_strings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child_strings</span>
+		<span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span>
+		<span class="n">descendants</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">descendants</span>
+		<span class="n">markstart_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markstart_dict</span>
+		<span class="n">markend_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markend_dict</span>
+
+		<span class="c1"># Add list of all dependent funcs and strings to each token</span>
+		<span class="n">add_child_info</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">child_funcs</span><span class="p">,</span> <span class="n">child_strings</span><span class="p">)</span>
+
+		<span class="n">mark_candidates_by_head</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+		<span class="n">stop_ids</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="n">tok1</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+			<span class="n">stop_ids</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>  <span class="c1"># Assume all tokens are head candidates</span>
+
+		<span class="c1"># Post-process parser input based on entity list if desired</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;postprocess_parser&quot;</span><span class="p">]:</span>
+			<span class="n">postprocess_parser</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">tokoffset</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="n">stop_ids</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+
+		<span class="c1"># Revert conj token function to parent function</span>
+		<span class="n">replace_conj_func</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">tokoffset</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+
+		<span class="c1"># Enrich tokens with modifiers and parent head text</span>
+		<span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span><span class="p">:]:</span>
+			<span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mod_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">child</span><span class="p">)]</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">token</span><span class="o">.</span><span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">child</span><span class="p">)])</span>
+			<span class="n">token</span><span class="o">.</span><span class="n">head_text</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">text</span>
+			<span class="c1"># Check for lexical possessives to dynamically enhance hasa information</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;possessive_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="c1"># Check that neither possessor nor possessed is a pronoun</span>
+				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pronoun_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pronoun_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="p">][</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">text</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span>  <span class="c1"># Increase by 2: 1 for attestation, 1 for pertinence in this document</span>
+
+		<span class="c1"># Find dead areas</span>
+		<span class="k">for</span> <span class="n">tok1</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+			<span class="c1"># Affix tokens can&#39;t be markable heads - assume parser error and fix if desired</span>
+			<span class="c1"># DEBUG POINT</span>
+			<span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+				<span class="k">pass</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;postprocess_parser&quot;</span><span class="p">]:</span>
+				<span class="k">if</span> <span class="p">((</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_head_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_forbidden_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span>
+				<span class="n">pos_func_combo</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">tok1</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pos_func_heads&quot;</span><span class="p">]))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">stop_ids</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]):</span>
+					<span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">affix_tokens</span><span class="p">:</span>
+						<span class="n">stop_ids</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+						<span class="k">for</span> <span class="n">child_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">children</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+							<span class="n">child</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">child_id</span><span class="p">)]</span>
+							<span class="k">if</span> <span class="p">((</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_head_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_forbidden_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span>
+							<span class="n">pos_func_combo</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pos_func_heads&quot;</span><span class="p">]))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">stop_ids</span><span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">]):</span>
+								<span class="n">child</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">tok1</span><span class="o">.</span><span class="n">head</span>
+								<span class="n">tok1</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span>
+								<span class="c1"># Make the new head be the head of all children of the affix token</span>
+								<span class="k">for</span> <span class="n">child_id2</span> <span class="ow">in</span> <span class="n">children</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+									<span class="k">if</span> <span class="ow">not</span> <span class="n">child_id2</span> <span class="o">==</span> <span class="n">child_id</span><span class="p">:</span>
+										<span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">child_id2</span><span class="p">)]</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span>
+										<span class="n">children</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child_id2</span><span class="p">)</span>
+										<span class="n">children</span><span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child_id2</span><span class="p">)</span>
+
+								<span class="c1"># Assign the function of the affix head to the new head and vice versa</span>
+								<span class="n">temp_func</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">func</span>
+								<span class="n">child</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">tok1</span><span class="o">.</span><span class="n">func</span>
+								<span class="n">tok1</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">temp_func</span>
+								<span class="n">children</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+								<span class="n">children</span><span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+								<span class="k">if</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">tok1</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+									<span class="n">tok1</span><span class="o">.</span><span class="n">modifiers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+									<span class="n">child</span><span class="o">.</span><span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok1</span><span class="p">)</span>
+								<span class="c1"># Check if any other non-link parents need to be re-routed to the new head</span>
+								<span class="k">for</span> <span class="n">tok_to_rewire</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+									<span class="k">if</span> <span class="n">tok_to_rewire</span><span class="o">.</span><span class="n">original_head</span> <span class="o">==</span> <span class="n">tok1</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">tok_to_rewire</span><span class="o">.</span><span class="n">head</span> <span class="o">!=</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">tok_to_rewire</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+										<span class="n">tok_to_rewire</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span>
+										<span class="c1"># Also add the rewired child func</span>
+										<span class="k">if</span> <span class="n">tok_to_rewire</span><span class="o">.</span><span class="n">func</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">child_funcs</span><span class="p">:</span>
+											<span class="n">child</span><span class="o">.</span><span class="n">child_funcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok_to_rewire</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+										<span class="c1"># Rewire modifiers</span>
+										<span class="k">if</span> <span class="n">tok_to_rewire</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">child</span><span class="o">.</span><span class="n">modifiers</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mod_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok_to_rewire</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+											<span class="n">child</span><span class="o">.</span><span class="n">modifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok_to_rewire</span><span class="p">)</span>
+										<span class="k">if</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">tok_to_rewire</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+											<span class="n">tok_to_rewire</span><span class="o">.</span><span class="n">modifiers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+								<span class="c1"># Only do this for the first subordinate markable head found by traversing right to left</span>
+								<span class="k">break</span>
+
+			<span class="c1"># Try to construct a longer stop candidate starting with each token in the sentence, max length 5 tokens</span>
+			<span class="n">stop_candidate</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+			<span class="k">for</span> <span class="n">tok2</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">):</span><span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">)]:</span>
+				<span class="n">stop_candidate</span> <span class="o">+=</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+				<span class="k">if</span> <span class="n">stop_candidate</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">stop_list</span><span class="p">:</span>  <span class="c1"># Stop list matched, flag tokens as impossible markable heads</span>
+					<span class="k">for</span> <span class="n">tok3</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">tok2</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+						<span class="n">stop_ids</span><span class="p">[</span><span class="n">tok3</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+		<span class="c1"># Find last-first name combinations</span>
+		<span class="k">for</span> <span class="n">tok1</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="n">tok2</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+			<span class="n">first_name_candidate</span> <span class="o">=</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span>
+			<span class="n">last_name_candidate</span> <span class="o">=</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">if</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span>
+			<span class="k">if</span> <span class="n">first_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span> <span class="ow">and</span> <span class="n">last_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">last_names</span> <span class="ow">and</span> <span class="n">tok1</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">tok2</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+				<span class="n">stop_ids</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+		<span class="c1"># Allow one intervening token, e.g. for middle initial</span>
+		<span class="k">for</span> <span class="n">tok1</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]:</span>
+			<span class="n">tok2</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+			<span class="n">first_name_candidate</span> <span class="o">=</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span>
+			<span class="n">middle_name_candidate</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+			<span class="n">last_name_candidate</span> <span class="o">=</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">if</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span>
+			<span class="k">if</span> <span class="n">first_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span> <span class="ow">and</span> <span class="n">last_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">last_names</span> <span class="ow">and</span> <span class="n">tok1</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">tok2</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">r&#39;^[A-Z]\.$&#39;</span><span class="p">,</span><span class="n">middle_name_candidate</span><span class="p">)</span> <span class="ow">or</span> <span class="n">middle_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span><span class="p">):</span>
+				<span class="n">stop_ids</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+		<span class="c1"># Expand children list recursively into descendants</span>
+		<span class="k">for</span> <span class="n">parent_key</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">parent_key</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tokoffset</span><span class="p">:</span>
+				<span class="n">descendants</span><span class="p">[</span><span class="n">parent_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_descendants</span><span class="p">(</span><span class="n">parent_key</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="p">[],</span> <span class="bp">self</span><span class="o">.</span><span class="n">sent_num</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">)</span>
+
+		<span class="n">keys_to_pop</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="c1"># Find markables</span>
+		<span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+			<span class="c1"># Markable heads should match specified pos or pos+func combinations,</span>
+			<span class="c1"># ruling out stop list items with appropriate functions</span>
+			<span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+				<span class="k">pass</span>
+			<span class="c1"># TODO: consider switch for lex.filters[&quot;stop_func&quot;].match(tok.func)</span>
+			<span class="k">if</span> <span class="p">((</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_head_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_forbidden_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span>
+					<span class="n">pos_func_combo</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">tok</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pos_func_heads&quot;</span><span class="p">]))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">stop_ids</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]):</span>
+				<span class="n">this_markable</span> <span class="o">=</span> <span class="n">make_markable</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">,</span> <span class="n">descendants</span><span class="p">,</span> <span class="n">tokoffset</span><span class="p">,</span> <span class="n">sentence</span><span class="p">,</span> <span class="n">keys_to_pop</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">this_markable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_markable</span>
+
+				<span class="c1"># Check whether this head is the beginning of a coordination and needs its own sub-markable too</span>
+				<span class="n">make_submark</span> <span class="o">=</span> <span class="bp">False</span>
+				<span class="n">submark_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+				<span class="n">submarks</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="n">cardi</span><span class="o">=</span><span class="mi">0</span>
+				<span class="k">for</span> <span class="n">child_id</span> <span class="ow">in</span> <span class="n">children</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+					<span class="n">child</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">child_id</span><span class="p">)]</span>
+					<span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">coordinate</span><span class="p">:</span>
+						<span class="c1"># Coordination found - make a small markable for just this first head without coordinates</span>
+						<span class="n">make_submark</span> <span class="o">=</span> <span class="bp">True</span>
+						<span class="c1"># Remove the coordinate children from descendants of small markable head</span>
+						<span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">descendants</span><span class="p">:</span>
+							<span class="k">for</span> <span class="n">sub_descendant</span> <span class="ow">in</span> <span class="n">descendants</span><span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+								<span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">descendants</span><span class="p">:</span>
+									<span class="k">if</span> <span class="n">sub_descendant</span> <span class="ow">in</span> <span class="n">descendants</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+										<span class="n">descendants</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">sub_descendant</span><span class="p">)</span>
+						<span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">descendants</span><span class="p">:</span>
+							<span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">descendants</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+								<span class="n">descendants</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+						<span class="c1"># Build a composite id for the large head from coordinate children IDs separated by underscore</span>
+						<span class="n">submark_id</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span>
+						<span class="n">cardi</span><span class="o">+=</span><span class="mi">1</span>
+						<span class="n">submarks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">make_submark</span><span class="p">:</span>
+					<span class="n">submarks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+					<span class="c1"># Assign aggregate/coordinate agreement class to large markable if desired</span>
+					<span class="c1"># Remove coordination tokens, such as &#39;and&#39;, &#39;or&#39; based on coord_func setting</span>
+					<span class="k">for</span> <span class="n">child_id</span> <span class="ow">in</span> <span class="n">children</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+						<span class="n">child</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">child_id</span><span class="p">)]</span>
+						<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;coord_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">func</span><span class="p">):</span>
+							<span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">descendants</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+								<span class="n">descendants</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+					<span class="c1"># Make the small markable and recall the big markable</span>
+					<span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">cardinality</span><span class="o">=</span><span class="n">cardi</span><span class="o">+</span><span class="mi">1</span>
+					<span class="n">big_markable</span> <span class="o">=</span> <span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+					<span class="n">small_markable</span> <span class="o">=</span> <span class="n">make_markable</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">,</span> <span class="n">descendants</span><span class="p">,</span> <span class="n">tokoffset</span><span class="p">,</span> <span class="n">sentence</span><span class="p">,</span> <span class="n">keys_to_pop</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+					<span class="n">big_markable</span><span class="o">.</span><span class="n">submarks</span> <span class="o">=</span> <span class="n">submarks</span><span class="p">[:]</span>
+					<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;aggregate_agree&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;_&quot;</span><span class="p">:</span>
+						<span class="n">big_markable</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;aggregate_agree&quot;</span><span class="p">]</span>
+						<span class="n">big_markable</span><span class="o">.</span><span class="n">agree_certainty</span> <span class="o">=</span> <span class="s2">&quot;coordinate_aggregate_plural&quot;</span>
+						<span class="n">big_markable</span><span class="o">.</span><span class="n">coordinate</span> <span class="o">=</span> <span class="bp">True</span>
+
+					<span class="c1"># Switch the id&#39;s so that the big markable has the 1_2_3 style id, and the small has just the head id</span>
+					<span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">submark_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">big_markable</span>
+					<span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">small_markable</span>
+					<span class="n">big_markable</span> <span class="o">=</span> <span class="bp">None</span>
+					<span class="n">small_markable</span> <span class="o">=</span> <span class="bp">None</span>
+					<span class="c1">#submarks = None</span>
+
+
+		<span class="c1"># Check for atomicity and remove any subsumed markables if atomic</span>
+		<span class="k">for</span> <span class="n">mark_id</span> <span class="ow">in</span> <span class="n">mark_candidates_by_head</span><span class="p">:</span>
+			<span class="n">mark</span> <span class="o">=</span> <span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">mark_id</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;</span> <span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>  <span class="c1"># No atomicity check if single token</span>
+				<span class="c1"># Check if the markable has a modifier based entity guess</span>
+				<span class="n">modifier_based_entity</span> <span class="o">=</span> <span class="n">recognize_entity_by_mod</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+				<span class="c1"># Consider for atomicity if in atoms or has @ modifier, but not if it&#39;s a single token or a coordinate markable</span>
+				<span class="k">if</span> <span class="p">(</span><span class="n">is_atomic</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;@&quot;</span> <span class="ow">in</span> <span class="n">modifier_based_entity</span> <span class="ow">and</span> <span class="s2">&quot;_&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mark_id</span><span class="p">))</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;</span> <span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+					<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mark_candidates_by_head</span><span class="p">):</span>
+						<span class="n">key</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+						<span class="c1"># Note that the key may contain underscores if it&#39;s a composite, but those can&#39;t be atomic</span>
+						<span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;_.*&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">key</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="n">mark</span><span class="o">.</span><span class="n">end</span> <span class="ow">and</span> <span class="s1">&#39;_&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+							<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pronoun_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;_.*&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">key</span><span class="p">))]</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c1"># Make sure we&#39;re not removing a pronoun</span>
+								<span class="n">keys_to_pop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+				<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">modifier_based_entity</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+					<span class="n">stoplist_prefix_tokens</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_mods</span><span class="p">,</span> <span class="n">keys_to_pop</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys_to_pop</span><span class="p">:</span>
+			<span class="n">mark_candidates_by_head</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">mark_id</span> <span class="ow">in</span> <span class="n">mark_candidates_by_head</span><span class="p">:</span>
+			<span class="n">mark</span> <span class="o">=</span> <span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">mark_id</span><span class="p">]</span>
+			<span class="n">mark</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+			<span class="n">mark</span><span class="o">.</span><span class="n">core_text</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+			<span class="c1"># DEBUG POINT</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+				<span class="k">pass</span>
+			<span class="n">tok</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;proper_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">=</span> <span class="s2">&quot;proper&quot;</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">=</span> <span class="s2">&quot;def&quot;</span>
+			<span class="k">elif</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pronoun_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">=</span> <span class="s2">&quot;pronoun&quot;</span>
+				<span class="c1"># Check for explicit indefinite morphology in morph feature of head token</span>
+				<span class="k">if</span> <span class="s2">&quot;indef&quot;</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">=</span> <span class="s2">&quot;indef&quot;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">=</span> <span class="s2">&quot;def&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">=</span> <span class="s2">&quot;common&quot;</span>
+				<span class="c1"># Check for explicit definite morphology in morph feature of head token</span>
+				<span class="k">if</span> <span class="s2">&quot;def&quot;</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="s2">&quot;indef&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">=</span> <span class="s2">&quot;def&quot;</span>
+					<span class="c1"># Chomp definite information not to interfere with agreement</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;def&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="c1"># Check if any children linked via a link function are definite markings</span>
+					<span class="n">children_are_def_articles</span> <span class="o">=</span> <span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;definite_articles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">maybe_article</span><span class="p">)]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">for</span> <span class="n">maybe_article</span> <span class="ow">in</span> <span class="n">children</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">])</span>
+					<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">children_are_def_articles</span><span class="p">):</span>
+						<span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">=</span> <span class="s2">&quot;def&quot;</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">=</span> <span class="s2">&quot;indef&quot;</span>
+
+			<span class="c1"># Find agreement alternatives unless cardinality has set agreement explicitly already (e.g. to &#39;plural&#39;/&#39;dual&#39; etc.)</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">cardinality</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span> <span class="o">=</span> <span class="n">resolve_mark_agree</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">elif</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">!=</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span> <span class="o">!=</span> <span class="s2">&quot;_&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span> <span class="o">!=</span> <span class="s2">&quot;--&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">!=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;aggregate_agree&quot;</span><span class="p">]:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">agree_certainty</span> <span class="o">=</span> <span class="s2">&quot;mark_head_morph&quot;</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span><span class="p">)</span>
+
+			<span class="c1">#cardinality resolve, only resolve here if it hasn&#39;t been set before (as in coordination markable)</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">cardinality</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">cardinality</span> <span class="o">=</span> <span class="n">resolve_cardinality</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span><span class="n">lex</span><span class="p">)</span>
+
+			<span class="n">resolve_mark_entity</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+			<span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="p">:</span>  <span class="c1"># Lexicalized agreement information appended to entity</span>
+				<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="k">elif</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree_certainty</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">agree</span><span class="p">)</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">elif</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_agree&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">!=</span> <span class="s2">&quot;pronoun&quot;</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_agree&quot;</span><span class="p">]</span>
+			<span class="n">subclass</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+			<span class="k">if</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="p">:</span>  <span class="c1"># This is a subclass bearing solution</span>
+				<span class="n">subclass</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">!=</span> <span class="s2">&quot;pronoun&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">text</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">no_affix_mark</span> <span class="o">=</span> <span class="n">remove_suffix_tokens</span><span class="p">(</span><span class="n">remove_prefix_tokens</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">lex</span><span class="p">),</span> <span class="n">lex</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">no_affix_mark</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">no_affix_mark</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_agree&quot;</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;pronoun&quot;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;abstract&quot;</span> <span class="ow">or</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+				<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span> <span class="ow">in</span> <span class="n">markables_by_head</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;subject_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">markables_by_head</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span><span class="p">]</span><span class="o">.</span><span class="n">entity</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span> <span class="ow">and</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;[A-ZÄÖÜ]&quot;</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>  <span class="c1"># Unknown all caps entity, guess acronym default</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;all_caps_entity&quot;</span><span class="p">]</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;uncertain&quot;</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>  <span class="c1"># Unknown entity, guess default</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_entity&quot;</span><span class="p">]</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;uncertain&quot;</span>
+			<span class="k">if</span> <span class="n">subclass</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">subclass</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+					<span class="n">subclass</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">subclass</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">subclass</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">func</span> <span class="o">==</span> <span class="s2">&quot;title&quot;</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_entity&quot;</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_entity&quot;</span><span class="p">]:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_agree&quot;</span><span class="p">]</span>
+
+			<span class="k">if</span> <span class="s2">&quot;ablations&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+				<span class="k">if</span> <span class="s2">&quot;no_subclasses&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ablations&quot;</span><span class="p">]:</span>
+					<span class="n">subclass</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">markcounter</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">groupcounter</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="n">this_markable</span> <span class="o">=</span> <span class="n">Markable</span><span class="p">(</span><span class="s2">&quot;referent_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">markcounter</span><span class="p">),</span> <span class="n">tok</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">form</span><span class="p">,</span>
+									 <span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span><span class="p">,</span>
+									 <span class="n">subclass</span><span class="p">,</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">sentence</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupcounter</span><span class="p">,</span>
+									 <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">cardinality</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">submarks</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">coordinate</span><span class="p">)</span>
+			<span class="n">markables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_markable</span><span class="p">)</span>
+			<span class="n">markables_by_head</span><span class="p">[</span><span class="n">mark_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_markable</span>
+			<span class="n">markstart_dict</span><span class="p">[</span><span class="n">this_markable</span><span class="o">.</span><span class="n">start</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_markable</span><span class="p">)</span>
+			<span class="n">markend_dict</span><span class="p">[</span><span class="n">this_markable</span><span class="o">.</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_markable</span><span class="p">)</span>
+
+
+		<span class="k">for</span> <span class="n">markable_head_id</span> <span class="ow">in</span> <span class="n">markables_by_head</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;_.*&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">markable_head_id</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">tokoffset</span><span class="p">:</span>  <span class="c1"># Resolve antecedent for current sentence markables</span>
+				<span class="n">current_markable</span> <span class="o">=</span> <span class="n">markables_by_head</span><span class="p">[</span><span class="n">markable_head_id</span><span class="p">]</span>
+				<span class="c1"># DEBUG POINT</span>
+				<span class="k">if</span> <span class="n">current_markable</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+					<span class="k">pass</span>
+				<span class="c1"># Revise coordinate markable entities now that we have resolved all of their constituents</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_markable</span><span class="o">.</span><span class="n">submarks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">assign_coordinate_entity</span><span class="p">(</span><span class="n">current_markable</span><span class="p">,</span><span class="n">markables_by_head</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">antecedent_prohibited</span><span class="p">(</span><span class="n">current_markable</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">current_markable</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;indef&quot;</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;apposition_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">current_markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;allow_indef_anaphor&quot;</span><span class="p">]):</span>
+					<span class="n">antecedent</span> <span class="o">=</span> <span class="bp">None</span>
+				<span class="k">elif</span> <span class="p">(</span><span class="n">current_markable</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;indef&quot;</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;apposition_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">current_markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;allow_indef_anaphor&quot;</span><span class="p">]):</span>
+					<span class="n">antecedent</span><span class="p">,</span> <span class="n">propagation</span> <span class="o">=</span> <span class="n">find_antecedent</span><span class="p">(</span><span class="n">current_markable</span><span class="p">,</span> <span class="n">markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="s2">&quot;appos&quot;</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">antecedent</span><span class="p">,</span> <span class="n">propagation</span> <span class="o">=</span> <span class="n">find_antecedent</span><span class="p">(</span><span class="n">current_markable</span><span class="p">,</span> <span class="n">markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">antecedent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">antecedent</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;invert&#39;</span> <span class="ow">in</span> <span class="n">propagation</span><span class="p">:</span>
+						<span class="c1"># If the rule specifies to invert</span>
+						<span class="k">if</span> <span class="s1">&#39;invert&#39;</span> <span class="ow">in</span> <span class="n">propagation</span><span class="p">:</span>
+							<span class="n">temp</span> <span class="o">=</span> <span class="n">antecedent</span>
+							<span class="n">antecedent</span> <span class="o">=</span> <span class="n">current_markable</span>
+							<span class="n">current_markable</span> <span class="o">=</span> <span class="n">temp</span>
+						<span class="n">current_markable</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">=</span> <span class="n">antecedent</span>
+						<span class="n">current_markable</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">antecedent</span><span class="o">.</span><span class="n">group</span>
+						<span class="c1"># Check for apposition function if both markables are in the same sentence</span>
+						<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;apposition_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">current_markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
+								<span class="n">current_markable</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">==</span> <span class="n">antecedent</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span><span class="p">:</span>
+							<span class="n">current_markable</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">=</span> <span class="s2">&quot;appos&quot;</span>
+						<span class="k">elif</span> <span class="n">current_markable</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;pronoun&quot;</span><span class="p">:</span>
+							<span class="n">current_markable</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">=</span> <span class="s2">&quot;ana&quot;</span>
+						<span class="k">elif</span> <span class="n">current_markable</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+							<span class="n">current_markable</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">=</span> <span class="s2">&quot;coref&quot;</span>
+						<span class="n">current_markable</span><span class="o">.</span><span class="n">infstat</span> <span class="o">=</span> <span class="s2">&quot;giv&quot;</span>
+					<span class="k">else</span><span class="p">:</span>  <span class="c1"># Cataphoric match</span>
+						<span class="n">current_markable</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">=</span> <span class="n">antecedent</span>
+						<span class="n">antecedent</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">current_markable</span><span class="o">.</span><span class="n">group</span>
+						<span class="n">current_markable</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">=</span> <span class="s2">&quot;cata&quot;</span>
+						<span class="n">current_markable</span><span class="o">.</span><span class="n">infstat</span> <span class="o">=</span> <span class="s2">&quot;new&quot;</span>
+				<span class="k">elif</span> <span class="n">current_markable</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;pronoun&quot;</span><span class="p">:</span>
+					<span class="n">current_markable</span><span class="o">.</span><span class="n">infstat</span> <span class="o">=</span> <span class="s2">&quot;acc&quot;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">current_markable</span><span class="o">.</span><span class="n">infstat</span> <span class="o">=</span> <span class="s2">&quot;new&quot;</span>
+
+				<span class="k">if</span> <span class="n">current_markable</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">current_markable</span><span class="o">.</span><span class="n">agree</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+					<span class="n">lex</span><span class="o">.</span><span class="n">last</span><span class="p">[</span><span class="n">current_markable</span><span class="o">.</span><span class="n">agree</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_markable</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">pass</span></div></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Amir Zeldes.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

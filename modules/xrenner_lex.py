@@ -1,6 +1,8 @@
 import csv
 import gc
 import os
+from os import listdir
+from os.path import isfile, join
 import re
 import ConfigParser
 import sys
@@ -8,45 +10,54 @@ from collections import defaultdict
 from xrenner_rule import CorefRule
 
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
-modules/xrenner_lex.py
 LexData class - container object for lexical information, gazetteers etc.
+
 Author: Amir Zeldes
 """
-
 
 class LexData:
 	"""
 	Class to hold lexical information from gazetteers and training data.
-	Use model argument to define subdirectory under modes/ for reading different sets of
+	Use model argument to define subdirectory under models/ for reading different sets of
 	configuration files.
 	"""
 	def __init__(self, model,override=None):
+		"""
+		:param model: model - string name of the model to read from models/
+		:param override: override - optional name of a section to use in models/override.ini
+		"""
 		gc.disable()
 		self.model = model
 		self.atoms = {}
 		self.mod_atoms = {}
+
+		model_path = os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + model + os.sep
+		model_files = [f for f in listdir(model_path) if isfile(join(model_path, f))]
+
+		# Mandatory files must be included in model directory
+		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
 		self.entities = self.read_delim('entities.tab', 'triple')
 		self.entity_heads = self.read_delim('entity_heads.tab', 'triple')
-		self.names = self.read_delim('names.tab')
-		self.stop_list = self.read_delim('stop_list.tab', 'low')
-		self.open_close_punct = self.read_delim('open_close_punct.tab')
-		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
-		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms')
-		self.entity_deps = self.read_delim('entity_deps.tab','quadruple')
-		self.hasa = self.read_delim('hasa.tab', 'triple_numeric')
-		self.coref = self.read_delim('coref.tab')
-		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
-
 		self.pronouns= self.read_delim('pronouns.tab', 'double')
-		self.numbers=self.read_delim('numbers.tab','double')
-		self.affix_tokens = self.read_delim('affix_tokens.tab')
-
+		# Get configuration
 		self.filters = self.get_filters(override)
 
-		self.antonyms = self.read_antonyms()
-		self.isa = self.read_isa()  # isa dictionary, from generic subclass string to list of valid substitutes
+		# Optional files improve model accuracy
+		self.names = self.read_delim('names.tab') if "names.tab" in model_files else {}
+		self.stop_list = self.read_delim('stop_list.tab', 'low') if "stop_list.tab" in model_files else set([])
+		self.open_close_punct = self.read_delim('open_close_punct.tab') if "open_close_punct.tab" in model_files else {}
+		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
+		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms') if "entity_mods.tab" in model_path else {}
+		self.entity_deps = self.read_delim('entity_deps.tab','quadruple') if "entity_deps.tab" in model_files else {}
+		self.hasa = self.read_delim('hasa.tab', 'triple_numeric') if "hasa.tab" in model_files else {}
+		self.coref = self.read_delim('coref.tab') if "coref.tab" in model_files else {}
+		self.numbers=self.read_delim('numbers.tab','double') if "numbers.tab" in model_files else {}
+		self.affix_tokens = self.read_delim('affix_tokens.tab') if "affix_tokens.tab" in model_files else {}
+		self.antonyms = self.read_antonyms() if "antonyms.tab" in model_files else {}
+		self.isa = self.read_isa() if "isa.tab" in model_files else {}
+		self.debug = self.read_delim('debug.tab') if "debug.tab" in model_files else {"ana":"","ante":"","ablations":""}
 
+		# Compile atom and first + last name data
 		self.atoms = self.get_atoms()
 		self.first_names, self.last_names = self.get_first_last_names(self.names)
 
@@ -56,10 +67,17 @@ class LexData:
 		self.morph = self.get_morph()
 		self.func_substitutes_forward, self.func_substitutes_backward = self.get_func_substitutes()
 
-		self.debug = self.read_delim('debug.tab')
 		gc.enable()
 
 	def read_delim(self, filename, mode="normal", atom_list_name="atoms"):
+		"""
+		Generic file reader for lexical data in model directory
+
+		:param filename: string - name of the file
+		:param mode: single, double, triple, quadruple, triple_numeric or low reading mode
+		:param atom_list_name: list of atoms to use for triple reader mode
+		:return: compiled lexical data, usually a structured dictionary or set depending on number of columns
+		"""
 		if atom_list_name == "atoms":
 			atom_list = self.atoms
 		elif atom_list_name == "mod_atoms":
@@ -67,7 +85,7 @@ class LexData:
 		with open(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + filename, 'rb') as csvfile:
 			reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
 			if mode == "low":
-				return dict((rows[0].lower(), "") for rows in reader if not rows[0].startswith('#') and not len(rows[0]) == 0)
+				return set([rows[0].lower() for rows in reader if not rows[0].startswith('#') and not len(rows[0]) == 0])
 			elif mode == "single":
 				return list((rows[0]) for rows in reader if not rows[0].startswith('#') and not len(rows[0].strip()) == 0)
 			elif mode == "double":
@@ -92,13 +110,27 @@ class LexData:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2]]
 				return out_dict
 			elif mode == "triple_numeric":
-				return dict((rows[0], {rows[1]:int(rows[2])}) for rows in reader if not rows[0].startswith('#'))
+				out_dict = defaultdict(lambda: defaultdict(int))
+				for row in reader:
+					if not row[0].startswith("#"):
+						out_dict[row[0]][row[1]] = int(row[2])
+				return out_dict
 			elif mode == "quadruple":
-				return dict((rows[0],{rows[1]:{rows[2] : int(rows[3])}}) for rows in reader)
+				out_dict = defaultdict(lambda: defaultdict(lambda: defaultdict(str)))
+				for row in reader:
+					if not row[0].startswith("#"):
+						out_dict[row[0]][row[1]][row[2]] = int(row[3])
+				return out_dict
 			else:
 				return dict((rows[0], rows[1]) for rows in reader if not rows[0].startswith('#'))
 
 	def get_atoms(self):
+		"""
+		Function to compile atom list for atomic markable recognition. Currently treats listed persons, places,
+		organizations and inanimate objects from lexical data as atomic by default.
+
+		:return: dictionary of atoms.
+		"""
 		atoms = self.atoms
 		places = dict((key, value[0]) for key, value in self.entities.items() if value[0].startswith(self.filters["place_def_entity"]+"\t"))
 		atoms.update(places)
@@ -113,16 +145,27 @@ class LexData:
 
 	@staticmethod
 	def get_first_last_names(names):
+		"""
+		Collects separate first and last name data from the collection in names.tab
+
+		:param names: The complete names dictionary from names.tab, mapping full name to agreement
+		:return: [firsts, lasts] - list containing dictionary of first names to agreement and set of last names
+		"""
 		firsts = {}
-		lasts = []
+		lasts = set([])
 		for name in names:
 			if " " in name:
 				parts = name.split(" ")
 				firsts[parts[0]] = names[name]  # Get heuristic gender for this first name
-				lasts.append(parts[len(parts)-1])  # Last name is a list, no gender info
+				lasts.update(parts[len(parts)-1])  # Last name is a set, no gender info
 		return [firsts,lasts]
 
 	def read_antonyms(self):
+		"""
+		Function to created dictionary from each word to all its antonyms in antonyms.tab
+
+		:return: dictionary from words to antonym sets
+		"""
 		set_list = self.read_delim('antonyms.tab', 'low')
 		output = defaultdict(set)
 		for antoset in set_list:
@@ -133,6 +176,11 @@ class LexData:
 		return output
 
 	def read_isa(self):
+		"""
+		Reads isa.tab into a dictionary from words to lists of isa-matches
+
+		:return: dictionary from words to lists of corresponding isa-matches
+		"""
 		isa_list = self.read_delim('isa.tab')
 		output = {}
 		for isa in isa_list:
@@ -143,6 +191,13 @@ class LexData:
 		return output
 
 	def get_filters(self, override=None):
+		"""
+		Reads model settings from config.ini and possibly overrides from override.ini
+
+		:param override: optional section name in override.ini
+		:return: filters - dictionary of settings from config.ini with possible overrides
+		"""
+
 		#e.g., override = 'OntoNotes'
 		config = ConfigParser.ConfigParser()
 		config.read(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + 'config.ini')
@@ -199,6 +254,12 @@ class LexData:
 		return filters
 
 	def lemmatize(self, token):
+		"""
+		Simple lemmatization function using rules from lemma_rules in config.ini
+
+		:param token: ParsedToken object to be lemmatized
+		:return: string - the lemma
+		"""
 
 		lemma_rules = self.filters["lemma_rules"]
 		lemma = token.text
@@ -219,6 +280,12 @@ class LexData:
 			return lemma
 
 	def get_func_substitutes(self):
+		"""
+		Function for semi-hard-wired function substitutions based on function label and dependency direction.
+		Uses func_substitute_forward and func_substitute_backward settings in config.ini
+
+		:return: list of compiled substitutions_forward, substitutions_backward
+		"""
 
 		substitutions_forward = {}
 		substitutions_backward = {}
@@ -233,6 +300,13 @@ class LexData:
 		return [substitutions_forward,substitutions_backward]
 
 	def process_morph(self, token):
+		"""
+		Simple mechanism for substituting values in morph feature of input tokens. For more elaborate sub-graph
+		dependent manipultations, use depedit module
+
+		:param token: ParsedToken object to edit morph feature
+		:return: string - the edited morph feature
+		"""
 
 		morph_rules = self.filters["morph_rules"]
 		morph = token.morph
@@ -242,6 +316,11 @@ class LexData:
 		return morph
 
 	def get_pos_agree_mappings(self):
+		"""
+		Gets dictionary mapping POS categories to default agreement classes, e.g. NNS > plural
+
+		:return: mapping dictionary
+		"""
 
 		mappings = {}
 		rules = self.filters["pos_agree_mapping"]
@@ -253,6 +332,12 @@ class LexData:
 
 	@staticmethod
 	def parse_coref_rules(rule_list):
+		"""
+		Reader function to pass coref_rules.tab into CorefRule objects
+
+		:param rule_list: textual list of rules
+		:return: list of compiled CorefRule objects
+		"""
 
 		output=[]
 		for rule in rule_list:
@@ -261,6 +346,11 @@ class LexData:
 		return output
 
 	def get_morph(self):
+		"""
+		Compiles morphlogical affix dictionary based on members of entity_heads.tab
+
+		:return: dictionary from affixes to dictionaries mapping classes to type frequencies
+		"""
 		morph = {}
 		for head in self.entity_heads:
 			for i in range(1, self.filters["max_suffix_length"]):

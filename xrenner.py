@@ -10,8 +10,9 @@ Author: Amir Zeldes
 
 import argparse, sys
 from modules.xrenner_xrenner import Xrenner
+from glob import glob
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
@@ -25,6 +26,9 @@ parser.add_argument('file', action="store", help="input file name to process")
 parser.add_argument('-t', '--test', action="store_true", dest="test", help="run unit tests and quit")
 parser.add_argument('--version', action='version', version=xrenner_version, help="show xrenner version number and quit")
 
+total_tokens = 0
+total_sentences = 0
+docnum = 0
 
 # Check if -t is invoked and run unit tests instead of parsing command line
 if len(sys.argv) > 1 and sys.argv[1] in ["-t", "--test"]:
@@ -37,16 +41,41 @@ else:
 	options = parser.parse_args()
 	if options.verbose:
 		import modules.timing
+		sys.stderr.write("\nReading language model...\n") 
 
 	model = options.model
 	override = options.override
-	parse = open(options.file)
 	xrenner = Xrenner(model, override)
-	output = xrenner.analyze(parse, options.format)
 
-	if options.format != "paula":
-		print output
+	data = glob(options.file)
+	if not isinstance(data,list):
+		data = [data]
+	for file_ in data:
+
+		docnum += 1
+
+		if options.verbose:
+			if len(data) > 1:
+				sys.stderr.write("Processing document " + str(docnum) + "/" + str(len(data)) + "... ") 
+			else:
+				sys.stderr.write("Processing document...\n")
+
+		output = xrenner.analyze(file_, options.format)
+		total_tokens += len(xrenner.conll_tokens)-1
+		total_sentences += xrenner.sent_num-1
+		
+		if options.format != "paula":
+			if len(data) > 1:
+				outfile = xrenner.docname + "." + options.format
+				handle = open(outfile, 'w')
+				handle.write(output)
+				handle.close()
+			else:
+				print output
+		
+		if options.verbose and len(data) > 1:
+			sys.stderr.write("Processed " + str(len(xrenner.conll_tokens)-1) + " tokens in " + str(xrenner.sent_num-1) + " sentences.\n")
 
 	if options.verbose:
 		sys.stderr.write("="*40 + "\n")
-		sys.stderr.write("Processed " + str(len(xrenner.conll_tokens)-1) + " tokens in " + str(xrenner.sent_num-1) + " sentences.\n")
+		sys.stderr.write("Processed " + str(total_tokens) + " tokens in " + str(total_sentences) + " sentences.\n")

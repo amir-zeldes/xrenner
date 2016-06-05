@@ -1,17 +1,18 @@
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
 modules/xrenner_propagate.py
+
 Feature propagation module. Propagates entity and agreement features for coreferring markables.
+
 Author: Amir Zeldes
 """
 
 def propagate_entity(markable, candidate, direction="propagate"):
 	"""
 	Propagate class and agreement features between coreferent markables
+	
 	:param markable: a Markable object
 	:param candidate: a coreferent antecedent Markable object
-	:param direction: propagation direction; by default, data can be propagated in either direction from the more
-						certain markable to the less certain one, but direction can be forced, e.g. 'propagate_forward'
+	:param direction: propagation direction; by default, data can be propagated in either direction from the more certain markable to the less certain one, but direction can be forced, e.g. 'propagate_forward'
 	:return: void
 	"""
 	# Check for rule explicit instructions
@@ -72,6 +73,7 @@ def propagate_entity(markable, candidate, direction="propagate"):
 def propagate_agree(markable, candidate):
 	"""
 	Progpagate agreement between to markables if one has unknown agreement
+	
 	:param markable: Markable object
 	:param candidate: Coreferent antecdedent Markable object
 	:return: void

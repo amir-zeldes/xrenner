@@ -2,19 +2,31 @@
 import sys
 import operator
 import re
+import os
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
-modules/xrenner_out.py
 Output module for exporting resolved data to one of the supported serialization formats
+
 Author: Amir Zeldes
 """
 
+
+def clean_filename(filename):
+	"""
+	Heuristically replaces known extensions to create sensible output file name
+
+	:param filename: the input file name to strip extensions from
+	"""
+	if filename.endswith(".conll10") or filename.endswith(".conllu") and not filename.startswith("."):
+		return filename.replace(".conll10", "").replace(".conllu", "")
+
+
 def output_onto(conll_tokens, markstart_dict, markend_dict, file_name):
 	"""
-	Outputs analysis results in OntoNotes .coref cormat
+	Outputs analysis results in OntoNotes .coref XML format
+	
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
@@ -44,6 +56,7 @@ def output_onto(conll_tokens, markstart_dict, markend_dict, file_name):
 def output_SGML(conll_tokens, markstart_dict, markend_dict):
 	"""
 	Outputs analysis results as CWB SGML (with nesting), one token per line and markables in <referent> tags
+	
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
@@ -71,6 +84,7 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name, output_i
 	"""
 	Outputs analysis results in CoNLL format, one token per line and markables with opening
 	and closing numbered brackets. Compatible with CoNLL scorer.
+	
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
@@ -114,22 +128,28 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name, output_i
 	return output_string
 
 
-def output_HTML(conll_tokens, markstart_dict, markend_dict):
+def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 	"""
 	Outputs analysis results as HTML (assuming jquery, xrenner css and js files), one token per line and
 	markables in <div> tags with Font Awesome icons and colored groups.
+	
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
 	:return: serialized HTML
 	"""
 
+	if rtl:
+		rtl_style = ' style="direction: rtl"'
+	else:
+		rtl_style = ""
+
 	output_string = '''<html>
 <head>
 	<link rel="stylesheet" href="./css/renner.css" type="text/css" charset="utf-8"/>
 	<link rel="stylesheet" href="./css/font-awesome-4.2.0/css/font-awesome.min.css"/>
 </head>
-<body>
+<body'''+rtl_style+'''>
 <script src="./script/jquery-1.11.3.min.js"></script>
 <script src="./script/chroma.min.js"></script>
 <script src="./script/xrenner.js"></script>
@@ -139,7 +159,8 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict):
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
 				info_string = "class: " + str(out_mark.entity) + " | subclass: " + str(out_mark.subclass) + \
 				              "&#10;definiteness: " + str(out_mark.definiteness) + " | agree: " + str(out_mark.agree) + \
-				              "&#10;cardinality: " + str(out_mark.cardinality) + " | form: "+ str(out_mark.form)
+				              "&#10;cardinality: " + str(out_mark.cardinality) + " | form: "+ str(out_mark.form) + \
+				              "&#10;core_text: " + str(out_mark.core_text) + " | lemma: "+ str(out_mark.lemma)
 				if not out_mark.antecedent == "none":
 					info_string += '&#10;coref_type: ' + out_mark.coref_type
 				output_string += '<div id="' + out_mark.id + '" head="' + out_mark.head.id + '" onmouseover="highlight_group(' + \
@@ -158,11 +179,12 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict):
 	return output_string
 
 
-def output_PAULA(conll_tokens, markstart_dict, markend_dict):
+def output_PAULA(conll_tokens, markstart_dict, markend_dict, docname, docpath):
 	"""
 	Outputs analysis results as PAULA standoff XML. Separate files for tokens, markables and coreference links
 	plus annotations. This format is the most complete, distinguishing apposition, anaphora, cataphora and other
 	coreference types as edge annotations.
+	
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
@@ -192,16 +214,16 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict):
 
 <header paula_id="renner.out_tok"/>
 
-<markList xmlns:xlink="http://www.w3.org/1999/xlink" type="tok" xml:base="renner.out.text.xml">
+<markList xmlns:xlink="http://www.w3.org/1999/xlink" type="tok" xml:base="xrenner.''' + docname + '''.text.xml">
 '''
 
 	paula_mark_header = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE paula SYSTEM "paula_mark.dtd">
 <paula version="1.0">
 
-<header paula_id="ref.renner.out_referentSeg"/>
+<header paula_id="xrenner.''' + docname + '''_referentSeg"/>
 
-<markList xmlns:xlink="http://www.w3.org/1999/xlink" type="referentSeg" xml:base="renner.out.tok.xml">
+<markList xmlns:xlink="http://www.w3.org/1999/xlink" type="referentSeg" xml:base="xrenner.''' + docname + '''.tok.xml">
 '''
 
 	paula_entity_header = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -209,9 +231,9 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict):
 <!DOCTYPE paula SYSTEM "paula_feat.dtd">
 <paula version="1.0">
 
-<header paula_id="ref.renner.out_referentSeg_entity"/>
+<header paula_id="xrenner.''' + docname + '''_referentSeg_entity"/>
 
-<featList xmlns:xlink="http://www.w3.org/1999/xlink" type="entity" xml:base="ref.renner.out.referentSeg.xml">
+<featList xmlns:xlink="http://www.w3.org/1999/xlink" type="entity" xml:base="xrenner.''' + docname + '''.referentSeg.xml">
 '''
 
 	paula_coref_header = '''<?xml version="1.0" standalone="no"?>
@@ -219,31 +241,36 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict):
 <!DOCTYPE paula SYSTEM "paula_rel.dtd">
 <paula version="1.0">
 
-<header paula_id="ref.renner.out.referentSeg_coref"/>
+<header paula_id="xrenner.''' + docname + '''.referentSeg_coref"/>
 
-<relList xmlns:xlink="http://www.w3.org/1999/xlink" type="coref" xml:base="ref.renner.out.referentSeg.xml">
+<relList xmlns:xlink="http://www.w3.org/1999/xlink" type="coref" xml:base="xrenner.''' + docname + '''.referentSeg.xml">
 '''
 	paula_coref_type_header = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <!DOCTYPE paula SYSTEM "paula_feat.dtd">
 <paula version="1.0">
 
-<header paula_id="ref.renner.out.referentSeg_coref_type"/>
+<header paula_id="xrenner.''' + docname + '''.referentSeg_coref_type"/>
 
-<featList xmlns:xlink="http://www.w3.org/1999/xlink" type="type" xml:base="ref.renner.out.referentSeg_coref.xml">
+<featList xmlns:xlink="http://www.w3.org/1999/xlink" type="type" xml:base="xrenner.''' + docname + '''.referentSeg_coref.xml">
 '''
 
-	f = open('renner.out.text.xml', 'w')
+	if not os.path.exists(docpath + os.sep + docname):
+		os.makedirs(docpath + os.sep + docname)
+	elif os.path.isfile(docpath + os.sep + docname):
+		raise("Unable to create document directory. There is already a file named " + docpath + os.sep + docname + "\n")
+
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.text.xml', 'w')
 	f.write(paula_text_header)
-	f = open('renner.out.tok.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.tok.xml', 'w')
 	f.write(paula_tok_header)
-	f = open('ref.renner.out.referentSeg.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg.xml', 'w')
 	f.write(paula_mark_header)
-	f = open('ref.renner.out.referentSeg_entity.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_entity.xml', 'w')
 	f.write(paula_entity_header)
-	f = open('ref.renner.out.referentSeg_coref.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_coref.xml', 'w')
 	f.write(paula_coref_header)
-	f = open('ref.renner.out.referentSeg_coref_type.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_coref_type.xml', 'w')
 	f.write(paula_coref_type_header)
 
 	del conll_tokens[0]
@@ -270,17 +297,17 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict):
 	paula_entities += "</featList>\n</paula>\n"
 	paula_rels += "</relList>\n</paula>\n"
 	paula_rel_annos += "</featList>\n</paula>\n"
-	f = open('renner.out.text.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.text.xml', 'a')
 	f.write(paula_text)
-	f = open('renner.out.tok.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.tok.xml', 'a')
 	f.write(paula_tokens)
-	f = open('ref.renner.out.referentSeg.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg.xml', 'a')
 	f.write(paula_markables)
-	f = open('ref.renner.out.referentSeg_entity.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_entity.xml', 'a')
 	f.write(paula_entities)
-	f = open('ref.renner.out.referentSeg_coref.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_coref.xml', 'a')
 	f.write(paula_rels)
-	f = open('ref.renner.out.referentSeg_coref_type.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_coref_type.xml', 'a')
 	f.write(paula_rel_annos)
 
 
@@ -396,6 +423,7 @@ def get_glyph(entity_type):
 	"""
 	Generates appropriate Font Awesome icon strings based on entity type strings, such as
 	a person icon (fa-male) for the 'person' entity, etc.
+	
 	:param entity_type: String specifying the entity type to be visualized
 	:return: HTML string with the corresponding Font Awesome icon
 	"""

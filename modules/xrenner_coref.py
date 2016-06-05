@@ -4,9 +4,8 @@ from xrenner_propagate import *
 from xrenner_rule import CorefRule, ConstraintMatcher
 
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
-modules/xrenner_coref.py
 Coreference resolution module. Iterates through markables to find possible matches based on rules.
+
 Author: Amir Zeldes
 """
 
@@ -14,6 +13,7 @@ Author: Amir Zeldes
 def find_antecedent(markable, previous_markables, lex, restrict_rule=""):
 	"""
 	Search for antecedents by cycling through coref rules for previous markables
+	
 	:param markable: Markable object to find an antecedent for
 	:param previous_markables: Markables in all sentences up to and including current sentence
 	:param lex: the LexData object with gazetteer information and model settings
@@ -37,9 +37,9 @@ def find_antecedent(markable, previous_markables, lex, restrict_rule=""):
 def search_prev_markables(markable, previous_markables, ante_constraints, ante_spec, lex, max_dist, propagate):
 	"""
 	Search for antecedent to specified markable using a specified rule
+	
 	:param markable: The markable object to find an antecedent for
-	:param previous_markables: The list of know markables up to and including the current sentence;
-								markables beyond current markable but in its sentence are included for cataphora.
+	:param previous_markables: The list of know markables up to and including the current sentence; markables beyond current markable but in its sentence are included for cataphora.
 	:param ante_constraints: A list of ContraintMatcher objects describing the antecedent
 	:param ante_spec: The antecedent specification part of the coref rule being checked, as a string
 	:param lex: the LexData object with gazetteer information and model settings
@@ -90,7 +90,7 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 									if propagate.startswith("propagate"):
 										propagate_entity(markable, candidate, propagate)
 									return candidate
-							elif (markable.head.text == candidate.head.text and agree_compatible(markable,candidate,lex) or (markable.head.lemma == candidate.head.lemma and
+							elif agree_compatible(markable,candidate,lex) and ((markable.head.text == candidate.head.text) or (markable.head.lemma == candidate.head.lemma and
 							lex.filters["lemma_match_pos"].match(markable.head.pos) is not None and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
 								if merge_entities(markable, candidate, previous_markables, lex):
 									if propagate.startswith("propagate"):
@@ -139,11 +139,12 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 def coref_rule_applies(lex, constraints, mark, anaphor=None):
 	"""
 	Check whether a markable definition from a coref rule applies to this markable
+	
 	:param lex: the LexData object with gazetteer information and model settings
 	:param constraints: the constraints defining the relevant Markable
 	:param mark: the Markable object to check constraints against
 	:param anaphor: if this is an antecedent check, the anaphor is passed for $1-style constraint checks
-	:return: Boolean: True if 'mark' fits all constraints, False if any of them fail
+	:return: bool: True if 'mark' fits all constraints, False if any of them fail
 	"""
 	for constraint in constraints:
 		if not constraint.match(mark,lex,anaphor):
@@ -154,10 +155,11 @@ def coref_rule_applies(lex, constraints, mark, anaphor=None):
 def antecedent_prohibited(markable, conll_tokens, lex):
 	"""
 	Check whether a Markable object is prohibited from having an antecedent
+	
 	:param markable: The Markable object to check
 	:param conll_tokens: The list of ParsedToken objects up to and including the current sentence
 	:param lex: the LexData object with gazetteer information and model settings
-	:return: Boolean
+	:return: bool
 	"""
 	mismatch = True
 	if "/" in lex.filters["no_antecedent"]:

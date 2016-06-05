@@ -1,5 +1,7 @@
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
 
+https://corpling.uis.georgetown.edu/xrenner/
+
 Usage: 
 ========
 xrenner.py [options] INFILE (> OUTFILE)

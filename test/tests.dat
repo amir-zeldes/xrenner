@@ -152,3 +152,60 @@ input_data:
 3	birds	_	NNS	NNS	_	4	nsubj	_	_
 4	flew	_	VBD	VBD	_	0	root	_	_
 5	.	_	.	.	_	4	punct	_	_
+
+-----
+
+name:verb_test
+model:eng
+toks:10 # John visited Spain...
+marks:2
+groups:1
+chains:
+  # visited
+  2_2 < 5_6
+input_data:
+1	John	_	NNP	NNP	_	2	nsubj	_	_
+2	visited	_	VBD	VBD	_	0	root	_	_
+3	Spain	_	NNP	NNP	_	2	dobj	_	_
+4	.	_	.	.	_	2	punct	_	_
+
+1	The	_	DT	DT	_	2	det	_	_
+2	visit	_	NN	NN	_	3	nsubj	_	_
+3	went	_	VBD	VBD	_	0	root	_	_
+4	well	_	RB	RB	_	3	advmod	_	_
+5	.	_	.	.	_	3	punct	_	_
+
+-----
+
+name:dynamic_hasa_test
+model:eng
+toks:21 # Beth was worried...
+marks:4
+groups:2
+chains:
+  # Sinead
+  5_5 < 14_14
+  # Sinead 's well-being
+  5_7 < 14_15
+input_data:
+1	Beth	_	NNP	NNP	_	3	nsubjpass	_	_
+2	was	_	VBD	VBD	_	3	auxpass	_	_
+3	worried	_	VBN	VBN	_	0	root	_	_
+4	about	_	IN	IN	_	0	erased	_	_
+5	Sinead	_	NNP	NNP	_	7	poss	_	_
+6	's	_	POS	POS	_	5	possessive	_	_
+7	well-being	_	NN	NN	_	3	prep_about	_	_
+8	,	_	,	,	_	4	punct	_	_
+9	and	_	CC	CC	_	4	cc	_	_
+10	also	_	RB	RB	_	11	advmod	_	_
+11	about	_	IN	IN	_	0	erased	_	_
+12	Jane	_	NNP	NNP	_	4	prep_about	_	_
+13	.	_	.	.	_	3	punct	_	_
+
+1	Her	_	PRP$	PRP$	_	2	poss	_	_
+2	well-being	_	NN	NN	_	6	nsubj	_	_
+3	was	_	VBD	VBD	_	6	cop	_	_
+4	always	_	RB	RB	_	6	advmod	_	_
+5	a	_	DT	DT	_	6	det	_	_
+6	concern	_	NN	NN	_	0	root	_	_
+7	.	_	.	.	_	6	punct	_	_

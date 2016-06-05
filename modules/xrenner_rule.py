@@ -136,7 +136,10 @@ class ConstraintMatcher:
 					return True
 		else:
 			if self.key in self.props:
-				test_val = str(getattr(mark, self.key))
+				if self.match_type == "bool":
+					test_val = getattr(mark, self.key)
+				else:
+					test_val = str(getattr(mark, self.key))
 			elif self.key == "LAST":
 				if self.value in lex.last:
 					return op(lex.last[self.value].entity==mark.entity)
@@ -144,6 +147,9 @@ class ConstraintMatcher:
 					return False
 			elif self.key == "has_child_func":
 				test_val = mark.child_func_string
+				self.match_type = "substring"
+				if self.value[0] != ";":
+					self.value = ";"+self.value+";"
 			elif self.key == "mod":
 				mods = [self.value]
 				found_mod = False
@@ -168,7 +174,7 @@ class ConstraintMatcher:
 		if self.match_type == "exact":
 			return op(test_val == self.value)
 		elif self.match_type == "substring":
-			return op(test_val in self.value)
+			return op(self.value in test_val)
 		elif self.match_type == "regex":
 			return op(self.compiled_re.search(test_val) is not None)
 		elif self.match_type == "startswith":

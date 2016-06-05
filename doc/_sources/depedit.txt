@@ -1,0 +1,69 @@
+========
+DepEdit
+========
+The depedit module offers a powerful tool for manipulating input dependency trees before they are analyzed by the system. It is also available as a standalone script at: http://corpling.uis.georgetown.edu/depedit/
+
+The manipulations carried out by the script are determined by the file *depedit.ini* in the model directory, which may be left empty or missing if depedit should not be used (depedit takes a moment to run, so not using it is an option if very high performance on large amounts of documents is desired). Each rule in the depedit file is a tab-delimited triple, with semicolon delimited instructions in this configuration:
+
+``feature1=/value/;feature2=/value/...	#1op#2;#2op#3...	#1:feature3=value;...#1>#2op#3``
+
+Where features can be:
+
+* **text** - the token text 
+* **lemma** - the token's lemma 
+* **pos** - the token's POS tag (column 4) 
+* **cpos** - the token's coarse/other POS tag (column 5)
+* **morph** - morphological information (column 6) 
+* **func** - the dependency label
+* **head** - the parent feature, only used if specifically targeting roots (head=0)
+
+And operators *op* are:
+
+* **>** - dominance (#1>#2 means #1 is the head of #2)
+* **.** - adjacency (#1.#2 means #1 precedes #2)
+* **.n** - distance (#1.3#2 means #1 is three tokens before #2) 
+* **.n,m** - distance range (#1.3,5#2 means #1 is three-five tokens before #2) 
+
+Below we describe some common scenarios using depedit to preprocess data for coreference resolution; for full documentation see the depedit website.
+
+****************
+Common scenarios
+****************
+
+Fixing probable parser errors
+=============================
+If you know of some consistenly wrong or problematic parser output in your language, you can correct it using depedit by defining the subgraph features identifying the problem and manipulating the tree. Here's an example:
+
+**discourse marker chains** - sometimes a sequence of discourse markers is recognized at its head with the label *discourse*, but subsequent dependents are labeled as *dep*. We could decide to fix this by labeling all *dep* dependents of *discourse* as further cases of *discourse*. If we then rule out *discourse* as a possible markable head label, we can get rid of the whole chain, regardless of POS tags.
+
+.. code-block:: html
+
+	# Dep of discourse is also discourse
+	func=/discourse/;func=/dep/	#1>#2	#2:func=discourse
+
+Flagging special constructions
+==============================
+Even if a tree is correct, you may be interested in flagging certain constellations as special with new labels, and catching those labels later on with *coref_rules.tab* or some other configuration. For example:
+
+**cataphora** - suppose you want to catch 'empty' or cataphoric pronouns such as *it's good that she came*. You can recognize dependency subgraphs corresponding to these and change the pronoun's function to a new one. 
+
+.. code-block:: html
+
+	text=/^[Ii]t$/&func=/nsubj/;pos=/JJ/;func=/ccomp/	#2>#1;#2>#3	#3:func=cata
+
+This token can then be ignored by adding the function to forbidden Mark func in config.ini, or it can be caught with a coref rule in coref_rules.tab.
+
+Adding morphological information
+================================
+Above and beyond the rudimentary morphological substitutions that the *morph_rules* setting in :doc:`config.ini <config>`, depedit can assign morphological
+information based on complex subgraphs. For example:
+
+**possessor definiteness** - suppose you want both the possessor and possessed NP in an example such as *the man's brother* to be treated as definite. You can recognize this subgraph and add a 'def' feature to the morphology column of the dependency tree on each head:
+
+.. code-block:: html
+
+	# Attach preceding article to the possessor noun and mark as definite
+	func=/det/;func=/poss/;pos=/POS/;text=/.*/	#2>#1;#2>#3;#4>#2	#4>#1;#2:morph=def
+
+After this rule runs, the fourth token in the definition governs the first (article is attached to the main noun), and the possessor (#2) will be marked as definite, despite the fact that the article is attached to #4. 
+

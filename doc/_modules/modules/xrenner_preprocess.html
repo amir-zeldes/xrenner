@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>modules.xrenner_preprocess &mdash; xrenner 1.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="xrenner 1.3.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> xrenner
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">xrenner</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>modules.xrenner_preprocess</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for modules.xrenner_preprocess</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">modules/xrenner_preprocess.py</span>
+
+<span class="sd">Prepare parser output for entity and coreference resolution</span>
+
+<span class="sd">Author: Amir Zeldes</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">xrenner_marker</span> <span class="kn">import</span> <span class="n">lookup_has_entity</span>
+
+<div class="viewcode-block" id="add_child_info"><a class="viewcode-back" href="../../modules.html#modules.xrenner_preprocess.add_child_info">[docs]</a><span class="k">def</span> <span class="nf">add_child_info</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">child_funcs</span><span class="p">,</span> <span class="n">child_strings</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Adds a list of all dependent functions and token strings to each parent token</span>
+<span class="sd">	</span>
+<span class="sd">	:param conll_tokens: The ParsedToken list so far</span>
+<span class="sd">	:param child_funcs: Dictionary from ids to child functions</span>
+<span class="sd">	:param child_strings: Dictionary from ids to child strings</span>
+<span class="sd">	:return: void</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">child_id</span> <span class="ow">in</span> <span class="n">child_funcs</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">child_funcs</span><span class="p">[</span><span class="n">child_id</span><span class="p">]:</span>
+			<span class="k">if</span> <span class="n">func</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">child_id</span><span class="p">]</span><span class="o">.</span><span class="n">child_funcs</span><span class="p">:</span>
+				<span class="n">conll_tokens</span><span class="p">[</span><span class="n">child_id</span><span class="p">]</span><span class="o">.</span><span class="n">child_funcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">tok_text</span> <span class="ow">in</span> <span class="n">child_strings</span><span class="p">[</span><span class="n">child_id</span><span class="p">]:</span>
+			<span class="k">if</span> <span class="n">tok_text</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">child_id</span><span class="p">]</span><span class="o">.</span><span class="n">child_strings</span><span class="p">:</span>
+				<span class="n">conll_tokens</span><span class="p">[</span><span class="n">child_id</span><span class="p">]</span><span class="o">.</span><span class="n">child_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok_text</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">postprocess_parser</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">tokoffset</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="n">stop_ids</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="k">for</span> <span class="n">tok1</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+		<span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;-LSB-&quot;</span> <span class="ow">or</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;-RSB-&quot;</span><span class="p">:</span>
+			<span class="n">tok1</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span>
+			<span class="n">tok1</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="s2">&quot;punct&quot;</span>
+			<span class="n">tok1</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_head_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">entity_candidate</span> <span class="o">=</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+			<span class="k">for</span> <span class="n">tok2</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_head_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok2</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="n">entity_candidate</span> <span class="o">+=</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+					<span class="c1">### DEBUG BREAKPOINT ###</span>
+					<span class="k">if</span> <span class="n">entity_candidate</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+						<span class="k">pass</span>
+					<span class="k">if</span> <span class="n">entity_candidate</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>  <span class="c1"># Entity matched, check if all tokens are inter-connected</span>
+						<span class="k">for</span> <span class="n">tok3</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">tok2</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+							<span class="c1"># Ensure right most token has head outside entity:</span>
+							<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok2</span><span class="o">.</span><span class="n">head</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok2</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok2</span><span class="o">.</span><span class="n">head</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>
+								<span class="k">if</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">tok3</span><span class="o">.</span><span class="n">head</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok3</span><span class="o">.</span><span class="n">head</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok2</span><span class="o">.</span><span class="n">id</span><span class="p">))</span> <span class="ow">and</span> <span class="n">tok3</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">children</span><span class="p">[</span><span class="n">tok3</span><span class="o">.</span><span class="n">head</span><span class="p">]:</span>
+									<span class="n">children</span><span class="p">[</span><span class="n">tok3</span><span class="o">.</span><span class="n">head</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tok3</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+									<span class="n">tok3</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">tok2</span><span class="o">.</span><span class="n">id</span>
+									<span class="n">children</span><span class="p">[</span><span class="n">tok3</span><span class="o">.</span><span class="n">head</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok3</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+									<span class="k">break</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">break</span>
+		<span class="c1"># Check for apposition pointing back to immediately preceding proper noun token -</span>
+		<span class="c1"># typical (German model) MaltParser name behavior</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;apposition_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tok1</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;proper_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">conll_tokens</span><span class="p">[</span>
+						<span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">tok1</span><span class="o">.</span><span class="n">head</span><span class="p">:</span>
+				<span class="n">tok1</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="s2">&quot;xrenner_fix&quot;</span>
+				<span class="n">children</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+				<span class="n">stop_ids</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+		<span class="c1"># Check for [city], [state/country] apposition -</span>
+		<span class="c1"># typical (English model) Stanford parser behavior</span>
+		<span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+			<span class="k">pass</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;apposition_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;,&quot;</span><span class="p">:</span>
+				<span class="n">tok_minus2</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span>
+				<span class="n">tok1_head</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span>
+				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;proper_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok_minus2</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="k">if</span> <span class="p">(</span><span class="n">tok_minus2</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">tok1</span><span class="o">.</span><span class="n">head</span> <span class="ow">and</span> <span class="p">(</span><span class="n">lookup_has_entity</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">tok1</span><span class="o">.</span><span class="n">lemma</span><span class="p">,</span> <span class="s2">&quot;place&quot;</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">lookup_has_entity</span><span class="p">(</span><span class="n">tok_minus2</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">tok_minus2</span><span class="o">.</span><span class="n">lemma</span><span class="p">,</span> <span class="s2">&quot;place&quot;</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">or</span> \
+						<span class="n">lookup_has_entity</span><span class="p">(</span><span class="n">tok_minus2</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">tok_minus2</span><span class="o">.</span><span class="n">lemma</span><span class="p">,</span> <span class="s2">&quot;place&quot;</span><span class="p">,</span> <span class="n">lex</span><span class="p">)))</span> <span class="ow">or</span> \
+						<span class="ow">not</span> <span class="n">lookup_has_entity</span><span class="p">(</span><span class="n">tok1_head</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">tok1_head</span><span class="o">.</span><span class="n">lemma</span><span class="p">,</span> <span class="s2">&quot;place&quot;</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lookup_has_entity</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">tok1</span><span class="o">.</span><span class="n">lemma</span><span class="p">,</span> <span class="s2">&quot;place&quot;</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+							<span class="n">tok1</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="s2">&quot;xrenner_fix&quot;</span>
+							<span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">children</span><span class="p">[</span><span class="n">tok_minus2</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+								<span class="n">children</span><span class="p">[</span><span class="n">tok_minus2</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+		<span class="c1"># Check for markable projecting beyond an apposition to itself and remove from children on violation</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;apposition_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tok1</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">tok2</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+				<span class="k">if</span> <span class="n">tok2</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">tok1</span><span class="o">.</span><span class="n">head</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;non_link_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok2</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">tok2</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">children</span><span class="p">[</span><span class="n">tok2</span><span class="o">.</span><span class="n">head</span><span class="p">]:</span>
+					<span class="n">children</span><span class="p">[</span><span class="n">tok2</span><span class="o">.</span><span class="n">head</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tok2</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="replace_conj_func"><a class="viewcode-back" href="../../modules.html#modules.xrenner_preprocess.replace_conj_func">[docs]</a><span class="k">def</span> <span class="nf">replace_conj_func</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">tokoffset</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function to replace functions of tokens matching the conjunction function with their parent&#39;s function</span>
+<span class="sd">	</span>
+<span class="sd">	:param conll_tokens: The ParsedToken list so far</span>
+<span class="sd">	:param tokoffset: The starting token for this sentence</span>
+<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:return: void</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span><span class="p">:]:</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;conjunct_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">child_func</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">child_funcs</span><span class="p">:</span>
+				<span class="n">token</span><span class="o">.</span><span class="n">child_funcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child_func</span><span class="p">)</span>
+			<span class="n">token</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">func</span>
+			<span class="n">token</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">head</span>
+			<span class="n">token</span><span class="o">.</span><span class="n">coordinate</span> <span class="o">=</span> <span class="bp">True</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Amir Zeldes.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

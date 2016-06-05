@@ -2,43 +2,64 @@
 # -*- coding: utf-8 -*-
 
 """
-xrenner - eXternally configurable REference and Non-Named Entity Recognizer
-xrenner_xrenner.py
 Main class file for Xrenner() class
+
 Author: Amir Zeldes
 """
 
 from collections import OrderedDict
-from modules.xrenner_out import *
-from modules.xrenner_classes import *
-from modules.xrenner_coref import *
-from modules.xrenner_preprocess import *
-from modules.xrenner_marker import make_markable
-from modules.xrenner_lex import *
-from modules.xrenner_postprocess import postprocess_coref
-from modules.depedit import run_depedit
+from xrenner_out import *
+from xrenner_classes import *
+from xrenner_coref import *
+from xrenner_preprocess import *
+from xrenner_marker import make_markable
+from xrenner_lex import *
+from xrenner_postprocess import postprocess_coref
+from depedit import run_depedit
+import ntpath, os
 
 
 class Xrenner:
 
 	def __init__(self, model="eng", override=None):
 		"""
-		Main class for xrenner coreferencer
+		Main class for xrenner coreferencer. Invokes the load method to read model data.
+		
 		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
 		:param override: name of a section in models/override.ini if configuration overrides should be applied
 		:return: void
 		"""
+		self.load(model, override)
 
+	def load(self, model="eng", override=None):
+		"""
+		Method to load model data. Normally invoked by constructor, but can be repeated to change models later.
+
+		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
+		:param override: name of a section in models/override.ini if configuration overrides should be applied
+		:return: void
+		"""
 		self.model = model
 		self.override = override
 		self.lex = LexData(self.model, self.override)
 
 	def analyze(self, infile, out_format):
 		"""
-		:param infile: String representing a parse file in the conll10 format
+		Method to run coreference analysis with loaded model
+		
+		:param infile: file name of the parse file in the conll10 format, or the pre-read parse itself
 		:param format: format to determine output type, one of: html, paula, webanno, conll, onto, unittest
 		:return: output based on requested format
 		"""
+
+		# Check if this is a file name from the main script or a parse delivered in an import or unittest scenario
+		if "\t" in infile or isinstance(infile,list):  # This is a raw parse as string or list, not a file name
+			self.docpath = os.path.dirname(os.path.abspath("."))
+			self.docname = "untitled"
+		else:  # This is a file name, extract document name and path, then read the file
+			self.docpath = os.path.dirname(os.path.abspath(infile))
+			self.docname = clean_filename(ntpath.basename(infile))
+			infile = open(infile)
 
 		depedit_config = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + "depedit.ini")
 
@@ -156,7 +177,9 @@ class Xrenner:
 	def serialize_output(self, out_format, parse=None):
 		"""
 		Return a string representation of the output in some format, or generate PAULA directory structure as output
+		
 		:param out_format: the format to generate, one of: html, paula, webanno, conll, onto, unittest
+		:param parse: the original parse input fed to xrenner; only needed for unittest output
 		:return: specified output format string, or void for paula
 		"""
 		conll_tokens = self.conll_tokens
@@ -166,13 +189,13 @@ class Xrenner:
 			rtl = True if self.model in ["heb","ara"] else False
 			return output_HTML(conll_tokens, markstart_dict, markend_dict, rtl)
 		elif out_format == "paula":
-			output_PAULA(conll_tokens, markstart_dict, markend_dict)
+			output_PAULA(conll_tokens, markstart_dict, markend_dict, self.docname, self.docpath)
 		elif out_format == "webanno":
 			return output_webanno(conll_tokens[1:], markables)
 		elif out_format == "conll":
-			return output_conll(conll_tokens, markstart_dict, markend_dict, file, True)
+			return output_conll(conll_tokens, markstart_dict, markend_dict, self.docname, True)
 		elif out_format == "onto":
-			return output_onto(conll_tokens, markstart_dict, markend_dict, file)
+			return output_onto(conll_tokens, markstart_dict, markend_dict, self.docname)
 		elif out_format == "unittest":
 			from xrenner_test import generate_test
 			return generate_test(conll_tokens, markables, parse, self.model)
@@ -182,6 +205,7 @@ class Xrenner:
 	def process_sentence(self, tokoffset, sentence):
 		"""
 		Function to analyze a single sentence
+		
 		:param tokoffset: the offset in tokens for the beginning of the current sentence within all input tokens
 		:param sentence: the Sentence object containin mood, speaker and other information about this sentence
 		:return: void
@@ -201,7 +225,7 @@ class Xrenner:
 		# Add list of all dependent funcs and strings to each token
 		add_child_info(conll_tokens, child_funcs, child_strings)
 
-		mark_candidates_by_head = collections.OrderedDict()
+		mark_candidates_by_head = OrderedDict()
 		stop_ids = {}
 		for tok1 in conll_tokens[tokoffset + 1:]:
 			stop_ids[tok1.id] = False  # Assume all tokens are head candidates
@@ -219,6 +243,11 @@ class Xrenner:
 				if lex.filters["mod_func"].match(conll_tokens[int(child)].func) is not None:
 					token.modifiers.append(conll_tokens[int(child)])
 			token.head_text = conll_tokens[int(token.head)].text
+			# Check for lexical possessives to dynamically enhance hasa information
+			if lex.filters["possessive_func"].match(token.func) is not None:
+				# Check that neither possessor nor possessed is a pronoun
+				if lex.filters["pronoun_pos"].match(token.pos) is None and lex.filters["pronoun_pos"].match(conll_tokens[int(token.head)].pos) is None:
+					lex.hasa[token.text][conll_tokens[int(token.head)].text] += 2  # Increase by 2: 1 for attestation, 1 for pertinence in this document
 
 		# Find dead areas
 		for tok1 in conll_tokens[tokoffset + 1:]:
@@ -367,18 +396,19 @@ class Xrenner:
 		# Check for atomicity and remove any subsumed markables if atomic
 		for mark_id in mark_candidates_by_head:
 			mark = mark_candidates_by_head[mark_id]
-			# Check if the markable has a modifier based entity guess
-			modifier_based_entity = recognize_entity_by_mod(mark, lex, True)
-			# Consider for atomicity if in atoms or has @ modifier, but not if it's a single token or a coordinate markable
-			if (is_atomic(mark, lex.atoms, lex) or ("@" in modifier_based_entity and "_" not in mark_id)) and mark.end > mark.start:
-				for index in enumerate(mark_candidates_by_head):
-					key = index[1]
-					# Note that the key may contain underscores if it's a composite, but those can't be atomic
-					if key != mark.head.id and mark.start <= int(re.sub('_.*','',key)) <= mark.end and '_' not in key:
-						if lex.filters["pronoun_pos"].match(conll_tokens[int(re.sub('_.*','',key))].pos) is None:  # Make sure we're not removing a pronoun
-							keys_to_pop.append(key)
-			elif len(modifier_based_entity) > 1:
-				stoplist_prefix_tokens(mark, lex.entity_mods, keys_to_pop)
+			if mark.end > mark.start:  # No atomicity check if single token
+				# Check if the markable has a modifier based entity guess
+				modifier_based_entity = recognize_entity_by_mod(mark, lex, True)
+				# Consider for atomicity if in atoms or has @ modifier, but not if it's a single token or a coordinate markable
+				if (is_atomic(mark, lex.atoms, lex) or ("@" in modifier_based_entity and "_" not in mark_id)) and mark.end > mark.start:
+					for index in enumerate(mark_candidates_by_head):
+						key = index[1]
+						# Note that the key may contain underscores if it's a composite, but those can't be atomic
+						if key != mark.head.id and mark.start <= int(re.sub('_.*','',key)) <= mark.end and '_' not in key:
+							if lex.filters["pronoun_pos"].match(conll_tokens[int(re.sub('_.*','',key))].pos) is None:  # Make sure we're not removing a pronoun
+								keys_to_pop.append(key)
+				elif len(modifier_based_entity) > 1:
+					stoplist_prefix_tokens(mark, lex.entity_mods, keys_to_pop)
 
 		for key in keys_to_pop:
 			mark_candidates_by_head.pop(key, None)
@@ -396,10 +426,11 @@ class Xrenner:
 				mark.definiteness = "def"
 			elif lex.filters["pronoun_pos"].match(tok.pos) is not None:
 				mark.form = "pronoun"
-				mark.definiteness = "def"
-			elif tok.text in lex.pronouns:
-				mark.form = "pronoun"
-				mark.definiteness = "def"
+				# Check for explicit indefinite morphology in morph feature of head token
+				if "indef" in mark.head.morph.lower():
+					mark.definiteness = "indef"
+				else:
+					mark.definiteness = "def"
 			else:
 				mark.form = "common"
 				# Check for explicit definite morphology in morph feature of head token
@@ -459,9 +490,6 @@ class Xrenner:
 					mark.entity = markables_by_head[mark.head.head].entity
 			if mark.entity == "" and mark.core_text.upper() == mark.core_text and re.search("[A-ZÄÖÜ]",mark.core_text) is not None:  # Unknown all caps entity, guess acronym default
 				mark.entity = lex.filters["all_caps_entity"]
-				mark.entity_certainty = "uncertain"
-			if mark.entity == "" and mark.form != "pronoun":  # Unknown entity, guess by affix
-				mark.entity = get_entity_by_affix(mark.lemma, lex)
 				mark.entity_certainty = "uncertain"
 			if mark.entity == "":  # Unknown entity, guess default
 				mark.entity = lex.filters["default_entity"]

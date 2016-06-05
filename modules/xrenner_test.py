@@ -1,7 +1,6 @@
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
-modules/xrenner_test.py
 Module to generate and run unit tests
+
 Author: Amir Zeldes
 """
 
@@ -122,6 +121,13 @@ class TestCorefMethods(unittest.TestCase):
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"hasa test (CEO, taxi driver <- his employees)")
 
+	def test_dynamic_hasa(self):
+		# Beth was worried about [[Sinead 's] well-being] , and also about Jane . [[Her] well-being] was always a concern .
+		print "\nRun dynamic hasa test:  ",
+		target = self.cases["dynamic_hasa_test"]
+		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
+		self.assertEqual(target.chains,result.chains,"dynamic hasa test (Sinead 's <- her)")
+
 	def test_entity_dep(self):
 		# I have a book , [a dog] and a car. [It] barked.
 		print "\nRun entity dep test:  ",
@@ -131,10 +137,17 @@ class TestCorefMethods(unittest.TestCase):
 
 	def test_affix_morphology(self):
 		# [A blorker] and an animal and a car . Of these , I saw [the person] .
-		print "Run affix morphology test:  ",
+		print "\nRun affix morphology test:  ",
 		target = self.cases["morph_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"affix morph test (a blorker <- the person)")
+
+	def test_verbal_event_stem(self):
+		# John [visited] Spain . [The visit] went well .
+		print "\nRun verbal event coreference test:  ",
+		target = self.cases["verb_test"]
+		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
+		self.assertEqual(target.chains,result.chains,"verbal event stemming (visited <- the visit	)")
 
 
 class Case:

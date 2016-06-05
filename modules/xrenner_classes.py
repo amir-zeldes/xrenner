@@ -1,7 +1,6 @@
 """
-xrenner - eXternally configurable REference and Non Named Entity Recognizer
-modules/xrenner_classes.py
 Basic classes for parsed tokens, markables and sentences.
+
 Author: Amir Zeldes
 """
 
@@ -67,7 +66,6 @@ class Markable:
 		self.cardinality=cardinality
 		self.submarks = submarks
 		self.coordinate = coordinate
-		self.child_func_string = ""  # Convenience property to store semi-colon separated child funcs of head token
 
 	def __repr__(self):
 		agree = "no-agr" if self.agree == "" else self.agree
@@ -84,10 +82,11 @@ class Markable:
 			return getattr(self.sentence,item)
 		elif item == "child_func_string":
 			# Check for cached child_func_string
-			if self.child_func_string == "":
+			if "child_func_string" not in self.__dict__:  # Convenience property to store semi-colon separated child funcs of head token
 				# Assemble if not yet cached
-				self.child_func_string = ";".join(self.head.child_funcs)
-				if len(self.child_func_string) < 1:
+				if len(self.head.child_funcs) > 1:
+					self.child_func_string = ";" + ";".join(self.head.child_funcs) + ";"
+				else:
 					self.child_func_string = "_"
 			return self.child_func_string
 		else:

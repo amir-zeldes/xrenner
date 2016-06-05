@@ -1,0 +1,117 @@
+=============
+config.ini
+=============
+The main configuration file for a language model is *config.ini*. It contains several kinds of settings:
+
+* **regex** - regular expressions, always stand between two slashes, e.g. property=/[Vv]alue/
+* **literal** - exact values, have no delimiters, e.g. property=value
+* **boolean** - True or False
+* **special** - complex setting with special formats, typically containing arrays of settings with multiple separators (see individual entries below)
+
+The config.ini file has several part, outlined below.
+
+***************************
+General labels and settings
+***************************
+
+This section defines main dependency label functions that are interpreted by xrenner in special ways. Functions such as subjecthood, apposition, coordination or possession have special meanings for the workflow (for example, possession is checked against the **hasa** table). This section
+also determines the thousands and decimal separators for the language for **cardinality** recognition. 
+
+.. literalinclude:: ../models/eng/config.ini
+   :language: ini
+   :start-after: [main]
+   :end-before: Markable Detection
+
+
+*************************
+Markable detection
+*************************
+
+Settings in this section are used to determin what tokens should be candidates for inclusion in a markable (i.e. an entity mention). 
+These include settings for part of speech tags that indicate being a markable head, dependency function labels of descendents of that
+head to include in the markable span, and more.
+
+.. literalinclude:: ../models/eng/config.ini
+   :language: ini
+   :start-after: Markable Detection
+   :end-before: Entity
+
+
+*************************
+Entity recognition
+*************************
+
+This section contains settings related to the recognition of the kind of markable we are dealing with, once a markable has been detected. This includes NP form (*common*, *pronoun*, or *proper* noun), entity types, such as *person* and subtypes, such as *politician*. 
+
+Special values:
+
+* **lemma_rules**: a cascade of regex replacement rules applied to generate the lemma field of each token, if not provided in the input. This can be used as a very rudimentary lemmatization engine. Rules are separated by semicolons, and each rule consists of three parts followed by slashes: 
+
+  * A part of speech regex, determining the POS tags to apply the rule to
+  * A regular expression to find
+  * The string to replace the match with 
+  * **example**: NNP?S/xes$/x/ - replaces word final *xes* with *x*, if the tag is *NNPS* or *NNS*
+
+* **morph_rules**: a cascade of regex replacement rules applied to the morph field of each token. Unlike *lemma_rules*, this is not POS tag dependent. Rules are separated by semicolon, and find and replace expressions are separated by slash. This is mainly useful for adapting the format of some morphological analysis in the input tree to the categories used in the model's lexical data. Note that for simple, non-conditional substitutions, this is faster than using the :doc:`depedit <depedit>` module.
+
+  * **example**: 3SgM/Masc - suppose our input has categories like *3SgM* for 3rd person masculine, but our lexicon has gender information like *Masc*. This rule adapts the input tag to the tag we want. 
+
+.. literalinclude:: ../models/eng/config.ini
+   :language: ini
+   :start-after: Entity
+   :end-before: Agreement Class Detection
+
+*************************
+Agreement class detection
+*************************
+
+This section contains settings for detecting the morphological agreement class (e.g. feminine, masculine, plural)
+
+Special values:
+
+* **pos_agree_mapping**: a special list of semicolon-separated mappings of POS categories to agreement classes, internally separated by angle brackets. For example: `NNS>plural means` the tag *NNS* gets mapped to the agreement class *plural*
+
+* **agree_entity_mapping**: similarly, a mapping of agreement classes to entity types. For example, in English, mapping *female* to *person* is usually correct: `female>person;male>person`
+
+* **never_agree_pairs**: semicolon-separated list of plus-separated pairs of agreement classes that are never compatible, e.g. `male+plural`
+
+.. literalinclude:: ../models/eng/config.ini
+   :language: ini
+   :start-after: Agreement Class Detection
+   :end-before: Coreference Detection
+
+*************************
+Coreference detection
+*************************
+
+Settings affecting coreference matching.
+
+Special values:
+
+**no_antecedent**: 
+
+A detailed description of markables forbidden to have antecedents (e.g. bare plurals in English, or indefinites in general). A semicolon separated series of patterns of initial (^x), final ($x) or head(@x) POS tags + text specification that rule out antecedents. Use ! for negation, and & for multiple criteria. Use e.g. @none/none to switch this off. For example the following specification forbids markables headed by a percent token (with text '%') from having an antecedent:
+
+``@.*/^%$``
+
+The following specification says that a markable headed (@) by the POS tag *NNS* and having any text (.\*), but also not (!) starting (^) with a POS tag matching *DT* or *PRP* is forbidden from having an antecedent (English bare plural). 
+
+``@NNS/.*&^!(DT|PRP)/.*``
+
+
+.. literalinclude:: ../models/eng/config.ini
+   :language: ini
+   :start-after: Coreference Detection
+   :end-before: Postprocessing
+
+   
+***********************
+Postprocessing settings
+***********************
+
+Settings for sanitizing or altering output, such as removing singletons, or markables with specific grammatical functions which are nevertheless used internally during processing (e.g. predicatives).
+
+.. literalinclude:: ../models/eng/config.ini
+   :language: ini
+   :start-after: Postprocessing
+
