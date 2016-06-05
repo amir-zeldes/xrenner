@@ -2,6 +2,7 @@
 import sys
 import operator
 import re
+import os
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -10,6 +11,17 @@ Output module for exporting resolved data to one of the supported serialization 
 
 Author: Amir Zeldes
 """
+
+
+def clean_filename(filename):
+	"""
+	Heuristically replaces known extensions to create sensible output file name
+
+	:param filename: the input file name to strip extensions from
+	"""
+	if filename.endswith(".conll10") or filename.endswith(".conllu") and not filename.startswith("."):
+		return filename.replace(".conll10", "").replace(".conllu", "")
+
 
 def output_onto(conll_tokens, markstart_dict, markend_dict, file_name):
 	"""
@@ -167,7 +179,7 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 	return output_string
 
 
-def output_PAULA(conll_tokens, markstart_dict, markend_dict):
+def output_PAULA(conll_tokens, markstart_dict, markend_dict, docname, docpath):
 	"""
 	Outputs analysis results as PAULA standoff XML. Separate files for tokens, markables and coreference links
 	plus annotations. This format is the most complete, distinguishing apposition, anaphora, cataphora and other
@@ -202,16 +214,16 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict):
 
 <header paula_id="renner.out_tok"/>
 
-<markList xmlns:xlink="http://www.w3.org/1999/xlink" type="tok" xml:base="renner.out.text.xml">
+<markList xmlns:xlink="http://www.w3.org/1999/xlink" type="tok" xml:base="xrenner.''' + docname + '''.text.xml">
 '''
 
 	paula_mark_header = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE paula SYSTEM "paula_mark.dtd">
 <paula version="1.0">
 
-<header paula_id="ref.renner.out_referentSeg"/>
+<header paula_id="xrenner.''' + docname + '''_referentSeg"/>
 
-<markList xmlns:xlink="http://www.w3.org/1999/xlink" type="referentSeg" xml:base="renner.out.tok.xml">
+<markList xmlns:xlink="http://www.w3.org/1999/xlink" type="referentSeg" xml:base="xrenner.''' + docname + '''.tok.xml">
 '''
 
 	paula_entity_header = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -219,9 +231,9 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict):
 <!DOCTYPE paula SYSTEM "paula_feat.dtd">
 <paula version="1.0">
 
-<header paula_id="ref.renner.out_referentSeg_entity"/>
+<header paula_id="xrenner.''' + docname + '''_referentSeg_entity"/>
 
-<featList xmlns:xlink="http://www.w3.org/1999/xlink" type="entity" xml:base="ref.renner.out.referentSeg.xml">
+<featList xmlns:xlink="http://www.w3.org/1999/xlink" type="entity" xml:base="xrenner.''' + docname + '''.referentSeg.xml">
 '''
 
 	paula_coref_header = '''<?xml version="1.0" standalone="no"?>
@@ -229,31 +241,36 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict):
 <!DOCTYPE paula SYSTEM "paula_rel.dtd">
 <paula version="1.0">
 
-<header paula_id="ref.renner.out.referentSeg_coref"/>
+<header paula_id="xrenner.''' + docname + '''.referentSeg_coref"/>
 
-<relList xmlns:xlink="http://www.w3.org/1999/xlink" type="coref" xml:base="ref.renner.out.referentSeg.xml">
+<relList xmlns:xlink="http://www.w3.org/1999/xlink" type="coref" xml:base="xrenner.''' + docname + '''.referentSeg.xml">
 '''
 	paula_coref_type_header = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 <!DOCTYPE paula SYSTEM "paula_feat.dtd">
 <paula version="1.0">
 
-<header paula_id="ref.renner.out.referentSeg_coref_type"/>
+<header paula_id="xrenner.''' + docname + '''.referentSeg_coref_type"/>
 
-<featList xmlns:xlink="http://www.w3.org/1999/xlink" type="type" xml:base="ref.renner.out.referentSeg_coref.xml">
+<featList xmlns:xlink="http://www.w3.org/1999/xlink" type="type" xml:base="xrenner.''' + docname + '''.referentSeg_coref.xml">
 '''
 
-	f = open('renner.out.text.xml', 'w')
+	if not os.path.exists(docpath + os.sep + docname):
+		os.makedirs(docpath + os.sep + docname)
+	elif os.path.isfile(docpath + os.sep + docname):
+		raise("Unable to create document directory. There is already a file named " + docpath + os.sep + docname + "\n")
+
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.text.xml', 'w')
 	f.write(paula_text_header)
-	f = open('renner.out.tok.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.tok.xml', 'w')
 	f.write(paula_tok_header)
-	f = open('ref.renner.out.referentSeg.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg.xml', 'w')
 	f.write(paula_mark_header)
-	f = open('ref.renner.out.referentSeg_entity.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_entity.xml', 'w')
 	f.write(paula_entity_header)
-	f = open('ref.renner.out.referentSeg_coref.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_coref.xml', 'w')
 	f.write(paula_coref_header)
-	f = open('ref.renner.out.referentSeg_coref_type.xml', 'w')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_coref_type.xml', 'w')
 	f.write(paula_coref_type_header)
 
 	del conll_tokens[0]
@@ -280,17 +297,17 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict):
 	paula_entities += "</featList>\n</paula>\n"
 	paula_rels += "</relList>\n</paula>\n"
 	paula_rel_annos += "</featList>\n</paula>\n"
-	f = open('renner.out.text.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.text.xml', 'a')
 	f.write(paula_text)
-	f = open('renner.out.tok.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.tok.xml', 'a')
 	f.write(paula_tokens)
-	f = open('ref.renner.out.referentSeg.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg.xml', 'a')
 	f.write(paula_markables)
-	f = open('ref.renner.out.referentSeg_entity.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_entity.xml', 'a')
 	f.write(paula_entities)
-	f = open('ref.renner.out.referentSeg_coref.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_coref.xml', 'a')
 	f.write(paula_rels)
-	f = open('ref.renner.out.referentSeg_coref_type.xml', 'a')
+	f = open(docpath + os.sep + docname + os.sep + 'xrenner.' + docname + '.referentSeg_coref_type.xml', 'a')
 	f.write(paula_rel_annos)
 
 

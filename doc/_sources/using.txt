@@ -22,7 +22,17 @@ If your model includes alternative setting profiles in an override.ini file, you
 
 ``> python xrenner.py -x gum infile.conll10``
 
-Finally, you can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected.
+You can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected.
+
+*************
+Batch input
+*************
+
+You can use `glob <https://docs.python.org/2/library/glob.html>`_ syntax  to process multiple files in batch mode. This will be substantially faster than invoking the xrenner multiple times, since the lexical data will only be loaded once. For example, you can read all .conll10 files in a directory like this:
+
+``> python xrenner.py *.conll10``
+
+In batch mode, output file names are automatically generated using the input file name, minus extensions like 'conll10' or 'conllu', and suffixed with the output format extension. For PAULA, document directories with names corresponding to the input documents are generated automatically.
 
 *************
 Input format
@@ -184,7 +194,7 @@ Note that this format only groups mentions but does not represent antecedents an
 html
 ------
 
-Very similar to sgml, but designed to visualize coreferent groups in same colored divs, and some entity icons, all using font awesome and JavaScript (see :doc:`main page <index>` for an example). The css and scripts are available in the utils/ directory. 
+Very similar to sgml, but designed to visualize coreferent groups in same colored divs, and some entity icons, all using Font Awesome (http://fontawesome.io/) and JavaScript (see :doc:`main page <index>` for an example). The css and scripts are available in the utils/ directory. 
 
 onto
 -------

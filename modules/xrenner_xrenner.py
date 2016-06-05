@@ -8,14 +8,15 @@ Author: Amir Zeldes
 """
 
 from collections import OrderedDict
-from modules.xrenner_out import *
-from modules.xrenner_classes import *
-from modules.xrenner_coref import *
-from modules.xrenner_preprocess import *
-from modules.xrenner_marker import make_markable
-from modules.xrenner_lex import *
-from modules.xrenner_postprocess import postprocess_coref
-from modules.depedit import run_depedit
+from xrenner_out import *
+from xrenner_classes import *
+from xrenner_coref import *
+from xrenner_preprocess import *
+from xrenner_marker import make_markable
+from xrenner_lex import *
+from xrenner_postprocess import postprocess_coref
+from depedit import run_depedit
+import ntpath, os
 
 
 class Xrenner:
@@ -37,10 +38,19 @@ class Xrenner:
 		"""
 		Method to run coreference analysis with loaded model
 		
-		:param infile: String representing a parse file in the conll10 format
+		:param infile: file name of the parse file in the conll10 format, or the pre-read parse itself
 		:param format: format to determine output type, one of: html, paula, webanno, conll, onto, unittest
 		:return: output based on requested format
 		"""
+
+		# Check if this is a file name from the main script or a parse delivered in an import or unittest scenario
+		if "\t" in infile or isinstance(infile,list):  # This is a raw parse as string or list, not a file name
+			self.docpath = os.path.dirname(os.path.abspath("."))
+			self.docname = "untitled"
+		else:  # This is a file name, extract document name and path, then read the file
+			self.docpath = os.path.dirname(os.path.abspath(infile))
+			self.docname = clean_filename(ntpath.basename(infile))
+			infile = open(infile)
 
 		depedit_config = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + "depedit.ini")
 
@@ -170,13 +180,13 @@ class Xrenner:
 			rtl = True if self.model in ["heb","ara"] else False
 			return output_HTML(conll_tokens, markstart_dict, markend_dict, rtl)
 		elif out_format == "paula":
-			output_PAULA(conll_tokens, markstart_dict, markend_dict)
+			output_PAULA(conll_tokens, markstart_dict, markend_dict, self.docname, self.docpath)
 		elif out_format == "webanno":
 			return output_webanno(conll_tokens[1:], markables)
 		elif out_format == "conll":
-			return output_conll(conll_tokens, markstart_dict, markend_dict, file, True)
+			return output_conll(conll_tokens, markstart_dict, markend_dict, self.docname, True)
 		elif out_format == "onto":
-			return output_onto(conll_tokens, markstart_dict, markend_dict, file)
+			return output_onto(conll_tokens, markstart_dict, markend_dict, self.docname)
 		elif out_format == "unittest":
 			from xrenner_test import generate_test
 			return generate_test(conll_tokens, markables, parse, self.model)

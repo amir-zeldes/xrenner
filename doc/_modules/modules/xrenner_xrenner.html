@@ -141,14 +141,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">modules.xrenner_out</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">modules.xrenner_classes</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">modules.xrenner_coref</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">modules.xrenner_preprocess</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">modules.xrenner_marker</span> <span class="kn">import</span> <span class="n">make_markable</span>
-<span class="kn">from</span> <span class="nn">modules.xrenner_lex</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">modules.xrenner_postprocess</span> <span class="kn">import</span> <span class="n">postprocess_coref</span>
-<span class="kn">from</span> <span class="nn">modules.depedit</span> <span class="kn">import</span> <span class="n">run_depedit</span>
+<span class="kn">from</span> <span class="nn">xrenner_out</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_classes</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_coref</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_preprocess</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_marker</span> <span class="kn">import</span> <span class="n">make_markable</span>
+<span class="kn">from</span> <span class="nn">xrenner_lex</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">xrenner_postprocess</span> <span class="kn">import</span> <span class="n">postprocess_coref</span>
+<span class="kn">from</span> <span class="nn">depedit</span> <span class="kn">import</span> <span class="n">run_depedit</span>
+<span class="kn">import</span> <span class="nn">ntpath</span><span class="o">,</span> <span class="nn">os</span>
 
 
 <div class="viewcode-block" id="Xrenner"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner">[docs]</a><span class="k">class</span> <span class="nc">Xrenner</span><span class="p">:</span>
@@ -170,10 +171,19 @@
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Method to run coreference analysis with loaded model</span>
 <span class="sd">		</span>
-<span class="sd">		:param infile: String representing a parse file in the conll10 format</span>
+<span class="sd">		:param infile: file name of the parse file in the conll10 format, or the pre-read parse itself</span>
 <span class="sd">		:param format: format to determine output type, one of: html, paula, webanno, conll, onto, unittest</span>
 <span class="sd">		:return: output based on requested format</span>
 <span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1"># Check if this is a file name from the main script or a parse delivered in an import or unittest scenario</span>
+		<span class="k">if</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">infile</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>  <span class="c1"># This is a raw parse as string or list, not a file name</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">docpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">))</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="s2">&quot;untitled&quot;</span>
+		<span class="k">else</span><span class="p">:</span>  <span class="c1"># This is a file name, extract document name and path, then read the file</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">docpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="n">clean_filename</span><span class="p">(</span><span class="n">ntpath</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
+			<span class="n">infile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
 
 		<span class="n">depedit_config</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;models&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;depedit.ini&quot;</span><span class="p">)</span>
 
@@ -303,13 +313,13 @@
 			<span class="n">rtl</span> <span class="o">=</span> <span class="bp">True</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;heb&quot;</span><span class="p">,</span><span class="s2">&quot;ara&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="bp">False</span>
 			<span class="k">return</span> <span class="n">output_HTML</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="n">rtl</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;paula&quot;</span><span class="p">:</span>
-			<span class="n">output_PAULA</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">)</span>
+			<span class="n">output_PAULA</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docpath</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;webanno&quot;</span><span class="p">:</span>
 			<span class="k">return</span> <span class="n">output_webanno</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">markables</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;conll&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">output_conll</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">output_conll</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;onto&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">output_onto</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="nb">file</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">output_onto</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;unittest&quot;</span><span class="p">:</span>
 			<span class="kn">from</span> <span class="nn">xrenner_test</span> <span class="kn">import</span> <span class="n">generate_test</span>
 			<span class="k">return</span> <span class="n">generate_test</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markables</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
