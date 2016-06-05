@@ -23,13 +23,22 @@ class Xrenner:
 
 	def __init__(self, model="eng", override=None):
 		"""
-		Main class for xrenner coreferencer
+		Main class for xrenner coreferencer. Invokes the load method to read model data.
 		
 		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
 		:param override: name of a section in models/override.ini if configuration overrides should be applied
 		:return: void
 		"""
+		self.load(model, override)
 
+	def load(self, model="eng", override=None):
+		"""
+		Method to load model data. Normally invoked by constructor, but can be repeated to change models later.
+
+		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
+		:param override: name of a section in models/override.ini if configuration overrides should be applied
+		:return: void
+		"""
 		self.model = model
 		self.override = override
 		self.lex = LexData(self.model, self.override)

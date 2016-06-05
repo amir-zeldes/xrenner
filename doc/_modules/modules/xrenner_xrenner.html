@@ -156,16 +156,25 @@
 
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Main class for xrenner coreferencer</span>
+<span class="sd">		Main class for xrenner coreferencer. Invokes the load method to read model data.</span>
 <span class="sd">		</span>
 <span class="sd">		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)</span>
 <span class="sd">		:param override: name of a section in models/override.ini if configuration overrides should be applied</span>
 <span class="sd">		:return: void</span>
 <span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">override</span><span class="p">)</span>
 
+<div class="viewcode-block" id="Xrenner.load"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.load">[docs]</a>	<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Method to load model data. Normally invoked by constructor, but can be repeated to change models later.</span>
+
+<span class="sd">		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)</span>
+<span class="sd">		:param override: name of a section in models/override.ini if configuration overrides should be applied</span>
+<span class="sd">		:return: void</span>
+<span class="sd">		&quot;&quot;&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">override</span> <span class="o">=</span> <span class="n">override</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">lex</span> <span class="o">=</span> <span class="n">LexData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">override</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lex</span> <span class="o">=</span> <span class="n">LexData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">override</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Xrenner.analyze"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.analyze">[docs]</a>	<span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">,</span> <span class="n">out_format</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>

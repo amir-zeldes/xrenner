@@ -184,6 +184,27 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="modules.xrenner_xrenner.Xrenner.load">
+<code class="descname">load</code><span class="sig-paren">(</span><em>model='eng'</em>, <em>override=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to load model data. Normally invoked by constructor, but can be repeated to change models later.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> &#8211; model directory in models/ specifying settings and gazetteers for this language (default: eng)</li>
+<li><strong>override</strong> &#8211; name of a section in models/override.ini if configuration overrides should be applied</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="modules.xrenner_xrenner.Xrenner.process_sentence">
 <code class="descname">process_sentence</code><span class="sig-paren">(</span><em>tokoffset</em>, <em>sentence</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner.process_sentence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner.process_sentence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to analyze a single sentence</p>
