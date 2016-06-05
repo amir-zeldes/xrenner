@@ -234,6 +234,11 @@ class Xrenner:
 				if lex.filters["mod_func"].match(conll_tokens[int(child)].func) is not None:
 					token.modifiers.append(conll_tokens[int(child)])
 			token.head_text = conll_tokens[int(token.head)].text
+			# Check for lexical possessives to dynamically enhance hasa information
+			if lex.filters["possessive_func"].match(token.func) is not None:
+				# Check that neither possessor nor possessed is a pronoun
+				if lex.filters["pronoun_pos"].match(token.pos) is None and lex.filters["pronoun_pos"].match(conll_tokens[int(token.head)].pos) is None:
+					lex.hasa[token.text][conll_tokens[int(token.head)].text] += 2  # Increase by 2: 1 for attestation, 1 for pertinence in this document
 
 		# Find dead areas
 		for tok1 in conll_tokens[tokoffset + 1:]:

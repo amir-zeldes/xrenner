@@ -1,6 +1,4 @@
 """
-modules/xrenner_test.py
-
 Module to generate and run unit tests
 
 Author: Amir Zeldes
@@ -122,6 +120,13 @@ class TestCorefMethods(unittest.TestCase):
 		target = self.cases["hasa_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"hasa test (CEO, taxi driver <- his employees)")
+
+	def test_dynamic_hasa(self):
+		# Beth was worried about [[Sinead 's] well-being] , and also about Jane . [[Her] well-being] was always a concern .
+		print "\nRun dynamic hasa test:  ",
+		target = self.cases["dynamic_hasa_test"]
+		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
+		self.assertEqual(target.chains,result.chains,"dynamic hasa test (Sinead 's <- her)")
 
 	def test_entity_dep(self):
 		# I have a book , [a dog] and a car. [It] barked.

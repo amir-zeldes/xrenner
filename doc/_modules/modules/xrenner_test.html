@@ -132,8 +132,6 @@
             
   <h1>Source code for modules.xrenner_test</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">modules/xrenner_test.py</span>
-
 <span class="sd">Module to generate and run unit tests</span>
 
 <span class="sd">Author: Amir Zeldes</span>
@@ -255,6 +253,13 @@
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;hasa_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;hasa test (CEO, taxi driver &lt;- his employees)&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCorefMethods.test_dynamic_hasa"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.TestCorefMethods.test_dynamic_hasa">[docs]</a>	<span class="k">def</span> <span class="nf">test_dynamic_hasa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="c1"># Beth was worried about [[Sinead &#39;s] well-being] , and also about Jane . [[Her] well-being] was always a concern .</span>
+		<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Run dynamic hasa test:  &quot;</span><span class="p">,</span>
+		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;dynamic_hasa_test&quot;</span><span class="p">]</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;dynamic hasa test (Sinead &#39;s &lt;- her)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TestCorefMethods.test_entity_dep"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.TestCorefMethods.test_entity_dep">[docs]</a>	<span class="k">def</span> <span class="nf">test_entity_dep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># I have a book , [a dog] and a car. [It] barked.</span>

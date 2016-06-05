@@ -110,7 +110,7 @@ class LexData:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2]]
 				return out_dict
 			elif mode == "triple_numeric":
-				out_dict = defaultdict(lambda: defaultdict(str))
+				out_dict = defaultdict(lambda: defaultdict(int))
 				for row in reader:
 					if not row[0].startswith("#"):
 						out_dict[row[0]][row[1]] = int(row[2])
