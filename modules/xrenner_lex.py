@@ -157,7 +157,7 @@ class LexData:
 			if " " in name:
 				parts = name.split(" ")
 				firsts[parts[0]] = names[name]  # Get heuristic gender for this first name
-				lasts.update(parts[len(parts)-1])  # Last name is a set, no gender info
+				lasts.add(parts[len(parts)-1])  # Last name is a set, no gender info
 		return [firsts,lasts]
 
 	def read_antonyms(self):
