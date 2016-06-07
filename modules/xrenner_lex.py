@@ -47,7 +47,7 @@ class LexData:
 		self.stop_list = self.read_delim('stop_list.tab', 'low') if "stop_list.tab" in model_files else set([])
 		self.open_close_punct = self.read_delim('open_close_punct.tab') if "open_close_punct.tab" in model_files else {}
 		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
-		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms') if "entity_mods.tab" in model_path else {}
+		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms') if "entity_mods.tab" in model_files else {}
 		self.entity_deps = self.read_delim('entity_deps.tab','quadruple') if "entity_deps.tab" in model_files else {}
 		self.hasa = self.read_delim('hasa.tab', 'triple_numeric') if "hasa.tab" in model_files else {}
 		self.coref = self.read_delim('coref.tab') if "coref.tab" in model_files else {}
