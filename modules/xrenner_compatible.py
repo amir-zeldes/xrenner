@@ -468,8 +468,13 @@ def acronym_match(mark, candidate, lex):
 	"""
 	position = 0
 	calibration = 0
+	candidate_string = candidate.core_text
+	if "ignore_in_acronym" in lex.filters:
+		candidate_string = lex.filters["ignore_in_acronym"].sub("", candidate_string)
+		candidate_string = candidate_string.replace("  "," ")
+
 	if mark.head.text.isupper() and len(mark.head.text) > 2:
-		for word in candidate.core_text.split(" "):
+		for word in candidate_string.split(" "):
 			if lex.filters["articles"].match(word):
 				calibration = -1
 			elif len(word) > 0:
@@ -481,7 +486,7 @@ def acronym_match(mark, candidate, lex):
 							return False
 				else:
 					return False
-		if (position == len(candidate.core_text.strip().split(" ")) + calibration) and position > 2:
+		if (position == len(candidate_string.strip().split(" ")) + calibration) and position > 2:
 			return True
 		else:
 			return False
