@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict, OrderedDict
-from modules.xrenner_classes import Markable
+from xrenner_classes import Markable
 from math import log
 
 """
@@ -106,14 +106,17 @@ def resolve_mark_entity(mark, token_list, lex):
 				mark.entity_certainty = "uncertain"
 	else:
 		if entity == "":
-			if re.match(r'(1[456789][0-9][0-9]|20[0-9][0-9])', mark.core_text) is not None:
+			# Try to catch year numbers and hours + minutes
+			if re.match(r'(1[456789][0-9][0-9]|20[0-9][0-9]|(2[0-3]|1?[0-9]):[0-5][0-9])', mark.core_text) is not None:
 				entity = lex.filters["time_def_entity"]
+				mark.entity_certainty = "uncertain"
 				mark.subclass = "time-unit" # TODO: de-hardwire this
 				mark.definiteness = "def"  # literal year numbers are considered definite like 'proper names'
 				mark.form = "proper"  # literal year numbers are considered definite like 'proper names'
 		if entity == "":
 			if re.match(r'^(([0-9]+[.,]?)+)$', mark.core_text) is not None:
 				entity = lex.filters["quantity_def_entity"]
+				mark.entity_certainty = "uncertain"
 		if entity == "":
 			entity = resolve_entity_cascade(mark.text.strip(), mark, lex)
 		if entity == "":
@@ -263,8 +266,6 @@ def resolve_mark_agree(mark, lex):
 					mark.alt_agree.append(entry[entry.find("/") + 1:])
 
 
-
-
 def resolve_cardinality(mark,lex):
 	for mod in mark.head.modifiers:
 		if mod.text in lex.numbers:
@@ -287,9 +288,6 @@ def resolve_cardinality(mark,lex):
 					denominator = float(parts.groups()[1])
 					return numerator/denominator
 	return 0
-
-
-
 
 
 def recognize_entity_by_mod(mark, lex, mark_atoms=False):
