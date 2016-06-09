@@ -25,14 +25,15 @@ def entities_compatible(mark1, mark2, lex):
 		return True
 	if mark1.form == "pronoun" and (not (mark1.entity == lex.filters["person_def_entity"] and mark2.entity != lex.filters["person_def_entity"]) or mark1.entity_certainty == ''):
 		return True
-	if mark1.entity in mark2.alt_entities and mark1.entity != mark2.entity and (mark2.entity_certainty == "uncertain" or mark2.entity_certainty == "propagated"):
-		return True
-	elif mark2.entity in mark1.alt_entities and mark1.entity != mark2.entity and (mark1.entity_certainty == "uncertain" or mark1.entity_certainty == "propagated"):
-		return True
-	elif mark2.entity == lex.filters["default_entity"] and mark2.entity_certainty in ["","propagated","uncertain"] and mark1.entity != mark2.entity:
-		return True
-	elif mark1.entity == lex.filters["default_entity"] and mark1.entity_certainty in ["","propagated","uncertain"] and mark1.entity != mark2.entity:
-		return True
+	if mark1.entity != mark2.entity:
+		if mark1.entity in mark2.alt_entities and (mark2.entity_certainty == "uncertain" or mark2.entity_certainty == "propagated"):
+			return True
+		elif mark2.entity in mark1.alt_entities and (mark1.entity_certainty == "uncertain" or mark1.entity_certainty == "propagated"):
+			return True
+		elif mark2.entity == lex.filters["default_entity"] and mark2.entity_certainty in ["","propagated","uncertain"]:
+			return True
+		elif mark1.entity == lex.filters["default_entity"] and mark1.entity_certainty in ["","propagated","uncertain"]:
+			return True
 
 	return False
 
@@ -107,17 +108,28 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 					if proper_mod_must_match:
 						return False
 
-	# Check if markable and candidate have modifiers that are different place names
+	# Check if markable and candidate have modifiers that are different place names or person names
 	# e.g. 'Georgetown University' is incompatible with 'Boston University' even if those entities are not in lexicon
+	# and similarly for a John / Jane portrait
 	for mod in markable.head.modifiers:
-		if mod.text.strip() in lex.entities and (mod.text.istitle() or not lex.filters["cap_names"]):
-			if re.sub('\t.*', "", lex.entities[mod.text.strip()][0]) == lex.filters["place_def_entity"]:
+		if mod.text in lex.entities and (mod.text.istitle() or not lex.filters["cap_names"]):
+			if re.sub('\t.*', "", lex.entities[mod.text][0]) == lex.filters["place_def_entity"]:
 				for candidate_mod in candidate.head.modifiers:
-					if candidate_mod.text.strip() in lex.entities and (candidate_mod.text.istitle() or not lex.filters["cap_names"]):
-						if re.sub('\t.*', "", lex.entities[candidate_mod.text.strip()][0]) == lex.filters["place_def_entity"]:
+					if candidate_mod.text in lex.entities and (candidate_mod.text.istitle() or not lex.filters["cap_names"]):
+						if re.sub('\t.*', "", lex.entities[candidate_mod.text][0]) == lex.filters["place_def_entity"]:
 							markable.non_antecdent_groups.add(candidate.group)
 							return False
-
+		if mod.text in lex.last_names or mod.text in lex.first_names:
+			mismatching_names = False
+			for candidate_mod in candidate.head.modifiers:
+				if candidate_mod.text in lex.first_names or candidate_mod.text in lex.last_names:
+					if candidate_mod.text != mod.text and not mismatching_names:
+						mismatching_names = True
+					else:
+						mismatching_names = False
+						break
+			if mismatching_names:
+				return False
 
 	# Check for each possible pair of modifiers with identical function in the ident_mod list whether they are identical,
 	# e.g. for the num function 'the four children' shouldn't be coreferent with 'five other children'
@@ -286,9 +298,14 @@ def isa(markable, candidate, lex):
 
 	# Subclass based isa match - check agreement too unless disabled
 	for subclass in markable.alt_subclasses + [markable.subclass]:
-		if subclass == candidate.head.lemma:
+		if subclass == candidate.lemma:
 			if agree_compatible(markable, candidate, lex) and not never_agree(markable, candidate, lex):
-				return True
+				# Check if this case is already assigned a different lexical head as isa partner
+				if candidate.isa_partner_head == "":
+					candidate.isa_partner_head = markable.lemma
+					return True
+				else:  # Another lemma is already isa-linked to this, e.g. state <- Oregon; so now not also "Nevada"
+					return False
 		if subclass in lex.isa:
 			if lex.isa[subclass][-1] == "*":
 				subclass_isa = lex.isa[subclass][:-1]
@@ -296,10 +313,10 @@ def isa(markable, candidate, lex):
 			else:
 				subclass_isa = lex.isa[subclass]
 				check_agree = lex.filters["isa_subclass_agreement"]
-			if candidate.head.lemma.lower() in subclass_isa or candidate.text.lower().strip() in subclass_isa:
-				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma or markable.isa_partner_head == candidate.head.lemma:
+			if candidate.lemma.lower() in subclass_isa or candidate.text.lower().strip() in subclass_isa:
+				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.lemma or markable.isa_partner_head == candidate.lemma:
 					if (agree_compatible(markable, candidate, lex) or check_agree is False) and not never_agree(markable, candidate, lex):
-						candidate.isa_partner_head = markable.head.lemma
+						candidate.isa_partner_head = markable.lemma
 						return True
 
 	# Exact text match in isa table - no agreement matching is carried out
