@@ -15,7 +15,7 @@ from copy import copy, deepcopy
 import sys
 from collections import defaultdict
 
-__version__ = "1.4.2"
+__version__ = "1.4.3"
 
 
 def escape(string,symbol_to_mask,border_marker):
@@ -358,7 +358,18 @@ def merge_sets(sets, node_count, rel_count):
 
 	for my_bin in bins:
 		if len(my_bin) == node_count + 2:
-			solutions.append(my_bin)
+			if len(my_bin["rels"]) == rel_count:  # All required relations have been fulfilled
+				solutions.append(my_bin)
+			else:  # Some node pair has multiple relations, check that all are fulfilled
+				for set_to_merge in sets:
+					if set_to_merge["rel"] not in my_bin["rels"]: # This relation was missing
+						node_ids = list((key) for key in set_to_merge if isinstance(key,int))
+						# Check that the missing rel connects nodes that are already in my_bin
+						ids_are_in_bin = list((nid in my_bin) for nid in node_ids)
+						if all(ids_are_in_bin):
+							nodes_are_identical = list((set_to_merge[nid] == my_bin[nid]) for nid in node_ids)
+							if all(nodes_are_identical):
+								solutions.append(my_bin)
 
 	merged_bins = []
 	for solution in solutions:
