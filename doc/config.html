@@ -305,6 +305,8 @@ head to include in the markable span, and more.</p>
 <span class="na">allow_indef_isa</span><span class="o">=</span><span class="s">False</span>
 <span class="c1"># Should we match Title Case entities to acronyms made of each token&#39;s initial letters?</span>
 <span class="na">match_acronyms</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Words to ignore in acronym matching, e.g. &#39;of&#39; in Federal Bureau *of* Investigation &lt;- FBI</span>
+<span class="na">ignore_in_acronym</span><span class="o">=</span><span class="s">/of/</span>
 <span class="c1"># Should it be possible for a later mention to include lexical modifiers not present in the antecedent?</span>
 <span class="na">no_new_modifiers</span><span class="o">=</span><span class="s">False</span>
 <span class="c1"># Do proper noun modifiers have to match exactly across mentions? (NB: this may include proper modifiers such as Mr.!! Often leaving this False is better)</span>

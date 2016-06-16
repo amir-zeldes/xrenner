@@ -454,7 +454,7 @@ dependent manipultations, use depedit module</p>
 
 <dl class="method">
 <dt id="modules.xrenner_lex.LexData.read_delim">
-<code class="descname">read_delim</code><span class="sig-paren">(</span><em>filename</em>, <em>mode='normal'</em>, <em>atom_list_name='atoms'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.read_delim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.read_delim" title="Permalink to this definition">¶</a></dt>
+<code class="descname">read_delim</code><span class="sig-paren">(</span><em>filename</em>, <em>mode='normal'</em>, <em>atom_list_name='atoms'</em>, <em>add_to_sums=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.read_delim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.read_delim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic file reader for lexical data in model directory</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -851,11 +851,22 @@ Otherwise updating succeeds and the update_group returns true</p>
 <dl class="function">
 <dt id="modules.xrenner_marker.assign_coordinate_entity">
 <code class="descclassname">modules.xrenner_marker.</code><code class="descname">assign_coordinate_entity</code><span class="sig-paren">(</span><em>mark</em>, <em>markables_by_head</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#assign_coordinate_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.assign_coordinate_entity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if all constituents of a coordinate markable have the same entity and subclass</p>
-<p>and if so, propagates these to the coordinate markable.
-:param mark: a coordinate markable to check the entities of its constituents
-:param markables_by_head: dictionary of markables by head id
-:return: void</p>
+<dd><p>Checks if all constituents of a coordinate markable have the same entity and subclass and if so, propagates these to the coordinate markable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark</strong> &#8211; a coordinate markable to check the entities of its constituents</li>
+<li><strong>markables_by_head</strong> &#8211; dictionary of markables by head id</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -875,6 +886,27 @@ Otherwise updating succeeds and the update_group returns true</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="modules.xrenner_marker.disambiguate_entity">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">disambiguate_entity</code><span class="sig-paren">(</span><em>mark</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#disambiguate_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.disambiguate_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Selects prefered entity for a Markable with multiple alt_entities based on dependency information or more common type</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark</strong> &#8211; the Markable object</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">predicted entity type as string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="modules.xrenner_marker.get_mod_ordered_dict">
 <code class="descclassname">modules.xrenner_marker.</code><code class="descname">get_mod_ordered_dict</code><span class="sig-paren">(</span><em>mod</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#get_mod_ordered_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.get_mod_ordered_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves the (sub)modifiers of a modifier token</p>
@@ -882,7 +914,7 @@ Otherwise updating succeeds and the update_group returns true</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mod</strong> &#8211; A ParsedToken object representing a modifier of the head of some markable</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mod</strong> &#8211; A <a class="reference internal" href="#modules.xrenner_classes.ParsedToken" title="modules.xrenner_classes.ParsedToken"><code class="xref py py-class docutils literal"><span class="pre">ParsedToken</span></code></a> object representing a modifier of the head of some markable</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Recursive ordered dictionary of that modifier&#8217;s own modifiers</td>
 </tr>
@@ -899,9 +931,9 @@ Otherwise updating succeeds and the update_group returns true</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>mark</strong> &#8211; the markable to be checked for atomicity</li>
+<li><strong>mark</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a> to be checked for atomicity</li>
 <li><strong>atoms</strong> &#8211; list of atomic markable text strings</li>
-<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
 </ul>
 </td>
 </tr>
@@ -924,11 +956,53 @@ Otherwise updating succeeds and the update_group returns true</p>
 <li><strong>text</strong> &#8211; text of the token</li>
 <li><strong>lemma</strong> &#8211; lemma of the token</li>
 <li><strong>entity</strong> &#8211; entity to check for</li>
-<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.markables_overlap">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">markables_overlap</code><span class="sig-paren">(</span><em>mark1</em>, <em>mark2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#markables_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.markables_overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to check if two markables cover some of the same tokens</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark1</strong> &#8211; First <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a></li>
+<li><strong>mark2</strong> &#8211; Second <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.parse_entity">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">parse_entity</code><span class="sig-paren">(</span><em>entity_text</em>, <em>certainty='uncertain'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#parse_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.parse_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses: entity -tab- subclass(/agree) + certainty into a tuple</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>entity_text</strong> &#8211; the string to parse, must contain excatly one tab</li>
+<li><strong>certainty</strong> &#8211; the certainty string at end of tuple, default &#8216;uncertain&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">quadruple of (entity, subclass, agree, certainty)</p>
 </td>
 </tr>
 </tbody>
@@ -957,12 +1031,140 @@ Otherwise updating succeeds and the update_group returns true</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>mark</strong> &#8211; Markable for which to identify the entity type</li>
-<li><strong>modifier_lexicon</strong> &#8211; The LexData object&#8217;s modifier list</li>
+<li><strong>mark</strong> &#8211; <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a> for which to identify the entity type</li>
+<li><strong>modifier_lexicon</strong> &#8211; The <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object&#8217;s modifier list</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">String (entity type, possibly including subtype and agreement)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.remove_prefix_tokens">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">remove_prefix_tokens</code><span class="sig-paren">(</span><em>marktext</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#remove_prefix_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.remove_prefix_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove leading tokens such as articles and other tokens configured as potentially redundant to citation form</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>marktext</strong> &#8211; the markable text string to remove tokens from</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">potentially truncated text</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.remove_suffix_tokens">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">remove_suffix_tokens</code><span class="sig-paren">(</span><em>marktext</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#remove_suffix_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.remove_suffix_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove trailing tokens such as genitive &#8216;s and other tokens configured as potentially redundant to citation form</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>marktext</strong> &#8211; the markable text string to remove tokens from</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">potentially truncated text</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.resolve_cardinality">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">resolve_cardinality</code><span class="sig-paren">(</span><em>mark</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#resolve_cardinality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.resolve_cardinality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find cardinality for Markable based on numerical modifiers or number words</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark</strong> &#8211; The <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a> to resolve agreement for</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Cardinality as float, zero if unknown</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.resolve_entity_cascade">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">resolve_entity_cascade</code><span class="sig-paren">(</span><em>entity_text</em>, <em>mark</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#resolve_entity_cascade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.resolve_entity_cascade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve possible entity types for a given text fragment based on entities list, entity heads and names list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>entity_text</strong> &#8211; The text to determine the entity for</li>
+<li><strong>mark</strong> &#8211; The <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a> hosting the text fragment to retrieve context information from (e.g. dependency)</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">entity type; note that this is used to decide whether to stop the search, but the Markable&#8217;s entity is already set during processing together with matching subclass and agree information</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.resolve_mark_agree">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">resolve_mark_agree</code><span class="sig-paren">(</span><em>mark</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#resolve_mark_agree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.resolve_mark_agree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve Markable agreement based on morph information in tokens or gazetteer data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark</strong> &#8211; The <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a> to resolve agreement for</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_marker.resolve_mark_entity">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">resolve_mark_entity</code><span class="sig-paren">(</span><em>mark</em>, <em>token_list</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#resolve_mark_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.resolve_mark_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function to set entity type based on progressively less restricted parts of a markable&#8217;s text</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mark</strong> &#8211; The <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a> object to get the entity type for</li>
+<li><strong>token_list</strong> &#8211; The list of ParsedToken objects processed so far</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
 </td>
 </tr>
 </tbody>
@@ -1102,51 +1304,61 @@ annotation scheme</p>
 <div class="section" id="unit-tests">
 <h2>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="modules.xrenner_test.TestCorefMethods">
-<em class="property">class </em><code class="descclassname">modules.xrenner_test.</code><code class="descname">TestCorefMethods</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods" title="Permalink to this definition">¶</a></dt>
+<dt id="modules.xrenner_test.Test1Model">
+<em class="property">class </em><code class="descclassname">modules.xrenner_test.</code><code class="descname">Test1Model</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Test1Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Test1Model" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="classmethod">
-<dt id="modules.xrenner_test.TestCorefMethods.setUpClass">
-<em class="property">classmethod </em><code class="descname">setUpClass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.setUpClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dt id="modules.xrenner_test.Test1Model.setUpClass">
+<em class="property">classmethod </em><code class="descname">setUpClass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Test1Model.setUpClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Test1Model.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="modules.xrenner_test.Test1Model.tearDownClass">
+<em class="property">classmethod </em><code class="descname">tearDownClass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Test1Model.tearDownClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Test1Model.tearDownClass" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="modules.xrenner_test.TestCorefMethods.test_affix_morphology">
-<code class="descname">test_affix_morphology</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_affix_morphology"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_affix_morphology" title="Permalink to this definition">¶</a></dt>
+<dt id="modules.xrenner_test.Test1Model.test_model_files">
+<code class="descname">test_model_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Test1Model.test_model_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Test1Model.test_model_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="modules.xrenner_test.Test2MarkableMethods">
+<em class="property">class </em><code class="descclassname">modules.xrenner_test.</code><code class="descname">Test2MarkableMethods</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Test2MarkableMethods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Test2MarkableMethods" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="class">
+<dt id="modules.xrenner_test.Test2MarkableMethods.Test3CorefMethods">
+<em class="property">class </em><code class="descname">Test3CorefMethods</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.xrenner_test.Test2MarkableMethods.Test3CorefMethods" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Members:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Undoc-members:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="modules.xrenner_test.Test2MarkableMethods.setUpClass">
+<em class="property">classmethod </em><code class="descclassname">Test2MarkableMethods.</code><code class="descname">setUpClass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Test2MarkableMethods.setUpClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Test2MarkableMethods.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="modules.xrenner_test.Test2MarkableMethods.tearDownClass">
+<em class="property">classmethod </em><code class="descclassname">Test2MarkableMethods.</code><code class="descname">tearDownClass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Test2MarkableMethods.tearDownClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Test2MarkableMethods.tearDownClass" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="modules.xrenner_test.TestCorefMethods.test_appos_envelope">
-<code class="descname">test_appos_envelope</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_appos_envelope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_appos_envelope" title="Permalink to this definition">¶</a></dt>
+<dt id="modules.xrenner_test.Test2MarkableMethods.test_atomic_mod">
+<code class="descclassname">Test2MarkableMethods.</code><code class="descname">test_atomic_mod</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Test2MarkableMethods.test_atomic_mod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Test2MarkableMethods.test_atomic_mod" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="modules.xrenner_test.TestCorefMethods.test_cardinality">
-<code class="descname">test_cardinality</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_cardinality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_cardinality" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="modules.xrenner_test.TestCorefMethods.test_dynamic_hasa">
-<code class="descname">test_dynamic_hasa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_dynamic_hasa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_dynamic_hasa" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="modules.xrenner_test.TestCorefMethods.test_entity_dep">
-<code class="descname">test_entity_dep</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_entity_dep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_entity_dep" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="modules.xrenner_test.TestCorefMethods.test_hasa">
-<code class="descname">test_hasa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_hasa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_hasa" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="modules.xrenner_test.TestCorefMethods.test_isa">
-<code class="descname">test_isa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_isa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_isa" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="modules.xrenner_test.TestCorefMethods.test_verbal_event_stem">
-<code class="descname">test_verbal_event_stem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#TestCorefMethods.test_verbal_event_stem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.TestCorefMethods.test_verbal_event_stem" title="Permalink to this definition">¶</a></dt>
+<dt id="modules.xrenner_test.Test2MarkableMethods.test_name">
+<code class="descclassname">Test2MarkableMethods.</code><code class="descname">test_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_test.html#Test2MarkableMethods.test_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_test.Test2MarkableMethods.test_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

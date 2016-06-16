@@ -148,7 +148,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.4.2&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.4.3&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">escape</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="n">symbol_to_mask</span><span class="p">,</span><span class="n">border_marker</span><span class="p">):</span>
@@ -491,7 +491,18 @@
 
 	<span class="k">for</span> <span class="n">my_bin</span> <span class="ow">in</span> <span class="n">bins</span><span class="p">:</span>
 		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_bin</span><span class="p">)</span> <span class="o">==</span> <span class="n">node_count</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span>
-			<span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_bin</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_bin</span><span class="p">[</span><span class="s2">&quot;rels&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="n">rel_count</span><span class="p">:</span>  <span class="c1"># All required relations have been fulfilled</span>
+				<span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_bin</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>  <span class="c1"># Some node pair has multiple relations, check that all are fulfilled</span>
+				<span class="k">for</span> <span class="n">set_to_merge</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">set_to_merge</span><span class="p">[</span><span class="s2">&quot;rel&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">my_bin</span><span class="p">[</span><span class="s2">&quot;rels&quot;</span><span class="p">]:</span> <span class="c1"># This relation was missing</span>
+						<span class="n">node_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">set_to_merge</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="nb">int</span><span class="p">))</span>
+						<span class="c1"># Check that the missing rel connects nodes that are already in my_bin</span>
+						<span class="n">ids_are_in_bin</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">nid</span> <span class="ow">in</span> <span class="n">my_bin</span><span class="p">)</span> <span class="k">for</span> <span class="n">nid</span> <span class="ow">in</span> <span class="n">node_ids</span><span class="p">)</span>
+						<span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">ids_are_in_bin</span><span class="p">):</span>
+							<span class="n">nodes_are_identical</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">set_to_merge</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span> <span class="o">==</span> <span class="n">my_bin</span><span class="p">[</span><span class="n">nid</span><span class="p">])</span> <span class="k">for</span> <span class="n">nid</span> <span class="ow">in</span> <span class="n">node_ids</span><span class="p">)</span>
+							<span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">nodes_are_identical</span><span class="p">):</span>
+								<span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_bin</span><span class="p">)</span>
 
 	<span class="n">merged_bins</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">solution</span> <span class="ow">in</span> <span class="n">solutions</span><span class="p">:</span>
