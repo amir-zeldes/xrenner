@@ -1,0 +1,22 @@
+#first match identical proper markables
+form="proper";form="proper"&text=$1;100;nopropagate
+#attach reflexives first
+func=/refl/;func=/nsubj/&sameparent;0;propagate
+#allow coreference between "you" in a question and "I/we" in an answer
+form="pronoun"&text=/^(ϯ|ⲓ)$/&mood!="question";mood="question"&text=/^ⲕ$/&anytext&anyagree;1;nopropagate
+#propagate entity type across apposition; first if entity is same, then for non-organizations to prevent "politician (party)" being appos identical
+func="appos"&pos!="NUM"&anytext;has_child_func="appos"&entity=$1&anytext&anyagree;0;propagate
+#prefer pronouns to corefer to identical pronouns in same or previous sentence
+form="pronoun";text=$1&!sameparent*;0;propagate
+#prefer pronouns to corefer to subjects in previous sentence
+form="pronoun";func=/nsubj/&!sameparent*;1;propagate
+#identify coreferent light heads based on identical modifiers
+lemma=/ϩⲱⲃ|ϣⲁϫⲉ/;mod=$1&anytext&form!=/proper/;4;nonpropagate
+anytext&form!=/proper/;lemma=/ϩⲱⲃ|ϣⲁϫⲉ/&mod=$1&anytext;4;nonpropagate
+#allow coreference between nouns and their nsubj dependents
+pos=/N(PROP)?/&has_child_func!="neg";func=/nsubj/&head=$1&anytext&anyagree;0;propagate
+#allow coreference between quoted first person and unquoted third person
+form="pronoun"&text=/^(ϯ|ⲁⲛⲟⲕ|ⲓ)$/&quoted=True;func=/nsubj/&text=/ϥ|ⲥ/&anytext&anyagree&quoted=False;1;nopropagate
+form="pronoun"&text=/^(ϯ|ⲁⲛⲟⲕ|ⲓ)$/&quoted=True;func=/nsubj/&entity=/person/&anytext&anyagree&quoted=False;1;nopropagate
+#default rule
+none;none;15;nopropagate
