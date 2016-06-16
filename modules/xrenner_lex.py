@@ -34,13 +34,16 @@ class LexData:
 		model_path = os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + model + os.sep
 		model_files = [f for f in listdir(model_path) if isfile(join(model_path, f))]
 
+		self.entity_sums = defaultdict(int)
+
 		# Mandatory files must be included in model directory
 		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
 		self.entities = self.read_delim('entities.tab', 'triple')
-		self.entity_heads = self.read_delim('entity_heads.tab', 'triple')
-		self.pronouns= self.read_delim('pronouns.tab', 'double')
+		self.entity_heads = self.read_delim('entity_heads.tab', 'triple', 'atoms', True)
+		self.pronouns = self.read_delim('pronouns.tab', 'double')
 		# Get configuration
 		self.filters = self.get_filters(override)
+
 
 		# Optional files improve model accuracy
 		self.names = self.read_delim('names.tab') if "names.tab" in model_files else {}
@@ -51,7 +54,7 @@ class LexData:
 		self.entity_deps = self.read_delim('entity_deps.tab','quadruple') if "entity_deps.tab" in model_files else {}
 		self.hasa = self.read_delim('hasa.tab', 'triple_numeric') if "hasa.tab" in model_files else {}
 		self.coref = self.read_delim('coref.tab') if "coref.tab" in model_files else {}
-		self.numbers=self.read_delim('numbers.tab','double') if "numbers.tab" in model_files else {}
+		self.numbers = self.read_delim('numbers.tab','double') if "numbers.tab" in model_files else {}
 		self.affix_tokens = self.read_delim('affix_tokens.tab') if "affix_tokens.tab" in model_files else {}
 		self.antonyms = self.read_antonyms() if "antonyms.tab" in model_files else {}
 		self.isa = self.read_isa() if "isa.tab" in model_files else {}
@@ -69,7 +72,7 @@ class LexData:
 
 		gc.enable()
 
-	def read_delim(self, filename, mode="normal", atom_list_name="atoms"):
+	def read_delim(self, filename, mode="normal", atom_list_name="atoms", add_to_sums=False):
 		"""
 		Generic file reader for lexical data in model directory
 
@@ -104,6 +107,8 @@ class LexData:
 						if rows[2].endswith('@'):
 							rows[2] = rows[2][0:-1]
 							atom_list[rows[0]] = rows[1]
+						if add_to_sums:
+							self.entity_sums[rows[1]] += 1
 						if rows[0] in out_dict:
 							out_dict[rows[0]].append(rows[1] + "\t" + rows[2])
 						else:
