@@ -15,9 +15,9 @@ def is_atomic(mark, atoms, lex):
 	"""
 	Checks if nested markables are allowed within this markable
 	
-	:param mark: the markable to be checked for atomicity
+	:param mark: the :class:`.Markable` to be checked for atomicity
 	:param atoms: list of atomic markable text strings
-	:param lex: the LexData object with gazetteer information and model settings
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
 	:return: bool
 	"""
 
@@ -53,6 +53,14 @@ def is_atomic(mark, atoms, lex):
 
 
 def remove_suffix_tokens(marktext, lex):
+	"""
+	Remove trailing tokens such as genitive 's and other tokens configured as potentially redundant to citation form
+
+	:param marktext: the markable text string to remove tokens from
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
+	:return: potentially truncated text
+	"""
+
 	if lex.filters["core_suffixes"].search(marktext):
 		return re.sub(lex.filters["core_suffixes"].pattern, " ", marktext)
 	else:
@@ -68,6 +76,14 @@ def remove_suffix_tokens(marktext, lex):
 
 
 def remove_prefix_tokens(marktext, lex):
+	"""
+	Remove leading tokens such as articles and other tokens configured as potentially redundant to citation form
+
+	:param marktext: the markable text string to remove tokens from
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
+	:return: potentially truncated text
+	"""
+
 	if lex.filters["core_prefixes"].match(marktext): # NB use initial match here
 		return re.sub(lex.filters["core_prefixes"].pattern, " ", marktext)
 	else:
@@ -82,6 +98,15 @@ def remove_prefix_tokens(marktext, lex):
 
 
 def resolve_mark_entity(mark, token_list, lex):
+	"""
+	Main function to set entity type based on progressively less restricted parts of a markable's text
+
+	:param mark: The :class:`.Markable` object to get the entity type for
+	:param token_list: The list of ParsedToken objects processed so far
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
+	:return: void
+	"""
+
 	entity = ""
 	use_entity_deps = True
 	if "ablations" in lex.debug:
@@ -129,6 +154,12 @@ def resolve_mark_entity(mark, token_list, lex):
 			entity = resolve_entity_cascade(mark.core_text, mark, lex)
 		if entity == "":
 			entity = recognize_entity_by_mod(mark, lex)
+		if entity == "" and mark.head.text.istitle():
+			if mark.head.text in lex.last_names:
+				modifiers_match_article = (lex.filters["articles"].match(mod.text) is not None for mod in mark.head.modifiers)
+				modifiers_match_first_name = (mod.text in lex.first_names for mod in mark.head.modifiers)
+				if any(modifiers_match_first_name) and not any(modifiers_match_article):
+					entity = lex.filters["person_def_entity"]
 		if entity == "" and mark.head.text.istitle():
 			entity = resolve_entity_cascade(mark.core_text.lower().strip(), mark, lex)
 		if entity == "" and not mark.head.text.istitle():
@@ -182,59 +213,82 @@ def resolve_mark_entity(mark, token_list, lex):
 
 
 def resolve_entity_cascade(entity_text, mark, lex):
-	# TODO: refactor repetitive handling of alt entity / and \t coding
+	"""
+	Retrieve possible entity types for a given text fragment based on entities list, entity heads and names list.
+
+	:param entity_text: The text to determine the entity for
+	:param mark: The :class:`.Markable` hosting the text fragment to retrieve context information from (e.g. dependency)
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
+	:return: entity type; note that this is used to decide whether to stop the search, but the Markable's entity is	already set during processing together with matching subclass and agree information
+	"""
+	options = {}
 	entity = ""
+	person_entity = lex.filters["person_def_entity"]
 	if entity_text in lex.entities:
-		entity = lex.entities[entity_text][0]
-		mark.entity_certainty = "entities_match"
 		for alt in lex.entities[entity_text]:
-			alt_no_agree = re.sub(r"/.*", "", alt)
-			if "\t" in alt_no_agree:
-				mark.alt_entities.append(alt_no_agree.split("\t")[0])
-				mark.alt_subclasses.append(alt_no_agree.split("\t")[1])
-			else:
-				mark.alt_entities.append(alt_no_agree)
+			parsed_entity = parse_entity(alt, "entities_match")
+			if parsed_entity[0] not in mark.alt_entities:
+				mark.alt_entities.append(parsed_entity[0])
+				mark.alt_subclasses.append(parsed_entity[1])
+				options[parsed_entity[0]] = parsed_entity
 	if entity_text in lex.entity_heads:
-		mark.entity_certainty = "entity_heads_match"
-		if entity == "":
-			entity = lex.entity_heads[entity_text][0]
-			for alt in lex.entity_heads[entity_text]:
-				alt_no_agree = re.sub(r"/.*", "", alt)
-				if "\t" in alt:
-					mark.alt_entities.append(alt_no_agree.split("\t")[0])
-					mark.alt_subclasses.append(alt_no_agree.split("\t")[1])
-				else:
-					mark.alt_entities.append(alt_no_agree)
-		else:
-			for alt in lex.entity_heads[entity_text]:
-				alt_no_agree = re.sub(r"/.*", "", alt)
-				if "\t" in alt:
-					mark.alt_entities.append(alt_no_agree.split("\t")[0])
-					mark.alt_subclasses.append(alt_no_agree.split("\t")[1])
-				else:
-					mark.alt_entities.append(alt_no_agree)
+		for alt in lex.entity_heads[entity_text]:
+			parsed_entity = parse_entity(alt, "entity_heads_match")
+			if parsed_entity[0] not in mark.alt_entities:
+				mark.alt_entities.append(parsed_entity[0])
+				mark.alt_subclasses.append(parsed_entity[1])
+				options[parsed_entity[0]] = parsed_entity
 	if entity_text in lex.names:
-		if entity_text[0].istitle() or not lex.filters["cap_names"]:
-			if entity == "":
-				entity = lex.filters["person_def_entity"]
-				mark.entity_certainty = "names_match"
-			elif not lex.filters["person_def_entity"] in mark.alt_entities:
-				mark.alt_entities.append(lex.filters["person_def_entity"])
-	if 0 < entity_text.count(" ") < 3:
+		if (entity_text[0].istitle() or not lex.filters["cap_names"]) and person_entity not in mark.alt_entities:
+			mark.alt_entities.append(lex.filters["person_def_entity"])
+			mark.alt_subclasses.append(lex.filters["person_def_entity"])
+			options[person_entity] = (person_entity, person_entity, lex.names[entity_text],"names_match")
+	if 0 < entity_text.count(" ") < 3 and lex.filters["person_def_entity"] not in mark.alt_entities:
 		if entity_text.split(" ")[0] in lex.first_names and entity_text.split(" ")[-1] in lex.last_names:
 			if entity_text[0].istitle() or not lex.filters["cap_names"]:
 				if lex.filters["articles"].match(mark.text.split(" ")[0]) is None:
-					if entity == "":
-						entity = lex.filters["person_def_entity"]
-						mark.agree = lex.first_names[entity_text.split(" ")[0]]
-					elif not lex.filters["person_def_entity"] in mark.alt_entities:
-						mark.alt_entities.append(lex.filters["person_def_entity"])
+					mark.alt_entities.append(person_entity)
+					mark.alt_subclasses.append(person_entity)
+					options[person_entity] = (person_entity, person_entity, lex.first_names[entity_text.split(" ")[0]], "name_match")
 
-	return entity
+	if len(mark.alt_entities) > 1:
+		entity = disambiguate_entity(mark, lex)
+	elif len(mark.alt_entities) == 1:
+		entity = mark.alt_entities[0]
 
+	if entity != "":
+		mark.entity, mark.subclass = options[entity][0:2]
+		if options[entity][2] != "":
+			mark.agree = options[entity][2]
+		mark.entity_certainty = options[entity][3]
+
+	return entity if len(options) > 0 else ""
+
+
+def parse_entity(entity_text, certainty="uncertain"):
+	"""
+	Parses: entity -tab- subclass(/agree) + certainty into a tuple
+
+	:param entity_text: the string to parse, must contain excatly one tab
+	:param certainty: the certainty string at end of tuple, default 'uncertain'
+	:return: quadruple of (entity, subclass, agree, certainty)
+	"""
+	entity, subclass = entity_text.split("\t")
+	if "/" in subclass:
+		subclass, agree = subclass.split("/")
+	else:
+		agree = ""
+	return (entity, subclass, agree, certainty)
 
 
 def resolve_mark_agree(mark, lex):
+	"""
+	Resolve Markable agreement based on morph information in tokens or gazetteer data
+
+	:param mark: The :class:`.Markable` to resolve agreement for
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
+	:return: void
+	"""
 	if mark.head.morph not in ["","_"]:
 		mark.agree_certainty = "head_morph"
 		return [mark.head.morph]
@@ -267,6 +321,13 @@ def resolve_mark_agree(mark, lex):
 
 
 def resolve_cardinality(mark,lex):
+	"""
+	Find cardinality for Markable based on numerical modifiers or number words
+
+	:param mark: The :class:`.Markable` to resolve agreement for
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
+	:return: Cardinality as float, zero if unknown
+	"""
 	for mod in mark.head.modifiers:
 		if mod.text in lex.numbers:
 			return int(lex.numbers[mod.text][0])
@@ -294,8 +355,8 @@ def recognize_entity_by_mod(mark, lex, mark_atoms=False):
 	"""
 	Attempt to recognize entity type based on modifiers
 	
-	:param mark: Markable for which to identify the entity type
-	:param modifier_lexicon: The LexData object's modifier list
+	:param mark: :class:`.Markable` for which to identify the entity type
+	:param modifier_lexicon: The :class:`.LexData` object's modifier list
 	:return: String (entity type, possibly including subtype and agreement)
 	"""
 	modifier_lexicon = lex.entity_mods
@@ -357,7 +418,7 @@ def get_mod_ordered_dict(mod):
 	"""
 	Retrieves the (sub)modifiers of a modifier token
 	
-	:param mod: A ParsedToken object representing a modifier of the head of some markable
+	:param mod: A :class:`.ParsedToken` object representing a modifier of the head of some markable
 	:return: Recursive ordered dictionary of that modifier's own modifiers
 	"""
 	mod_dict = OrderedDict()
@@ -384,6 +445,13 @@ def markable_extend_punctuation(marktext, adjacent_token, punct_dict, direction)
 
 
 def markables_overlap(mark1, mark2):
+	"""
+	Helper function to check if two markables cover some of the same tokens
+
+	:param mark1: First :class:`.Markable`
+	:param mark2: Second :class:`.Markable`
+	:return: bool
+	"""
 	if mark2.end >= mark1.start >= mark2.start and mark2.end:
 		return True
 	elif mark2.end >= mark1.end >= mark2.start:
@@ -545,7 +613,7 @@ def lookup_has_entity(text, lemma, entity, lex):
 	:param text: text of the token
 	:param lemma: lemma of the token
 	:param entity: entity to check for
-	:param lex: the LexData object with gazetteer information and model settings
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
 	:return: bool
 	"""
 	found = []
@@ -562,9 +630,8 @@ def lookup_has_entity(text, lemma, entity, lex):
 
 def assign_coordinate_entity(mark,markables_by_head):
 	"""
-	Checks if all constituents of a coordinate markable have the same entity and subclass
-	
-	and if so, propagates these to the coordinate markable.
+	Checks if all constituents of a coordinate markable have the same entity and subclass and if so, propagates these to the coordinate markable.
+
 	:param mark: a coordinate markable to check the entities of its constituents
 	:param markables_by_head: dictionary of markables by head id
 	:return: void
@@ -581,4 +648,31 @@ def assign_coordinate_entity(mark,markables_by_head):
 	if len(set(sub_subclasses)) == 1:  # There is agreement on the entity
 		mark.subclass = sub_subclasses[0]
 
+
+def disambiguate_entity(mark,lex):
+	"""
+	Selects prefered entity for a Markable with multiple alt_entities based on dependency information or more common type
+
+	:param mark: the Markable object
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
+	:return: predicted entity type as string
+	"""
+	parent_text = mark.head.head_text
+	scores = defaultdict(float)
+	entity_freqs = defaultdict(int)
+	# Bias tie breaker in favor of default entity
+	if lex.filters["default_entity"] in mark.alt_entities:
+		scores[lex.filters["default_entity"]] += 0.0001
+	if parent_text in lex.entity_deps:
+		if mark.func in lex.entity_deps[parent_text]:
+			entity_freqs.update(lex.entity_deps[parent_text][mark.func])
+
+	if len(entity_freqs) == 0:  # No dependency info, use entity sum proportions
+		entity_freqs = lex.entity_sums
+
+	for entity_type in mark.alt_entities:
+		scores[entity_type] += entity_freqs[entity_type]
+
+	best_entity = max(scores.iterkeys(), key=(lambda key: scores[key]))
+	return best_entity
 
