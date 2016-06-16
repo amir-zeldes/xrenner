@@ -390,7 +390,6 @@ class Xrenner:
 					mark_candidates_by_head[tok.id] = small_markable
 					big_markable = None
 					small_markable = None
-					#submarks = None
 
 
 		# Check for atomicity and remove any subsumed markables if atomic

@@ -108,9 +108,8 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 					if proper_mod_must_match:
 						return False
 
-	# Check if markable and candidate have modifiers that are different place names or person names
+	# Check if markable and candidate have modifiers that are different place names
 	# e.g. 'Georgetown University' is incompatible with 'Boston University' even if those entities are not in lexicon
-	# and similarly for a John / Jane portrait
 	for mod in markable.head.modifiers:
 		if mod.text in lex.entities and (mod.text.istitle() or not lex.filters["cap_names"]):
 			if re.sub('\t.*', "", lex.entities[mod.text][0]) == lex.filters["place_def_entity"]:
@@ -119,17 +118,6 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 						if re.sub('\t.*', "", lex.entities[candidate_mod.text][0]) == lex.filters["place_def_entity"]:
 							markable.non_antecdent_groups.add(candidate.group)
 							return False
-		if mod.text in lex.last_names or mod.text in lex.first_names:
-			mismatching_names = False
-			for candidate_mod in candidate.head.modifiers:
-				if candidate_mod.text in lex.first_names or candidate_mod.text in lex.last_names:
-					if candidate_mod.text != mod.text and not mismatching_names:
-						mismatching_names = True
-					else:
-						mismatching_names = False
-						break
-			if mismatching_names:
-				return False
 
 	# Check for each possible pair of modifiers with identical function in the ident_mod list whether they are identical,
 	# e.g. for the num function 'the four children' shouldn't be coreferent with 'five other children'
@@ -327,12 +315,13 @@ def isa(markable, candidate, lex):
 				return True
 	# TODO: add prefix/suffix stripped version to catch '*the* United States' = 'America'
 
-	# Core text isa match - no agreement matching is carried out
+	# Core text isa match
 	if markable.core_text.strip() in lex.isa:
 		if candidate.core_text.strip() in lex.isa[markable.core_text.strip()] or candidate.head.lemma in lex.isa[markable.core_text.strip()]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
-				candidate.isa_partner_head = markable.head.lemma
-				return True
+				if agree_compatible(markable, candidate, lex) and not never_agree(markable, candidate, lex):
+					candidate.isa_partner_head = markable.head.lemma
+					return True
 		# Head-core text isa match - no agreement matching is carried out
 		# Note this next check is unidirectional
 		elif candidate.head.text.strip() in lex.isa[markable.core_text.strip()]:
