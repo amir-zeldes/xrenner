@@ -95,9 +95,12 @@ class Xrenner:
 		quoted = False
 		current_sentence = Sentence(self.sent_num, self.tokoffset, "")
 
+		lex.coref_rules = lex.non_speaker_rules
+
 		for myline in infile:
 			if "#speaker" in myline: # speaker
 				current_sentence.speaker = myline.split('"')[1]
+				lex.coref_rules = lex.speaker_rules
 			elif myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
 				cols = myline.split("\t")
 				if lex.filters["open_quote"].match(cols[1]) is not None and quoted is False:

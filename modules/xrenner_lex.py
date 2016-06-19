@@ -37,7 +37,8 @@ class LexData:
 		self.entity_sums = defaultdict(int)
 
 		# Mandatory files must be included in model directory
-		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
+		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
+		self.coref_rules = self.non_speaker_rules
 		self.entities = self.read_delim('entities.tab', 'triple')
 		self.entity_heads = self.read_delim('entity_heads.tab', 'triple', 'atoms', True)
 		self.pronouns = self.read_delim('pronouns.tab', 'double')
@@ -338,17 +339,21 @@ class LexData:
 	@staticmethod
 	def parse_coref_rules(rule_list):
 		"""
-		Reader function to pass coref_rules.tab into CorefRule objects
+		Reader function to pass coref_rules.tab into CorefRule objects in two lists: one for general rules and
+		one also including rules to use when speaker info is available.
 
 		:param rule_list: textual list of rules
-		:return: list of compiled CorefRule objects
+		:return: two separate lists of compiled CorefRule objects with and without speaker specifications
 		"""
 
-		output=[]
+		speaker_rules=[]
+		non_speaker_rules=[]
 		for rule in rule_list:
-			output.append(CorefRule(rule))
+			speaker_rules.append(CorefRule(rule))
+			if "speaker" not in rule:
+				non_speaker_rules.append(CorefRule(rule))
 
-		return output
+		return speaker_rules, non_speaker_rules
 
 	def get_morph(self):
 		"""
