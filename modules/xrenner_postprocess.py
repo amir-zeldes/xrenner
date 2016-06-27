@@ -32,7 +32,7 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 		for mark in markables:
 			if lex.filters["remove_head_func"].match(mark.head.func) is not None and (mark.form != "proper" or \
 						mark.entity == "abstract" or \
-						mark.text.strip() == "U.S." or mark.text.strip() in lex.first_names): # TODO: de-hardwire Proper restriction matching OntoNotes guidelines; US is interpreted as "American" (amod); forbid abstract nn modifier even if proper
+						(mark.text.strip() == "U.S." and mark.func == "nn") or mark.text.strip() in lex.first_names): # TODO: de-hardwire Proper restriction matching OntoNotes guidelines; US is interpreted as "American" (amod); forbid abstract nn modifier even if proper
 				splice_out(mark, marks_by_group[mark.group])
 	if len(lex.filters["remove_child_func"].pattern) > 0:
 		for mark in markables:
@@ -46,7 +46,7 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 		for mark1 in marks_by_group[group]:
 			for mark2 in marks_by_group[group]:
 				if not mark1 == mark2:
-					if markables_overlap(mark1, mark2):
+					if markables_overlap(mark1, mark2, None):
 						if (mark1.end - mark1.start) > (mark2.end - mark2.start):
 							splice_out(mark2, marks_by_group[group])
 						else:
