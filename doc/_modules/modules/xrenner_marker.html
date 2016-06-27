@@ -133,7 +133,7 @@
   <h1>Source code for modules.xrenner_marker</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">modules.xrenner_classes</span> <span class="kn">import</span> <span class="n">Markable</span>
+<span class="kn">from</span> <span class="nn">xrenner_classes</span> <span class="kn">import</span> <span class="n">Markable</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -148,9 +148,9 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Checks if nested markables are allowed within this markable</span>
 <span class="sd">	</span>
-<span class="sd">	:param mark: the markable to be checked for atomicity</span>
+<span class="sd">	:param mark: the :class:`.Markable` to be checked for atomicity</span>
 <span class="sd">	:param atoms: list of atomic markable text strings</span>
-<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
 <span class="sd">	:return: bool</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -185,7 +185,15 @@
 		<span class="k">return</span> <span class="bp">False</span></div>
 
 
-<span class="k">def</span> <span class="nf">remove_suffix_tokens</span><span class="p">(</span><span class="n">marktext</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+<div class="viewcode-block" id="remove_suffix_tokens"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.remove_suffix_tokens">[docs]</a><span class="k">def</span> <span class="nf">remove_suffix_tokens</span><span class="p">(</span><span class="n">marktext</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Remove trailing tokens such as genitive &#39;s and other tokens configured as potentially redundant to citation form</span>
+
+<span class="sd">	:param marktext: the markable text string to remove tokens from</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
+<span class="sd">	:return: potentially truncated text</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
 	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;core_suffixes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">marktext</span><span class="p">):</span>
 		<span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;core_suffixes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">marktext</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
@@ -197,10 +205,18 @@
 			<span class="k">if</span> <span class="n">suffix_candidate</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">affix_tokens</span><span class="p">:</span>
 				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">affix_tokens</span><span class="p">[</span><span class="n">suffix_candidate</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">==</span> <span class="s2">&quot;prefix&quot;</span><span class="p">:</span>
 					<span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">suffix_candidate</span> <span class="o">+</span> <span class="s1">r&#39;$&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">marktext</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">marktext</span>
+	<span class="k">return</span> <span class="n">marktext</span></div>
 
 
-<span class="k">def</span> <span class="nf">remove_prefix_tokens</span><span class="p">(</span><span class="n">marktext</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+<div class="viewcode-block" id="remove_prefix_tokens"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.remove_prefix_tokens">[docs]</a><span class="k">def</span> <span class="nf">remove_prefix_tokens</span><span class="p">(</span><span class="n">marktext</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Remove leading tokens such as articles and other tokens configured as potentially redundant to citation form</span>
+
+<span class="sd">	:param marktext: the markable text string to remove tokens from</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
+<span class="sd">	:return: potentially truncated text</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
 	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;core_prefixes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">marktext</span><span class="p">):</span> <span class="c1"># NB use initial match here</span>
 		<span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;core_prefixes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">marktext</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
@@ -211,10 +227,19 @@
 			<span class="k">if</span> <span class="n">prefix_candidate</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">affix_tokens</span><span class="p">:</span>
 				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">affix_tokens</span><span class="p">[</span><span class="n">prefix_candidate</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">==</span> <span class="s2">&quot;prefix&quot;</span><span class="p">:</span>
 					<span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;^&#39;</span> <span class="o">+</span> <span class="n">prefix_candidate</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">marktext</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">marktext</span>
+	<span class="k">return</span> <span class="n">marktext</span></div>
 
 
-<span class="k">def</span> <span class="nf">resolve_mark_entity</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">token_list</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+<div class="viewcode-block" id="resolve_mark_entity"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.resolve_mark_entity">[docs]</a><span class="k">def</span> <span class="nf">resolve_mark_entity</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">token_list</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Main function to set entity type based on progressively less restricted parts of a markable&#39;s text</span>
+
+<span class="sd">	:param mark: The :class:`.Markable` object to get the entity type for</span>
+<span class="sd">	:param token_list: The list of ParsedToken objects processed so far</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
+<span class="sd">	:return: void</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
 	<span class="n">entity</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 	<span class="n">use_entity_deps</span> <span class="o">=</span> <span class="bp">True</span>
 	<span class="k">if</span> <span class="s2">&quot;ablations&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
@@ -239,14 +264,17 @@
 				<span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;uncertain&quot;</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">r&#39;(1[456789][0-9][0-9]|20[0-9][0-9])&#39;</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="c1"># Try to catch year numbers and hours + minutes</span>
+			<span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">r&#39;(1[456789][0-9][0-9]|20[0-9][0-9]|(2[0-3]|1?[0-9]):[0-5][0-9])&#39;</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
 				<span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;time_def_entity&quot;</span><span class="p">]</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;uncertain&quot;</span>
 				<span class="n">mark</span><span class="o">.</span><span class="n">subclass</span> <span class="o">=</span> <span class="s2">&quot;time-unit&quot;</span> <span class="c1"># TODO: de-hardwire this</span>
 				<span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">=</span> <span class="s2">&quot;def&quot;</span>  <span class="c1"># literal year numbers are considered definite like &#39;proper names&#39;</span>
 				<span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">=</span> <span class="s2">&quot;proper&quot;</span>  <span class="c1"># literal year numbers are considered definite like &#39;proper names&#39;</span>
 		<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">r&#39;^(([0-9]+[.,]?)+)$&#39;</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
 				<span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;quantity_def_entity&quot;</span><span class="p">]</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;uncertain&quot;</span>
 		<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
 			<span class="n">entity</span> <span class="o">=</span> <span class="n">resolve_entity_cascade</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
@@ -259,6 +287,12 @@
 			<span class="n">entity</span> <span class="o">=</span> <span class="n">resolve_entity_cascade</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="p">,</span> <span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
 			<span class="n">entity</span> <span class="o">=</span> <span class="n">recognize_entity_by_mod</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">istitle</span><span class="p">():</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">last_names</span><span class="p">:</span>
+				<span class="n">modifiers_match_article</span> <span class="o">=</span> <span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;articles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">)</span>
+				<span class="n">modifiers_match_first_name</span> <span class="o">=</span> <span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span> <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">)</span>
+				<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">modifiers_match_first_name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">modifiers_match_article</span><span class="p">):</span>
+					<span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span>
 		<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">istitle</span><span class="p">():</span>
 			<span class="n">entity</span> <span class="o">=</span> <span class="n">resolve_entity_cascade</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">istitle</span><span class="p">():</span>
@@ -308,63 +342,86 @@
 
 			<span class="n">entity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">joint_probs</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">(),</span> <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">joint_probs</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
 
-	<span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span>
+	<span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">entity</span></div>
 
 
-<span class="k">def</span> <span class="nf">resolve_entity_cascade</span><span class="p">(</span><span class="n">entity_text</span><span class="p">,</span> <span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
-	<span class="c1"># TODO: refactor repetitive handling of alt entity / and \t coding</span>
+<div class="viewcode-block" id="resolve_entity_cascade"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.resolve_entity_cascade">[docs]</a><span class="k">def</span> <span class="nf">resolve_entity_cascade</span><span class="p">(</span><span class="n">entity_text</span><span class="p">,</span> <span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Retrieve possible entity types for a given text fragment based on entities list, entity heads and names list.</span>
+
+<span class="sd">	:param entity_text: The text to determine the entity for</span>
+<span class="sd">	:param mark: The :class:`.Markable` hosting the text fragment to retrieve context information from (e.g. dependency)</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
+<span class="sd">	:return: entity type; note that this is used to decide whether to stop the search, but the Markable&#39;s entity is	already set during processing together with matching subclass and agree information</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
 	<span class="n">entity</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">person_entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span>
 	<span class="k">if</span> <span class="n">entity_text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
-		<span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">entity_text</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-		<span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;entities_match&quot;</span>
 		<span class="k">for</span> <span class="n">alt</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="n">entity_text</span><span class="p">]:</span>
-			<span class="n">alt_no_agree</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">r&quot;/.*&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">alt</span><span class="p">)</span>
-			<span class="k">if</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">alt_no_agree</span><span class="p">:</span>
-				<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_no_agree</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-				<span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_no_agree</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_no_agree</span><span class="p">)</span>
+			<span class="n">parsed_entity</span> <span class="o">=</span> <span class="n">parse_entity</span><span class="p">(</span><span class="n">alt</span><span class="p">,</span> <span class="s2">&quot;entities_match&quot;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">parsed_entity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parsed_entity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parsed_entity</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+				<span class="n">options</span><span class="p">[</span><span class="n">parsed_entity</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">parsed_entity</span>
 	<span class="k">if</span> <span class="n">entity_text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_heads</span><span class="p">:</span>
-		<span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;entity_heads_match&quot;</span>
-		<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-			<span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_heads</span><span class="p">[</span><span class="n">entity_text</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-			<span class="k">for</span> <span class="n">alt</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_heads</span><span class="p">[</span><span class="n">entity_text</span><span class="p">]:</span>
-				<span class="n">alt_no_agree</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">r&quot;/.*&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">alt</span><span class="p">)</span>
-				<span class="k">if</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">alt</span><span class="p">:</span>
-					<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_no_agree</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-					<span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_no_agree</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-				<span class="k">else</span><span class="p">:</span>
-					<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_no_agree</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="k">for</span> <span class="n">alt</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_heads</span><span class="p">[</span><span class="n">entity_text</span><span class="p">]:</span>
-				<span class="n">alt_no_agree</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">r&quot;/.*&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">alt</span><span class="p">)</span>
-				<span class="k">if</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">alt</span><span class="p">:</span>
-					<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_no_agree</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-					<span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_no_agree</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-				<span class="k">else</span><span class="p">:</span>
-					<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alt_no_agree</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">alt</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_heads</span><span class="p">[</span><span class="n">entity_text</span><span class="p">]:</span>
+			<span class="n">parsed_entity</span> <span class="o">=</span> <span class="n">parse_entity</span><span class="p">(</span><span class="n">alt</span><span class="p">,</span> <span class="s2">&quot;entity_heads_match&quot;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">parsed_entity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">:</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parsed_entity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+				<span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parsed_entity</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+				<span class="n">options</span><span class="p">[</span><span class="n">parsed_entity</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">parsed_entity</span>
 	<span class="k">if</span> <span class="n">entity_text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">entity_text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">istitle</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;cap_names&quot;</span><span class="p">]:</span>
-			<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-				<span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span>
-				<span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;names_match&quot;</span>
-			<span class="k">elif</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">:</span>
-				<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">])</span>
-	<span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">entity_text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">entity_text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">istitle</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;cap_names&quot;</span><span class="p">])</span> <span class="ow">and</span> <span class="n">person_entity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">:</span>
+			<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">])</span>
+			<span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">])</span>
+			<span class="n">options</span><span class="p">[</span><span class="n">person_entity</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">person_entity</span><span class="p">,</span> <span class="n">person_entity</span><span class="p">,</span> <span class="n">lex</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">entity_text</span><span class="p">],</span><span class="s2">&quot;names_match&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">entity_text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">entity_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span> <span class="ow">and</span> <span class="n">entity_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">last_names</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">entity_text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">istitle</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;cap_names&quot;</span><span class="p">]:</span>
 				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;articles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-					<span class="k">if</span> <span class="n">entity</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-						<span class="n">entity</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span>
-						<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span><span class="p">[</span><span class="n">entity_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
-					<span class="k">elif</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">:</span>
-						<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">])</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">person_entity</span><span class="p">)</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">person_entity</span><span class="p">)</span>
+					<span class="n">options</span><span class="p">[</span><span class="n">person_entity</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">person_entity</span><span class="p">,</span> <span class="n">person_entity</span><span class="p">,</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span><span class="p">[</span><span class="n">entity_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]],</span> <span class="s2">&quot;name_match&quot;</span><span class="p">)</span>
 
-	<span class="k">return</span> <span class="n">entity</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">entity</span> <span class="o">=</span> <span class="n">disambiguate_entity</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">entity</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="k">if</span> <span class="n">entity</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+		<span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">subclass</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="n">entity</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="n">entity</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+			<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="n">entity</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+		<span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="n">entity</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="n">entity</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span></div>
 
 
+<div class="viewcode-block" id="parse_entity"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.parse_entity">[docs]</a><span class="k">def</span> <span class="nf">parse_entity</span><span class="p">(</span><span class="n">entity_text</span><span class="p">,</span> <span class="n">certainty</span><span class="o">=</span><span class="s2">&quot;uncertain&quot;</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Parses: entity -tab- subclass(/agree) + certainty into a tuple</span>
 
-<span class="k">def</span> <span class="nf">resolve_mark_agree</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+<span class="sd">	:param entity_text: the string to parse, must contain excatly one tab</span>
+<span class="sd">	:param certainty: the certainty string at end of tuple, default &#39;uncertain&#39;</span>
+<span class="sd">	:return: quadruple of (entity, subclass, agree, certainty)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">entity</span><span class="p">,</span> <span class="n">subclass</span> <span class="o">=</span> <span class="n">entity_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">subclass</span><span class="p">:</span>
+		<span class="n">subclass</span><span class="p">,</span> <span class="n">agree</span> <span class="o">=</span> <span class="n">subclass</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">agree</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="k">return</span> <span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="n">subclass</span><span class="p">,</span> <span class="n">agree</span><span class="p">,</span> <span class="n">certainty</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="resolve_mark_agree"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.resolve_mark_agree">[docs]</a><span class="k">def</span> <span class="nf">resolve_mark_agree</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Resolve Markable agreement based on morph information in tokens or gazetteer data</span>
+
+<span class="sd">	:param mark: The :class:`.Markable` to resolve agreement for</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
+<span class="sd">	:return: void</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;_&quot;</span><span class="p">]:</span>
 		<span class="n">mark</span><span class="o">.</span><span class="n">agree_certainty</span> <span class="o">=</span> <span class="s2">&quot;head_morph&quot;</span>
 		<span class="k">return</span> <span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">morph</span><span class="p">]</span>
@@ -377,8 +434,6 @@
 		<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;proper&quot;</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
 				<span class="k">return</span> <span class="p">[</span><span class="n">lex</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]]</span>
-			<span class="k">elif</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span><span class="p">:</span>
-				<span class="k">return</span> <span class="p">[</span><span class="n">lex</span><span class="o">.</span><span class="n">first_names</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]]</span>
 		<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">pos</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">pos_agree_mappings</span><span class="p">:</span>
 			<span class="n">mark</span><span class="o">.</span><span class="n">agree_certainty</span> <span class="o">=</span> <span class="s2">&quot;pos_agree_mappings&quot;</span>
 			<span class="k">return</span> <span class="p">[</span><span class="n">lex</span><span class="o">.</span><span class="n">pos_agree_mappings</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">pos</span><span class="p">]]</span>
@@ -393,12 +448,17 @@
 				<span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">:</span>
 					<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
 						<span class="n">mark</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
-					<span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span></div>
 
 
+<div class="viewcode-block" id="resolve_cardinality"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.resolve_cardinality">[docs]</a><span class="k">def</span> <span class="nf">resolve_cardinality</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span><span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Find cardinality for Markable based on numerical modifiers or number words</span>
 
-
-<span class="k">def</span> <span class="nf">resolve_cardinality</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span><span class="n">lex</span><span class="p">):</span>
+<span class="sd">	:param mark: The :class:`.Markable` to resolve agreement for</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
+<span class="sd">	:return: Cardinality as float, zero if unknown</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">mod</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">numbers</span><span class="p">:</span>
 			<span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">numbers</span><span class="p">[</span><span class="n">mod</span><span class="o">.</span><span class="n">text</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
@@ -419,18 +479,15 @@
 					<span class="n">numerator</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
 					<span class="n">denominator</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
 					<span class="k">return</span> <span class="n">numerator</span><span class="o">/</span><span class="n">denominator</span>
-	<span class="k">return</span> <span class="mi">0</span>
-
-
-
+	<span class="k">return</span> <span class="mi">0</span></div>
 
 
 <div class="viewcode-block" id="recognize_entity_by_mod"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.recognize_entity_by_mod">[docs]</a><span class="k">def</span> <span class="nf">recognize_entity_by_mod</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="n">mark_atoms</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Attempt to recognize entity type based on modifiers</span>
 <span class="sd">	</span>
-<span class="sd">	:param mark: Markable for which to identify the entity type</span>
-<span class="sd">	:param modifier_lexicon: The LexData object&#39;s modifier list</span>
+<span class="sd">	:param mark: :class:`.Markable` for which to identify the entity type</span>
+<span class="sd">	:param modifier_lexicon: The :class:`.LexData` object&#39;s modifier list</span>
 <span class="sd">	:return: String (entity type, possibly including subtype and agreement)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">modifier_lexicon</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_mods</span>
@@ -492,7 +549,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Retrieves the (sub)modifiers of a modifier token</span>
 <span class="sd">	</span>
-<span class="sd">	:param mod: A ParsedToken object representing a modifier of the head of some markable</span>
+<span class="sd">	:param mod: A :class:`.ParsedToken` object representing a modifier of the head of some markable</span>
 <span class="sd">	:return: Recursive ordered dictionary of that modifier&#39;s own modifiers</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">mod_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -518,13 +575,29 @@
 
 
 
-<span class="k">def</span> <span class="nf">markables_overlap</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">):</span>
+<div class="viewcode-block" id="markables_overlap"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.markables_overlap">[docs]</a><span class="k">def</span> <span class="nf">markables_overlap</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">,</span> <span class="n">lex</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Helper function to check if two markables cover some of the same tokens. Note that if the lex argument is specified,</span>
+<span class="sd">	it is used to recognize possessives, which behave exceptionally. Possessive pronouns beginning</span>
+<span class="sd">	after a main markable has started are tolerated in case of markable definitions including relative clauses,</span>
+<span class="sd">	e.g. [Mr. Pickwick, who was looking for [his] hat]</span>
+
+<span class="sd">	:param mark1: First :class:`.Markable`</span>
+<span class="sd">	:param mark2: Second :class:`.Markable`</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings or None</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">lex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;possessive_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mark1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">mark1</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;pronoun&quot;</span> <span class="ow">and</span> <span class="n">mark1</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">mark2</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">elif</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;possessive_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mark2</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">mark2</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;pronoun&quot;</span> <span class="ow">and</span> <span class="n">mark2</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">mark1</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">False</span>
 	<span class="k">if</span> <span class="n">mark2</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;=</span> <span class="n">mark1</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="n">mark2</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
 		<span class="k">return</span> <span class="bp">True</span>
 	<span class="k">elif</span> <span class="n">mark2</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;=</span> <span class="n">mark1</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;=</span> <span class="n">mark2</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
 		<span class="k">return</span> <span class="bp">True</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">return</span> <span class="bp">False</span></div>
 
 
 <span class="k">def</span> <span class="nf">markable_extend_affixes</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">,</span> <span class="n">sent_start</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
@@ -680,7 +753,7 @@
 <span class="sd">	:param text: text of the token</span>
 <span class="sd">	:param lemma: lemma of the token</span>
 <span class="sd">	:param entity: entity to check for</span>
-<span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
 <span class="sd">	:return: bool</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">found</span> <span class="o">=</span> <span class="p">[]</span>
@@ -697,9 +770,8 @@
 
 <div class="viewcode-block" id="assign_coordinate_entity"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.assign_coordinate_entity">[docs]</a><span class="k">def</span> <span class="nf">assign_coordinate_entity</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span><span class="n">markables_by_head</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Checks if all constituents of a coordinate markable have the same entity and subclass</span>
-<span class="sd">	</span>
-<span class="sd">	and if so, propagates these to the coordinate markable.</span>
+<span class="sd">	Checks if all constituents of a coordinate markable have the same entity and subclass and if so, propagates these to the coordinate markable.</span>
+
 <span class="sd">	:param mark: a coordinate markable to check the entities of its constituents</span>
 <span class="sd">	:param markables_by_head: dictionary of markables by head id</span>
 <span class="sd">	:return: void</span>
@@ -716,6 +788,33 @@
 	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">sub_subclasses</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># There is agreement on the entity</span>
 		<span class="n">mark</span><span class="o">.</span><span class="n">subclass</span> <span class="o">=</span> <span class="n">sub_subclasses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
+
+<div class="viewcode-block" id="disambiguate_entity"><a class="viewcode-back" href="../../modules.html#modules.xrenner_marker.disambiguate_entity">[docs]</a><span class="k">def</span> <span class="nf">disambiguate_entity</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span><span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Selects prefered entity for a Markable with multiple alt_entities based on dependency information or more common type</span>
+
+<span class="sd">	:param mark: the Markable object</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
+<span class="sd">	:return: predicted entity type as string</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">parent_text</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head_text</span>
+	<span class="n">scores</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+	<span class="n">entity_freqs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+	<span class="c1"># Bias tie breaker in favor of default entity</span>
+	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_entity&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">:</span>
+		<span class="n">scores</span><span class="p">[</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_entity&quot;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mf">0.0001</span>
+	<span class="k">if</span> <span class="n">parent_text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">func</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span><span class="p">[</span><span class="n">parent_text</span><span class="p">]:</span>
+			<span class="n">entity_freqs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span><span class="p">[</span><span class="n">parent_text</span><span class="p">][</span><span class="n">mark</span><span class="o">.</span><span class="n">func</span><span class="p">])</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">entity_freqs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># No dependency info, use entity sum proportions</span>
+		<span class="n">entity_freqs</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_sums</span>
+
+	<span class="k">for</span> <span class="n">entity_type</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">:</span>
+		<span class="n">scores</span><span class="p">[</span><span class="n">entity_type</span><span class="p">]</span> <span class="o">+=</span> <span class="n">entity_freqs</span><span class="p">[</span><span class="n">entity_type</span><span class="p">]</span>
+
+	<span class="n">best_entity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">scores</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+	<span class="k">return</span> <span class="n">best_entity</span></div>
 
 </pre></div>
 

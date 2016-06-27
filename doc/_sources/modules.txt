@@ -90,8 +90,16 @@ xrenner_propagate
 **********
 Unit tests
 **********
-	
-.. autoclass:: modules.xrenner_test.TestCorefMethods
+
+.. autoclass:: modules.xrenner_test.Test1Model
+	 :members:
+	 :undoc-members:
+
+.. autoclass:: modules.xrenner_test.Test2MarkableMethods
+	 :members:
+	 :undoc-members:
+
+.. autoclass:: modules.xrenner_test.Test3CorefMethods
 	 :members:
 	 :undoc-members:
 

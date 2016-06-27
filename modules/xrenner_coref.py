@@ -63,7 +63,7 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 			ante_spec.find("lookahead") == -1) or (int(markable.head.id) < int(candidate.head.id) and ante_spec.find("lookahead") > -1)):
 				if candidate.group not in markable.non_antecdent_groups:
 					if coref_rule_applies(lex, ante_constraints, candidate, markable):
-						if not markables_overlap(markable, candidate):
+						if not markables_overlap(markable, candidate, lex):
 							if markable.form == "pronoun":
 								if agree_compatible(markable, candidate, lex) or (ante_spec.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)):
 									if entities_compatible(markable, candidate, lex) and cardinality_compatible(markable, candidate, lex):
@@ -129,7 +129,7 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 		for removal in candidates_to_remove:
 			candidate_list.remove(removal)
 		if len(candidate_list)>0:
-			return best_candidate(markable, candidate_list, lex)
+			return best_candidate(markable, candidate_list, lex, propagate)
 		else:
 			return None
 	else:

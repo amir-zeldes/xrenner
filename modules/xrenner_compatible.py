@@ -1,5 +1,6 @@
 import re
 from xrenner_marker import remove_suffix_tokens
+from xrenner_propagate import *
 from math import log
 
 """
@@ -25,14 +26,15 @@ def entities_compatible(mark1, mark2, lex):
 		return True
 	if mark1.form == "pronoun" and (not (mark1.entity == lex.filters["person_def_entity"] and mark2.entity != lex.filters["person_def_entity"]) or mark1.entity_certainty == ''):
 		return True
-	if mark1.entity in mark2.alt_entities and mark1.entity != mark2.entity and (mark2.entity_certainty == "uncertain" or mark2.entity_certainty == "propagated"):
-		return True
-	elif mark2.entity in mark1.alt_entities and mark1.entity != mark2.entity and (mark1.entity_certainty == "uncertain" or mark1.entity_certainty == "propagated"):
-		return True
-	elif mark2.entity == lex.filters["default_entity"] and mark2.entity_certainty in ["","propagated","uncertain"] and mark1.entity != mark2.entity:
-		return True
-	elif mark1.entity == lex.filters["default_entity"] and mark1.entity_certainty in ["","propagated","uncertain"] and mark1.entity != mark2.entity:
-		return True
+	if mark1.entity != mark2.entity:
+		if mark1.entity in mark2.alt_entities and (mark2.entity_certainty == "uncertain" or mark2.entity_certainty == "propagated"):
+			return True
+		elif mark2.entity in mark1.alt_entities and (mark1.entity_certainty == "uncertain" or mark1.entity_certainty == "propagated"):
+			return True
+		elif mark2.entity == lex.filters["default_entity"] and mark2.entity_certainty in ["","propagated","uncertain"]:
+			return True
+		elif mark1.entity == lex.filters["default_entity"] and mark1.entity_certainty in ["","propagated","uncertain"]:
+			return True
 
 	return False
 
@@ -77,7 +79,11 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 		for mod in second.head.modifiers:
 			if lex.filters["det_func"].match(mod.func) is None:  # Exclude determiners from this check
 				if mod.text not in first_mods:
-					return False
+					if lex.filters["use_new_modifier_exceptions"]:
+						if mod.text not in lex.exceptional_new_modifiers:
+							return False
+					else:
+						return False
 
 	# Check if markable and candidate have modifiers that are in the antonym list together,
 	# e.g. 'the good news' should not be coreferent with 'the bad news',
@@ -110,14 +116,13 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 	# Check if markable and candidate have modifiers that are different place names
 	# e.g. 'Georgetown University' is incompatible with 'Boston University' even if those entities are not in lexicon
 	for mod in markable.head.modifiers:
-		if mod.text.strip() in lex.entities and (mod.text.istitle() or not lex.filters["cap_names"]):
-			if re.sub('\t.*', "", lex.entities[mod.text.strip()][0]) == lex.filters["place_def_entity"]:
+		if mod.text in lex.entities and (mod.text.istitle() or not lex.filters["cap_names"]):
+			if re.sub('\t.*', "", lex.entities[mod.text][0]) == lex.filters["place_def_entity"]:
 				for candidate_mod in candidate.head.modifiers:
-					if candidate_mod.text.strip() in lex.entities and (candidate_mod.text.istitle() or not lex.filters["cap_names"]):
-						if re.sub('\t.*', "", lex.entities[candidate_mod.text.strip()][0]) == lex.filters["place_def_entity"]:
+					if candidate_mod.text in lex.entities and (candidate_mod.text.istitle() or not lex.filters["cap_names"]):
+						if re.sub('\t.*', "", lex.entities[candidate_mod.text][0]) == lex.filters["place_def_entity"]:
 							markable.non_antecdent_groups.add(candidate.group)
 							return False
-
 
 	# Check for each possible pair of modifiers with identical function in the ident_mod list whether they are identical,
 	# e.g. for the num function 'the four children' shouldn't be coreferent with 'five other children'
@@ -135,6 +140,15 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 		if candidate.head.lemma in lex.antonyms[markable.head.lemma]:
 			return False
 		if candidate.head.lemma.isupper() and candidate.head.lemma.lower() in lex.antonyms[markable.head.lemma]:
+			return False
+
+	# Check that the heads are not conflicting proper names
+	if markable.form == "proper" and candidate.form == "proper" and markable.text != candidate.text:
+		if markable.text in lex.names and candidate.text in lex.names:
+			return False
+		elif markable.text in lex.first_names and candidate.text in lex.first_names:
+			return False
+		elif markable.text in lex.last_names and candidate.text in lex.last_names:
 			return False
 
 	# Recursive check through antecedent ancestors in group
@@ -280,15 +294,31 @@ def isa(markable, candidate, lex):
 			if candidate.definiteness =="indef":
 				return False
 
-	# Forbid isa head matching for two distinct proper names; NB: use coref table for these if desired
+	# Check for incompatible modifiers
+	if not modifiers_compatible(markable,candidate, lex):
+		return False
+
+	# Check for first name + full name match
+	if markable.entity == lex.filters["person_def_entity"] and candidate.entity == lex.filters["person_def_entity"]:
+		if markable.head.text in lex.first_names:
+			candidate_mod_texts = list((mod.text) for mod in candidate.head.modifiers)
+			if markable.head.text in candidate_mod_texts:
+				return True
+
+	# Forbid isa head matching for two distinct proper names except first+full name; NB: use coref table for these if desired
 	if markable.form == "proper" and candidate.form == "proper":
 		return False
 
 	# Subclass based isa match - check agreement too unless disabled
 	for subclass in markable.alt_subclasses + [markable.subclass]:
-		if subclass == candidate.head.lemma:
+		if subclass == candidate.lemma:
 			if agree_compatible(markable, candidate, lex) and not never_agree(markable, candidate, lex):
-				return True
+				# Check if this case is already assigned a different lexical head as isa partner
+				if candidate.isa_partner_head == "":
+					candidate.isa_partner_head = markable.lemma
+					return True
+				else:  # Another lemma is already isa-linked to this, e.g. state <- Oregon; so now not also "Nevada"
+					return False
 		if subclass in lex.isa:
 			if lex.isa[subclass][-1] == "*":
 				subclass_isa = lex.isa[subclass][:-1]
@@ -296,10 +326,10 @@ def isa(markable, candidate, lex):
 			else:
 				subclass_isa = lex.isa[subclass]
 				check_agree = lex.filters["isa_subclass_agreement"]
-			if candidate.head.lemma.lower() in subclass_isa or candidate.text.lower().strip() in subclass_isa:
-				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma or markable.isa_partner_head == candidate.head.lemma:
+			if candidate.lemma.lower() in subclass_isa or candidate.text.lower().strip() in subclass_isa:
+				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.lemma or markable.isa_partner_head == candidate.lemma:
 					if (agree_compatible(markable, candidate, lex) or check_agree is False) and not never_agree(markable, candidate, lex):
-						candidate.isa_partner_head = markable.head.lemma
+						candidate.isa_partner_head = markable.lemma
 						return True
 
 	# Exact text match in isa table - no agreement matching is carried out
@@ -310,12 +340,13 @@ def isa(markable, candidate, lex):
 				return True
 	# TODO: add prefix/suffix stripped version to catch '*the* United States' = 'America'
 
-	# Core text isa match - no agreement matching is carried out
+	# Core text isa match
 	if markable.core_text.strip() in lex.isa:
 		if candidate.core_text.strip() in lex.isa[markable.core_text.strip()] or candidate.head.lemma in lex.isa[markable.core_text.strip()]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
-				candidate.isa_partner_head = markable.head.lemma
-				return True
+				if agree_compatible(markable, candidate, lex) and not never_agree(markable, candidate, lex):
+					candidate.isa_partner_head = markable.head.lemma
+					return True
 		# Head-core text isa match - no agreement matching is carried out
 		# Note this next check is unidirectional
 		elif candidate.head.text.strip() in lex.isa[markable.core_text.strip()]:
@@ -393,7 +424,7 @@ def never_agree(candidate, markable, lex):
 	return False
 
 
-def best_candidate(markable,candidate_list,lex):
+def best_candidate(markable,candidate_list,lex, propagate):
 	"""
 	:param markable: markable to find best antecedent for
 	:param candidate_list: list of markables which are possible antecedents based on some coref_rule
@@ -428,6 +459,8 @@ def best_candidate(markable,candidate_list,lex):
 			candidate_scores[candidate] += 0.1
 		if candidate.entity == lex.filters["subject_func"]:  # Introduce slight bias to subjects
 			candidate_scores[candidate] += 0.95
+		if candidate.agree == markable.agree:  # Slight bias to explicitly identical agreement (not just compatible)
+			candidate_scores[candidate] += 0.1
 		if candidate.head.text in lex.hasa and use_hasa and lex.filters["possessive_func"].search(markable.head.func) is not None:  # Text based hasa
 			if anaphor_parent in lex.hasa[candidate.head.text]:
 				candidate_scores[candidate] += log(lex.hasa[candidate.head.text][anaphor_parent]+1) * 1.1
@@ -444,8 +477,12 @@ def best_candidate(markable,candidate_list,lex):
 			max_score = candidate_scores[candidate]
 			best = candidate
 
+	#if propagate.startswith("propagate"):
+	#	propagate_entity(markable,best,propagate)
 	markable.entity = best.entity
+	#markable.agree = best.agree
 	markable.entity_certainty = "propagated"
+	propagate_agree(markable, best)
 	return best
 
 
@@ -468,8 +505,13 @@ def acronym_match(mark, candidate, lex):
 	"""
 	position = 0
 	calibration = 0
+	candidate_string = candidate.core_text
+	if "ignore_in_acronym" in lex.filters:
+		candidate_string = lex.filters["ignore_in_acronym"].sub("", candidate_string)
+		candidate_string = candidate_string.replace("  "," ")
+
 	if mark.head.text.isupper() and len(mark.head.text) > 2:
-		for word in candidate.core_text.split(" "):
+		for word in candidate_string.split(" "):
 			if lex.filters["articles"].match(word):
 				calibration = -1
 			elif len(word) > 0:
@@ -481,7 +523,7 @@ def acronym_match(mark, candidate, lex):
 							return False
 				else:
 					return False
-		if (position == len(candidate.core_text.strip().split(" ")) + calibration) and position > 2:
+		if (position == len(candidate_string.strip().split(" ")) + calibration) and position > 2:
 			return True
 		else:
 			return False

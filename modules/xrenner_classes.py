@@ -76,8 +76,13 @@ class Markable:
 
 	def __getattr__(self, item):
 		# Convenience methods to access head token and containing sentence
-		if item in ["pos","lemma","morph","parent","func","quoted","modifiers","child_funcs","child_strings","text_lower","agree"]:
+		if item in ["pos","lemma","morph","parent","func","quoted","modifiers","child_funcs","child_strings","agree"]:
 			return getattr(self.head,item)
+		elif item == "text_lower":
+			if self.coordinate:  # If this is a coordinate markable return lower case core_text
+				return self.core_text.lower()
+			else:  # Otherwise return lower text of head token
+				return getattr(self.head, item)
 		elif item in ["mood", "speaker"]:
 			return getattr(self.sentence,item)
 		elif item == "child_func_string":

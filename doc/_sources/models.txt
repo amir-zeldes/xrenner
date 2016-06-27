@@ -17,7 +17,7 @@ example invokes the German language model, named *deu* (for Deutsch, i.e. German
   > python xrenner.py -m deu infile.conll10
   
  
-Most of the language model files listed below must be included in each model, though a few, noted below, are optional. The main configuration file determining the general behavior for a language is *config.ini*. Different variant behaviors for the same language model, using the same lexical data, can be created as configuration overide profiles using the *overide.ini* file.
+Most of the language model files listed below are optional, but some, listed below, must be included in each model. The main configuration file determining the general behavior for a language is *config.ini*. Different variant behaviors for the same language model, using the same lexical data, can be created as configuration overide profiles using the optional *overide.ini* file.
 
 At a minimum, a model must include:
 
@@ -165,7 +165,30 @@ antonyms.tab
 			# not really antonyms or incompatible, but likely to indicate heterodeixis
 			business,holiday
 
-				
+.. _atoms_tab:
+
+atoms.tab
+**********
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+	This file gives a list of additional markable texts that are known to be atomic (may contain no nested markables), even if their entity type is unknown (if the entity type is known, use :ref:`entities.tab <entities_tab>` or :ref:`entity_heads.tab <entity_heads_tab>` with the *@* annotation). A second column includes frequencies for the atoms, which can be left as 1 if unknown. This list extends, and does not replace atomic marked entries in the respective entity list files.
+
+	**Example entries**:
+
+		.. code-block:: python
+		
+			New York	989
+			Hong Kong	442
+			the United States	412
+			Xinhua News Agency	314
+
 .. _coref_tab:
 
 coref.tab
@@ -476,7 +499,32 @@ names.tab
 
 			John Smith	male
 			Jane K. Tanaka	female
-	
+
+
+new_modifiers.tab
+******************
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+	This file lists modifier tokens which may violate the no_new_modifiers setting in :ref:`config.ini <config_ini>`. This is only used if that setting is set to True, as well as the use_new_modifier_exceptions setting, which turns on use of this file. When used, subsequent mentions are exceptionally allowed to include previously unmentioned modifiers found in this list. A second column specifies the frequency with which these new modifiers are known to appear first in a subsequent mention (if unknown may be left as *1*).
+
+	**Example entries**:
+
+		.. code-block:: python
+		
+			Mr.	2070
+			Col.	110
+			junk	63
+			Ms.	59
+			President	59
+			new	49
+			proposed	1
+
 
 numbers.tab
 ************************

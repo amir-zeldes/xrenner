@@ -228,14 +228,17 @@
 		<span class="n">quoted</span> <span class="o">=</span> <span class="bp">False</span>
 		<span class="n">current_sentence</span> <span class="o">=</span> <span class="n">Sentence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sent_num</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
+		<span class="n">lex</span><span class="o">.</span><span class="n">coref_rules</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">non_speaker_rules</span>
+
 		<span class="k">for</span> <span class="n">myline</span> <span class="ow">in</span> <span class="n">infile</span><span class="p">:</span>
 			<span class="k">if</span> <span class="s2">&quot;#speaker&quot;</span> <span class="ow">in</span> <span class="n">myline</span><span class="p">:</span> <span class="c1"># speaker</span>
 				<span class="n">current_sentence</span><span class="o">.</span><span class="n">speaker</span> <span class="o">=</span> <span class="n">myline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="n">lex</span><span class="o">.</span><span class="n">coref_rules</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">speaker_rules</span>
 			<span class="k">elif</span> <span class="n">myline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Only process lines that contain tabs (i.e. conll tokens)</span>
 				<span class="n">cols</span> <span class="o">=</span> <span class="n">myline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
 				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;open_quote&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">quoted</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
 					<span class="n">quoted</span> <span class="o">=</span> <span class="bp">True</span>
-				<span class="k">elif</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;open_quote&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">quoted</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+				<span class="k">elif</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;close_quote&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">quoted</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
 					<span class="n">quoted</span> <span class="o">=</span> <span class="bp">False</span>
 				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;question_mark&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
 					<span class="n">current_sentence</span><span class="o">.</span><span class="n">mood</span> <span class="o">=</span> <span class="s2">&quot;question&quot;</span>
@@ -523,7 +526,6 @@
 					<span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">small_markable</span>
 					<span class="n">big_markable</span> <span class="o">=</span> <span class="bp">None</span>
 					<span class="n">small_markable</span> <span class="o">=</span> <span class="bp">None</span>
-					<span class="c1">#submarks = None</span>
 
 
 		<span class="c1"># Check for atomicity and remove any subsumed markables if atomic</span>
@@ -659,7 +661,9 @@
 				<span class="n">current_markable</span> <span class="o">=</span> <span class="n">markables_by_head</span><span class="p">[</span><span class="n">markable_head_id</span><span class="p">]</span>
 				<span class="c1"># DEBUG POINT</span>
 				<span class="k">if</span> <span class="n">current_markable</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
-					<span class="k">pass</span>
+					<span class="n">a</span><span class="o">=</span><span class="mi">5</span>
+					<span class="k">if</span> <span class="n">current_markable</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ante&quot;</span><span class="p">]:</span>
+						<span class="k">pass</span>
 				<span class="c1"># Revise coordinate markable entities now that we have resolved all of their constituents</span>
 				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_markable</span><span class="o">.</span><span class="n">submarks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 					<span class="n">assign_coordinate_entity</span><span class="p">(</span><span class="n">current_markable</span><span class="p">,</span><span class="n">markables_by_head</span><span class="p">)</span>

@@ -209,3 +209,34 @@ input_data:
 5	a	_	DT	DT	_	6	det	_	_
 6	concern	_	NN	NN	_	0	root	_	_
 7	.	_	.	.	_	6	punct	_	_
+
+-----
+
+name:mark_name_test
+model:eng
+toks:4 # Jerry B. Clinton...
+marks:1
+groups:1
+chains:
+  # Jerry B. Clinton
+  1_3
+input_data:
+1	Jerry	_	NNP	NNP	_	3	nn	_	_
+2	B.	_	NNP	NNP	_	3	nn	_	_
+3	Clinton	_	NNP	NNP	_	0	root	_	_
+
+-----
+
+name:mark_atomic_mod_test
+model:eng
+toks:5 # House Dr. Israel...
+marks:1
+groups:1
+chains:
+  # House Dr. Israel New...
+  1_4
+input_data:
+1	House	_	NNP	NNP	_	4	nn	_	_
+2	Dr.	_	NNP	NNP	_	4	nn	_	_
+3	Israel	_	NNP	NNP	_	4	nn	_	_
+4	Newspaper	_	NNP	NNP	_	0	root	_	_

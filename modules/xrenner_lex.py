@@ -34,31 +34,40 @@ class LexData:
 		model_path = os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + model + os.sep
 		model_files = [f for f in listdir(model_path) if isfile(join(model_path, f))]
 
+		self.entity_sums = defaultdict(int)
+
 		# Mandatory files must be included in model directory
-		self.coref_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
+		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
+		self.coref_rules = self.non_speaker_rules
 		self.entities = self.read_delim('entities.tab', 'triple')
-		self.entity_heads = self.read_delim('entity_heads.tab', 'triple')
-		self.pronouns= self.read_delim('pronouns.tab', 'double')
+		self.entity_heads = self.read_delim('entity_heads.tab', 'triple', 'atoms', True)
+		self.pronouns = self.read_delim('pronouns.tab', 'double')
 		# Get configuration
 		self.filters = self.get_filters(override)
+
 
 		# Optional files improve model accuracy
 		self.names = self.read_delim('names.tab') if "names.tab" in model_files else {}
 		self.stop_list = self.read_delim('stop_list.tab', 'low') if "stop_list.tab" in model_files else set([])
 		self.open_close_punct = self.read_delim('open_close_punct.tab') if "open_close_punct.tab" in model_files else {}
 		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
-		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms') if "entity_mods.tab" in model_path else {}
+		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms') if "entity_mods.tab" in model_files else {}
 		self.entity_deps = self.read_delim('entity_deps.tab','quadruple') if "entity_deps.tab" in model_files else {}
 		self.hasa = self.read_delim('hasa.tab', 'triple_numeric') if "hasa.tab" in model_files else {}
 		self.coref = self.read_delim('coref.tab') if "coref.tab" in model_files else {}
-		self.numbers=self.read_delim('numbers.tab','double') if "numbers.tab" in model_files else {}
+		self.numbers = self.read_delim('numbers.tab','double') if "numbers.tab" in model_files else {}
 		self.affix_tokens = self.read_delim('affix_tokens.tab') if "affix_tokens.tab" in model_files else {}
 		self.antonyms = self.read_antonyms() if "antonyms.tab" in model_files else {}
 		self.isa = self.read_isa() if "isa.tab" in model_files else {}
 		self.debug = self.read_delim('debug.tab') if "debug.tab" in model_files else {"ana":"","ante":"","ablations":""}
+		additional_atoms = self.read_delim('atoms.tab','double') if "atoms.tab" in model_files else {}
+
+		if self.filters["no_new_modifiers"] and self.filters["use_new_modifier_exceptions"]:
+			self.exceptional_new_modifiers = self.read_delim('new_modifiers.tab', 'double') if "new_modifiers.tab" in model_files else {}
 
 		# Compile atom and first + last name data
 		self.atoms = self.get_atoms()
+		self.atoms.update(additional_atoms)
 		self.first_names, self.last_names = self.get_first_last_names(self.names)
 
 		self.pos_agree_mappings = self.get_pos_agree_mappings()
@@ -69,7 +78,7 @@ class LexData:
 
 		gc.enable()
 
-	def read_delim(self, filename, mode="normal", atom_list_name="atoms"):
+	def read_delim(self, filename, mode="normal", atom_list_name="atoms", add_to_sums=False):
 		"""
 		Generic file reader for lexical data in model directory
 
@@ -104,6 +113,8 @@ class LexData:
 						if rows[2].endswith('@'):
 							rows[2] = rows[2][0:-1]
 							atom_list[rows[0]] = rows[1]
+						if add_to_sums:
+							self.entity_sums[rows[1]] += 1
 						if rows[0] in out_dict:
 							out_dict[rows[0]].append(rows[1] + "\t" + rows[2])
 						else:
@@ -157,7 +168,7 @@ class LexData:
 			if " " in name:
 				parts = name.split(" ")
 				firsts[parts[0]] = names[name]  # Get heuristic gender for this first name
-				lasts.update(parts[len(parts)-1])  # Last name is a set, no gender info
+				lasts.add(parts[len(parts)-1])  # Last name is a set, no gender info
 		return [firsts,lasts]
 
 	def read_antonyms(self):
@@ -333,17 +344,21 @@ class LexData:
 	@staticmethod
 	def parse_coref_rules(rule_list):
 		"""
-		Reader function to pass coref_rules.tab into CorefRule objects
+		Reader function to pass coref_rules.tab into CorefRule objects in two lists: one for general rules and
+		one also including rules to use when speaker info is available.
 
 		:param rule_list: textual list of rules
-		:return: list of compiled CorefRule objects
+		:return: two separate lists of compiled CorefRule objects with and without speaker specifications
 		"""
 
-		output=[]
+		speaker_rules=[]
+		non_speaker_rules=[]
 		for rule in rule_list:
-			output.append(CorefRule(rule))
+			speaker_rules.append(CorefRule(rule))
+			if "speaker" not in rule:
+				non_speaker_rules.append(CorefRule(rule))
 
-		return output
+		return speaker_rules, non_speaker_rules
 
 	def get_morph(self):
 		"""

@@ -97,6 +97,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#lexical-data-files">Lexical data files</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#affix-tokens-tab">affix_tokens.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#antonyms-tab">antonyms.tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#atoms-tab">atoms.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coref-tab">coref.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#coref-rules-tab">coref_rules.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#entities-tab">entities.tab</a></li>
@@ -106,6 +107,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#hasa-tab">hasa.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#isa-tab">isa.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#names-tab">names.tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#new-modifiers-tab">new_modifiers.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#numbers-tab">numbers.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#open-close-punctuation-tab">open_close_punctuation.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pronouns-tab">pronouns.tab</a></li>
@@ -172,7 +174,7 @@ example invokes the German language model, named <em>deu</em> (for Deutsch, i.e.
 <div class="highlight-bash"><div class="highlight"><pre><span></span>&gt; python xrenner.py -m deu infile.conll10
 </pre></div>
 </div>
-<p>Most of the language model files listed below must be included in each model, though a few, noted below, are optional. The main configuration file determining the general behavior for a language is <em>config.ini</em>. Different variant behaviors for the same language model, using the same lexical data, can be created as configuration overide profiles using the <em>overide.ini</em> file.</p>
+<p>Most of the language model files listed below are optional, but some, listed below, must be included in each model. The main configuration file determining the general behavior for a language is <em>config.ini</em>. Different variant behaviors for the same language model, using the same lexical data, can be created as configuration overide profiles using the optional <em>overide.ini</em> file.</p>
 <p>At a minimum, a model must include:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#config-ini"><span class="std std-ref">config.ini</span></a></li>
@@ -290,8 +292,27 @@ p.m.    suffix
 </div>
 </div>
 </div>
+<div class="section" id="atoms-tab">
+<span id="id3"></span><h4>atoms.tab<a class="headerlink" href="#atoms-tab" title="Permalink to this headline">¶</a></h4>
+<div class="boggle container">
+<div class="header container">
+<strong>optional</strong></div>
+<div class="expandable container">
+<p>This file gives a list of additional markable texts that are known to be atomic (may contain no nested markables), even if their entity type is unknown (if the entity type is known, use <a class="reference internal" href="#entities-tab"><span class="std std-ref">entities.tab</span></a> or <a class="reference internal" href="#entity-heads-tab"><span class="std std-ref">entity_heads.tab</span></a> with the <em>&#64;</em> annotation). A second column includes frequencies for the atoms, which can be left as 1 if unknown. This list extends, and does not replace atomic marked entries in the respective entity list files.</p>
+<p><strong>Example entries</strong>:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">New</span> <span class="n">York</span>        <span class="mi">989</span>
+<span class="n">Hong</span> <span class="n">Kong</span>       <span class="mi">442</span>
+<span class="n">the</span> <span class="n">United</span> <span class="n">States</span>       <span class="mi">412</span>
+<span class="n">Xinhua</span> <span class="n">News</span> <span class="n">Agency</span>      <span class="mi">314</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
 <div class="section" id="coref-tab">
-<span id="id3"></span><h4>coref.tab<a class="headerlink" href="#coref-tab" title="Permalink to this headline">¶</a></h4>
+<span id="id4"></span><h4>coref.tab<a class="headerlink" href="#coref-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
 <strong>optional</strong></div>
@@ -309,7 +330,7 @@ the educational system|the education system     coref
 </div>
 </div>
 <div class="section" id="coref-rules-tab">
-<span id="id4"></span><h4>coref_rules.tab<a class="headerlink" href="#coref-rules-tab" title="Permalink to this headline">¶</a></h4>
+<span id="id5"></span><h4>coref_rules.tab<a class="headerlink" href="#coref-rules-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
 <strong>mandatory</strong></div>
@@ -352,7 +373,7 @@ the educational system|the education system     coref
 </div>
 </div>
 <div class="section" id="entities-tab">
-<span id="id5"></span><h4>entities.tab<a class="headerlink" href="#entities-tab" title="Permalink to this headline">¶</a></h4>
+<span id="id6"></span><h4>entities.tab<a class="headerlink" href="#entities-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
 <strong>mandatory</strong></div>
@@ -419,7 +440,7 @@ want    nsubj   person  49
 </div>
 </div>
 <div class="section" id="entity-heads-tab">
-<span id="id6"></span><h4>entity_heads.tab<a class="headerlink" href="#entity-heads-tab" title="Permalink to this headline">¶</a></h4>
+<span id="id7"></span><h4>entity_heads.tab<a class="headerlink" href="#entity-heads-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
 <strong>mandatory</strong></div>
@@ -504,7 +525,7 @@ actor   career  3
 </div>
 </div>
 <div class="section" id="isa-tab">
-<span id="id7"></span><h4>isa.tab<a class="headerlink" href="#isa-tab" title="Permalink to this headline">¶</a></h4>
+<span id="id8"></span><h4>isa.tab<a class="headerlink" href="#isa-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
 <strong>optional</strong></div>
@@ -550,6 +571,28 @@ Jane K. Tanaka  female
 </pre></div>
 </div>
 </div></blockquote>
+</div></blockquote>
+</div>
+</div>
+</div>
+<div class="section" id="new-modifiers-tab">
+<h4>new_modifiers.tab<a class="headerlink" href="#new-modifiers-tab" title="Permalink to this headline">¶</a></h4>
+<div class="boggle container">
+<div class="header container">
+<strong>optional</strong></div>
+<div class="expandable container">
+<p>This file lists modifier tokens which may violate the no_new_modifiers setting in <a class="reference internal" href="#config-ini"><span class="std std-ref">config.ini</span></a>. This is only used if that setting is set to True, as well as the use_new_modifier_exceptions setting, which turns on use of this file. When used, subsequent mentions are exceptionally allowed to include previously unmentioned modifiers found in this list. A second column specifies the frequency with which these new modifiers are known to appear first in a subsequent mention (if unknown may be left as <em>1</em>).</p>
+<p><strong>Example entries</strong>:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Mr</span><span class="o">.</span>     <span class="mi">2070</span>
+<span class="n">Col</span><span class="o">.</span>    <span class="mi">110</span>
+<span class="n">junk</span>    <span class="mi">63</span>
+<span class="n">Ms</span><span class="o">.</span>     <span class="mi">59</span>
+<span class="n">President</span>       <span class="mi">59</span>
+<span class="n">new</span>     <span class="mi">49</span>
+<span class="n">proposed</span>        <span class="mi">1</span>
+</pre></div>
+</div>
 </div></blockquote>
 </div>
 </div>
@@ -615,7 +658,7 @@ dozen   12
 </div>
 </div>
 <div class="section" id="pronouns-tab">
-<span id="id8"></span><h4>pronouns.tab<a class="headerlink" href="#pronouns-tab" title="Permalink to this headline">¶</a></h4>
+<span id="id9"></span><h4>pronouns.tab<a class="headerlink" href="#pronouns-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
 <strong>mandatory</strong></div>
