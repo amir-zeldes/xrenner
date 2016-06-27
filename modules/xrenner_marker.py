@@ -243,7 +243,7 @@ def resolve_entity_cascade(entity_text, mark, lex):
 			mark.alt_entities.append(lex.filters["person_def_entity"])
 			mark.alt_subclasses.append(lex.filters["person_def_entity"])
 			options[person_entity] = (person_entity, person_entity, lex.names[entity_text],"names_match")
-	if 0 < entity_text.count(" ") < 3 and lex.filters["person_def_entity"] not in mark.alt_entities:
+	if len(mark.alt_entities) < 1 and 0 < entity_text.count(" ") < 3 and lex.filters["person_def_entity"] not in mark.alt_entities:
 		if entity_text.split(" ")[0] in lex.first_names and entity_text.split(" ")[-1] in lex.last_names:
 			if entity_text[0].istitle() or not lex.filters["cap_names"]:
 				if lex.filters["articles"].match(mark.text.split(" ")[0]) is None:
@@ -301,8 +301,6 @@ def resolve_mark_agree(mark, lex):
 		if mark.form == "proper":
 			if mark.core_text.strip() in lex.names:
 				return [lex.names[mark.core_text.strip()]]
-			elif mark.head.text.strip() in lex.first_names:
-				return [lex.first_names[mark.head.text.strip()]]
 		if mark.head.pos in lex.pos_agree_mappings:
 			mark.agree_certainty = "pos_agree_mappings"
 			return [lex.pos_agree_mappings[mark.head.pos]]
@@ -444,14 +442,23 @@ def markable_extend_punctuation(marktext, adjacent_token, punct_dict, direction)
 
 
 
-def markables_overlap(mark1, mark2):
+def markables_overlap(mark1, mark2, lex=None):
 	"""
-	Helper function to check if two markables cover some of the same tokens
+	Helper function to check if two markables cover some of the same tokens. Note that if the lex argument is specified,
+	it is used to recognize possessives, which behave exceptionally. Possessive pronouns beginning
+	after a main markable has started are tolerated in case of markable definitions including relative clauses,
+	e.g. [Mr. Pickwick, who was looking for [his] hat]
 
 	:param mark1: First :class:`.Markable`
 	:param mark2: Second :class:`.Markable`
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings or None
 	:return: bool
 	"""
+	if lex is not None:
+		if lex.filters["possessive_func"].match(mark1.func) is not None and mark1.form == "pronoun" and mark1.start > mark2.start:
+			return False
+		elif lex.filters["possessive_func"].match(mark2.func) is not None and mark2.form == "pronoun" and mark2.start > mark1.start:
+			return False
 	if mark2.end >= mark1.start >= mark2.start and mark2.end:
 		return True
 	elif mark2.end >= mark1.end >= mark2.start:
