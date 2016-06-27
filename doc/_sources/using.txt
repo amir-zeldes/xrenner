@@ -38,7 +38,7 @@ In batch mode, output file names are automatically generated using the input fil
 Input format
 *************
 
-xrenner uses the 10 column tab delimited conll10 format, with one line per token and a line space between sentences. Columns are (use underscore for missing values):
+xrenner uses the 10 column tab delimited conll10 format, with **one line per token** and **a blank line between sentences**. All of the following columns should be included (use an **underscore** for missing values):
 
 1. **ID** - token ID within sentence
 

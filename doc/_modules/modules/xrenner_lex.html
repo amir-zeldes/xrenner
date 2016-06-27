@@ -170,7 +170,8 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">entity_sums</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 		<span class="c1"># Mandatory files must be included in model directory</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">coref_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_coref_rules</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;coref_rules.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;single&#39;</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">speaker_rules</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_speaker_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_coref_rules</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;coref_rules.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;single&#39;</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">coref_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_speaker_rules</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;entities.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;triple&#39;</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">entity_heads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;entity_heads.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;triple&#39;</span><span class="p">,</span> <span class="s1">&#39;atoms&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">pronouns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;pronouns.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;double&#39;</span><span class="p">)</span>
@@ -192,9 +193,14 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">antonyms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_antonyms</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;antonyms.tab&quot;</span> <span class="ow">in</span> <span class="n">model_files</span> <span class="k">else</span> <span class="p">{}</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">isa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_isa</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;isa.tab&quot;</span> <span class="ow">in</span> <span class="n">model_files</span> <span class="k">else</span> <span class="p">{}</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;debug.tab&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;debug.tab&quot;</span> <span class="ow">in</span> <span class="n">model_files</span> <span class="k">else</span> <span class="p">{</span><span class="s2">&quot;ana&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;ante&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;ablations&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">}</span>
+		<span class="n">additional_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;atoms.tab&#39;</span><span class="p">,</span><span class="s1">&#39;double&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;atoms.tab&quot;</span> <span class="ow">in</span> <span class="n">model_files</span> <span class="k">else</span> <span class="p">{}</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;no_new_modifiers&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;use_new_modifier_exceptions&quot;</span><span class="p">]:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">exceptional_new_modifiers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;new_modifiers.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;double&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;new_modifiers.tab&quot;</span> <span class="ow">in</span> <span class="n">model_files</span> <span class="k">else</span> <span class="p">{}</span>
 
 		<span class="c1"># Compile atom and first + last name data</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">additional_atoms</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">first_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_first_last_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">pos_agree_mappings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pos_agree_mappings</span><span class="p">()</span>
@@ -471,17 +477,21 @@
 	<span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="LexData.parse_coref_rules"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.parse_coref_rules">[docs]</a>	<span class="k">def</span> <span class="nf">parse_coref_rules</span><span class="p">(</span><span class="n">rule_list</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Reader function to pass coref_rules.tab into CorefRule objects</span>
+<span class="sd">		Reader function to pass coref_rules.tab into CorefRule objects in two lists: one for general rules and</span>
+<span class="sd">		one also including rules to use when speaker info is available.</span>
 
 <span class="sd">		:param rule_list: textual list of rules</span>
-<span class="sd">		:return: list of compiled CorefRule objects</span>
+<span class="sd">		:return: two separate lists of compiled CorefRule objects with and without speaker specifications</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
-		<span class="n">output</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">speaker_rules</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">non_speaker_rules</span><span class="o">=</span><span class="p">[]</span>
 		<span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rule_list</span><span class="p">:</span>
-			<span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CorefRule</span><span class="p">(</span><span class="n">rule</span><span class="p">))</span>
+			<span class="n">speaker_rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CorefRule</span><span class="p">(</span><span class="n">rule</span><span class="p">))</span>
+			<span class="k">if</span> <span class="s2">&quot;speaker&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rule</span><span class="p">:</span>
+				<span class="n">non_speaker_rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CorefRule</span><span class="p">(</span><span class="n">rule</span><span class="p">))</span>
 
-		<span class="k">return</span> <span class="n">output</span></div>
+		<span class="k">return</span> <span class="n">speaker_rules</span><span class="p">,</span> <span class="n">non_speaker_rules</span></div>
 
 <div class="viewcode-block" id="LexData.get_morph"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.get_morph">[docs]</a>	<span class="k">def</span> <span class="nf">get_morph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>

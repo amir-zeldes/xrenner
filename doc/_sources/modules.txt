@@ -99,7 +99,7 @@ Unit tests
 	 :members:
 	 :undoc-members:
 
-	 .. autoclass:: modules.xrenner_test.Test3CorefMethods
+.. autoclass:: modules.xrenner_test.Test3CorefMethods
 	 :members:
 	 :undoc-members:
 

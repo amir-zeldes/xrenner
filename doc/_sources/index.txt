@@ -30,7 +30,7 @@ Welcome to xrenner's documentation!
 
 You can find some more information about the system in the following paper. This is also the paper to cite if you use xrenner in publications:
 
-Zeldes, Amir and Zhang, Shuo (2016) `When Annotation Schemes Change Rules Help: A Configurable Approach to Coreference Resolution beyond OntoNotes <https://corpling.uis.georgetown.edu/amir/pdf/corbon_NAACL2016_xrenner_camera.pdf>`_. In: Proceedings of the NAACL2016 Workshop on Coreference Resolution Beyond OntoNotes (CORBON). San Diego, CA. 
+Zeldes, Amir and Zhang, Shuo (2016) `When Annotation Schemes Change Rules Help: A Configurable Approach to Coreference Resolution beyond OntoNotes <http://aclweb.org/anthology/W/W16/W16-0713.pdf>`_. In: Proceedings of the NAACL2016 Workshop on Coreference Resolution Beyond OntoNotes (CORBON). San Diego, CA, 92-101. 
 
 
 Indices
