@@ -1,5 +1,6 @@
 import re
 from xrenner_marker import remove_suffix_tokens
+from xrenner_propagate import *
 from math import log
 
 """
@@ -78,7 +79,11 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 		for mod in second.head.modifiers:
 			if lex.filters["det_func"].match(mod.func) is None:  # Exclude determiners from this check
 				if mod.text not in first_mods:
-					return False
+					if lex.filters["use_new_modifier_exceptions"]:
+						if mod.text not in lex.exceptional_new_modifiers:
+							return False
+					else:
+						return False
 
 	# Check if markable and candidate have modifiers that are in the antonym list together,
 	# e.g. 'the good news' should not be coreferent with 'the bad news',
@@ -135,6 +140,15 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 		if candidate.head.lemma in lex.antonyms[markable.head.lemma]:
 			return False
 		if candidate.head.lemma.isupper() and candidate.head.lemma.lower() in lex.antonyms[markable.head.lemma]:
+			return False
+
+	# Check that the heads are not conflicting proper names
+	if markable.form == "proper" and candidate.form == "proper" and markable.text != candidate.text:
+		if markable.text in lex.names and candidate.text in lex.names:
+			return False
+		elif markable.text in lex.first_names and candidate.text in lex.first_names:
+			return False
+		elif markable.text in lex.last_names and candidate.text in lex.last_names:
 			return False
 
 	# Recursive check through antecedent ancestors in group
@@ -280,7 +294,18 @@ def isa(markable, candidate, lex):
 			if candidate.definiteness =="indef":
 				return False
 
-	# Forbid isa head matching for two distinct proper names; NB: use coref table for these if desired
+	# Check for incompatible modifiers
+	if not modifiers_compatible(markable,candidate, lex):
+		return False
+
+	# Check for first name + full name match
+	if markable.entity == lex.filters["person_def_entity"] and candidate.entity == lex.filters["person_def_entity"]:
+		if markable.head.text in lex.first_names:
+			candidate_mod_texts = list((mod.text) for mod in candidate.head.modifiers)
+			if markable.head.text in candidate_mod_texts:
+				return True
+
+	# Forbid isa head matching for two distinct proper names except first+full name; NB: use coref table for these if desired
 	if markable.form == "proper" and candidate.form == "proper":
 		return False
 
@@ -399,7 +424,7 @@ def never_agree(candidate, markable, lex):
 	return False
 
 
-def best_candidate(markable,candidate_list,lex):
+def best_candidate(markable,candidate_list,lex, propagate):
 	"""
 	:param markable: markable to find best antecedent for
 	:param candidate_list: list of markables which are possible antecedents based on some coref_rule
@@ -434,6 +459,8 @@ def best_candidate(markable,candidate_list,lex):
 			candidate_scores[candidate] += 0.1
 		if candidate.entity == lex.filters["subject_func"]:  # Introduce slight bias to subjects
 			candidate_scores[candidate] += 0.95
+		if candidate.agree == markable.agree:  # Slight bias to explicitly identical agreement (not just compatible)
+			candidate_scores[candidate] += 0.1
 		if candidate.head.text in lex.hasa and use_hasa and lex.filters["possessive_func"].search(markable.head.func) is not None:  # Text based hasa
 			if anaphor_parent in lex.hasa[candidate.head.text]:
 				candidate_scores[candidate] += log(lex.hasa[candidate.head.text][anaphor_parent]+1) * 1.1
@@ -450,8 +477,12 @@ def best_candidate(markable,candidate_list,lex):
 			max_score = candidate_scores[candidate]
 			best = candidate
 
+	#if propagate.startswith("propagate"):
+	#	propagate_entity(markable,best,propagate)
 	markable.entity = best.entity
+	#markable.agree = best.agree
 	markable.entity_certainty = "propagated"
+	propagate_agree(markable, best)
 	return best
 
 
