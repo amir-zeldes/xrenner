@@ -60,9 +60,14 @@ class LexData:
 		self.antonyms = self.read_antonyms() if "antonyms.tab" in model_files else {}
 		self.isa = self.read_isa() if "isa.tab" in model_files else {}
 		self.debug = self.read_delim('debug.tab') if "debug.tab" in model_files else {"ana":"","ante":"","ablations":""}
+		additional_atoms = self.read_delim('atoms.tab','double') if "atoms.tab" in model_files else {}
+
+		if self.filters["no_new_modifiers"] and self.filters["use_new_modifier_exceptions"]:
+			self.exceptional_new_modifiers = self.read_delim('new_modifiers.tab', 'double') if "new_modifiers.tab" in model_files else {}
 
 		# Compile atom and first + last name data
 		self.atoms = self.get_atoms()
+		self.atoms.update(additional_atoms)
 		self.first_names, self.last_names = self.get_first_last_names(self.names)
 
 		self.pos_agree_mappings = self.get_pos_agree_mappings()
