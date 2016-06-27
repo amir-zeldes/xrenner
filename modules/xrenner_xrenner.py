@@ -105,7 +105,7 @@ class Xrenner:
 				cols = myline.split("\t")
 				if lex.filters["open_quote"].match(cols[1]) is not None and quoted is False:
 					quoted = True
-				elif lex.filters["open_quote"].match(cols[1]) is not None and quoted is True:
+				elif lex.filters["close_quote"].match(cols[1]) is not None and quoted is True:
 					quoted = False
 				if lex.filters["question_mark"].match(cols[1]) is not None:
 					current_sentence.mood = "question"
@@ -528,7 +528,9 @@ class Xrenner:
 				current_markable = markables_by_head[markable_head_id]
 				# DEBUG POINT
 				if current_markable.text == lex.debug["ana"]:
-					pass
+					a=5
+					if current_markable.text == lex.debug["ante"]:
+						pass
 				# Revise coordinate markable entities now that we have resolved all of their constituents
 				if len(current_markable.submarks) > 0:
 					assign_coordinate_entity(current_markable,markables_by_head)
