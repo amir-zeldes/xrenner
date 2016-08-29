@@ -486,6 +486,9 @@ class Xrenner:
 								keys_to_pop.append(key)
 				elif len(modifier_based_entity) > 1:
 					stoplist_prefix_tokens(mark, lex.entity_mods, keys_to_pop)
+			# Check for whole markable only exclusion
+			if mark.text + "@" in lex.stop_list:
+				keys_to_pop.append(mark_id)
 
 		for key in keys_to_pop:
 			mark_candidates_by_head.pop(key, None)
