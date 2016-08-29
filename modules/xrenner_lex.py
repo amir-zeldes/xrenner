@@ -62,9 +62,6 @@ class LexData:
 		self.debug = self.read_delim('debug.tab') if "debug.tab" in model_files else {"ana":"","ante":"","ablations":""}
 		additional_atoms = self.read_delim('atoms.tab','double') if "atoms.tab" in model_files else {}
 
-		if self.filters["no_new_modifiers"] and self.filters["use_new_modifier_exceptions"]:
-			self.exceptional_new_modifiers = self.read_delim('new_modifiers.tab', 'double') if "new_modifiers.tab" in model_files else {}
-
 		# Compile atom and first + last name data
 		self.atoms = self.get_atoms()
 		self.atoms.update(additional_atoms)
@@ -75,6 +72,14 @@ class LexData:
 
 		self.morph = self.get_morph()
 		self.func_substitutes_forward, self.func_substitutes_backward = self.get_func_substitutes()
+
+		# Compile lemmatizer and morph rules
+		self.lemma_rules = self.compile_lemmatization()
+		self.morph_rules = self.compile_morph_rules()
+
+		# Caching lists for already established non-matching pairs
+		self.incompatible_mod_pairs = set([])
+		self.incompatible_isa_pairs = set([])
 
 		gc.enable()
 
@@ -264,6 +269,23 @@ class LexData:
 
 		return filters
 
+	def compile_lemmatization(self):
+		compiled_rules = []
+		for rule in self.filters["lemma_rules"].split(";"):
+			rule_part = rule.split("/")
+			# Add a compiled lemmatization rule: regex matcher for pos, regex matcher for text, and replacement string
+			compiled_rules.append((re.compile(rule_part[0]),re.compile(rule_part[1]),rule_part[2]))
+		return compiled_rules
+
+	def compile_morph_rules(self):
+		compiled_rules = []
+		for rule in self.filters["morph_rules"].split(";"):
+			rule_part = rule.split("/")
+			# Add a compiled lemmatization rule: regex matcher for pos, regex matcher for text, and replacement string
+			if not rule[0] == rule[1]:
+				compiled_rules.append((re.compile(rule_part[0]),rule_part[1]))
+		return compiled_rules
+
 	def lemmatize(self, token):
 		"""
 		Simple lemmatization function using rules from lemma_rules in config.ini
@@ -272,14 +294,10 @@ class LexData:
 		:return: string - the lemma
 		"""
 
-		lemma_rules = self.filters["lemma_rules"]
 		lemma = token.text
-		for rule in lemma_rules.split(";"):
-			rule_part = rule.split("/")
-			pos_pattern = re.compile(rule_part[0])
-			if pos_pattern.search(token.pos):
-				lemma_pattern = re.compile(rule_part[1])
-				lemma = lemma_pattern.sub(rule_part[2], lemma)
+		for rule in self.lemma_rules:
+			if rule[0].search(token.pos) is not None:
+				lemma = rule[1].sub(rule[2], lemma)
 		if self.filters["auto_lower_lemma"] == "all":
 			return lemma.lower()
 		elif self.filters["auto_lower_lemma"] == "except_all_caps":
@@ -319,11 +337,9 @@ class LexData:
 		:return: string - the edited morph feature
 		"""
 
-		morph_rules = self.filters["morph_rules"]
 		morph = token.morph
-		for rule in morph_rules.split(";"):
-			rule_part = rule.split("/")
-			morph = re.sub(rule_part[0], rule_part[1], morph)
+		for rule in self.morph_rules:
+			morph = rule[0].sub(rule[1], morph)
 		return morph
 
 	def get_pos_agree_mappings(self):
