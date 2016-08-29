@@ -1,7 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import re
 from collections import defaultdict, OrderedDict
 from xrenner_classes import Markable
-from math import log
 
 """
 Marker module for markable entity recognition. Establishes compatibility between entity features
@@ -62,9 +64,9 @@ def remove_suffix_tokens(marktext, lex):
 	"""
 
 	if lex.filters["core_suffixes"].search(marktext):
-		return re.sub(lex.filters["core_suffixes"].pattern, " ", marktext)
+		return lex.filters["core_suffixes"].sub(" ", marktext)
 	else:
-		tokens = marktext.strip().split(" ")
+		tokens = marktext.split(" ")
 		suffix_candidate = ""
 
 		for token in reversed(tokens):
@@ -85,9 +87,9 @@ def remove_prefix_tokens(marktext, lex):
 	"""
 
 	if lex.filters["core_prefixes"].match(marktext): # NB use initial match here
-		return re.sub(lex.filters["core_prefixes"].pattern, " ", marktext)
+		return lex.filters["core_prefixes"].sub(" ", marktext)
 	else:
-		tokens = marktext.strip().split(" ")
+		tokens = marktext.split(" ")
 		prefix_candidate = ""
 		for token in tokens:
 			prefix_candidate += token + " "
@@ -97,12 +99,11 @@ def remove_prefix_tokens(marktext, lex):
 	return marktext
 
 
-def resolve_mark_entity(mark, token_list, lex):
+def resolve_mark_entity(mark, lex):
 	"""
 	Main function to set entity type based on progressively less restricted parts of a markable's text
 
 	:param mark: The :class:`.Markable` object to get the entity type for
-	:param token_list: The list of ParsedToken objects processed so far
 	:param lex: the :class:`.LexData` object with gazetteer information and model settings
 	:return: void
 	"""
@@ -113,8 +114,7 @@ def resolve_mark_entity(mark, token_list, lex):
 		if "no_entity_dep" in lex.debug["ablations"]:
 			use_entity_deps = False
 
-	parent_text = token_list[int(mark.head.head)].text
-	token_list[int(mark.head.id)].head_text = parent_text  # Save parent text for later dependency check
+	parent_text = mark.head.head_text
 	if mark.form == "pronoun":
 		if re.search(r'[12]',mark.agree):  # Explicit 1st or 2nd person pronoun
 			entity = lex.filters["person_def_entity"]
@@ -130,86 +130,130 @@ def resolve_mark_entity(mark, token_list, lex):
 				entity = lex.filters["default_entity"]
 				mark.entity_certainty = "uncertain"
 	else:
-		if entity == "":
-			# Try to catch year numbers and hours + minutes
-			if re.match(r'(1[456789][0-9][0-9]|20[0-9][0-9]|(2[0-3]|1?[0-9]):[0-5][0-9])', mark.core_text) is not None:
-				entity = lex.filters["time_def_entity"]
-				mark.entity_certainty = "uncertain"
-				mark.subclass = "time-unit" # TODO: de-hardwire this
-				mark.definiteness = "def"  # literal year numbers are considered definite like 'proper names'
-				mark.form = "proper"  # literal year numbers are considered definite like 'proper names'
-		if entity == "":
-			if re.match(r'^(([0-9]+[.,]?)+)$', mark.core_text) is not None:
-				entity = lex.filters["quantity_def_entity"]
-				mark.entity_certainty = "uncertain"
-		if entity == "":
-			entity = resolve_entity_cascade(mark.text.strip(), mark, lex)
-		if entity == "":
-			entity = resolve_entity_cascade(replace_head_with_lemma(mark), mark, lex)
-		if entity == "":
-			entity = resolve_entity_cascade(remove_suffix_tokens(mark.text.strip(),lex), mark, lex)
-		if entity == "":
-			entity = resolve_entity_cascade(remove_prefix_tokens(mark.text.strip(), lex), mark, lex)
-		if entity == "":
-			entity = resolve_entity_cascade(mark.core_text, mark, lex)
-		if entity == "":
-			entity = recognize_entity_by_mod(mark, lex)
-		if entity == "" and mark.head.text.istitle():
-			if mark.head.text in lex.last_names:
-				modifiers_match_article = (lex.filters["articles"].match(mod.text) is not None for mod in mark.head.modifiers)
-				modifiers_match_first_name = (mod.text in lex.first_names for mod in mark.head.modifiers)
-				if any(modifiers_match_first_name) and not any(modifiers_match_article):
-					entity = lex.filters["person_def_entity"]
-		if entity == "" and mark.head.text.istitle():
-			entity = resolve_entity_cascade(mark.core_text.lower().strip(), mark, lex)
-		if entity == "" and not mark.head.text.istitle():
-			entity = resolve_entity_cascade(mark.core_text.strip()[:1].upper() + mark.core_text.strip()[1:], mark, lex)
-		if entity == "":
-			entity = resolve_entity_cascade(mark.head.text, mark, lex)
-		if entity == "" and mark.head.text.istitle():
-			entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
-		if entity == "" and mark.head.text.isupper():
-			entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
-		if entity == "" and mark.head.text.isupper():
-			entity = resolve_entity_cascade(mark.head.text.lower().title(), mark, lex)
-		if entity == "" and not mark.head.lemma == mark.head.text:  # Try lemma match if lemma different from token
-			entity = resolve_entity_cascade(mark.head.lemma, mark, lex)
-		if entity == "":
-			if (mark.head.text.istitle() or not lex.filters["cap_names"]):
-				if mark.head.text in lex.last_names or mark.head.text in lex.first_names:
-					modifiers_match_definite = (lex.filters["definite_articles"].match(mod.text) is not None for mod in mark.head.modifiers)
+		if mark.coordinate:
+			# For coordinate markables we expect the constituents to determine the entity in assign_coordinate_entity.
+			# An exception to this is when the entire coordination is listed in the entities list.
+			if entity == "":
+				entity = resolve_entity_cascade(mark.text.strip(), mark, lex)
+			if entity == "":
+				entity = resolve_entity_cascade(mark.core_text, mark, lex)
+
+		else:
+			if entity == "":
+				# Try to catch year numbers and hours + minutes
+				if re.match(r'^(1[456789][0-9][0-9]|20[0-9][0-9]|(2[0-3]|1?[0-9]):[0-5][0-9])$', mark.head.text) is not None:
+					entity = lex.filters["time_def_entity"]
+					mark.entity_certainty = "uncertain"
+					mark.subclass = "time-unit" # TODO: de-hardwire this
+					mark.definiteness = "def"  # literal year numbers are considered definite like 'proper names'
+					mark.form = "proper"  # literal year numbers are considered definite like 'proper names'
+			if entity == "":
+				if re.match(r'^(([0-9]+[.,]?)+)$', mark.core_text) is not None:
+					entity = lex.filters["quantity_def_entity"]
+					mark.entity_certainty = "uncertain"
+			if entity == "":
+				entity = resolve_entity_cascade(mark.text.strip(), mark, lex)
+			if entity == "":
+				entity = resolve_entity_cascade(replace_head_with_lemma(mark), mark, lex)
+			if entity == "":
+				entity = resolve_entity_cascade(remove_suffix_tokens(mark.text.strip(),lex), mark, lex)
+			if entity == "":
+				entity = resolve_entity_cascade(remove_prefix_tokens(mark.text.strip(), lex), mark, lex)
+			if entity == "":
+				entity = resolve_entity_cascade(mark.core_text, mark, lex)
+			if entity == "":
+				entity = recognize_entity_by_mod(mark, lex)
+			if entity == "" and mark.head.text.istitle():
+				if mark.head.text in lex.last_names:
 					modifiers_match_article = (lex.filters["articles"].match(mod.text) is not None for mod in mark.head.modifiers)
-					modifiers_match_def_entity = (re.sub(r"\t.*","",lex.entity_heads[mod.text.strip().lower()][0]) == lex.filters["default_entity"] for mod in mark.head.modifiers if mod.text.strip().lower() in lex.entity_heads)
-					if not (any(modifiers_match_article) or any(modifiers_match_definite) or any(modifiers_match_def_entity)):
+					modifiers_match_first_name = (mod.text in lex.first_names for mod in mark.head.modifiers)
+					if any(modifiers_match_first_name) and not any(modifiers_match_article):
 						entity = lex.filters["person_def_entity"]
-		if entity == "":
-			# See what the affix morphology predicts for the head
-			head_text = mark.lemma if mark.lemma != "_" and mark.lemma != "" else mark.head.text
-			morph_probs = get_entity_by_affix(head_text,lex)
+			if entity == "" and mark.head.text.istitle():
+				entity = resolve_entity_cascade(mark.core_text.lower().strip(), mark, lex)
+			if entity == "" and not mark.head.text.istitle():
+				entity = resolve_entity_cascade(mark.core_text.strip()[:1].upper() + mark.core_text.strip()[1:], mark, lex)
+			if entity == "":
+				entity = resolve_entity_cascade(mark.head.text, mark, lex)
+			if entity == "" and mark.head.text.istitle():
+				entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
+			if entity == "" and mark.head.text.isupper():
+				entity = resolve_entity_cascade(mark.head.text.lower(), mark, lex)
+			if entity == "" and mark.head.text.isupper():
+				entity = resolve_entity_cascade(mark.head.text.lower().title(), mark, lex)
+			if entity == "" and not mark.head.lemma == mark.head.text:  # Try lemma match if lemma different from token
+				entity = resolve_entity_cascade(mark.head.lemma, mark, lex)
+			if entity == "":
+				if (mark.head.text.istitle() or not lex.filters["cap_names"]):
+					if mark.head.text in lex.last_names or mark.head.text in lex.first_names:
+						modifiers_match_definite = (lex.filters["definite_articles"].match(mod.text) is not None for mod in mark.head.modifiers)
+						modifiers_match_article = (lex.filters["articles"].match(mod.text) is not None for mod in mark.head.modifiers)
+						modifiers_match_def_entity = (re.sub(r"\t.*","",lex.entity_heads[mod.text.strip().lower()][0]) == lex.filters["default_entity"] for mod in mark.head.modifiers if mod.text.strip().lower() in lex.entity_heads)
+						if not (any(modifiers_match_article) or any(modifiers_match_definite) or any(modifiers_match_def_entity)):
+							entity = lex.filters["person_def_entity"]
+			if entity == "":
+				# See what the affix morphology predicts for the head
+				head_text = mark.lemma if mark.lemma != "_" and mark.lemma != "" else mark.head.text
+				morph_probs = get_entity_by_affix(head_text,lex)
 
-			# Now check what the dependencies predict
-			dep_probs = {}
-			parent_text = token_list[int(mark.head.head)].text
-			if parent_text in lex.entity_deps and use_entity_deps:
-				if mark.head.func in lex.entity_deps[parent_text]:
-					dep_probs.update(lex.entity_deps[parent_text][mark.head.func])
+				# Now check what the dependencies predict
+				dep_probs = {}
+				if parent_text in lex.entity_deps and use_entity_deps:
+					if mark.head.func in lex.entity_deps[parent_text]:
+						dep_probs.update(lex.entity_deps[parent_text][mark.head.func])
 
-			# Compare scores to decide between affix vs. dependency evidence
-			dep_values = list(dep_probs[key] for key in dep_probs)
-			total_deps = float(sum(dep_values))
-			probs = {}
-			for key, value in dep_probs.iteritems():
-				probs[key] = value/total_deps
-			joint_probs = defaultdict(float)
-			joint_probs.update(probs)
-			for entity in morph_probs:
-				joint_probs[entity] += morph_probs[entity]
-			# Bias in favor of default entity to break ties
-			joint_probs[lex.filters["default_entity"]] += 0.0000001
+				# Compare scores to decide between affix vs. dependency evidence
+				dep_values = list(dep_probs[key] for key in dep_probs)
+				total_deps = float(sum(dep_values))
+				probs = {}
+				for key, value in dep_probs.iteritems():
+					probs[key] = value/total_deps
+				joint_probs = defaultdict(float)
+				joint_probs.update(probs)
+				for entity in morph_probs:
+					joint_probs[entity] += morph_probs[entity]
+				# Bias in favor of default entity to break ties
+				joint_probs[lex.filters["default_entity"]] += 0.0000001
 
-			entity = max(joint_probs.iterkeys(), key = (lambda key: joint_probs[key]))
+				entity = max(joint_probs.iterkeys(), key = (lambda key: joint_probs[key]))
 
-	mark.entity = entity
+	if entity != "":
+		mark.entity = entity
+
+	if "/" in mark.entity:  # Lexicalized agreement information appended to entity
+		if mark.agree == "" or mark.agree is None:
+			mark.agree = mark.entity.split("/")[1]
+		elif mark.agree_certainty == "":
+			mark.alt_agree.append(mark.agree)
+			mark.agree = mark.entity.split("/")[1]
+		mark.entity = mark.entity.split("/")[0]
+	elif mark.entity == lex.filters["person_def_entity"] and mark.agree == lex.filters["default_agree"] and mark.form != "pronoun":
+		mark.agree = lex.filters["person_def_agree"]
+	if "\t" in mark.entity:  # This is a subclass bearing solution
+		mark.subclass = mark.entity.split("\t")[1]
+		mark.entity = mark.entity.split("\t")[0]
+	if mark.entity == lex.filters["person_def_entity"] and mark.form != "pronoun":
+		if mark.text in lex.names:
+			mark.agree = lex.names[mark.text]
+	if mark.entity == lex.filters["person_def_entity"] and mark.agree is None:
+		no_affix_mark = remove_suffix_tokens(remove_prefix_tokens(mark.text, lex), lex)
+		if no_affix_mark in lex.names:
+			mark.agree = lex.names[no_affix_mark]
+	if mark.entity == lex.filters["person_def_entity"] and mark.agree is None:
+		mark.agree = lex.filters["person_def_agree"]
+	if mark.entity == "" and mark.core_text.upper() == mark.core_text and re.search(r"[A-ZÄÖÜ]", mark.core_text) is not None:  # Unknown all caps entity, guess acronym default
+		mark.entity = lex.filters["all_caps_entity"]
+		mark.entity_certainty = "uncertain"
+	if mark.entity == "":  # Unknown entity, guess default
+		mark.entity = lex.filters["default_entity"]
+		mark.entity_certainty = "uncertain"
+	if mark.subclass  == "":
+		if mark.subclass == "":
+			mark.subclass = mark.entity
+	if mark.func == "title":
+		mark.entity = lex.filters["default_entity"]
+	if mark.agree == "" and mark.entity == lex.filters["default_entity"]:
+		mark.agree = lex.filters["default_agree"]
 
 
 def resolve_entity_cascade(entity_text, mark, lex):
@@ -432,11 +476,11 @@ def get_mod_ordered_dict(mod):
 def markable_extend_punctuation(marktext, adjacent_token, punct_dict, direction):
 	if direction == "trailing":
 		for open_punct in punct_dict:
-			if open_punct in marktext and adjacent_token.text == punct_dict[open_punct]:
+			if (" " + open_punct + " " in marktext or marktext.startswith(open_punct + " ")) and adjacent_token.text == punct_dict[open_punct]:
 				return True
 	else:
 		for close_punct in punct_dict:
-			if close_punct in marktext and adjacent_token.text == punct_dict[close_punct]:
+			if (" " + close_punct + " " in marktext or marktext.endswith(" " + close_punct)) and adjacent_token.text == punct_dict[close_punct]:
 				return True
 	return False
 
@@ -459,7 +503,7 @@ def markables_overlap(mark1, mark2, lex=None):
 			return False
 		elif lex.filters["possessive_func"].match(mark2.func) is not None and mark2.form == "pronoun" and mark2.start > mark1.start:
 			return False
-	if mark2.end >= mark1.start >= mark2.start and mark2.end:
+	if mark2.end >= mark1.start >= mark2.start:
 		return True
 	elif mark2.end >= mark1.end >= mark2.start:
 		return True
