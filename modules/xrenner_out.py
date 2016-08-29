@@ -146,13 +146,13 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 
 	output_string = '''<html>
 <head>
-	<link rel="stylesheet" href="./css/renner.css" type="text/css" charset="utf-8"/>
-	<link rel="stylesheet" href="./css/font-awesome-4.2.0/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="http://corpling.uis.georgetown.edu/xrenner/css/renner.css" type="text/css" charset="utf-8"/>
+	<link rel="stylesheet" href="https://corpling.uis.georgetown.edu/xrenner/css/font-awesome-4.2.0/css/font-awesome.min.css"/>
 </head>
 <body'''+rtl_style+'''>
-<script src="./script/jquery-1.11.3.min.js"></script>
-<script src="./script/chroma.min.js"></script>
-<script src="./script/xrenner.js"></script>
+<script src="http://corpling.uis.georgetown.edu/xrenner/script/jquery-1.11.3.min.js"></script>
+<script src="http://corpling.uis.georgetown.edu/xrenner/script/chroma.min.js"></script>
+<script src="http://corpling.uis.georgetown.edu/xrenner/script/xrenner.js"></script>
 '''
 	for out_tok in conll_tokens:
 		if int(out_tok.id) in markstart_dict:
@@ -161,6 +161,8 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 				              "&#10;definiteness: " + str(out_mark.definiteness) + " | agree: " + str(out_mark.agree) + \
 				              "&#10;cardinality: " + str(out_mark.cardinality) + " | form: "+ str(out_mark.form) + \
 				              "&#10;core_text: " + str(out_mark.core_text) + " | lemma: "+ str(out_mark.lemma)
+				if out_mark.speaker != "":
+					info_string += "&#10;speaker: " + out_mark.speaker
 				if not out_mark.antecedent == "none":
 					info_string += '&#10;coref_type: ' + out_mark.coref_type
 				output_string += '<div id="' + out_mark.id + '" head="' + out_mark.head.id + '" onmouseover="highlight_group(' + \
