@@ -184,6 +184,15 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="modules.xrenner_xrenner.Xrenner.analyze_markable">
+<code class="descname">analyze_markable</code><span class="sig-paren">(</span><em>mark</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner.analyze_markable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner.analyze_markable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find entity, agreement and cardinality information for a markable
+:param mark: The <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a> object to analyze
+:param lex: the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings
+:return: void</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="modules.xrenner_xrenner.Xrenner.load">
 <code class="descname">load</code><span class="sig-paren">(</span><em>model='eng'</em>, <em>override=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to load model data. Normally invoked by constructor, but can be repeated to change models later.</p>
@@ -255,7 +264,7 @@
 <blockquote>
 <div><dl class="class">
 <dt id="modules.xrenner_classes.ParsedToken">
-<em class="property">class </em><code class="descclassname">modules.xrenner_classes.</code><code class="descname">ParsedToken</code><span class="sig-paren">(</span><em>tok_id</em>, <em>text</em>, <em>lemma</em>, <em>pos</em>, <em>morph</em>, <em>head</em>, <em>func</em>, <em>sentence</em>, <em>modifiers</em>, <em>child_funcs</em>, <em>child_strings</em>, <em>lex</em>, <em>quoted=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_classes.html#ParsedToken"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_classes.ParsedToken" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">modules.xrenner_classes.</code><code class="descname">ParsedToken</code><span class="sig-paren">(</span><em>tok_id</em>, <em>text</em>, <em>lemma</em>, <em>pos</em>, <em>morph</em>, <em>head</em>, <em>func</em>, <em>sentence</em>, <em>modifiers</em>, <em>child_funcs</em>, <em>child_strings</em>, <em>lex</em>, <em>quoted=False</em>, <em>head2='_'</em>, <em>func2='_'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_classes.html#ParsedToken"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_classes.ParsedToken" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div></blockquote>
@@ -501,48 +510,6 @@ dependent manipultations, use depedit module</p>
 <p>DepEdit - A simple configurable tool for manipulating dependency trees</p>
 <p>Input: CoNLL10 (10 columns, tab-delimited, blank line between sentences)</p>
 <p>Author: Amir Zeldes</p>
-<dl class="function">
-<dt id="modules.depedit.merge_bins">
-<code class="descclassname">modules.depedit.</code><code class="descname">merge_bins</code><span class="sig-paren">(</span><em>bin1</em>, <em>bin2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/depedit.html#merge_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.depedit.merge_bins" title="Permalink to this definition">¶</a></dt>
-<dd><p>Merge bins we know are compatible, e.g. bin1 has #1+#2 and bin2 has #2+#3</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>bin1</strong> &#8211; a bin dictionary mapping indices to tokens, a list of relations &#8216;rels&#8217; and matcher objects &#8216;matchers&#8217;</li>
-<li><strong>bin2</strong> &#8211; a bin dictionary mapping indices to tokens, a list of relations &#8216;rels&#8217; and matcher objects &#8216;matchers&#8217;</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the merged bin with data from both input bins</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="modules.depedit.prune_merged_bins">
-<code class="descclassname">modules.depedit.</code><code class="descname">prune_merged_bins</code><span class="sig-paren">(</span><em>merged_bins</em>, <em>rel_count</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/depedit.html#prune_merged_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.depedit.prune_merged_bins" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes bins with too few relationships matched after merging is complete</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>merged_bins</strong> &#8211; candidates for bins representing complete related chains of nodes</li>
-<li><strong>rel_count</strong> &#8211; how many relations the current transformation has - any bins with less will be discarded now</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </div>
 <div class="section" id="module-modules.xrenner_compatible">
 <span id="xrenner-compatible"></span><h3>xrenner_compatible<a class="headerlink" href="#module-modules.xrenner_compatible" title="Permalink to this headline">¶</a></h3>
@@ -658,7 +625,8 @@ dependent manipultations, use depedit module</p>
 <dl class="function">
 <dt id="modules.xrenner_compatible.isa">
 <code class="descclassname">modules.xrenner_compatible.</code><code class="descname">isa</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#isa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.isa" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks whether two markables are compatible for coreference via the isa-relation</p>
+<dd><p>Staging function to check for and store new cached isa information.
+Calls actual <a class="reference internal" href="#modules.xrenner_compatible.run_isa" title="modules.xrenner_compatible.run_isa"><code class="xref py py-func docutils literal"><span class="pre">run_isa()</span></code></a> function if pair is still viable for new isa match.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -711,6 +679,28 @@ Returns True if merging has occurred.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>markable</strong> &#8211; one of two markables to compare dependents for</li>
+<li><strong>candidate</strong> &#8211; the second markable, which is a candidate antecedent for the other markable</li>
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.run_isa">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">run_isa</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#run_isa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.run_isa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether two markables are compatible for coreference via the isa-relation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>markable</strong> &#8211; one of two markables to compare lexical isa relationship with</li>
 <li><strong>candidate</strong> &#8211; the second markable, which is a candidate antecedent for the other markable</li>
 <li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
 </ul>
@@ -1156,7 +1146,7 @@ e.g. [Mr. Pickwick, who was looking for [his] hat]</p>
 
 <dl class="function">
 <dt id="modules.xrenner_marker.resolve_mark_entity">
-<code class="descclassname">modules.xrenner_marker.</code><code class="descname">resolve_mark_entity</code><span class="sig-paren">(</span><em>mark</em>, <em>token_list</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#resolve_mark_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.resolve_mark_entity" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">resolve_mark_entity</code><span class="sig-paren">(</span><em>mark</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#resolve_mark_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.resolve_mark_entity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main function to set entity type based on progressively less restricted parts of a markable&#8217;s text</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1164,7 +1154,6 @@ e.g. [Mr. Pickwick, who was looking for [his] hat]</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>mark</strong> &#8211; The <a class="reference internal" href="#modules.xrenner_classes.Markable" title="modules.xrenner_classes.Markable"><code class="xref py py-class docutils literal"><span class="pre">Markable</span></code></a> object to get the entity type for</li>
-<li><strong>token_list</strong> &#8211; The list of ParsedToken objects processed so far</li>
 <li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
 </ul>
 </td>

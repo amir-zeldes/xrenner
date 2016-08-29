@@ -392,7 +392,7 @@ the educational system|the education system     coref
 </ul>
 </div></blockquote>
 <ul>
-<li><p class="first">include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within this entity&#8217;s span, e.g. <code class="docutils literal"><span class="pre">President</span> <span class="pre">'s</span> <span class="pre">Choice</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="pre">object</span>&nbsp; <span class="pre">object/inanim&#64;</span></code></p>
+<li><p class="first">include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within this entity&#8217;s span, e.g. <code class="docutils literal"><span class="pre">President</span> <span class="pre">'s</span> <span class="pre">Choice</span>&#160;&#160;&#160;&#160; <span class="pre">object</span>&#160; <span class="pre">object/inanim&#64;</span></code></p>
 <p>Example:</p>
 </li>
 </ul>
@@ -453,7 +453,7 @@ want    nsubj   person  49
 <li><strong>entity type</strong>: the major type, such as <em>person</em> or <em>organization</em>, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use <em>ORG</em>, <em>organization</em>, or make your own arbitrary taxonomies).</li>
 <li><strong>subtype information</strong>: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally:<ul>
 <li>include agreement information after a slash (e.g. <code class="docutils literal"><span class="pre">politician/Fem</span></code>)</li>
-<li>include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within the span of the entity headed by this token, e.g. <code class="docutils literal"><span class="pre">museum</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="pre">place</span>&nbsp;&nbsp; <span class="pre">place/inanim&#64;</span></code></li>
+<li>include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within the span of the entity headed by this token, e.g. <code class="docutils literal"><span class="pre">museum</span>&#160;&#160;&#160;&#160; <span class="pre">place</span>&#160;&#160; <span class="pre">place/inanim&#64;</span></code></li>
 </ul>
 </li>
 </ul>
@@ -483,7 +483,7 @@ sand  substance       substance
 <li><strong>entity type</strong>: the major type, such as <em>person</em> or <em>organization</em>, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use <em>ORG</em>, <em>organization</em>, or make your own arbitrary taxonomies).</li>
 <li><strong>subtype information</strong>: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally:<ul>
 <li>include agreement information after a slash (e.g. <code class="docutils literal"><span class="pre">politician/Fem</span></code>)</li>
-<li>include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within the span of the entity modified by this token, e.g. <code class="docutils literal"><span class="pre">Mr.</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="pre">person</span>&nbsp; <span class="pre">person/male&#64;</span></code></li>
+<li>include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within the span of the entity modified by this token, e.g. <code class="docutils literal"><span class="pre">Mr.</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">person</span>&#160; <span class="pre">person/male&#64;</span></code></li>
 </ul>
 </li>
 </ul>
@@ -539,7 +539,7 @@ actor   career  3
 <li>From head token string to comma separated markable strings (U.S.A. -&gt; USA,US,America...)</li>
 </ol>
 <p>The table has two columns: a single word to match, and any number of equivalents (for multi-word equivalents use <a class="reference internal" href="#coref-tab"><span class="std std-ref">coref.tab</span></a>). This means that is-a matching is directed: it&#8217;s possible for <em>king</em> to imply <em>man</em> but not vice versa:</p>
-<p><code class="docutils literal"><span class="pre">king</span>&nbsp; <span class="pre">man,person,majesty</span></code></p>
+<p><code class="docutils literal"><span class="pre">king</span>&#160; <span class="pre">man,person,majesty</span></code></p>
 <p>Placing an asterisk in the equivalents list will result in exceptionally ignoring agreement matching for this entry (to switch off agreement matching for is-a in general, use the setting in <a class="reference internal" href="#config-ini"><span class="std std-ref">config.ini</span></a>).</p>
 <p><strong>Example entries</strong>:</p>
 <blockquote>
@@ -687,12 +687,14 @@ you     2pl
 <div class="header container">
 <strong>optional</strong></div>
 <div class="expandable container">
-<p>This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. <em>mum &#8216;s the word</em> and not <em>mum&#8217;s the word</em>.</p>
+<p>This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. <em>mum &#8216;s the word</em> and not <em>mum&#8217;s the word</em>.  You can also specify entries that are only used as stop items when they are not the whole markable. For example, and entry <em>Yangtze&#64;</em> will prevent that string becoming a markable if it is the entire text of the markable, but will not prevent a longer markable such as <em>Yangtze River</em> (regardless of which token is the head).</p>
 <blockquote>
 <div><p><strong>example</strong></p>
 <div class="highlight-html"><div class="highlight"><pre><span></span># These token sequences are excluded as markable heads
 by air
 every week
+# The following example is only excluded if it is the entire text of the markable
+Yangtze@
 </pre></div>
 </div>
 </div></blockquote>

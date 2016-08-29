@@ -221,3 +221,8 @@ unittest
 --------
 
 This is an internal format used only to generate test cases for xrenner unit tests.
+
+none
+----
+
+This is a dummy format setting - run the analysis but produce no output.

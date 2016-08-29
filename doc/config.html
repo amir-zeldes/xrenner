@@ -146,13 +146,13 @@ also determines the thousands and decimal separators for the language for <stron
 <div class="highlight-ini"><div class="highlight"><pre><span></span><span class="c1">### General Function Label Settings ###</span>
 <span class="na">subject_func</span><span class="o">=</span><span class="s">/^nsubj$/</span>
 <span class="na">apposition_func</span><span class="o">=</span><span class="s">/appos/</span>
-<span class="na">possessive_func</span><span class="o">=</span><span class="s">/^poss$/</span>
+<span class="na">possessive_func</span><span class="o">=</span><span class="s">/^poss|prep_of$/</span>
 <span class="c1"># Function for the second conjunct, NOT the conjunction; used to propagate function from first conjunct</span>
 <span class="na">conjunct_func</span><span class="o">=</span><span class="s">/^conj$/</span>
 <span class="c1"># Dependency function identifying a coordinating conjunction</span>
 <span class="na">coord_func</span><span class="o">=</span><span class="s">/^cc$/</span>
 <span class="c1"># Dependency function for determiners (if this function also matches functions in mod_func it will NOT used to rule out incompatible modifiers)</span>
-<span class="na">det_func</span><span class="o">=</span><span class="s">/^(pre)?det$/</span>
+<span class="na">det_func</span><span class="o">=</span><span class="s">/^(pre)?det|num$/</span>
 <span class="c1"># Decimal point separator in this language, e.g. period or comma</span>
 <span class="na">decimal_sep</span><span class="o">=</span><span class="s">.</span>
 <span class="c1"># Thousands separator in this language, e.g. comma or period</span>
@@ -189,7 +189,7 @@ head to include in the markable span, and more.</p>
 <span class="na">core_prefixes</span><span class="o">=</span><span class="s">/^ ?([Tt]h([oe](se)?|is|at)|an?|some|all|many|[Mm]y|[Yy]our|[Hh]is|[Hh]er|[Oo]ur|[Tt]heir|[Ii]ts)( |$)/</span>
 <span class="na">core_suffixes</span><span class="o">=</span><span class="s">/ ((&#39;s|&#39;|[Cc]orp\.?|Inc\.?|[Cc]o\.?|&amp;) ?)*$/</span>
 <span class="c1"># Functions that can be stripped when determining atomicity, e.g. if &#39;police department&#39; is atomic, then a modified &#39;rich police department&#39; is too</span>
-<span class="na">non_essential_mod_func</span><span class="o">=</span><span class="s">/amod|quantmod|num|det|prep_of|vmod/</span>
+<span class="na">non_essential_mod_func</span><span class="o">=</span><span class="s">/amod|quantmod|num|number|det|prep_of|vmod/</span>
 </pre></div>
 </div>
 </div>
@@ -290,7 +290,7 @@ head to include in the markable span, and more.</p>
 <span class="c1"># What POS categories should allow lemma matching of heads for coreference? e.g. /^NNS?$/ to allow singular and plural nouns to match based on lemma</span>
 <span class="na">lemma_match_pos</span><span class="o">=</span><span class="s">/none/</span>
 <span class="c1"># Dependency functions that are interpreted as modifiers for compatible modifier, and other modifier checks</span>
-<span class="na">mod_func</span><span class="o">=</span><span class="s">/amod|nn|quantmod|num|det|prep_of|vmod/</span>
+<span class="na">mod_func</span><span class="o">=</span><span class="s">/amod|nn|quantmod|num|number|det|prep_of|vmod/</span>
 <span class="c1"># Tokens that mark opening and closing quotation for direct speech detection</span>
 <span class="na">open_quote</span><span class="o">=</span><span class="s">/^([&quot;&#39;”’]|``)$/</span>
 <span class="na">close_quote</span><span class="o">=</span><span class="s">/^([&quot;&#39;”’]|&#39;&#39;)$/</span>

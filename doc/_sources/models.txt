@@ -631,7 +631,7 @@ stop_list.tab
 
   .. container:: expandable	
   
-      This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. *mum 's the word* and not *mum's the word*.
+      This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. *mum 's the word* and not *mum's the word*.  You can also specify entries that are only used as stop items when they are not the whole markable. For example, and entry *Yangtze@* will prevent that string becoming a markable if it is the entire text of the markable, but will not prevent a longer markable such as *Yangtze River* (regardless of which token is the head).
 	  
 		**example**
 
@@ -640,4 +640,6 @@ stop_list.tab
 			# These token sequences are excluded as markable heads
 			by air
 			every week
+			# The following example is only excluded if it is the entire text of the markable
+			Yangtze@
 

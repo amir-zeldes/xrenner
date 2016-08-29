@@ -5,7 +5,7 @@ The depedit module offers a powerful tool for manipulating input dependency tree
 
 The manipulations carried out by the script are determined by the file *depedit.ini* in the model directory, which may be left empty or missing if depedit should not be used (depedit takes a moment to run, so not using it is an option if very high performance on large amounts of documents is desired). Each rule in the depedit file is a tab-delimited triple, with semicolon delimited instructions in this configuration:
 
-``feature1=/value/;feature2=/value/...	#1op#2;#2op#3...	#1:feature3=value;...#1>#2op#3``
+``feature1=/value/;feature2=/value/...	#1op#2;#2op#3...	#1:feature3=value;...#1>#2;...``
 
 Where features can be:
 

@@ -137,10 +137,11 @@
 <span class="sd">Author: Amir Zeldes</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">xrenner_xrenner</span> <span class="kn">import</span> <span class="n">Xrenner</span>
+<span class="kn">from</span> <span class="nn">xrenner_xrenner</span> <span class="k">import</span> <span class="n">Xrenner</span>
+<span class="kn">from</span> <span class="nn">xrenner_coref</span> <span class="k">import</span> <span class="n">find_antecedent</span>
 
 <span class="k">def</span> <span class="nf">generate_test</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markables</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">):</span>
 	<span class="n">tok_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">)</span>
@@ -204,10 +205,10 @@
 
 <span class="k">def</span> <span class="nf">setUpModule</span><span class="p">():</span>
 	<span class="c1"># Read test/tests.dat</span>
-	<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">xrenner unit tests</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">20</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Reading test cases from test/tests.dat&quot;</span>
-	<span class="nb">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;test&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;tests.dat&quot;</span>
+	<span class="nb">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">xrenner unit tests</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">20</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Reading test cases from test/tests.dat&quot;</span>
+	<span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;test&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;tests.dat&quot;</span>
 	<span class="n">test_data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 		<span class="n">test_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
 	<span class="c1"># Populate cases with Case objects</span>
@@ -221,7 +222,7 @@
 			<span class="n">cases</span><span class="p">[</span><span class="n">case_to_add</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">case_to_add</span>
 
 	<span class="c1"># Initialize an Xrenner object with the language model and assign to module level xrenner variable for all suites</span>
-	<span class="k">print</span> <span class="s2">&quot;Initializing xrenner model &#39;eng&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="nb">print</span> <span class="s2">&quot;Initializing xrenner model &#39;eng&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
 	<span class="k">global</span> <span class="n">xrenner</span>
 	<span class="n">xrenner</span> <span class="o">=</span> <span class="n">Xrenner</span><span class="p">(</span><span class="s2">&quot;eng&quot;</span><span class="p">)</span>
 
@@ -230,7 +231,7 @@
 
 	<span class="nd">@classmethod</span>
 <div class="viewcode-block" id="Test1Model.setUpClass"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test1Model.setUpClass">[docs]</a>	<span class="k">def</span> <span class="nf">setUpClass</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-		<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Testing model integrity</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">30</span>
+		<span class="nb">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Testing model integrity</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">30</span>
 		<span class="k">global</span> <span class="n">xrenner</span>
 		<span class="n">cls</span><span class="o">.</span><span class="n">xrenner</span> <span class="o">=</span> <span class="n">xrenner</span>
 		<span class="k">global</span> <span class="n">cases</span>
@@ -242,7 +243,7 @@
 		<span class="n">cls</span><span class="o">.</span><span class="n">xrenner</span> <span class="o">=</span> <span class="n">xrenner</span></div>
 
 <div class="viewcode-block" id="Test1Model.test_model_files"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test1Model.test_model_files">[docs]</a>	<span class="k">def</span> <span class="nf">test_model_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="k">print</span> <span class="s2">&quot;Checking model files:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Checking model files:  &quot;</span>
 		<span class="c1"># Check that all model components were read and are filled as expected</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">coref_rules</span><span class="p">),</span><span class="s2">&quot;check that coref_rules is full&quot;</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">entities</span><span class="p">),</span><span class="s2">&quot;check that entities is full&quot;</span><span class="p">)</span>
@@ -269,22 +270,22 @@
 
 	<span class="nd">@classmethod</span>
 <div class="viewcode-block" id="Test2MarkableMethods.setUpClass"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test2MarkableMethods.setUpClass">[docs]</a>	<span class="k">def</span> <span class="nf">setUpClass</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-		<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running markable method tests</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">30</span>
+		<span class="nb">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running markable method tests</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">30</span>
 		<span class="k">global</span> <span class="n">xrenner</span>
 		<span class="n">cls</span><span class="o">.</span><span class="n">xrenner</span> <span class="o">=</span> <span class="n">xrenner</span>
 		<span class="k">global</span> <span class="n">cases</span>
 		<span class="n">cls</span><span class="o">.</span><span class="n">cases</span> <span class="o">=</span> <span class="n">cases</span>
-		<span class="n">cls</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_singletons&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span></div>
+		<span class="n">cls</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_singletons&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 	<span class="nd">@classmethod</span>
 <div class="viewcode-block" id="Test2MarkableMethods.tearDownClass"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test2MarkableMethods.tearDownClass">[docs]</a>	<span class="k">def</span> <span class="nf">tearDownClass</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
 		<span class="k">global</span> <span class="n">xrenner</span>
 		<span class="n">cls</span><span class="o">.</span><span class="n">xrenner</span> <span class="o">=</span> <span class="n">xrenner</span>
-		<span class="n">cls</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_singletons&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span></div>
+		<span class="n">cls</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;remove_singletons&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="Test2MarkableMethods.test_name"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test2MarkableMethods.test_name">[docs]</a>	<span class="k">def</span> <span class="nf">test_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># Jerry B. Clinton</span>
-		<span class="k">print</span> <span class="s2">&quot;Run markable name test:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run markable name test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;mark_name_test&quot;</span><span class="p">]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span> <span class="s2">&quot;unittest&quot;</span><span class="p">)</span>
 		<span class="n">markables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">markables</span>
@@ -296,7 +297,7 @@
 <div class="viewcode-block" id="Test2MarkableMethods.test_atomic_mod"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test2MarkableMethods.test_atomic_mod">[docs]</a>	<span class="k">def</span> <span class="nf">test_atomic_mod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># House Dr. Israel Newspaper</span>
 		<span class="c1"># Note that Dr. is a person-marking atomic flagged modifier of the head</span>
-		<span class="k">print</span> <span class="s2">&quot;Run atomic modifier test:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run atomic modifier test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;mark_atomic_mod_test&quot;</span><span class="p">]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span> <span class="s2">&quot;unittest&quot;</span><span class="p">)</span>
 		<span class="n">markables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">markables</span>
@@ -311,7 +312,7 @@
 	<span class="nd">@classmethod</span>
 <div class="viewcode-block" id="Test3CorefMethods.setUpClass"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.setUpClass">[docs]</a>	<span class="k">def</span> <span class="nf">setUpClass</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
 
-		<span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running coref method tests</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">30</span>
+		<span class="nb">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running coref method tests</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">30</span>
 		<span class="k">global</span> <span class="n">xrenner</span>
 		<span class="n">cls</span><span class="o">.</span><span class="n">xrenner</span> <span class="o">=</span> <span class="n">xrenner</span>
 		<span class="k">global</span> <span class="n">cases</span>
@@ -319,56 +320,56 @@
 
 <div class="viewcode-block" id="Test3CorefMethods.test_cardinality"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_cardinality">[docs]</a>	<span class="k">def</span> <span class="nf">test_cardinality</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># I saw two birds . The three birds flew .</span>
-		<span class="k">print</span> <span class="s2">&quot;Run cardinality test:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run cardinality test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;cardinality_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">mark_count</span><span class="p">,</span><span class="s2">&quot;cardinality test (two birds != the three birds)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_appos_envelope"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_appos_envelope">[docs]</a>	<span class="k">def</span> <span class="nf">test_appos_envelope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># Meet [[Mark Smith] , [the Governor]]. [He] is the best.</span>
-		<span class="k">print</span> <span class="s2">&quot;Run apposition envelope test:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run apposition envelope test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;appos_envelope&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;appos envelope test&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_isa"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_isa">[docs]</a>	<span class="k">def</span> <span class="nf">test_isa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="c1"># I read [the Wallstreet Journal]. [That newspaper] is great.</span>
-		<span class="k">print</span> <span class="s2">&quot;Run isa test:  &quot;</span>
+		<span class="c1"># I read [the Walls Street Journal]. [That newspaper] is great.</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run isa test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;isa_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;isa test (Wallstreet Journal &lt;- newspaper)&quot;</span><span class="p">)</span></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;isa test (Wall Street Journal &lt;- newspaper)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_hasa"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_hasa">[docs]</a>	<span class="k">def</span> <span class="nf">test_hasa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># The [[CEO] and the taxi driver] ate . [[His] employees] joined them</span>
-		<span class="k">print</span> <span class="s2">&quot;Run hasa test:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run hasa test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;hasa_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;hasa test (CEO, taxi driver &lt;- his employees)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_dynamic_hasa"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_dynamic_hasa">[docs]</a>	<span class="k">def</span> <span class="nf">test_dynamic_hasa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># Beth was worried about [[Sinead &#39;s] well-being] , and also about Jane . [[Her] well-being] was always a concern .</span>
-		<span class="k">print</span> <span class="s2">&quot;Run dynamic hasa test:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run dynamic hasa test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;dynamic_hasa_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;dynamic hasa test (Sinead &#39;s &lt;- her)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_entity_dep"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_entity_dep">[docs]</a>	<span class="k">def</span> <span class="nf">test_entity_dep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># I have a book , [a dog] and a car. [It] barked.</span>
-		<span class="k">print</span> <span class="s2">&quot;Run entity dep test:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run entity dep test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;entity_dep_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;entity dep test (a book, a dog &lt;- It barked)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_affix_morphology"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_affix_morphology">[docs]</a>	<span class="k">def</span> <span class="nf">test_affix_morphology</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># [A blorker] and an animal and a car . Of these , I saw [the person] .</span>
-		<span class="k">print</span> <span class="s2">&quot;Run affix morphology test:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run affix morphology test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;morph_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;affix morph test (a blorker &lt;- the person)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_verbal_event_stem"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_verbal_event_stem">[docs]</a>	<span class="k">def</span> <span class="nf">test_verbal_event_stem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># John [visited] Spain . [The visit] went well .</span>
-		<span class="k">print</span> <span class="s2">&quot;Run verbal event coreference test:  &quot;</span>
+		<span class="nb">print</span> <span class="s2">&quot;Run verbal event coreference test:  &quot;</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;verb_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;verbal event stemming (visited &lt;- the visit	)&quot;</span><span class="p">)</span></div></div>
@@ -382,7 +383,7 @@
 		<span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">chains</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="n">chain_mode</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="n">chain_mode</span> <span class="o">=</span> <span class="kc">False</span>
 
 		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
 			<span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;#.*&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -402,7 +403,7 @@
 					<span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span>
 						<span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">val</span>
 					<span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;chains&quot;</span><span class="p">:</span>
-						<span class="n">chain_mode</span> <span class="o">=</span> <span class="bp">True</span></div>
+						<span class="n">chain_mode</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
 <span class="k">def</span> <span class="nf">suite</span><span class="p">():</span>
@@ -417,8 +418,26 @@
 	<span class="k">return</span> <span class="n">test_suite</span>
 
 
+<span class="k">def</span> <span class="nf">can_be_coreferent</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Utility function to check whether an xrenner model is capable of finding two markables coreferent</span>
+
+<span class="sd">	:param mark1: The :class:`.Markable` object to match to mark2</span>
+<span class="sd">	:param mark2: The :class:`.Markable` object to match to mark1</span>
+<span class="sd">	:param lex: the :class:`.LexData` object with gazetteer information and model settings</span>
+<span class="sd">	:return: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">lex</span><span class="o">.</span><span class="n">incompatible_isa_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+	<span class="n">lex</span><span class="o">.</span><span class="n">incompatible_mod_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+	<span class="n">prev_markables</span> <span class="o">=</span> <span class="p">[</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">]</span>
+	<span class="n">mark2</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">=</span> <span class="mi">2</span>
+	<span class="n">antecedent</span><span class="p">,</span> <span class="n">propagation</span> <span class="o">=</span> <span class="n">find_antecedent</span><span class="p">(</span><span class="n">mark2</span><span class="p">,</span> <span class="n">prev_markables</span><span class="p">,</span><span class="n">lex</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">antecedent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-	<span class="n">xrenner</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="n">xrenner</span> <span class="o">=</span> <span class="kc">None</span>
 	<span class="n">cases</span> <span class="o">=</span> <span class="p">{}</span>
 
 	<span class="n">test_runner</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">()</span>

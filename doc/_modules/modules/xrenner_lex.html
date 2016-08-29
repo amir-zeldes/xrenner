@@ -134,13 +134,13 @@
 <span></span><span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">gc</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">listdir</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">join</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">listdir</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">join</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">ConfigParser</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">xrenner_rule</span> <span class="kn">import</span> <span class="n">CorefRule</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">xrenner_rule</span> <span class="k">import</span> <span class="n">CorefRule</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">LexData class - container object for lexical information, gazetteers etc.</span>
@@ -154,7 +154,7 @@
 <span class="sd">	Use model argument to define subdirectory under models/ for reading different sets of</span>
 <span class="sd">	configuration files.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span><span class="n">override</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span><span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		:param model: model - string name of the model to read from models/</span>
 <span class="sd">		:param override: override - optional name of a section to use in models/override.ini</span>
@@ -173,7 +173,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">speaker_rules</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_speaker_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_coref_rules</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;coref_rules.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;single&#39;</span><span class="p">))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">coref_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_speaker_rules</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;entities.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;triple&#39;</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">entity_heads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;entity_heads.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;triple&#39;</span><span class="p">,</span> <span class="s1">&#39;atoms&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">entity_heads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;entity_heads.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;triple&#39;</span><span class="p">,</span> <span class="s1">&#39;atoms&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">pronouns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;pronouns.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;double&#39;</span><span class="p">)</span>
 		<span class="c1"># Get configuration</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">filters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filters</span><span class="p">(</span><span class="n">override</span><span class="p">)</span>
@@ -195,13 +195,16 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;debug.tab&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;debug.tab&quot;</span> <span class="ow">in</span> <span class="n">model_files</span> <span class="k">else</span> <span class="p">{</span><span class="s2">&quot;ana&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;ante&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;ablations&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">}</span>
 		<span class="n">additional_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;atoms.tab&#39;</span><span class="p">,</span><span class="s1">&#39;double&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;atoms.tab&quot;</span> <span class="ow">in</span> <span class="n">model_files</span> <span class="k">else</span> <span class="p">{}</span>
 
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;no_new_modifiers&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;use_new_modifier_exceptions&quot;</span><span class="p">]:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">exceptional_new_modifiers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;new_modifiers.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;double&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;new_modifiers.tab&quot;</span> <span class="ow">in</span> <span class="n">model_files</span> <span class="k">else</span> <span class="p">{}</span>
-
 		<span class="c1"># Compile atom and first + last name data</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">additional_atoms</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">first_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_first_last_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;no_new_modifiers&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;use_new_modifier_exceptions&quot;</span><span class="p">]:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">exceptional_new_modifiers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_delim</span><span class="p">(</span><span class="s1">&#39;new_modifiers.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;double&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;new_modifiers.tab&quot;</span> <span class="ow">in</span> <span class="n">model_files</span> <span class="k">else</span> <span class="p">{}</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">exceptional_new_modifiers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_names</span><span class="p">))</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">exceptional_new_modifiers</span> <span class="o">=</span> <span class="p">{}</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">pos_agree_mappings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pos_agree_mappings</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="p">{}</span>
@@ -209,9 +212,17 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">morph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_morph</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">func_substitutes_forward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_substitutes_backward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_func_substitutes</span><span class="p">()</span>
 
+		<span class="c1"># Compile lemmatizer and morph rules</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lemma_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile_lemmatization</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">morph_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile_morph_rules</span><span class="p">()</span>
+
+		<span class="c1"># Caching lists for already established non-matching pairs</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">incompatible_mod_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">incompatible_isa_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+
 		<span class="n">gc</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
 
-<div class="viewcode-block" id="LexData.read_delim"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.read_delim">[docs]</a>	<span class="k">def</span> <span class="nf">read_delim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">atom_list_name</span><span class="o">=</span><span class="s2">&quot;atoms&quot;</span><span class="p">,</span> <span class="n">add_to_sums</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LexData.read_delim"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.read_delim">[docs]</a>	<span class="k">def</span> <span class="nf">read_delim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">atom_list_name</span><span class="o">=</span><span class="s2">&quot;atoms&quot;</span><span class="p">,</span> <span class="n">add_to_sums</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Generic file reader for lexical data in model directory</span>
 
@@ -334,7 +345,7 @@
 				<span class="n">output</span><span class="p">[</span><span class="n">isa</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
 		<span class="k">return</span> <span class="n">output</span></div>
 
-<div class="viewcode-block" id="LexData.get_filters"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.get_filters">[docs]</a>	<span class="k">def</span> <span class="nf">get_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LexData.get_filters"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.get_filters">[docs]</a>	<span class="k">def</span> <span class="nf">get_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Reads model settings from config.ini and possibly overrides from override.ini</span>
 
@@ -374,8 +385,8 @@
 						<span class="k">else</span><span class="p">:</span>
 							<span class="n">filters</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">option_string</span>
 				<span class="k">except</span><span class="p">:</span>
-					<span class="k">print</span><span class="p">(</span><span class="s2">&quot;exception on </span><span class="si">%s</span><span class="s2">!&quot;</span> <span class="o">%</span> <span class="n">option</span><span class="p">)</span>
-					<span class="n">filters</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;exception on </span><span class="si">%s</span><span class="s2">!&quot;</span> <span class="o">%</span> <span class="n">option</span><span class="p">)</span>
+					<span class="n">filters</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 				<span class="k">continue</span>
 			<span class="k">try</span><span class="p">:</span>
 				<span class="n">option_string</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
@@ -392,10 +403,27 @@
 					<span class="k">else</span><span class="p">:</span>
 						<span class="n">filters</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">option_string</span>
 			<span class="k">except</span><span class="p">:</span>
-				<span class="k">print</span><span class="p">(</span><span class="s2">&quot;exception on </span><span class="si">%s</span><span class="s2">!&quot;</span> <span class="o">%</span> <span class="n">option</span><span class="p">)</span>
-				<span class="n">filters</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;exception on </span><span class="si">%s</span><span class="s2">!&quot;</span> <span class="o">%</span> <span class="n">option</span><span class="p">)</span>
+				<span class="n">filters</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
 		<span class="k">return</span> <span class="n">filters</span></div>
+
+	<span class="k">def</span> <span class="nf">compile_lemmatization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">compiled_rules</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;lemma_rules&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
+			<span class="n">rule_part</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+			<span class="c1"># Add a compiled lemmatization rule: regex matcher for pos, regex matcher for text, and replacement string</span>
+			<span class="n">compiled_rules</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">rule_part</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">rule_part</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">rule_part</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+		<span class="k">return</span> <span class="n">compiled_rules</span>
+
+	<span class="k">def</span> <span class="nf">compile_morph_rules</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">compiled_rules</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;morph_rules&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
+			<span class="n">rule_part</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+			<span class="c1"># Add a compiled lemmatization rule: regex matcher for pos, regex matcher for text, and replacement string</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">rule</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">rule</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+				<span class="n">compiled_rules</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">rule_part</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">rule_part</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+		<span class="k">return</span> <span class="n">compiled_rules</span>
 
 <div class="viewcode-block" id="LexData.lemmatize"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.lemmatize">[docs]</a>	<span class="k">def</span> <span class="nf">lemmatize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -405,14 +433,10 @@
 <span class="sd">		:return: string - the lemma</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
-		<span class="n">lemma_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;lemma_rules&quot;</span><span class="p">]</span>
 		<span class="n">lemma</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span>
-		<span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">lemma_rules</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
-			<span class="n">rule_part</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
-			<span class="n">pos_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">rule_part</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-			<span class="k">if</span> <span class="n">pos_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">pos</span><span class="p">):</span>
-				<span class="n">lemma_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">rule_part</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-				<span class="n">lemma</span> <span class="o">=</span> <span class="n">lemma_pattern</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">rule_part</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">lemma</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lemma_rules</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">rule</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">lemma</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">rule</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">lemma</span><span class="p">)</span>
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;auto_lower_lemma&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
 			<span class="k">return</span> <span class="n">lemma</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;auto_lower_lemma&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;except_all_caps&quot;</span><span class="p">:</span>
@@ -452,11 +476,9 @@
 <span class="sd">		:return: string - the edited morph feature</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
-		<span class="n">morph_rules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;morph_rules&quot;</span><span class="p">]</span>
 		<span class="n">morph</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">morph</span>
-		<span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">morph_rules</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
-			<span class="n">rule_part</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
-			<span class="n">morph</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">rule_part</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rule_part</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">morph</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">morph_rules</span><span class="p">:</span>
+			<span class="n">morph</span> <span class="o">=</span> <span class="n">rule</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">rule</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">morph</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">morph</span></div>
 
 <div class="viewcode-block" id="LexData.get_pos_agree_mappings"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.get_pos_agree_mappings">[docs]</a>	<span class="k">def</span> <span class="nf">get_pos_agree_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
