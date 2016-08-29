@@ -200,11 +200,11 @@ class Test3CorefMethods(unittest.TestCase):
 		self.assertEqual(target.chains,result.chains,"appos envelope test")
 
 	def test_isa(self):
-		# I read [the Wallstreet Journal]. [That newspaper] is great.
+		# I read [the Walls Street Journal]. [That newspaper] is great.
 		print "Run isa test:  "
 		target = self.cases["isa_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
-		self.assertEqual(target.chains,result.chains,"isa test (Wallstreet Journal <- newspaper)")
+		self.assertEqual(target.chains,result.chains,"isa test (Wall Street Journal <- newspaper)")
 
 	def test_hasa(self):
 		# The [[CEO] and the taxi driver] ate . [[His] employees] joined them

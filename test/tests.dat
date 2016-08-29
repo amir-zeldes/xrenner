@@ -31,15 +31,16 @@ toks:12 # I read the...
 marks:2
 groups:1
 chains:
-  # the Wallstreet Journ...
-  3_5 < 7_8
+  # the Wall Street Journ...
+  3_6 < 8_9
 input_data:
 1	I	_	PRP	PRP	_	2	nsubj	_	_
 2	read	_	VBP	VBP	_	0	root	_	_
-3	the	_	DT	DT	_	5	det	_	_
-4	Wallstreet	_	NNP	NNP	_	5	nn	_	_
-5	Journal	_	NNP	NNP	_	2	dobj	_	_
-6	.	_	.	.	_	2	punct	_	_
+3	the	_	DT	DT	_	6	det	_	_
+4	Wall	_	NNP	NNP	_	6	nn	_	_
+5	Street	_	NNP	NNP	_	6	nn	_	_
+6	Journal	_	NNP	NNP	_	2	dobj	_	_
+7	.	_	.	.	_	2	punct	_	_
 
 1	That	_	DT	DT	_	2	det	_	_
 2	newspaper	_	NN	NN	_	4	nsubj	_	_
