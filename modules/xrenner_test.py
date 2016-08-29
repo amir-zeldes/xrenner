@@ -8,6 +8,7 @@ from collections import defaultdict
 import unittest
 import re, os
 from xrenner_xrenner import Xrenner
+from xrenner_coref import find_antecedent
 
 def generate_test(conll_tokens, markables, parse, model="eng", name="test"):
 	tok_count = len(conll_tokens)
@@ -282,6 +283,24 @@ def suite():
 	test_suite.addTest(unittest.makeSuite(Test3CorefMethods))
 
 	return test_suite
+
+
+def can_be_coreferent(mark1, mark2, lex):
+	"""
+	Utility function to check whether an xrenner model is capable of finding two markables coreferent
+
+	:param mark1: The :class:`.Markable` object to match to mark2
+	:param mark2: The :class:`.Markable` object to match to mark1
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
+	:return: bool
+	"""
+
+	lex.incompatible_isa_pairs = set([])
+	lex.incompatible_mod_pairs = set([])
+	prev_markables = [mark1, mark2]
+	mark2.sentence.sent_num = 2
+	antecedent, propagation = find_antecedent(mark2, prev_markables,lex)
+	return antecedent is not None
 
 
 if __name__ == '__main__':
