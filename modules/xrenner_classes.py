@@ -7,7 +7,7 @@ Author: Amir Zeldes
 import sys
 
 class ParsedToken:
-	def __init__(self, tok_id, text, lemma, pos, morph, head, func, sentence, modifiers, child_funcs, child_strings, lex, quoted=False):
+	def __init__(self, tok_id, text, lemma, pos, morph, head, func, sentence, modifiers, child_funcs, child_strings, lex, quoted=False, head2="_", func2="_"):
 		self.id = tok_id
 		self.text = text.strip()
 		self.text_lower = text.lower()
@@ -17,12 +17,14 @@ class ParsedToken:
 		else:
 			self.lemma = lex.lemmatize(self)
 		self.morph = morph
-		if morph != "_" and morph != "--":
+		if morph != "_" and morph != "--" and morph != "":
 			self.morph = lex.process_morph(self)
 
 		self.head = head
 		self.original_head = head
 		self.func = func
+		self.head2 = head2
+		self.func2 = func2
 		self.sentence = sentence
 		self.modifiers = modifiers
 		self.child_funcs = child_funcs
@@ -67,6 +69,15 @@ class Markable:
 		self.submarks = submarks
 		self.coordinate = coordinate
 
+		self.length = self.text.count(" ") + 1
+		self.mod_count = len(self.head.modifiers)
+
+	def has_child_func(self, func):
+		if "*" in func: # func substring, do not delimit function
+			return func in self.child_func_string
+		else: # Exact match, delimit with ";"
+			return ";" + func + ";" in self.child_func_string
+
 	def __repr__(self):
 		agree = "no-agr" if self.agree == "" else self.agree
 		defin = "no-def" if self.definiteness == "" else self.definiteness
@@ -104,6 +115,7 @@ class Sentence:
 		self.start_offset = start_offset
 		self.mood = mood
 		self.speaker = speaker
+		self.token_count = 0
 
 	def __repr__(self):
 		mood = "(no mood info)" if self.mood == "" else self.mood

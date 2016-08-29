@@ -15,7 +15,7 @@ from xrenner_preprocess import *
 from xrenner_marker import make_markable
 from xrenner_lex import *
 from xrenner_postprocess import postprocess_coref
-from depedit import run_depedit
+from depedit import DepEdit
 import ntpath, os
 
 
@@ -30,6 +30,8 @@ class Xrenner:
 		:return: void
 		"""
 		self.load(model, override)
+		depedit_config = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + "depedit.ini")
+		self.depedit = DepEdit(depedit_config)
 
 	def load(self, model="eng", override=None):
 		"""
@@ -61,9 +63,7 @@ class Xrenner:
 			self.docname = clean_filename(ntpath.basename(infile))
 			infile = open(infile)
 
-		depedit_config = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + "depedit.ini")
-
-		infile = run_depedit(infile, depedit_config)
+		infile = self.depedit.run_depedit(infile)
 		infile = infile.split("\n")
 
 		# Lists and dictionaries to hold tokens and markables
@@ -102,6 +102,7 @@ class Xrenner:
 				current_sentence.speaker = myline.split('"')[1]
 				lex.coref_rules = lex.speaker_rules
 			elif myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
+				current_sentence.token_count += 1
 				cols = myline.split("\t")
 				if lex.filters["open_quote"].match(cols[1]) is not None and quoted is False:
 					quoted = True
@@ -117,7 +118,7 @@ class Xrenner:
 					tok_func = cols[7]
 				head_id = "0" if cols[6] == "0" else str(int(cols[6]) + self.tokoffset)
 				conll_tokens.append(ParsedToken(str(int(cols[0]) + self.tokoffset), cols[1], cols[2], cols[3], cols[5],
-												head_id, tok_func, current_sentence, [], [], [], lex, quoted))
+												head_id, tok_func, current_sentence, [], [], [], lex, quoted, cols[8], cols[9]))
 				self.sentlength += 1
 				# Check not to add a child if this is a function which discontinues the markable span
 				if not (lex.filters["non_link_func"].match(tok_func) is not None or lex.filters["non_link_tok"].match(cols[1]) is not None):
@@ -177,6 +178,71 @@ class Xrenner:
 		else:
 			return self.serialize_output(out_format, infile)
 
+	def analyze_markable(self, mark, lex):
+		"""
+		Find entity, agreement and cardinality information for a markable
+		:param mark: The :class:`.Markable` object to analyze
+		:param lex: the :class:`.LexData` object with gazetteer information and model settings
+		:return: void
+		"""
+
+		mark.text = mark.text.strip()
+		mark.core_text = mark.core_text.strip()
+		# DEBUG POINT
+		if mark.text == lex.debug["ana"]:
+			pass
+		tok = mark.head
+		if lex.filters["proper_pos"].match(tok.pos) is not None:
+			mark.form = "proper"
+			mark.definiteness = "def"
+		elif lex.filters["pronoun_pos"].match(tok.pos) is not None:
+			mark.form = "pronoun"
+			# Check for explicit indefinite morphology in morph feature of head token
+			if "indef" in mark.head.morph.lower():
+				mark.definiteness = "indef"
+			else:
+				mark.definiteness = "def"
+		else:
+			mark.form = "common"
+			# Check for explicit definite morphology in morph feature of head token
+			if "def" in mark.head.morph.lower() and "indef" not in mark.head.morph.lower():
+				mark.definiteness = "def"
+				# Chomp definite information not to interfere with agreement
+				mark.head.morph = re.sub("def", "_", mark.head.morph)
+			else:
+				# Check if any children linked via a link function are definite markings
+				children_are_def_articles = (lex.filters["definite_articles"].match(maybe_article) is not None for
+											 maybe_article in
+											 [mark.head.text, mark.text.split(" ")[0]] + mark.head.child_strings)
+				if any(children_are_def_articles):
+					mark.definiteness = "def"
+				else:
+					mark.definiteness = "indef"
+
+		# Find agreement alternatives unless cardinality has set agreement explicitly already (e.g. to 'plural'/'dual' etc.)
+		if mark.cardinality == 0 or mark.agree == '':
+			mark.alt_agree = resolve_mark_agree(mark, lex)
+		if mark.alt_agree is not None and mark.agree == '':
+			mark.agree = mark.alt_agree[0]
+		elif mark.alt_agree is None:
+			mark.alt_agree = []
+		if mark.agree != mark.head.morph and mark.head.morph != "_" and mark.head.morph != "--" and mark.agree != \
+				lex.filters["aggregate_agree"]:
+			mark.agree = mark.head.morph
+			mark.agree_certainty = "mark_head_morph"
+			mark.alt_agree.append(mark.head.morph)
+
+		# cardinality resolve, only resolve here if it hasn't been set before (as in coordination markable)
+		if mark.cardinality == 0:
+			mark.cardinality = resolve_cardinality(mark, lex)
+
+		resolve_mark_entity(mark, lex)
+
+		if "ablations" in lex.debug:
+			if "no_subclasses" in lex.debug["ablations"]:
+				mark.subclass = mark.entity
+				mark.alt_subclasses = mark.alt_entities
+
 	def serialize_output(self, out_format, parse=None):
 		"""
 		Return a string representation of the output in some format, or generate PAULA directory structure as output
@@ -202,6 +268,8 @@ class Xrenner:
 		elif out_format == "unittest":
 			from xrenner_test import generate_test
 			return generate_test(conll_tokens, markables, parse, self.model)
+		elif out_format == "none":
+			return ""
 		else:
 			return output_SGML(conll_tokens, markstart_dict, markend_dict)
 
@@ -232,6 +300,8 @@ class Xrenner:
 		stop_ids = {}
 		for tok1 in conll_tokens[tokoffset + 1:]:
 			stop_ids[tok1.id] = False  # Assume all tokens are head candidates
+			tok1.sent_position = float(int(tok1.id) - tokoffset) / sentence.token_count # Add relative token positions at sentence as percentages
+			tok1.head_text = conll_tokens[int(tok1.head)].text  # Save parent text for later dependency checks
 
 		# Post-process parser input based on entity list if desired
 		if lex.filters["postprocess_parser"]:
@@ -251,6 +321,11 @@ class Xrenner:
 				# Check that neither possessor nor possessed is a pronoun
 				if lex.filters["pronoun_pos"].match(token.pos) is None and lex.filters["pronoun_pos"].match(conll_tokens[int(token.head)].pos) is None:
 					lex.hasa[token.text][conll_tokens[int(token.head)].text] += 2  # Increase by 2: 1 for attestation, 1 for pertinence in this document
+			# Check if func2 has additional possessor information
+			if token.func2 != "_":
+				if lex.filters["possessive_func"].match(token.func2) is not None:
+					if lex.filters["pronoun_pos"].match(token.pos) is None and lex.filters["pronoun_pos"].match(conll_tokens[int(token.head2)+tokoffset].pos) is None:
+						lex.hasa[token.text][conll_tokens[int(token.head2)+tokoffset].text] += 2  # Increase by 2: 1 for attestation, 1 for pertinence in this document
 
 		# Find dead areas
 		for tok1 in conll_tokens[tokoffset + 1:]:
@@ -415,163 +490,69 @@ class Xrenner:
 		for key in keys_to_pop:
 			mark_candidates_by_head.pop(key, None)
 
+		processed_marks = len(markables)
 		for mark_id in mark_candidates_by_head:
 			mark = mark_candidates_by_head[mark_id]
-			mark.text = mark.text.strip()
-			mark.core_text = mark.core_text.strip()
-			# DEBUG POINT
-			if mark.text == lex.debug["ana"]:
-				pass
-			tok = mark.head
-			if lex.filters["proper_pos"].match(tok.pos) is not None:
-				mark.form = "proper"
-				mark.definiteness = "def"
-			elif lex.filters["pronoun_pos"].match(tok.pos) is not None:
-				mark.form = "pronoun"
-				# Check for explicit indefinite morphology in morph feature of head token
-				if "indef" in mark.head.morph.lower():
-					mark.definiteness = "indef"
-				else:
-					mark.definiteness = "def"
-			else:
-				mark.form = "common"
-				# Check for explicit definite morphology in morph feature of head token
-				if "def" in mark.head.morph.lower() and "indef" not in mark.head.morph.lower():
-					mark.definiteness = "def"
-					# Chomp definite information not to interfere with agreement
-					mark.head.morph = re.sub("def","_",mark.head.morph)
-				else:
-					# Check if any children linked via a link function are definite markings
-					children_are_def_articles = (lex.filters["definite_articles"].match(conll_tokens[int(maybe_article)].text) is not None for maybe_article in children[mark.head.id]+[mark.head.id]+[mark.start])
-					if any(children_are_def_articles):
-						mark.definiteness = "def"
-					else:
-						mark.definiteness = "indef"
-
-			# Find agreement alternatives unless cardinality has set agreement explicitly already (e.g. to 'plural'/'dual' etc.)
-			if mark.cardinality == 0 or mark.agree == '':
-				mark.alt_agree = resolve_mark_agree(mark, lex)
-			if mark.alt_agree is not None and mark.agree == '':
-				mark.agree = mark.alt_agree[0]
-			elif mark.alt_agree is None:
-				mark.alt_agree = []
-			if mark.agree != mark.head.morph and mark.head.morph != "_" and mark.head.morph != "--" and mark.agree != lex.filters["aggregate_agree"]:
-				mark.agree = mark.head.morph
-				mark.agree_certainty = "mark_head_morph"
-				mark.alt_agree.append(mark.head.morph)
-
-			#cardinality resolve, only resolve here if it hasn't been set before (as in coordination markable)
-			if mark.cardinality == 0:
-				mark.cardinality = resolve_cardinality(mark,lex)
-
-			resolve_mark_entity(mark, conll_tokens, lex)
-			if "/" in mark.entity:  # Lexicalized agreement information appended to entity
-				if mark.agree == "" or mark.agree is None:
-					mark.agree = mark.entity.split("/")[1]
-				elif mark.agree_certainty == "":
-					mark.alt_agree.append(mark.agree)
-					mark.agree = mark.entity.split("/")[1]
-				mark.entity = mark.entity.split("/")[0]
-			elif mark.entity == lex.filters["person_def_entity"] and mark.agree == lex.filters["default_agree"] and mark.form != "pronoun":
-				mark.agree = lex.filters["person_def_agree"]
-			subclass = ""
-			if "\t" in mark.entity:  # This is a subclass bearing solution
-				subclass = mark.entity.split("\t")[1]
-				mark.entity = mark.entity.split("\t")[0]
-			if mark.entity == lex.filters["person_def_entity"] and mark.form != "pronoun":
-				if mark.text in lex.names:
-					mark.agree = lex.names[mark.text]
-			if mark.entity == lex.filters["person_def_entity"] and mark.agree is None:
-				no_affix_mark = remove_suffix_tokens(remove_prefix_tokens(mark.text, lex), lex)
-				if no_affix_mark in lex.names:
-					mark.agree = lex.names[no_affix_mark]
-			if mark.entity == lex.filters["person_def_entity"] and mark.agree is None:
-				mark.agree = lex.filters["person_def_agree"]
-			if mark.form == "pronoun" and (mark.entity == "abstract" or mark.entity == ""):
-				if mark.head.head in markables_by_head and lex.filters["subject_func"].match(mark.head.func) is not None:
-					mark.entity = markables_by_head[mark.head.head].entity
-			if mark.entity == "" and mark.core_text.upper() == mark.core_text and re.search("[A-ZÄÖÜ]",mark.core_text) is not None:  # Unknown all caps entity, guess acronym default
-				mark.entity = lex.filters["all_caps_entity"]
-				mark.entity_certainty = "uncertain"
-			if mark.entity == "":  # Unknown entity, guess default
-				mark.entity = lex.filters["default_entity"]
-				mark.entity_certainty = "uncertain"
-			if subclass == "":
-				if mark.subclass == "":
-					subclass = mark.entity
-				else:
-					subclass = mark.subclass
-			if mark.func == "title":
-				mark.entity = lex.filters["default_entity"]
-			if mark.agree == "" and mark.entity == lex.filters["default_entity"]:
-				mark.agree = lex.filters["default_agree"]
-
-			if "ablations" in lex.debug:
-				if "no_subclasses" in lex.debug["ablations"]:
-					subclass = mark.entity
-					mark.alt_subclasses = mark.alt_entities
+			self.analyze_markable(mark, lex)
 
 			self.markcounter += 1
 			self.groupcounter += 1
-			this_markable = Markable("referent_" + str(self.markcounter), tok, mark.form,
+			this_markable = Markable("referent_" + str(self.markcounter), mark.head, mark.form,
 									 mark.definiteness, mark.start, mark.end, mark.text, mark.core_text, mark.entity, mark.entity_certainty,
-									 subclass, "new", mark.agree, mark.sentence, "none", "none", self.groupcounter,
+									 mark.subclass, "new", mark.agree, mark.sentence, "none", "none", self.groupcounter,
 									 mark.alt_entities, mark.alt_subclasses, mark.alt_agree,mark.cardinality,mark.submarks,mark.coordinate)
 			markables.append(this_markable)
 			markables_by_head[mark_id] = this_markable
 			markstart_dict[this_markable.start].append(this_markable)
 			markend_dict[this_markable.end].append(this_markable)
 
-
-		for markable_head_id in markables_by_head:
-			if int(re.sub('_.*','',markable_head_id)) > tokoffset:  # Resolve antecedent for current sentence markables
-				current_markable = markables_by_head[markable_head_id]
-				# DEBUG POINT
-				if current_markable.text == lex.debug["ana"]:
-					a=5
-					if current_markable.text == lex.debug["ante"]:
-						pass
-				# Revise coordinate markable entities now that we have resolved all of their constituents
-				if len(current_markable.submarks) > 0:
-					assign_coordinate_entity(current_markable,markables_by_head)
-				if antecedent_prohibited(current_markable, conll_tokens, lex) or (current_markable.definiteness == "indef" and lex.filters["apposition_func"].match(current_markable.head.func) is None and not lex.filters["allow_indef_anaphor"]):
-					antecedent = None
-				elif (current_markable.definiteness == "indef" and lex.filters["apposition_func"].match(current_markable.head.func) is not None and not lex.filters["allow_indef_anaphor"]):
-					antecedent, propagation = find_antecedent(current_markable, markables, lex, "appos")
-				else:
-					antecedent, propagation = find_antecedent(current_markable, markables, lex)
-				if antecedent is not None:
-					if int(antecedent.head.id) < int(current_markable.head.id) or 'invert' in propagation:
-						# If the rule specifies to invert
-						if 'invert' in propagation:
-							temp = antecedent
-							antecedent = current_markable
-							current_markable = temp
-						current_markable.antecedent = antecedent
-						current_markable.group = antecedent.group
-						# Check for apposition function if both markables are in the same sentence
-						if lex.filters["apposition_func"].match(current_markable.head.func) is not None and \
-								current_markable.sentence.sent_num == antecedent.sentence.sent_num:
-							current_markable.coref_type = "appos"
-						elif current_markable.form == "pronoun":
-							current_markable.coref_type = "ana"
-						elif current_markable.coref_type == "none":
-							current_markable.coref_type = "coref"
-						current_markable.infstat = "giv"
-					else:  # Cataphoric match
-						current_markable.antecedent = antecedent
-						antecedent.group = current_markable.group
-						current_markable.coref_type = "cata"
-						current_markable.infstat = "new"
-				elif current_markable.form == "pronoun":
-					current_markable.infstat = "acc"
-				else:
-					current_markable.infstat = "new"
-
-				if current_markable.agree is not None and current_markable.agree != '':
-					lex.last[current_markable.agree] = current_markable
-				else:
+		for current_markable in markables[processed_marks:]:
+			# DEBUG POINT
+			if current_markable.text == lex.debug["ana"]:
+				a=5
+				if current_markable.text == lex.debug["ante"]:
 					pass
+			# Revise coordinate markable entities now that we have resolved all of their constituents
+			if len(current_markable.submarks) > 0:
+				assign_coordinate_entity(current_markable,markables_by_head)
+			if antecedent_prohibited(current_markable, conll_tokens, lex) or (current_markable.definiteness == "indef" and lex.filters["apposition_func"].match(current_markable.head.func) is None and not lex.filters["allow_indef_anaphor"]):
+				antecedent = None
+			elif (current_markable.definiteness == "indef" and lex.filters["apposition_func"].match(current_markable.head.func) is not None and not lex.filters["allow_indef_anaphor"]):
+				antecedent, propagation = find_antecedent(current_markable, markables, lex, "appos")
+			else:
+				antecedent, propagation = find_antecedent(current_markable, markables, lex)
+			if antecedent is not None:
+				if int(antecedent.head.id) < int(current_markable.head.id) or 'invert' in propagation:
+					# If the rule specifies to invert
+					if 'invert' in propagation:
+						temp = antecedent
+						antecedent = current_markable
+						current_markable = temp
+					current_markable.antecedent = antecedent
+					current_markable.group = antecedent.group
+					# Check for apposition function if both markables are in the same sentence
+					if lex.filters["apposition_func"].match(current_markable.head.func) is not None and \
+							current_markable.sentence.sent_num == antecedent.sentence.sent_num:
+						current_markable.coref_type = "appos"
+					elif current_markable.form == "pronoun":
+						current_markable.coref_type = "ana"
+					elif current_markable.coref_type == "none":
+						current_markable.coref_type = "coref"
+					current_markable.infstat = "giv"
+				else:  # Cataphoric match
+					current_markable.antecedent = antecedent
+					antecedent.group = current_markable.group
+					current_markable.coref_type = "cata"
+					current_markable.infstat = "new"
+			elif current_markable.form == "pronoun":
+				current_markable.infstat = "acc"
+			else:
+				current_markable.infstat = "new"
+
+			if current_markable.agree is not None and current_markable.agree != '':
+				lex.last[current_markable.agree] = current_markable
+			else:
+				pass
 
 
 
