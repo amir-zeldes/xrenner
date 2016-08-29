@@ -12,6 +12,8 @@ class CorefRule:
 			self.ana_constraints.append(ConstraintMatcher(item))
 		for item in self.ante_spec.split("&"):
 			self.ante_constraints.append(ConstraintMatcher(item))
+		# Make sure that group failure criteria are first to be checked
+		self.ante_constraints.sort(key=lambda x: x.group_failure, reverse=True)
 
 	def __repr__(self):
 		return self.ana_spec + " -> " + self.ante_spec + " (" + str(self.max_distance) + ", " + self.propagation + ")"
@@ -25,7 +27,7 @@ class ConstraintMatcher:
 		self.value = ""
 		self.key = ""
 		self.compiled_re = None
-		self.props = set(["form", "text", "agree", "entity", "subclass", "cardinality","text_lower","lemma","pos","func","quoted","mood"])
+		self.props = set(["form", "text", "agree", "entity", "subclass", "cardinality","text_lower","lemma","pos","func","quoted","mood","speaker"])
 
 		if constraint.endswith("*"):
 			self.group_failure = True
@@ -93,8 +95,6 @@ class ConstraintMatcher:
 			self.key = "LAST"
 			self.value = constraint[constraint.find("[")+1:-1]
 
-
-
 	def __repr__(self):
 		if self.negative == operator.truth:
 			op = ""
@@ -117,7 +117,16 @@ class ConstraintMatcher:
 			elif self.key == "child":
 				return op(anaphor.head.head == mark.head.id)
 			elif self.key == "parent":
-				return op(anaphor.head.head == mark.head.head)
+				if mark.head.head == "0":  # Root token, by definition not same parent as another token
+					retval = op(False)
+				elif mark.sentence.sent_num != anaphor.sentence.sent_num:
+					retval = op(False)
+				else:
+					retval = op(anaphor.head.head == mark.head.head)
+				if retval is False and self.group_failure and anaphor is not None:
+					mark.non_antecdent_groups.add(anaphor.group)
+					anaphor.non_antecdent_groups.add(mark.group)
+				return retval
 			elif self.key == "has_child_func":
 				raise Exception("coref rule 'has_child_func=$' : $ identity not implemented for has_child_func")
 			elif self.key == "mod":
@@ -169,21 +178,23 @@ class ConstraintMatcher:
 			elif self.key == "child":
 				raise Exception("coref rule 'child=VAL' : value match not implemented for child")
 
-
-
 		if self.match_type == "exact":
-			return op(test_val == self.value)
+			retval = op(test_val == self.value)
 		elif self.match_type == "substring":
-			return op(self.value in test_val)
+			retval = op(self.value in test_val)
 		elif self.match_type == "regex":
-			return op(self.compiled_re.search(test_val) is not None)
+			retval = op(self.compiled_re.search(test_val) is not None)
 		elif self.match_type == "startswith":
-			return op(test_val.startswith(self.value))
+			retval = op(test_val.startswith(self.value))
 		elif self.match_type == "endswith":
-			return op(test_val.endswith(self.value))
+			retval = op(test_val.endswith(self.value))
 		elif self.match_type == "dollar":
-			return op(test_val == self.value)
+			retval = op(test_val == self.value)
 		elif self.match_type == "bool":
-			return op(test_val == self.value)
+			retval = op(test_val == self.value)
 
+		if retval is False and self.group_failure and anaphor is not None:
+			mark.non_antecdent_groups.add(anaphor.group)
+
+		return retval
 
