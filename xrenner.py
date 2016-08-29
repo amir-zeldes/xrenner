@@ -12,13 +12,14 @@ import argparse, sys
 from modules.xrenner_xrenner import Xrenner
 from glob import glob
 
-__version__ = "1.3.2"
+
+__version__ = "1.3.x"  # Develop
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-o', '--output', action="store", dest="format", default="sgml", help="output format, default: sgml; alternatives: html, paula, webanno, conll, onto, unittest")
+parser.add_argument('-o', '--output', action="store", dest="format", default="sgml", help="output format, default: sgml; alternatives: html, paula, webanno, conll, onto, unittest, none")
 parser.add_argument('-m', '--model', action="store", dest="model", default="eng", help="input model directory name, in models/")
 parser.add_argument('-x', '--override', action="store", dest="override", default=None, help="specify a section in the model's override.ini file with alternative settings")
 parser.add_argument('-v', '--verbose', action="store_true", help="output run time and summary")
@@ -64,7 +65,9 @@ else:
 		total_tokens += len(xrenner.conll_tokens)-1
 		total_sentences += xrenner.sent_num-1
 		
-		if options.format != "paula":
+		if options.format == "none":
+			pass
+		elif options.format != "paula":
 			if len(data) > 1:
 				outfile = xrenner.docname + "." + options.format
 				handle = open(outfile, 'w')
@@ -72,7 +75,7 @@ else:
 				handle.close()
 			else:
 				print output
-		
+
 		if options.verbose and len(data) > 1:
 			sys.stderr.write("Processed " + str(len(xrenner.conll_tokens)-1) + " tokens in " + str(xrenner.sent_num-1) + " sentences.\n")
 
