@@ -67,6 +67,12 @@ class LexData:
 		self.atoms.update(additional_atoms)
 		self.first_names, self.last_names = self.get_first_last_names(self.names)
 
+		if self.filters["no_new_modifiers"] and self.filters["use_new_modifier_exceptions"]:
+			self.exceptional_new_modifiers = self.read_delim('new_modifiers.tab', 'double') if "new_modifiers.tab" in model_files else {}
+			self.exceptional_new_modifiers.update(dict((name, 1) for name in self.first_names))
+		else:
+			self.exceptional_new_modifiers = {}
+
 		self.pos_agree_mappings = self.get_pos_agree_mappings()
 		self.last = {}
 
