@@ -1,5 +1,4 @@
-# ONTO DATA
-# Sources: Freebase, GUM, WSJ/PTB, added data by Amir Zeldes (see licenses)
+# Sources: Freebase, GUM, WSJ/PTB, OntoNotes, added data by Amir Zeldes (see licenses)
 °	quantity	quantity/plural
 “ah”s	abstract	abstract/plural
 “um”s	abstract	abstract/plural
@@ -1235,6 +1234,7 @@ bursar	person	person
 burst	abstract	abstract/inanim
 Burundian	person	person
 bus	object	object
+busboy	person	person/male
 buses	object	object
 bushel	quantity	quantity/inanim
 bushes	plant	plant
@@ -1337,6 +1337,8 @@ canning	abstract	abstract/inanim
 cannon	object	object/inanim
 canopy	person	person
 cans	object	object
+Cantonese	abstract	language/inanim
+Cantonese	person	person
 cantor	person	person
 canvas	substance	substance/inanim
 cap	abstract	abstract/inanim
@@ -1452,8 +1454,8 @@ centers	place	place/plural
 centre	place	place/inanim
 centuries	time	time/plural
 century	time	time/inanim
-CEO	person	person
 ceo	person	person
+CEO	person	person
 ceramic	substance	substance
 ceramist	person	person
 Cereal	object	object
@@ -1968,10 +1970,11 @@ depression	event	event/inanim
 deputies	person	person/plural
 dermatologist	person	person
 descendants	person	person/plural
+desert	place	place/inanim
 design	abstract	abstract/inanim
 designer	person	person
 designs	abstract	abstract/plural
-desire	person	person
+desire	abstract	abstract/inanim
 destination	place	place/inanim
 destroyer	object	object/inanim
 destroyer	person	person
@@ -2132,6 +2135,7 @@ Edgewater	place	place
 edit	event	event/inanim
 editor	person	person
 editors	person	person
+education	abstract	abstract/inanim
 educationalist	person	person
 educator	person	person
 eel	animal	animal
@@ -2156,7 +2160,7 @@ element	abstract	abstract
 Elements	abstract	abstract
 elements	abstract	abstract/plural
 elephants	animal	animal/plural
-elites	substance	substance/plural
+elite	abstract	abstract/plural
 elk	animal	animal
 elo	animal	animal
 email	abstract	abstract/inanim
@@ -2179,6 +2183,7 @@ ending	abstract	abstract/inanim
 endocrinologist	person	person
 endodontist	person	person
 enemy	organization	organization/inanim
+enemy	person	person/male
 energy	abstract	abstract
 engine	object	object/inanim
 engineer	person	person
@@ -2244,7 +2249,8 @@ Evans	person	person
 Evanston	place	place
 Evansville	place	place
 evaporation	abstract	abstract/inanim
-evening	object	object
+eve	time	time/inanim
+evening	time	time/inanim
 evenings	time	time/plural
 event	abstract	abstract/inanim
 event	event	event
@@ -2535,8 +2541,8 @@ gemcutter	person	person
 gemsbok	animal	animal
 genders	abstract	abstract
 genealogist	person	person
-general	person	person
 General	person	person
+general	person	person
 generalissimo	person	person
 generation	abstract	abstract/inanim
 generations	abstract	abstract/plural
@@ -2603,6 +2609,7 @@ gods	abstract	abstract
 goers	person	person
 goldendoodle	animal	animal
 goldsmith	person	person
+golf	abstract	abstract/inanim
 golfer	person	person
 gondolier	person	person
 goods	object	object
@@ -2612,8 +2619,8 @@ governess	person	person
 government	organization	organization/inanim
 government	organization	organization/plural
 governments	organization	organization/plural
-governor	person	person
 Governor	person	person
+governor	person	person
 Governor(s)	person	person
 governors	person	person
 gov\'t	event	event/plural
@@ -2732,6 +2739,7 @@ hayward	person	person
 hazzan	person	person
 head	object	object
 head	person	person
+headache	abstract	abstract/inanim
 headmaster	person	person
 headquarters	place	place/inanim
 heads	plant	plant
@@ -2912,6 +2920,7 @@ incident	event	event
 incidents	event	event/plural
 income	object	object/inanim
 increases	event	event
+independence	abstract	abstract
 Indian	person	person
 Indians	organization	organization
 individual	person	person
@@ -2976,6 +2985,7 @@ investigation	abstract	abstract/inanim
 investigator	person	person
 investor	person	person
 invitation	event	event
+invitations	object	object/plural
 IQA	object	object/plural
 Iranian	person	person
 Iraqi	person	person
@@ -3098,6 +3108,7 @@ kinkajou	animal	animal
 kintamani	animal	animal
 kishu	animal	animal
 kit	object	object/inanim
+kitchen	place	place/inanim
 kits	object	object/plural
 kitten	animal	animal
 km	quantity	quantity/plural
@@ -3283,6 +3294,7 @@ logician	person	person
 London	place	place
 look	abstract	abstract
 loopholes	abstract	abstract/plural
+lord	person	person/male
 loss	event	event
 lot	abstract	abstract
 lots	abstract	abstract/plural
@@ -3510,6 +3522,7 @@ minority	person	person
 minstrel	person	person
 minute	time	time-unit/inanim
 minutes	time	time-unit/plural
+miracle	abstract	abstract/inanim
 misconception	abstract	abstract
 mishandling	abstract	abstract
 mission	event	event
@@ -3582,6 +3595,7 @@ motives	abstract	abstract/plural
 motor	object	object/inanim
 motorist	person	person
 motorways	place	place/plural
+mountain	place	place/inanim
 mountaineer	person	person
 mountains	object	object/plural
 mouse	animal	animal
@@ -3623,6 +3637,7 @@ mustang	animal	animal
 mxn	quantity	quantity/inanim
 mycologist	person	person
 myself	person	person
+myth	abstract	abstract/inanim
 négociant	person	person
 nagarvadhu	person	person
 nailist	person	person
@@ -4115,6 +4130,8 @@ porpoise	animal	animal
 port	object	object/inanim
 Port	place	place
 porter	person	person
+Portuguese	abstract	language/inanim
+Portuguese	person	person
 Portuguese	person	person
 Poseidon	person	person
 position	abstract	abstract/inanim
@@ -4126,6 +4143,7 @@ post	object	object
 Post	organization	organization
 post-season	event	event
 postage	quantity	quantity/inanim
+postcard	object	object/inanim
 poster	person	person
 posters	organization	organization
 posting	object	object
@@ -4236,6 +4254,8 @@ protection	abstract	abstract
 proteins	substance	substance
 protopope	person	person/male
 protostrator	person	person
+proverb	abstract	abstract/inanim
+proverbs	abstract	abstract/plural
 providing	abstract	abstract
 province	place	place/inanim
 province	place	region/inanim
@@ -4746,6 +4766,7 @@ singer-songwriter	person	person
 sinologist	person	person
 sins	abstract	abstract/plural
 sisal	plant	plant/inanim
+sister	person	person/female
 site	place	place
 sites	place	place
 situation	abstract	abstract/inanim
@@ -4766,8 +4787,8 @@ skirmish	event	event
 skirmisher	person	person
 skirts	object	object
 Skittled	substance	substance
-skittles	object	object
 Skittles	object	object
+skittles	object	object
 skunk	animal	animal
 skydivers	person	person/plural
 skydiving	event	event/inanim
@@ -4782,6 +4803,7 @@ slices	object	object
 slides	object	object
 slipstream	place	place/inanim
 sloeber	animal	animal
+slogan	abstract	abstract/inanim
 sloth	animal	animal
 sloughi	animal	animal
 Slovak	person	person
@@ -5006,6 +5028,7 @@ stylist	person	person
 styrmann	person	person
 sub-inspector	person	person
 subjects	animal	animal/plural
+subsidy	abstract	abstract/inanim
 substances	substance	substance/plural
 suburb	place	place/inanim
 success	abstract	abstract
@@ -5369,6 +5392,7 @@ vehicle	object	object/inanim
 vehicles	object	object/plural
 veins	plant	plant
 velocity	abstract	abstract/inanim
+velvet	substance	substance/inanim
 vendor	person	person
 vendors	person	person
 Venezuelan	person	person
@@ -5461,6 +5485,7 @@ wash	abstract	abstract
 washboard	object	object
 Washington	person	person
 waste	substance	substance/inanim
+watchdog	organization	organization/inanim
 watchmaker	person	person
 watchman	person	person/male
 Water	person	person
