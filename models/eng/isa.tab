@@ -231,11 +231,13 @@ al-yawer	al-yawar
 al-zarqawi	zarqawi
 al-zawahiri	al-zawahri
 al-zawahri	al-zawahiri
+Alabama	AL,Al.,Al,Ala.
 Alain Juppé	prime minister
 Alan Griffin	member of parliament
 Alan Johnson	member of parliament
 Alan Lowenthal	state senator,member of congress
 Alan Milburn	member of parliament
+Alaska	AK,Ak.,Ak
 Albanese	member of parliament,deputy prime minister
 Albert Reynolds	prime minister
 Alberto Gonzales	attorney general
@@ -283,7 +285,7 @@ aluminum	aluminium
 Amanda Rishworth	member of parliament
 Ambareesh	member of parliament,member of parliament
 ambassador	Edward Livingston,Livingston,Robert Roosevelt,Roosevelt,Vijaya Lakshmi Pandit,Pandit,John Quincy Adams,Adams,John Adams,Adams,James Buchanan,Buchanan,James A. Bayard,Bayard
-America	United States,US,USA
+America	United States,US,USA,U.S.,U.S.A.
 Amin	prime minister,vice president
 amir	emir
 Amman	Jordan
@@ -423,6 +425,8 @@ areas	zones
 argentina	argentine
 Argentina	Buenos Aires
 argentine	argentina
+Arizona	AZ,Az.,Az,Ariz.
+Arkansas	AR,Ar.,Ar,Ark.
 Arlen Specter	senator
 armistice	truce
 arms	weapons
@@ -559,7 +563,7 @@ banking	bank
 bans	prohibitions
 baptisms	christenings
 Barack Obama	senator,president
-Barak	prime minister,defence minister,foreign minister
+Barak	prime minister,defence minister,foreign minister,minister
 Barbara Boxer	senator,member of congress
 barbaric	barbarous
 barbarism	barbarity
@@ -887,6 +891,7 @@ calcareous	limestone
 Calderón	president
 calendar	timetable
 calf	veal
+California	CA,Ca.,Ca,Calif.
 Callaghan	prime minister
 calli	callus
 callus	calli
@@ -920,7 +925,7 @@ capes	cloaks
 capital	city,metropolis,municipality,borough,capital,place
 caprine	goatmeat
 captioning	subtitling
-car	vehicle
+car	vehicle,ride
 Caracas	Venezuela
 carbonation	gasification
 carbons	coals
@@ -1059,6 +1064,7 @@ Chatterjee	member of parliament
 Chaudhry	president
 Chaudhry Muhammad Ali	prime minister
 Chaudhry Shujaat Hussain	prime minister
+Chavez	president
 checkbook	chequebook
 checks	controls
 Cheeseman	member of parliament
@@ -1101,6 +1107,7 @@ Chris Huhne	member of parliament
 Chris Patten	governor
 Chris Pearce	member of parliament
 Chris Trevor	member of parliament
+Christ	Jesus,savior,Savior
 christenings	baptisms
 Christopher Pyne	member of parliament
 chromatographic	chromatography
@@ -1149,7 +1156,7 @@ climber	mountaineer
 climbers	mountaineers
 clinic	clinical
 clinical	clinic
-Clinton	senator,secretary of state,first lady,president,governor,mayor,governor,state senator,senator
+Clinton	senator,secretary of state,first lady,president,governor,mayor,governor,state senator,senator,President
 cloaks	capes
 closet	cupboard
 clothes	clothing
@@ -1239,6 +1246,7 @@ Collins	member of parliament
 colones	colons
 colons	colones
 color	colour
+Colorado	CO,Co,Colo.
 colors	colours
 colour	color
 colours	colors
@@ -1329,6 +1337,7 @@ congruence	congruency
 congruency	congruence
 conifer	coniferous
 coniferous	conifer
+Connecticut	CT,Ct.,Ct,Conn.
 consanguinity	inbreeding
 conservative	curator
 consideration	review
@@ -1408,7 +1417,7 @@ counterattacks	counter-attacks
 counterclaim	counter-claim
 counterclaims	counter-claims
 counterproposal	counter-proposal
-country	country,land,region,state,realm,duchy,nation,place,territory
+country	country,land,state,realm,duchy,nation,place,territory
 countryman	compatriot
 couples	pairs
 court	tribunal
@@ -1551,6 +1560,7 @@ David Waddington, Baron Waddington	governor
 Davis	member of congress,governor,senator,governor,governor-general
 dba	cob
 dc	cc
+DC	D.C.
 dcc	cdc
 dd	jj
 ddr	rfi
@@ -1605,6 +1615,7 @@ deindustrialisation	de-industrialisation
 deindustrialisation	de-industrialization
 deindustrialization	de-industrialization
 deinstitutionalization	de-institutionalization
+Delaware	DE,De.,De,Del.
 delegate	John Adams,Adams
 delegate to party convention	Bill Lockyer,Lockyer
 demagoguery	demagogy
@@ -2045,7 +2056,6 @@ evaporators	vaporizers
 Eveline Widmer-Schlumpf	swiss federal council,president
 evening	night
 Evennett	member of parliament
-event	event
 everybody	everyone
 everyone	everybody
 evidence	proof
@@ -2240,6 +2250,7 @@ flocks	herds
 flood	flooding
 flooding	flood
 floppy	diskette
+Florida	FL,Fl.,Fl,Fla.
 flu	influenza
 fluid	liquid
 fluoridation	fluorination
@@ -2405,6 +2416,7 @@ George Stoneman	governor
 George W. Bush	president,governor
 George Washington	president
 Georges Pompidou	president,prime minister
+Georgia	GA,Ga.,Ga
 Georgia	Tbilisi
 Georgiou	member of parliament
 geostrategic	geo-strategic
@@ -2450,6 +2462,7 @@ glycolytic	glycolysis
 goal	objective
 goals	objectives
 goatmeat	caprine
+God	Lord
 goggles	glasses
 Golda Meir	prime minister
 goldeneyes	tourniquets
@@ -2485,8 +2498,10 @@ grandmother	grandma
 grandmother	woman
 grandpa	grandfather
 Granholm	governor
+grant	money,funding
 Grant	president
 grant	subsidy
+grants	money,funding,*
 grants	subsidies
 granules	pellets
 graph	chart
@@ -2608,6 +2623,7 @@ hatred	hate
 Haughey	prime minister
 Havana	Cuba
 Havel	president
+Hawaii	HI,Hi.,Hi
 Hawke	member of parliament
 Hawker	member of parliament
 Hayes	president,governor,member of parliament
@@ -2764,6 +2780,7 @@ iconto	arrowto
 ict	icts
 icts	ict
 id	identifier
+Idaho	ID,Id.,Id
 Ide	governor-general
 identifier	id
 ideologists	ideologues
@@ -2778,6 +2795,7 @@ II	attorney general,monarch
 ill-treatment	maltreatment
 ill-treatment	mistreatment
 illegal	unlawful
+Illinois	IL,Il.,Il,Ill.
 illness	disease
 illnesses	diseases
 illumination	lighting
@@ -2824,6 +2842,7 @@ indecisiveness	indecision
 indexation	indexing
 indexing	indexation
 India	New Delhi
+Indiana	IN,In.,In,Ind.
 indigenous	aboriginal
 indignation	outrage
 Indira Gandhi	prime minister
@@ -2916,6 +2935,7 @@ ionisation	ionization
 ionising	ionizing
 ionization	ionisation
 ionizing	ionising
+Iowa	IA,Ia.,Ia
 iowa	lowa
 ipc	cpi
 Iran	Tehran
@@ -3013,6 +3033,7 @@ Jennifer Granholm	governor
 Jensen	member of parliament
 Jeremy Hunt	member of parliament
 Jerry Brown	secretary of state,mayor,governor,attorney general
+Jesus	Lord,Christ,Savior,Sir
 Jew	councillor
 jeweler	jeweller
 jeweller	jeweler
@@ -3126,6 +3147,7 @@ Kada	governor
 kafala	kafalah
 kafalah	kafala
 Kamal Nath	member of parliament
+Kansas	KS,Ks.,Ks,Kans.
 kaolin	kaolinite
 kaolinite	kaolin
 Karen Bass	speaker,member of congress
@@ -3145,6 +3167,7 @@ Ken Livingstone	mayor
 Ken Salazar	attorney general,senator
 Kennedy	president,attorney general,senator
 Kenneth Clarke	member of parliament,minister
+Kentucky	KY,Ky.,Ky
 Kenya	Nairobi
 kernels	almonds
 Kerr	member of parliament
@@ -3396,12 +3419,14 @@ loneliness	solitude
 long-liners	longliners
 longliners	long-liners
 looting	plundering
+Lord	God,Jesus,Savior
 lord mayor	Manfred Rommel,Rommel
 lordship	seigneury
 lorries	trucks
 Los Angeles	LA,L.A.
 Louis St. Laurent	prime minister
 Louise Markus	member of parliament
+Louisiana	LA,La.,La
 louver	grille
 Low	governor
 lowa	iowa
@@ -3466,6 +3491,7 @@ Magsaysay	president
 mahdi	al-mahdi
 maiming	mutilation
 main	principal
+Maine	ME,Me.
 maize	corn
 Major	prime minister
 Mal Washer	member of parliament
@@ -3544,7 +3570,9 @@ Mary Coughlan	deputy prime minister
 Mary Harney	deputy prime minister
 Mary McAleese	president
 Mary Robinson	president
+Maryland	MD,Md.,Md
 Masayoshi	prime minister
+Massachusetts	MA,Ma.,Ma,Mass.
 masseur	bone-setter
 Massey	prime minister
 material	materials
@@ -3649,6 +3677,7 @@ Michael McDowell	deputy prime minister
 Michael O'Leary	deputy prime minister
 Michela Alioto-Pier	councillor
 Micheline Calmy-Rey	swiss federal council
+Michigan	MI,Mi.,Mi,Mich.
 micro-algae	microalgae
 micro-architecture	microarchitecture
 micro-businesses	micro-enterprises
@@ -3725,12 +3754,15 @@ minister	Göran Persson,Persson,Nicolas Sarkozy,Sarkozy,Jacques Chirac,Chirac,Ke
 ministerial	departmental
 ministries	departments
 ministry	department
+Minnesota	MN,Mn.,Mn,Minn.
 Minsk	Belarus
 Mirabella	member of parliament
 Mirkarimi	councillor
 Mirza	president
 misinformation	disinformation
 missiles	rockets
+Mississippi	MS,Ms.,Ms,Miss.
+Missouri	MO,Mo.,Mo
 mist	fog
 mistake	error
 mistakes	errors
@@ -3794,6 +3826,7 @@ monomeric	monomer
 Monroe	president,secretary of state,governor,senator
 monster	freak
 monsters	freaks
+Montana	MT,Mt.,Mt,Mont.
 Montevideo	Uruguay
 month	months
 months	month
@@ -3952,6 +3985,7 @@ Nazimuddin	prime minister
 nazis	nazi
 ncc	scc
 Neal	member of parliament
+Nebraska	NE,Ne.,Ne,Nebr.
 necklace	collier
 Neelam Sanjiva Reddy	president
 neglect	negligence
@@ -3979,8 +4013,14 @@ nets	fillets
 Neumann	member of parliament
 neurones	neurons
 neurons	neurones
+Nevada	NV,Nv.,Nv,Nev.
 Neville	member of parliament
 New Delhi	India
+New Hampshire	NH,Nh.,Nh,N.H.
+New Jersey	NJ,Nj.,Nj,N.J.
+New Mexico	NM,Nm.,Nm,N.M.
+New York	NY,Ny.,Ny,N.Y.
+New Zealand	NZ
 newbie	probie
 newsletter	bulletin
 newsletters	bulletins
@@ -4036,6 +4076,8 @@ normality	normalcy
 Norman Mineta	mayor
 Norman P. Cohen	councillor
 norms	standards
+North Carolina	NC,Nc.,Nc,N.C.
+North Dakota	ND,Nd.,Nd,N.D.
 North Koreak	Pyongyang
 north-east	northeast
 north-west	northwest
@@ -4055,6 +4097,7 @@ nucleophile	nucleophilic
 nucleophilic	nucleophile
 nunnery	convent
 Nurul Amin	prime minister,vice president
+NZ	New Zealand
 O'Brien	mayor
 O'Connor	member of parliament
 O'Kelly	president,deputy prime minister
@@ -4084,10 +4127,12 @@ offences	crimes
 office	bureau
 officer	agent
 official	formal
+Ohio	OH,Oh.
 ohm	ohms
 ohms	ohm
 oid	dio
 oil	petroleum
+Oklahoma	OK,Ok.,Ok,Okla.
 oktabde	octabde
 Oliver Ellsworth	senator
 Olmert	prime minister,acting prime minister
@@ -4116,6 +4161,7 @@ orang-utans	orangutans
 orangutans	orang-utans
 orchestra	orchestre
 orchestre	orchestra
+Oregon	OR,Or.,Or,Ore.
 organ	body
 organisation	organization
 organisations	organizations
@@ -4330,6 +4376,7 @@ pelts	skins
 penal	criminal
 penalties	sanctions
 pencils	crayons
+Pennsylvania	PA,Pa.,Pa
 Penrose	member of parliament
 people	persons
 Per Unckel	governor
@@ -4344,7 +4391,7 @@ permits	permissions
 perpetrators	authors
 Perrett	member of parliament
 Perry	governor
-person	individual,character,human,person,guy,girl,man,woman
+person	individual,character,human,person,guy,girl,man,woman,Sir
 personalization	customization
 personalizations	customizations
 personalize	customize
@@ -4515,6 +4562,7 @@ praesidium	presidium
 Prague	the Czech Republic
 prairie	grassland
 prairies	grasslands
+PRC	China
 pre-accession	preaccession
 pre-authentication	preauthentication
 pre-clinical	preclinical
@@ -4604,6 +4652,7 @@ professionalisation	professionalization
 professionalization	professionalisation
 professions	occupations
 program	programme
+program	series,show
 programme	program
 programmes	programs
 programs	programmes
@@ -4925,6 +4974,7 @@ Reynolds	prime minister,governor
 rfi	ddr
 rfp	dp
 rfso	doc
+Rhode Island	RI,R.I.
 rials	riyals
 Rice	secretary of state
 Richard Bassett	governor,senator
@@ -5184,6 +5234,7 @@ Serbia	Belgrade
 serbian	serb
 sergeant	sarge
 Sergio Osmeña	president
+series	program,show
 seriousness	gravity
 serotype	serovar
 serotypes	serovars
@@ -5251,6 +5302,7 @@ short-wave	shortwave
 shortcomings	deficiencies
 Shorten	member of parliament
 shortwave	short-wave
+show	perogram,series
 si	tr
 Sibley	governor
 Sid Sidebottom	member of parliament
@@ -5354,6 +5406,8 @@ Sophie Mirabella	member of parliament
 sorceress	witch
 sorcery	witchcraft
 South Africa	Pretoria
+South Carolina	SC,S.C.
+South Dakota	SD,S.D.
 South Korea	Seoul
 south-east	south-eastern
 south-east	southeast
@@ -5745,8 +5799,8 @@ Taft	president,governor-general,governor
 tag	label
 tags	labels
 tailings	residues
-Taipei	Taiwan
-Taiwan	Taipei
+Taipei	Taiwan,ROC
+Taiwan	Taipei,ROC
 Takaaki	prime minister
 take-off	takeoff
 Takeo Fukuda	prime minister
@@ -5819,6 +5873,7 @@ tendency	trend
 tenderer	bidder
 tenderers	bidders
 tendon	sinew
+Tennessee	TN,Tn.,Tn,Tenn.
 tensile	traction
 tension	voltage
 termini	terminus
@@ -5831,6 +5886,7 @@ testing	test
 testis	testicle
 tetrads	quartets
 tetroxide	dinitrogen
+Texas	TX,Tx.,Tx,Tex.
 théâtre	theatre
 Thailand	Bangkok
 thalassaemia	thalassemia
@@ -6042,8 +6098,8 @@ tumour	tumor
 tumours	tumors
 tunis	tunisia
 Tunis	Tunisia
-tunisia	tunis
 Tunisia	Tunis
+tunisia	tunis
 turgidity	turgor
 turgor	turgidity
 Turkey	Ankara
@@ -6121,6 +6177,7 @@ USA	United States,America,US
 usable	useable
 useable	usable
 usefulness	utility
+Utah	UT,Ut.,Ut
 uterus	womb
 utility	usefulness
 Václav Havel	president
@@ -6159,6 +6216,7 @@ vengeance	revenge
 veranda	porch
 verde	green
 verification	audit
+Vermont	VT,Vt.,Vt
 version	printable
 vertebra	vertebrae
 vertebrae	vertebra
@@ -6210,6 +6268,7 @@ Vincent Auriol	president,prime minister
 Vining	member of congress,senator
 violation	breach
 violin	fiddle
+Virginia	VA,Va.,Va
 Virginia Bottomley	member of parliament
 virility	manhood
 virtualisation	virtualization
@@ -6258,6 +6317,7 @@ Warren Truss	member of parliament
 Warsaw	Poland
 Washer	member of parliament
 Washington	president
+Washington	WA,Wa.,Wa,Wash.
 Washington Bartlett	governor,mayor
 washroom	toilet
 waste	wastes
@@ -6284,6 +6344,7 @@ welfare	well-being
 well-being	welfare
 Weller	governor,senator
 Wen Jiabao	premier
+West Virginia	WV,Wv.,Wv,W.Va.
 Westerberg	speaker
 wet	moist
 wetter	wettest
@@ -6331,6 +6392,7 @@ Winston Churchill	prime minister,member of parliament
 wire	cable
 wires	cables
 wiring	cabling
+Wisconsin	WI,Wi.,Wi,Wis.
 witch	sorceress
 witchcraft	sorcery
 Wolf	governor
@@ -6358,6 +6420,7 @@ writing	written
 written	writing
 Wu Yi	deputy premier,vice mayor
 Wynne	premier
+Wyoming	WY,Wy.,Wy,Wyo.
 xu	seo
 Yahya Khan	president
 yasin	yassin
@@ -6396,54 +6459,3 @@ zone	area
 zones	areas
 zpm	mpa
 Zulfikar Ali Bhutto	president,prime minister
-Alabama	AL,Al.,Al,Ala.
-Alaska	AK,Ak.,Ak
-Arizona	AZ,Az.,Az,Ariz.
-Arkansas	AR,Ar.,Ar,Ark.
-California	CA,Ca.,Ca,Calif.
-Colorado	CO,Co,Colo.
-Connecticut	CT,Ct.,Ct,Conn.
-Delaware	DE,De.,De,Del.
-Florida	FL,Fl.,Fl,Fla.
-Georgia	GA,Ga.,Ga
-Hawaii	HI,Hi.,Hi
-Idaho	ID,Id.,Id
-Illinois	IL,Il.,Il,Ill.
-Indiana	IN,In.,In,Ind.
-Iowa	IA,Ia.,Ia
-Kansas	KS,Ks.,Ks,Kans.
-Kentucky	KY,Ky.,Ky
-Louisiana	LA,La.,La
-Maine	ME,Me.
-Maryland	MD,Md.,Md
-Massachusetts	MA,Ma.,Ma,Mass.
-Michigan	MI,Mi.,Mi,Mich.
-Minnesota	MN,Mn.,Mn,Minn.
-Mississippi	MS,Ms.,Ms,Miss.
-Missouri	MO,Mo.,Mo
-Montana	MT,Mt.,Mt,Mont.
-Nebraska	NE,Ne.,Ne,Nebr.
-Nevada	NV,Nv.,Nv,Nev.
-New Hampshire	NH,Nh.,Nh,N.H.
-New Jersey	NJ,Nj.,Nj,N.J.
-New Mexico	NM,Nm.,Nm,N.M.
-New York	NY,Ny.,Ny,N.Y.
-North Carolina	NC,Nc.,Nc,N.C.
-North Dakota	ND,Nd.,Nd,N.D.
-Ohio	OH,Oh.
-Oklahoma	OK,Ok.,Ok,Okla.
-Oregon	OR,Or.,Or,Ore.
-Pennsylvania	PA,Pa.,Pa
-Rhode Island	RI,R.I.
-South Carolina	SC,S.C.
-South Dakota	SD,S.D.
-Tennessee	TN,Tn.,Tn,Tenn.
-Texas	TX,Tx.,Tx,Tex.
-Utah	UT,Ut.,Ut
-Vermont	VT,Vt.,Vt
-Virginia	VA,Va.,Va
-Washington	WA,Wa.,Wa,Wash.
-West Virginia	WV,Wv.,Wv,W.Va.
-Wisconsin	WI,Wi.,Wi,Wis.
-Wyoming	WY,Wy.,Wy,Wyo.
-DC	D.C.
