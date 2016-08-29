@@ -1,6 +1,7 @@
 import re
 from xrenner_marker import remove_suffix_tokens
 from xrenner_propagate import *
+from xrenner_classes import Markable
 from math import log
 
 """
@@ -43,9 +44,10 @@ def cardinality_compatible(mark1,mark2,lex):
 	if "ablations" in lex.debug:
 		if "no_cardinality" in lex.debug["ablations"]:
 			return True
-	if mark1.cardinality!=0 and mark2.cardinality!=0:
-		if mark1.cardinality != mark2.cardinality:
-			return False
+	if mark1.cardinality!=0:
+		if mark2.cardinality!=0:
+			if mark1.cardinality != mark2.cardinality:
+				return False
 	return True
 
 
@@ -58,6 +60,9 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 	:param lex: the LexData object with gazetteer information and model settings
 	:return: bool
 	"""
+
+	if markable.id+"|"+candidate.id in lex.incompatible_mod_pairs:
+		return False
 
 	if allow_force_proper_mod_match:
 		proper_mod_must_match = lex.filters["proper_mod_must_match"]
@@ -104,13 +109,13 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 						markable.non_antecdent_groups.add(candidate.group)
 						return False
 			# Check that the two markables do not have non-identical proper noun modifiers
-			if lex.filters["proper_pos"].match(mod.pos):
-				candidate_proper_mod_texts = []
-				for mod2 in candidate.head.modifiers:
-					if lex.filters["proper_pos"].match(mod2.pos):
-						candidate_proper_mod_texts.append(mod2.text)
-				if mod.text not in candidate_proper_mod_texts and len(candidate_proper_mod_texts) > 0:
-					if proper_mod_must_match:
+			if proper_mod_must_match:
+				if lex.filters["proper_pos"].match(mod.pos):
+					candidate_proper_mod_texts = []
+					for mod2 in candidate.head.modifiers:
+						if lex.filters["proper_pos"].match(mod2.pos):
+							candidate_proper_mod_texts.append(mod2.text)
+					if mod.text not in candidate_proper_mod_texts and len(candidate_proper_mod_texts) > 0:
 						return False
 
 	# Check if markable and candidate have modifiers that are different place names
@@ -119,10 +124,11 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 		if mod.text in lex.entities and (mod.text.istitle() or not lex.filters["cap_names"]):
 			if re.sub('\t.*', "", lex.entities[mod.text][0]) == lex.filters["place_def_entity"]:
 				for candidate_mod in candidate.head.modifiers:
-					if candidate_mod.text in lex.entities and (candidate_mod.text.istitle() or not lex.filters["cap_names"]):
-						if re.sub('\t.*', "", lex.entities[candidate_mod.text][0]) == lex.filters["place_def_entity"]:
-							markable.non_antecdent_groups.add(candidate.group)
-							return False
+					if candidate_mod.text != mod.text:
+						if candidate_mod.text in lex.entities and (candidate_mod.text.istitle() or not lex.filters["cap_names"]):
+							if re.sub('\t.*', "", lex.entities[candidate_mod.text][0]) == lex.filters["place_def_entity"]:
+								markable.non_antecdent_groups.add(candidate.group)
+								return False
 
 	# Check for each possible pair of modifiers with identical function in the ident_mod list whether they are identical,
 	# e.g. for the num function 'the four children' shouldn't be coreferent with 'five other children'
@@ -143,17 +149,34 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 			return False
 
 	# Check that the heads are not conflicting proper names
-	if markable.form == "proper" and candidate.form == "proper" and markable.text != candidate.text:
-		if markable.text in lex.names and candidate.text in lex.names:
-			return False
-		elif markable.text in lex.first_names and candidate.text in lex.first_names:
-			return False
-		elif markable.text in lex.last_names and candidate.text in lex.last_names:
-			return False
+	if markable.form == "proper" and candidate.form == "proper":
+		if markable.text != candidate.text:
+			if markable.text in lex.names and candidate.text in lex.names:
+				return False
+			elif markable.text.count(" ") == 0 and candidate.text.count(" ") == 0:
+				isa = False
+				if markable.text in lex.first_names and candidate.text in lex.first_names:
+					if markable.text in lex.isa:
+						if candidate.text.lower() in lex.isa[markable.text]:
+							isa = True
+					if candidate.text in lex.isa:
+						if markable.text.lower() in lex.isa[candidate.text]:
+							isa = True
+					if not isa:
+						return False
+				if markable.text in lex.last_names and candidate.text in lex.last_names:
+					if markable.text in lex.isa:
+						if candidate.text.lower() in lex.isa[markable.text]:
+							isa = True
+					if candidate.text in lex.isa:
+						if markable.text.lower() in lex.isa[candidate.text]:
+							isa = True
+					if not isa:
+						return False
 
 	# Recursive check through antecedent ancestors in group
-	if candidate.antecedent != "none":
-		antecedent_compatible = modifiers_compatible(markable, candidate.antecedent, lex) and modifiers_compatible(candidate.antecedent, markable, lex)
+	if isinstance(candidate.antecedent, Markable):
+		antecedent_compatible = modifiers_compatible(markable, candidate.antecedent, lex)
 		if not antecedent_compatible:
 			return False
 
@@ -247,11 +270,28 @@ def update_group(host, model, previous_markables, lex):
 			markable.subclass = model.subclass
 	return True
 
-
 def isa(markable, candidate, lex):
 	"""
+	Staging function to check for and store new cached isa information.
+	Calls actual :func:`run_isa` function if pair is still viable for new isa match.
+
+	:param markable: one of two markables to compare lexical isa relationship with
+	:param candidate: the second markable, which is a candidate antecedent for the other markable
+	:param lex: the LexData object with gazetteer information and model settings
+	:return: bool
+	"""
+
+	retval = False
+	if markable.id+"|"+candidate.id not in lex.incompatible_isa_pairs:
+		retval = run_isa(markable, candidate, lex)
+		if not retval:
+			lex.incompatible_isa_pairs.add(markable.id+"|"+candidate.id)
+	return retval
+
+def run_isa(markable, candidate, lex):
+	"""
 	Checks whether two markables are compatible for coreference via the isa-relation
-	
+
 	:param markable: one of two markables to compare lexical isa relationship with
 	:param candidate: the second markable, which is a candidate antecedent for the other markable
 	:param lex: the LexData object with gazetteer information and model settings
@@ -295,27 +335,39 @@ def isa(markable, candidate, lex):
 				return False
 
 	# Check for incompatible modifiers
-	if not modifiers_compatible(markable,candidate, lex):
-		return False
+	if len(markable.modifiers) > 0:
+		if not modifiers_compatible(markable,candidate, lex):
+			lex.incompatible_mod_pairs.add(markable.id+"|"+candidate.id)
+			return False
 
 	# Check for first name + full name match
-	if markable.entity == lex.filters["person_def_entity"] and candidate.entity == lex.filters["person_def_entity"]:
+	if markable.entity in ["", lex.filters["person_def_entity"]] and candidate.entity in ["", lex.filters["person_def_entity"]]:
 		if markable.head.text in lex.first_names:
 			candidate_mod_texts = list((mod.text) for mod in candidate.head.modifiers)
 			if markable.head.text in candidate_mod_texts:
 				return True
+		if candidate.head.text in lex.first_names:
+			markable_mod_texts = list((mod.text) for mod in markable.head.modifiers)
+			if candidate.head.text in markable_mod_texts:
+				return True
 
 	# Forbid isa head matching for two distinct proper names except first+full name; NB: use coref table for these if desired
 	if markable.form == "proper" and candidate.form == "proper":
-		return False
+		if markable.text in lex.names or markable.text in lex.first_names:
+			if candidate.text in lex.names or candidate.text in lex.first_names:
+				#return False
+				pass
 
 	# Subclass based isa match - check agreement too unless disabled
-	for subclass in markable.alt_subclasses + [markable.subclass]:
-		if subclass == candidate.lemma:
+	# Note that this check is unidirectional: the subclass can match an antecedent instance of it,
+	# but prior mention of the subclass is not matched to a subsequent instance
+	# (the Guardian .. < .. the newspaper is OK, but not: the newspaper .. < .. the Guardian)
+	for subclass in candidate.alt_subclasses + [candidate.subclass]:
+		if subclass == markable.lemma:
 			if agree_compatible(markable, candidate, lex) and not never_agree(markable, candidate, lex):
 				# Check if this case is already assigned a different lexical head as isa partner
-				if candidate.isa_partner_head == "":
-					candidate.isa_partner_head = markable.lemma
+				if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.lemma:
+					markable.isa_partner_head = candidate.lemma
 					return True
 				else:  # Another lemma is already isa-linked to this, e.g. state <- Oregon; so now not also "Nevada"
 					return False
@@ -326,67 +378,81 @@ def isa(markable, candidate, lex):
 			else:
 				subclass_isa = lex.isa[subclass]
 				check_agree = lex.filters["isa_subclass_agreement"]
-			if candidate.lemma.lower() in subclass_isa or candidate.text.lower().strip() in subclass_isa:
-				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.lemma or markable.isa_partner_head == candidate.lemma:
+			if markable.lemma.lower() in subclass_isa:
+				if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.lemma or candidate.isa_partner_head == markable.lemma:
 					if (agree_compatible(markable, candidate, lex) or check_agree is False) and not never_agree(markable, candidate, lex):
-						candidate.isa_partner_head = markable.lemma
+						markable.isa_partner_head = candidate.lemma
 						return True
 
 	# Exact text match in isa table - no agreement matching is carried out
-	if markable.text.strip() in lex.isa:
-		if candidate.text.strip() in lex.isa[markable.text.strip()] or candidate.text.strip() in lex.isa[markable.text.strip()]:
+	if markable.text in lex.isa:
+		if candidate.text in lex.isa[markable.text]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				candidate.isa_partner_head = markable.head.lemma
 				return True
-	# TODO: add prefix/suffix stripped version to catch '*the* United States' = 'America'
+	if candidate.text in lex.isa:
+		if markable.text in lex.isa[candidate.text]:
+			if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.head.lemma:
+				markable.isa_partner_head = candidate.head.lemma
+				return True
 
 	# Core text isa match
-	if markable.core_text.strip() in lex.isa:
-		if candidate.core_text.strip() in lex.isa[markable.core_text.strip()] or candidate.head.lemma in lex.isa[markable.core_text.strip()]:
+	# Note this check is unidirectional
+	if markable.core_text in lex.isa:
+		if candidate.core_text in lex.isa[markable.core_text] or candidate.head.lemma in lex.isa[markable.core_text]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				if agree_compatible(markable, candidate, lex) and not never_agree(markable, candidate, lex):
 					candidate.isa_partner_head = markable.head.lemma
 					return True
 		# Head-core text isa match - no agreement matching is carried out
-		# Note this next check is unidirectional
-		elif candidate.head.text.strip() in lex.isa[markable.core_text.strip()]:
+		elif candidate.head.text in lex.isa[markable.core_text]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				candidate.isa_partner_head = markable.head.lemma
 				return True
-	elif markable.core_text.strip().isupper():  # Try to title case on all caps entity
-		if markable.core_text.strip().title() in lex.isa:
-			if candidate.core_text.strip() in lex.isa[markable.core_text.strip().title()] or candidate.head.lemma in lex.isa[markable.core_text.strip().title()]:
+	elif markable.core_text.isupper():  # Try to title case on all caps entity
+		if markable.core_text.title() in lex.isa:
+			if candidate.core_text in lex.isa[markable.core_text.title()] or candidate.head.lemma in lex.isa[markable.core_text.title()]:
 				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 					candidate.isa_partner_head = markable.head.lemma
 					return True
 
 	# Handle cases where a prefix like an article is part of the entity name, but a suffix like a possessive isn't
-	if remove_suffix_tokens(markable.text.strip(),lex) in lex.isa:
-		if candidate.head.text.strip() in lex.isa[remove_suffix_tokens(markable.text.strip(),lex)]:
+	if remove_suffix_tokens(markable.text,lex) in lex.isa:
+		if candidate.head.text in lex.isa[remove_suffix_tokens(markable.text,lex)]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				candidate.isa_partner_head = markable.head.lemma
 				return True
+	elif remove_suffix_tokens(candidate.text, lex) in lex.isa:
+		if markable.head.text in lex.isa[remove_suffix_tokens(candidate.text, lex)]:
+			if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.head.lemma:
+				markable.isa_partner_head = candidate.head.lemma
+				return True
 
 	# Head-head isa match - no agreement matching is carried out
-	if markable.head.text.strip() in lex.isa:
-		if candidate.head.text.strip() in lex.isa[markable.head.text.strip()] or candidate.head.text.strip() in lex.isa[markable.head.text.strip()]:
+	if markable.head.text in lex.isa:
+		if candidate.head.text in lex.isa[markable.head.text]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				candidate.isa_partner_head = markable.head.lemma
+				return True
+	if candidate.head.text in lex.isa:
+		if markable.head.text in lex.isa[candidate.head.text]:
+			if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.head.lemma:
+				markable.isa_partner_head = candidate.head.lemma
 				return True
 
 	# Lemma based isa matching - check agreement too
 	if markable.head.lemma in lex.isa:
-		if candidate.head.lemma in lex.isa[markable.head.lemma] or candidate.head.text.strip() in lex.isa[markable.head.lemma]:
+		if candidate.head.lemma in lex.isa[markable.head.lemma] or candidate.head.text in lex.isa[markable.head.lemma]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				if agree_compatible(markable, candidate, lex):
 					candidate.isa_partner_head = markable.head.lemma
 					return True
-
-	# First name-full name match
-	if markable.form == "proper" and markable.entity == lex.filters["person_def_entity"]:
-		if (markable.text.strip() in lex.first_names and candidate.text.startswith(markable.text.strip()+" ")) or \
-		(candidate.text.strip() in lex.first_names and markable.text.startswith(candidate.text.strip()+" ")):
-			return True
+	if candidate.head.lemma in lex.isa:
+		if markable.head.lemma in lex.isa[candidate.head.lemma] or markable.head.text in lex.isa[candidate.head.lemma]:
+			if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.head.lemma:
+				if agree_compatible(markable, candidate, lex):
+					markable.isa_partner_head = candidate.head.lemma
+					return True
 
 	return False
 
@@ -487,8 +553,8 @@ def best_candidate(markable,candidate_list,lex, propagate):
 
 
 def stems_compatible(verb, noun, lex):
-	verb_stem = re.sub(lex.filters["stemmer_deletes"],"",verb.text.strip())
-	noun_stem = re.sub(lex.filters["stemmer_deletes"],"",noun.text.strip())
+	verb_stem = lex.filters["stemmer_deletes"].sub("",verb.text)
+	noun_stem = lex.filters["stemmer_deletes"].sub("",noun.text)
 	if verb_stem == noun_stem and len(noun_stem)>3:
 		return True
 	return False
