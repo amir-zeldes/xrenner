@@ -54,9 +54,9 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 		referents_to_loop = reversed(previous_markables)
 	for candidate in referents_to_loop:  # loop through previous markables backwards
 		#DEBUG breakpoint:
-		if markable.text.strip() == lex.debug["ana"]:
+		if markable.text == lex.debug["ana"]:
 			a = 5
-			if candidate.text.strip() == lex.debug["ante"]:
+			if candidate.text == lex.debug["ante"]:
 				pass
 		if markable.sentence.sent_num - candidate.sentence.sent_num <= max_dist:
 			if ((int(markable.head.id) > int(candidate.head.id) and
@@ -68,12 +68,17 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 								if agree_compatible(markable, candidate, lex) or (ante_spec.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)):
 									if entities_compatible(markable, candidate, lex) and cardinality_compatible(markable, candidate, lex):
 										candidate_list.append(candidate)
-							elif markable.text.strip() == candidate.text.strip() or (len(markable.text) > 4 and (candidate.text.lower() == markable.text.lower())):
+							elif markable.text == candidate.text or (len(markable.text) > 4 and (candidate.text.lower() == markable.text.lower())):
 								propagate_entity(markable, candidate, propagate)
 								return candidate
-							elif markable.text.strip() + "|" + candidate.text.strip() in lex.coref and entities_compatible(
+							elif markable.text + "|" + candidate.text in lex.coref and entities_compatible(
 									markable, candidate, lex) and agree_compatible(markable, candidate, lex):
-								markable.coref_type = lex.coref[markable.text.strip() + "|" + candidate.text.strip()]
+								markable.coref_type = lex.coref[markable.text + "|" + candidate.text]
+								propagate_entity(markable, candidate)
+								return candidate
+							elif markable.core_text + "|" + candidate.core_text in lex.coref and entities_compatible(
+									markable, candidate, lex) and agree_compatible(markable, candidate, lex):
+								markable.coref_type = lex.coref[markable.core_text + "|" + candidate.core_text]
 								propagate_entity(markable, candidate)
 								return candidate
 							elif markable.entity == candidate.entity and agree_compatible(markable, candidate, lex) and (markable.head.text == candidate.head.text or
@@ -85,23 +90,21 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 									if propagate.startswith("propagate"):
 										propagate_entity(markable, candidate, propagate)
 									return candidate
-							elif markable.entity == candidate.entity and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
-								if modifiers_compatible(markable, candidate, lex, False) and modifiers_compatible(candidate, markable, lex, False):
-									if propagate.startswith("propagate"):
-										propagate_entity(markable, candidate, propagate)
-									return candidate
+							elif markable.entity == candidate.entity and isa(markable, candidate, lex):
+								if propagate.startswith("propagate"):
+									propagate_entity(markable, candidate, propagate)
+								return candidate
 							elif agree_compatible(markable,candidate,lex) and ((markable.head.text == candidate.head.text) or (markable.head.lemma == candidate.head.lemma and
 							lex.filters["lemma_match_pos"].match(markable.head.pos) is not None and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
 								if merge_entities(markable, candidate, previous_markables, lex):
 									if propagate.startswith("propagate"):
 										propagate_entity(markable, candidate, propagate)
 									return candidate
-							elif entities_compatible(markable, candidate, lex) and (isa(markable, candidate, lex) or isa(candidate, markable, lex)):
-									if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
-										if merge_entities(markable, candidate, previous_markables, lex):
-											if propagate.startswith("propagate"):
-												propagate_entity(markable, candidate, propagate)
-											return candidate
+							elif entities_compatible(markable, candidate, lex) and isa(markable, candidate, lex):
+								if merge_entities(markable, candidate, previous_markables, lex):
+									if propagate.startswith("propagate"):
+										propagate_entity(markable, candidate, propagate)
+									return candidate
 							elif lex.filters["match_acronyms"] and markable.head.text.isupper() or candidate.head.text.isupper():
 								if acronym_match(markable, candidate, lex) or acronym_match(candidate, markable, lex):
 									if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
@@ -194,7 +197,7 @@ def antecedent_prohibited(markable, conll_tokens, lex):
 				pos_matcher = re.compile(pos)
 				word_matcher = re.compile(word)
 				if (pos_matcher.match(test_token.pos) is None and not negative_pos) or (pos_matcher.match(test_token.pos) is not None and negative_pos) or \
-				(word_matcher.match(test_token.text.strip()) is None and not negative_word) or (word_matcher.match(test_token.text.strip()) is not None and negative_word):
+				(word_matcher.match(test_token.text) is None and not negative_word) or (word_matcher.match(test_token.text) is not None and negative_word):
 					mismatch = True
 					break
 	if mismatch:
