@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_rule &mdash; xrenner 1.3.0 documentation</title>
+  <title>modules.xrenner_rule &mdash; xrenner 1.4.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 1.3.0 documentation" href="../../index.html"/>
+    <link rel="top" title="xrenner 1.4.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.3
+                1.4
               </div>
             
           
@@ -145,6 +145,8 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">ana_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConstraintMatcher</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ante_spec</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">ante_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConstraintMatcher</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+		<span class="c1"># Make sure that group failure criteria are first to be checked</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ante_constraints</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">group_failure</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ana_spec</span> <span class="o">+</span> <span class="s2">&quot; -&gt; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ante_spec</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_distance</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagation</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span></div>
@@ -152,16 +154,16 @@
 
 <div class="viewcode-block" id="ConstraintMatcher"><a class="viewcode-back" href="../../modules.html#modules.xrenner_rule.ConstraintMatcher">[docs]</a><span class="k">class</span> <span class="nc">ConstraintMatcher</span><span class="p">:</span>
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">constraint</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="o">=</span> <span class="kc">False</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">negative</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">truth</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;exact&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">compiled_re</span> <span class="o">=</span> <span class="bp">None</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">props</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;form&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;agree&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">,</span> <span class="s2">&quot;subclass&quot;</span><span class="p">,</span> <span class="s2">&quot;cardinality&quot;</span><span class="p">,</span><span class="s2">&quot;text_lower&quot;</span><span class="p">,</span><span class="s2">&quot;lemma&quot;</span><span class="p">,</span><span class="s2">&quot;pos&quot;</span><span class="p">,</span><span class="s2">&quot;func&quot;</span><span class="p">,</span><span class="s2">&quot;quoted&quot;</span><span class="p">,</span><span class="s2">&quot;mood&quot;</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">compiled_re</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">props</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;form&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;agree&quot;</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">,</span> <span class="s2">&quot;subclass&quot;</span><span class="p">,</span> <span class="s2">&quot;cardinality&quot;</span><span class="p">,</span><span class="s2">&quot;text_lower&quot;</span><span class="p">,</span><span class="s2">&quot;lemma&quot;</span><span class="p">,</span><span class="s2">&quot;pos&quot;</span><span class="p">,</span><span class="s2">&quot;func&quot;</span><span class="p">,</span><span class="s2">&quot;quoted&quot;</span><span class="p">,</span><span class="s2">&quot;mood&quot;</span><span class="p">,</span><span class="s2">&quot;speaker&quot;</span><span class="p">])</span>
 
 		<span class="k">if</span> <span class="n">constraint</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="o">=</span> <span class="kc">True</span>
 			<span class="n">constraint</span> <span class="o">=</span> <span class="n">constraint</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 		<span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">:</span>  <span class="c1"># Key-value constrains</span>
@@ -194,10 +196,10 @@
 					<span class="bp">self</span><span class="o">.</span><span class="n">compiled_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 			<span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;bool&quot;</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">True</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
 			<span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;bool&quot;</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">False</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
 			<span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;$&quot;</span><span class="p">):</span>
 				<span class="c1"># Antecedent-based spec, can&#39;t precompile value matcher</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;dollar&quot;</span>
@@ -226,8 +228,6 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;LAST&quot;</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">constraint</span><span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-
-
 	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">negative</span> <span class="o">==</span> <span class="n">operator</span><span class="o">.</span><span class="n">truth</span><span class="p">:</span>
 			<span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -235,12 +235,12 @@
 			<span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;!&quot;</span>
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">op</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">+</span> <span class="s2">&quot; &#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
 
-	<span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mark</span><span class="p">,</span><span class="n">lex</span><span class="p">,</span><span class="n">anaphor</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mark</span><span class="p">,</span><span class="n">lex</span><span class="p">,</span><span class="n">anaphor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="n">test_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 		<span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">negative</span>
 
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="bp">True</span>
+			<span class="k">return</span> <span class="kc">True</span>
 		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;dollar&quot;</span><span class="p">:</span>
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">anaphor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">))</span>
@@ -250,23 +250,32 @@
 			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;child&quot;</span><span class="p">:</span>
 				<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span>
-				<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>  <span class="c1"># Root token, by definition not same parent as another token</span>
+					<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+				<span class="k">elif</span> <span class="n">mark</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">!=</span> <span class="n">anaphor</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span><span class="p">:</span>
+					<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">retval</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="ow">and</span> <span class="n">anaphor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">mark</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+					<span class="n">anaphor</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+				<span class="k">return</span> <span class="n">retval</span>
 			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;has_child_func&quot;</span><span class="p">:</span>
 				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;coref rule &#39;has_child_func=$&#39; : $ identity not implemented for has_child_func&quot;</span><span class="p">)</span>
 			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span>
 				<span class="n">mods</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">head</span><span class="p">,</span> <span class="s2">&quot;modifiers&quot;</span><span class="p">)</span>
-				<span class="n">found_mod</span> <span class="o">=</span> <span class="bp">False</span>
+				<span class="n">found_mod</span> <span class="o">=</span> <span class="kc">False</span>
 				<span class="k">for</span> <span class="n">mod1</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
 					<span class="k">for</span> <span class="n">mod2</span> <span class="ow">in</span> <span class="n">mods</span><span class="p">:</span>
-						<span class="k">if</span> <span class="n">mod1</span><span class="o">.</span><span class="n">lemma</span> <span class="o">==</span> <span class="n">mod2</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> \
-						<span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod2</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-							<span class="n">found_mod</span> <span class="o">=</span> <span class="bp">True</span>
+						<span class="k">if</span> <span class="n">mod1</span><span class="o">.</span><span class="n">lemma</span> <span class="o">==</span> <span class="n">mod2</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> \
+						<span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod2</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+							<span class="n">found_mod</span> <span class="o">=</span> <span class="kc">True</span>
 				<span class="k">if</span> <span class="ow">not</span> <span class="n">found_mod</span><span class="p">:</span>
-					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="ow">and</span> <span class="n">anaphor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="ow">and</span> <span class="n">anaphor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 						<span class="n">mark</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
-					<span class="k">return</span> <span class="bp">False</span>
+					<span class="k">return</span> <span class="kc">False</span>
 				<span class="k">else</span><span class="p">:</span>
-					<span class="k">return</span> <span class="bp">True</span>
+					<span class="k">return</span> <span class="kc">True</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">:</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span><span class="p">:</span>
@@ -277,7 +286,7 @@
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">last</span><span class="p">:</span>
 					<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">last</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">entity</span><span class="o">==</span><span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="p">)</span>
 				<span class="k">else</span><span class="p">:</span>
-					<span class="k">return</span> <span class="bp">False</span>
+					<span class="k">return</span> <span class="kc">False</span>
 			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;has_child_func&quot;</span><span class="p">:</span>
 				<span class="n">test_val</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">child_func_string</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">=</span> <span class="s2">&quot;substring&quot;</span>
@@ -285,40 +294,42 @@
 					<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">+</span><span class="s2">&quot;;&quot;</span>
 			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span>
 				<span class="n">mods</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
-				<span class="n">found_mod</span> <span class="o">=</span> <span class="bp">False</span>
+				<span class="n">found_mod</span> <span class="o">=</span> <span class="kc">False</span>
 				<span class="k">for</span> <span class="n">mod1</span> <span class="ow">in</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
 					<span class="k">for</span> <span class="n">mod2</span> <span class="ow">in</span> <span class="n">mods</span><span class="p">:</span>
 						<span class="c1"># Note that mod2 is just a string - not a ParsedToken</span>
-						<span class="k">if</span> <span class="n">mod1</span><span class="o">.</span><span class="n">lemma</span> <span class="o">==</span> <span class="n">mod2</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-							<span class="n">found_mod</span> <span class="o">=</span> <span class="bp">True</span>
+						<span class="k">if</span> <span class="n">mod1</span><span class="o">.</span><span class="n">lemma</span> <span class="o">==</span> <span class="n">mod2</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+							<span class="n">found_mod</span> <span class="o">=</span> <span class="kc">True</span>
 				<span class="k">if</span> <span class="ow">not</span> <span class="n">found_mod</span><span class="p">:</span>
-					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="ow">and</span> <span class="n">anaphor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="ow">and</span> <span class="n">anaphor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 						<span class="n">mark</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
-					<span class="k">return</span> <span class="bp">False</span>
+					<span class="k">return</span> <span class="kc">False</span>
 				<span class="k">else</span><span class="p">:</span>
-					<span class="k">return</span> <span class="bp">True</span>
+					<span class="k">return</span> <span class="kc">True</span>
 			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;head&quot;</span><span class="p">:</span>
 				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;coref rule &#39;head=VAL&#39; : value match not implemented for head&quot;</span><span class="p">)</span>
 			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;child&quot;</span><span class="p">:</span>
 				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;coref rule &#39;child=VAL&#39; : value match not implemented for child&quot;</span><span class="p">)</span>
 
-
-
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;exact&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+			<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;substring&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="n">test_val</span><span class="p">)</span>
+			<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="n">test_val</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;regex&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compiled_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">test_val</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+			<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compiled_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">test_val</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;startswith&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+			<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
 		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;endswith&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+			<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
 		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;dollar&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+			<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+			<span class="n">retval</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">test_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
+		<span class="k">if</span> <span class="n">retval</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_failure</span> <span class="ow">and</span> <span class="n">anaphor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">mark</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">anaphor</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">retval</span></div>
 
 </pre></div>
 
@@ -353,7 +364,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'1.3.0',
+            VERSION:'1.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

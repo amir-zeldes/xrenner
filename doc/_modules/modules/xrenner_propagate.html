@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_propagate &mdash; xrenner 1.3.0 documentation</title>
+  <title>modules.xrenner_propagate &mdash; xrenner 1.4.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 1.3.0 documentation" href="../../index.html"/>
+    <link rel="top" title="xrenner 1.4.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.3
+                1.4
               </div>
             
           
@@ -211,7 +211,7 @@
 <span class="sd">	:param candidate: Coreferent antecdedent Markable object</span>
 <span class="sd">	:return: void</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">markable</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">markable</span><span class="o">.</span><span class="n">agree</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
 		<span class="n">candidate</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">agree</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">markable</span><span class="o">.</span><span class="n">agree</span> <span class="o">=</span> <span class="n">candidate</span><span class="o">.</span><span class="n">agree</span></div>
@@ -248,7 +248,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'1.3.0',
+            VERSION:'1.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using xrenner &mdash; xrenner 1.3.0 documentation</title>
+  <title>Using xrenner &mdash; xrenner 1.4.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 1.3.0 documentation" href="index.html"/>
+    <link rel="top" title="xrenner 1.4.0 documentation" href="index.html"/>
         <link rel="next" title="Buliding New Language Models" href="models.html"/>
         <link rel="prev" title="Welcome to xrenner’s documentation!" href="index.html"/> 
 
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.3
+                1.4
               </div>
             
           
@@ -87,6 +87,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">     Using xrenner</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#batch-input">Batch input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importing-as-a-module">Importing as a module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-format">Input format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#output-formats">Output formats</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#sgml-default">sgml (default)</a></li>
@@ -95,6 +96,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#onto">onto</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#paula">paula</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#unittest">unittest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#none">none</a></li>
 </ul>
 </li>
 </ul>
@@ -155,7 +157,7 @@
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-m</span> <span class="pre">deu</span> <span class="pre">infile.conll10</span></code></p>
 <p>The default output format is a simple inline SGML format, but other output formats are available, using the -o option:</p>
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-o</span> <span class="pre">conll</span> <span class="pre">infile.conll10</span></code></p>
-<p>If your model includes alternative setting profiles in an override.ini file, you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:</p>
+<p>If your model includes alternative setting profiles in an override.ini file (or compressed model component), you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:</p>
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-x</span> <span class="pre">gum</span> <span class="pre">infile.conll10</span></code></p>
 <p>You can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected.</p>
 </div>
@@ -164,6 +166,23 @@
 <p>You can use <a class="reference external" href="https://docs.python.org/2/library/glob.html">glob</a> syntax  to process multiple files in batch mode. This will be substantially faster than invoking the xrenner multiple times, since the lexical data will only be loaded once. For example, you can read all .conll10 files in a directory like this:</p>
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">*.conll10</span></code></p>
 <p>In batch mode, output file names are automatically generated using the input file name, minus extensions like &#8216;conll10&#8217; or &#8216;conllu&#8217;, and suffixed with the output format extension. For PAULA, document directories with names corresponding to the input documents are generated automatically.</p>
+</div>
+<div class="section" id="importing-as-a-module">
+<h2>Importing as a module<a class="headerlink" href="#importing-as-a-module" title="Permalink to this headline">¶</a></h2>
+<p>You can import xrenner as a module. It may be convenient to just install xrenner via pip in this scenario:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">xrenner</span>
+</pre></div>
+</div>
+<p>Then you can import the Xrenner object and feed it a string containing a 10 column conll format parse (see below on formats):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xrenner</span> <span class="kn">import</span> <span class="n">Xrenner</span>
+
+<span class="n">xrenner</span> <span class="o">=</span> <span class="n">Xrenner</span><span class="p">()</span>
+<span class="n">my_conllx_result</span> <span class="o">=</span> <span class="n">some_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;John visited Spain. His visit went well.&quot;</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">my_conllx_result</span><span class="p">,</span><span class="s2">&quot;sgml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Keep in mind that the parser output must match whatever annotation scheme the xrenner model is expecting (tags, label names, head-dependent conventions, etc.)</p>
 </div>
 <div class="section" id="input-format">
 <h2>Input format<a class="headerlink" href="#input-format" title="Permalink to this headline">¶</a></h2>
@@ -332,6 +351,10 @@ role in the 1969 film Easy Rider
 <h3>unittest<a class="headerlink" href="#unittest" title="Permalink to this headline">¶</a></h3>
 <p>This is an internal format used only to generate test cases for xrenner unit tests.</p>
 </div>
+<div class="section" id="none">
+<h3>none<a class="headerlink" href="#none" title="Permalink to this headline">¶</a></h3>
+<p>This is a dummy format setting - run the analysis but produce no output.</p>
+</div>
 </div>
 </div>
 
@@ -376,7 +399,7 @@ role in the 1969 film Easy Rider
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.3.0',
+            VERSION:'1.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

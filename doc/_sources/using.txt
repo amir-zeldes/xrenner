@@ -18,7 +18,7 @@ The default output format is a simple inline SGML format, but other output forma
 
 ``> python xrenner.py -o conll infile.conll10``
 
-If your model includes alternative setting profiles in an override.ini file, you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:
+If your model includes alternative setting profiles in an override.ini file (or compressed model component), you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:
 
 ``> python xrenner.py -x gum infile.conll10``
 
@@ -33,6 +33,30 @@ You can use `glob <https://docs.python.org/2/library/glob.html>`_ syntax  to pro
 ``> python xrenner.py *.conll10``
 
 In batch mode, output file names are automatically generated using the input file name, minus extensions like 'conll10' or 'conllu', and suffixed with the output format extension. For PAULA, document directories with names corresponding to the input documents are generated automatically.
+
+
+**********************
+Importing as a module
+**********************
+
+You can import xrenner as a module. It may be convenient to just install xrenner via pip in this scenario::
+
+   > pip install xrenner
+   
+Then you can import the Xrenner object and feed it a string containing a 10 column conll format parse (see below on formats):
+
+
+.. code-block:: python
+
+   from xrenner import Xrenner
+   
+   xrenner = Xrenner()
+   my_conllx_result = some_parser.parse("John visited Spain. His visit went well.")
+   
+   print xrenner.analyze(my_conllx_result,"sgml")
+
+
+Keep in mind that the parser output must match whatever annotation scheme the xrenner model is expecting (tags, label names, head-dependent conventions, etc.)
 
 *************
 Input format
@@ -221,3 +245,8 @@ unittest
 --------
 
 This is an internal format used only to generate test cases for xrenner unit tests.
+
+none
+----
+
+This is a dummy format setting - run the analysis but produce no output.
