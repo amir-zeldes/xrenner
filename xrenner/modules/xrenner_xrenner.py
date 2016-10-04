@@ -67,6 +67,7 @@ class Xrenner:
 		if "\t" in infile or isinstance(infile,list):  # This is a raw parse as string or list, not a file name
 			self.docpath = os.path.dirname(os.path.abspath("."))
 			self.docname = "untitled"
+			infile = infile.replace("\r","").split("\n")
 		else:  # This is a file name, extract document name and path, then read the file
 			self.docpath = os.path.dirname(os.path.abspath(infile))
 			self.docname = clean_filename(ntpath.basename(infile))
