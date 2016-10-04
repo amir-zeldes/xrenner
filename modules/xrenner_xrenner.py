@@ -45,6 +45,15 @@ class Xrenner:
 		self.override = override
 		self.lex = LexData(self.model, self.override)
 
+	def set_doc_name(self, name):
+		"""
+		Method to manually set the name of the document being processed, rather than deriving it from an input file name.
+
+		:param name: string, the name to give the document
+		:return: void
+		"""
+		self.docname = name
+
 	def analyze(self, infile, out_format):
 		"""
 		Method to run coreference analysis with loaded model
