@@ -18,7 +18,7 @@ The default output format is a simple inline SGML format, but other output forma
 
 ``> python xrenner.py -o conll infile.conll10``
 
-If your model includes alternative setting profiles in an override.ini file, you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:
+If your model includes alternative setting profiles in an override.ini file (or compressed model component), you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:
 
 ``> python xrenner.py -x gum infile.conll10``
 

@@ -8,16 +8,16 @@ Introduction
 
 Beyond the language models that are available in the xrenner distribution, you can build your own models, or modify existing models, by editing their configuration files and gathering lexical data for your target language or domain.
 
-A language model in xrenner is defined by a set of files in a directory under the models/ directory. For exmple, the default English language
-model is models/eng/, and different models, typically named using ISO 639-2 three letter language codes, can be invoked using the -m option. The following
-example invokes the German language model, named *deu* (for Deutsch, i.e. German):
+A language model in xrenner is defined by a set of files in a directory under the models/ directory, or in a compressed archive containing such files, conventionally marked by the extension .xrm. For exmple, the default English language model is models/eng/, and different models, typically named using ISO 639-2 three letter language codes, can be invoked using the -m option. The following example invokes the German language model, named *deu* (for Deutsch, i.e. German):
 
 .. code-block:: bash
 
   > python xrenner.py -m deu infile.conll10
   
- 
-Most of the language model files listed below are optional, but some, listed below, must be included in each model. The main configuration file determining the general behavior for a language is *config.ini*. Different variant behaviors for the same language model, using the same lexical data, can be created as configuration overide profiles using the optional *overide.ini* file.
+
+To locate this model, xrenner first checks whether you have supplied an absolute or relative model path (e.g. /path/to/model/deu.xrm, or my_subdir/deu/). If you have supplied just the model name, as in *deu* above, xrenner assumes that the model is located under the xrenner installation directory in the ./models/ sub-directory. If there is either a directory or a file called *deu* (or *deu.xrm* for a compressed model), that model will be used.
+  
+Most of the language model files listed below are optional, but some, listed below, must be included in each model (whether compressed or not). The main configuration file determining the general behavior for a language is *config.ini*. Different variant behaviors for the same language model, using the same lexical data, can be created as configuration overide profiles using the optional *overide.ini* file.
 
 At a minimum, a model must include:
 

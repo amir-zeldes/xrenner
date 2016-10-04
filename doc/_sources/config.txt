@@ -1,7 +1,7 @@
 =============
 config.ini
 =============
-The main configuration file for a language model is *config.ini*. It contains several kinds of settings:
+The main configuration file for a language model is *config.ini* (either in the model directory, or inside the compressed model archive). It contains several kinds of settings:
 
 * **regex** - regular expressions, always stand between two slashes, e.g. property=/[Vv]alue/
 * **literal** - exact values, have no delimiters, e.g. property=value
