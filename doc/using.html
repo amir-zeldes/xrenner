@@ -87,6 +87,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">     Using xrenner</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#batch-input">Batch input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importing-as-a-module">Importing as a module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#input-format">Input format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#output-formats">Output formats</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#sgml-default">sgml (default)</a></li>
@@ -165,6 +166,23 @@
 <p>You can use <a class="reference external" href="https://docs.python.org/2/library/glob.html">glob</a> syntax  to process multiple files in batch mode. This will be substantially faster than invoking the xrenner multiple times, since the lexical data will only be loaded once. For example, you can read all .conll10 files in a directory like this:</p>
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">*.conll10</span></code></p>
 <p>In batch mode, output file names are automatically generated using the input file name, minus extensions like &#8216;conll10&#8217; or &#8216;conllu&#8217;, and suffixed with the output format extension. For PAULA, document directories with names corresponding to the input documents are generated automatically.</p>
+</div>
+<div class="section" id="importing-as-a-module">
+<h2>Importing as a module<a class="headerlink" href="#importing-as-a-module" title="Permalink to this headline">¶</a></h2>
+<p>You can import xrenner as a module. It may be convenient to just install xrenner via pip in this scenario:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">xrenner</span>
+</pre></div>
+</div>
+<p>Then you can import the Xrenner object and feed it a string containing a 10 column conll format parse (see below on formats):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xrenner</span> <span class="kn">import</span> <span class="n">Xrenner</span>
+
+<span class="n">xrenner</span> <span class="o">=</span> <span class="n">Xrenner</span><span class="p">()</span>
+<span class="n">my_conllx_result</span> <span class="o">=</span> <span class="n">some_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;John visited Spain. His visit went well.&quot;</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">my_conllx_result</span><span class="p">,</span><span class="s2">&quot;sgml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Keep in mind that the parser output must match whatever annotation scheme the xrenner model is expecting (tags, label names, head-dependent conventions, etc.)</p>
 </div>
 <div class="section" id="input-format">
 <h2>Input format<a class="headerlink" href="#input-format" title="Permalink to this headline">¶</a></h2>

@@ -42,9 +42,29 @@ Input format:
 		5	,	,	,	,	_	0	punct	_	_
 		6	2013	2013	CD	CD	_	3	tmod	_	_
 
+Installation:
+-------------
+Download and use the main xrenner.py script on an input file, or install from PyPI and import as a module::
+
+   > pip install xrenner
+
+
 Examples:
 ---------
 * python xrenner.py example_in.conll10 > example_out.sgml
 * python xrenner.py -x GUM example_in.conll10 > example_out.sgml
 * python xrenner.py -o conll example_in.conll10 > example_out.conll
 * python xrenner.py -m eng -o conll example_in.conll10 > example_out.conll
+
+
+Module usage:
+-------------
+
+.. code-block:: python
+
+   from xrenner import Xrenner
+   
+   xrenner = Xrenner()
+   my_conllx_result = some_parser.parse("John visited Spain. His visit went well.")
+   
+   print xrenner.analyze(my_conllx_result,"sgml")
