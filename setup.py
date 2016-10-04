@@ -1,7 +1,9 @@
 from distutils.core import setup
+from setuptools import find_packages
+
 setup(
   name = 'xrenner',
-  packages = ['xrenner'],
+  packages = find_packages(),
   version = '1.4.1',
   description = 'A configurable, language independent coreferencer and (non) named entity recognizer',
   author = 'Amir Zeldes',
