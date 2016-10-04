@@ -31,36 +31,62 @@ class LexData:
 		self.atoms = {}
 		self.mod_atoms = {}
 
-		model_path = os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + model + os.sep
-		model_files = [f for f in listdir(model_path) if isfile(join(model_path, f))]
+		# Lookup model path
+
+		if os.sep in self.model:  # Check if model provided is an absolute or relative path
+			model_path = os.path.abspath(self.model)
+		# Check the unlikely case that the model is directly in xrenner.py's directory
+		elif os.path.exists(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + model):
+			model_path = os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + model
+		else:  # This is a pathless model name specification, which is expected to live in ./models/
+			model_path = os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + model
+
+		# Read model files and store in self.model_files dictionary
+
+		self.model_files = {}
+		if os.path.isdir(model_path):  # Check if this is a directory or a compressed model file
+			model_path += os.sep
+			model_files_list = [f for f in listdir(model_path) if isfile(join(model_path, f))]
+			for filename in model_files_list:
+				self.model_files[filename] = open(model_path + filename,'rb')
+		else:
+			from zipfile import ZipFile
+			try:
+				zip = ZipFile(model_path)
+				model_files_list = [f for f in zip.namelist() if not os.path.isdir(f)]
+				for filename in model_files_list:
+					self.model_files[filename] = zip.open(filename)
+			except:
+				raise IOError("Could not open model file " + filename)
+
 
 		self.entity_sums = defaultdict(int)
 
-		# Mandatory files must be included in model directory
-		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.read_delim('coref_rules.tab', 'single'))
+		# Mandatory files must be included in model
+		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.read_delim(self.model_files['coref_rules.tab'], 'single'))
 		self.coref_rules = self.non_speaker_rules
-		self.entities = self.read_delim('entities.tab', 'triple')
-		self.entity_heads = self.read_delim('entity_heads.tab', 'triple', 'atoms', True)
-		self.pronouns = self.read_delim('pronouns.tab', 'double')
+		self.entities = self.read_delim(self.model_files['entities.tab'], 'triple')
+		self.entity_heads = self.read_delim(self.model_files['entity_heads.tab'], 'triple', 'atoms', True)
+		self.pronouns = self.read_delim(self.model_files['pronouns.tab'], 'double')
 		# Get configuration
 		self.filters = self.get_filters(override)
 
 
 		# Optional files improve model accuracy
-		self.names = self.read_delim('names.tab') if "names.tab" in model_files else {}
-		self.stop_list = self.read_delim('stop_list.tab', 'low') if "stop_list.tab" in model_files else set([])
-		self.open_close_punct = self.read_delim('open_close_punct.tab') if "open_close_punct.tab" in model_files else {}
+		self.names = self.read_delim(self.model_files['names.tab']) if "names.tab" in self.model_files else {}
+		self.stop_list = self.read_delim(self.model_files['stop_list.tab'], 'low') if "stop_list.tab" in self.model_files else set([])
+		self.open_close_punct = self.read_delim(self.model_files['open_close_punct.tab']) if "open_close_punct.tab" in self.model_files else {}
 		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
-		self.entity_mods = self.read_delim('entity_mods.tab', 'triple', 'mod_atoms') if "entity_mods.tab" in model_files else {}
-		self.entity_deps = self.read_delim('entity_deps.tab','quadruple') if "entity_deps.tab" in model_files else {}
-		self.hasa = self.read_delim('hasa.tab', 'triple_numeric') if "hasa.tab" in model_files else {}
-		self.coref = self.read_delim('coref.tab') if "coref.tab" in model_files else {}
-		self.numbers = self.read_delim('numbers.tab','double') if "numbers.tab" in model_files else {}
-		self.affix_tokens = self.read_delim('affix_tokens.tab') if "affix_tokens.tab" in model_files else {}
-		self.antonyms = self.read_antonyms() if "antonyms.tab" in model_files else {}
-		self.isa = self.read_isa() if "isa.tab" in model_files else {}
-		self.debug = self.read_delim('debug.tab') if "debug.tab" in model_files else {"ana":"","ante":"","ablations":""}
-		additional_atoms = self.read_delim('atoms.tab','double') if "atoms.tab" in model_files else {}
+		self.entity_mods = self.read_delim(self.model_files['entity_mods.tab'], 'triple', 'mod_atoms') if "entity_mods.tab" in self.model_files else {}
+		self.entity_deps = self.read_delim(self.model_files['entity_deps.tab'], 'quadruple') if "entity_deps.tab" in self.model_files else {}
+		self.hasa = self.read_delim(self.model_files['hasa.tab'], 'triple_numeric') if "hasa.tab" in self.model_files else {}
+		self.coref = self.read_delim(self.model_files['coref.tab']) if "coref.tab" in self.model_files else {}
+		self.numbers = self.read_delim(self.model_files['numbers.tab'], 'double') if "numbers.tab" in self.model_files else {}
+		self.affix_tokens = self.read_delim(self.model_files['affix_tokens.tab']) if "affix_tokens.tab" in self.model_files else {}
+		self.antonyms = self.read_antonyms() if "antonyms.tab" in self.model_files else {}
+		self.isa = self.read_isa() if "isa.tab" in self.model_files else {}
+		self.debug = self.read_delim(self.model_files['debug.tab']) if "debug.tab" in self.model_files else {"ana":"","ante":"","ablations":""}
+		additional_atoms = self.read_delim(self.model_files['atoms.tab'], 'double') if "atoms.tab" in self.model_files else {}
 
 		# Compile atom and first + last name data
 		self.atoms = self.get_atoms()
@@ -68,10 +94,11 @@ class LexData:
 		self.first_names, self.last_names = self.get_first_last_names(self.names)
 
 		if self.filters["no_new_modifiers"] and self.filters["use_new_modifier_exceptions"]:
-			self.exceptional_new_modifiers = self.read_delim('new_modifiers.tab', 'double') if "new_modifiers.tab" in model_files else {}
+			self.exceptional_new_modifiers = self.read_delim(self.model_files['new_modifiers.tab'], 'double') if "new_modifiers.tab" in self.model_files else {}
 			self.exceptional_new_modifiers.update(dict((name, 1) for name in self.first_names))
 		else:
 			self.exceptional_new_modifiers = {}
+
 
 		self.pos_agree_mappings = self.get_pos_agree_mappings()
 		self.last = {}
@@ -102,7 +129,7 @@ class LexData:
 			atom_list = self.atoms
 		elif atom_list_name == "mod_atoms":
 			atom_list = self.mod_atoms
-		with open(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + filename, 'rb') as csvfile:
+		with filename as csvfile:
 			reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
 			if mode == "low":
 				return set([rows[0].lower() for rows in reader if not rows[0].startswith('#') and not len(rows[0]) == 0])
@@ -188,7 +215,7 @@ class LexData:
 
 		:return: dictionary from words to antonym sets
 		"""
-		set_list = self.read_delim('antonyms.tab', 'low')
+		set_list = self.read_delim(self.model_files['antonyms.tab'], 'low')
 		output = defaultdict(set)
 		for antoset in set_list:
 			members = antoset.lower().split(",")
@@ -203,7 +230,7 @@ class LexData:
 
 		:return: dictionary from words to lists of corresponding isa-matches
 		"""
-		isa_list = self.read_delim('isa.tab')
+		isa_list = self.read_delim(self.model_files['isa.tab'])
 		output = {}
 		for isa in isa_list:
 			output[isa] = []
@@ -222,17 +249,18 @@ class LexData:
 
 		#e.g., override = 'OntoNotes'
 		config = ConfigParser.ConfigParser()
-		config.read(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + 'config.ini')
+
+		config.readfp(self.model_files["config.ini"])
 		filters = {}
 		options = config.options("main")
 
 		if override:
 			config_ovrd = ConfigParser.ConfigParser()
-			config_ovrd.read(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + 'override.ini')
+			config_ovrd.readfp(self.model_files['override.ini'])
 			try:
 				options_ovrd = config_ovrd.options(override)
 			except ConfigParser.NoSectionError:
-				sys.stderr.write("\nNo section " +  override + " in override.ini in model " + self.model + "\n")
+				sys.stderr.write("\nNo section " + override + " in override.ini in model " + self.model + "\n")
 				sys.exit()
 
 		for option in options:

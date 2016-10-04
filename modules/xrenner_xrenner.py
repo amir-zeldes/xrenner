@@ -30,7 +30,7 @@ class Xrenner:
 		:return: void
 		"""
 		self.load(model, override)
-		depedit_config = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + self.model + os.sep + "depedit.ini")
+		depedit_config = self.lex.model_files["depedit.ini"]
 		self.depedit = DepEdit(depedit_config)
 
 	def load(self, model="eng", override=None):
@@ -62,6 +62,10 @@ class Xrenner:
 			self.docpath = os.path.dirname(os.path.abspath(infile))
 			self.docname = clean_filename(ntpath.basename(infile))
 			infile = open(infile)
+
+		# Empty cached lists of incompatible pairs
+		self.lex.incompatible_mod_pairs = set([])
+		self.lex.incompatible_isa_pairs = set([])
 
 		infile = self.depedit.run_depedit(infile)
 		infile = infile.split("\n")
