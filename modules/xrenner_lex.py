@@ -41,6 +41,12 @@ class LexData:
 		else:  # This is a pathless model name specification, which is expected to live in ./models/
 			model_path = os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "models" + os.sep + model
 
+		if not os.path.exists(model_path):  # Check if this is a default model name that might need the .xrm extension
+			if os.path.exists(model_path + ".xrm"):
+				model_path += ".xrm"
+			else:
+				raise IOError("Model not found at: " + model_path)
+
 		# Read model files and store in self.model_files dictionary
 
 		self.model_files = {}
