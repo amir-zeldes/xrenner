@@ -13,7 +13,7 @@ from modules.xrenner_xrenner import Xrenner
 from glob import glob
 
 
-__version__ = "1.4.0" 
+__version__ = "1.4.1" 
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
