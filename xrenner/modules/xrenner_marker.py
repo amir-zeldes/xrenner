@@ -282,11 +282,16 @@ def resolve_entity_cascade(entity_text, mark, lex):
 				mark.alt_entities.append(parsed_entity[0])
 				mark.alt_subclasses.append(parsed_entity[1])
 				options[parsed_entity[0]] = parsed_entity
-	if entity_text in lex.names:
+	if entity_text in lex.names or entity_text in lex.last_names or entity_text in lex.first_names:
 		if (entity_text[0].istitle() or not lex.filters["cap_names"]) and person_entity not in mark.alt_entities:
 			mark.alt_entities.append(lex.filters["person_def_entity"])
 			mark.alt_subclasses.append(lex.filters["person_def_entity"])
-			options[person_entity] = (person_entity, person_entity, lex.names[entity_text],"names_match")
+			name_agree = ""
+			if entity_text in lex.names:
+				name_agree = lex.names[entity_text]
+			elif entity_text in lex.first_names:
+				name_agree = lex.first_names[entity_text]
+			options[person_entity] = (person_entity, person_entity, name_agree,"names_match")
 	if len(mark.alt_entities) < 1 and 0 < entity_text.count(" ") < 3 and lex.filters["person_def_entity"] not in mark.alt_entities:
 		if entity_text.split(" ")[0] in lex.first_names and entity_text.split(" ")[-1] in lex.last_names:
 			if entity_text[0].istitle() or not lex.filters["cap_names"]:
