@@ -1,6 +1,6 @@
 xrenner - eXternally configurable REference and Non Named Entity Recognizer
 
-Copyright 2015 Amir Zeldes
+Copyright 2015-2016 Amir Zeldes
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this software except in compliance with the License.
