@@ -91,6 +91,7 @@ class LexData:
 		self.affix_tokens = self.read_delim(self.model_files['affix_tokens.tab']) if "affix_tokens.tab" in self.model_files else {}
 		self.antonyms = self.read_antonyms() if "antonyms.tab" in self.model_files else {}
 		self.isa = self.read_isa() if "isa.tab" in self.model_files else {}
+		self.similar = self.read_delim(self.model_files['similar.tab'], 'double_with_sep') if "similar.tab" in self.model_files else {}
 		self.debug = self.read_delim(self.model_files['debug.tab']) if "debug.tab" in self.model_files else {"ana":"","ante":"","ablations":""}
 		additional_atoms = self.read_delim(self.model_files['atoms.tab'], 'double') if "atoms.tab" in self.model_files else {}
 
@@ -116,13 +117,16 @@ class LexData:
 		self.lemma_rules = self.compile_lemmatization()
 		self.morph_rules = self.compile_morph_rules()
 
+		# Parse nested entity removal types
+		self.rm_nested_entities = self.parse_rm_nested_entities()
+
 		# Caching lists for already established non-matching pairs
 		self.incompatible_mod_pairs = set([])
 		self.incompatible_isa_pairs = set([])
 
 		gc.enable()
 
-	def read_delim(self, filename, mode="normal", atom_list_name="atoms", add_to_sums=False):
+	def read_delim(self, filename, mode="normal", atom_list_name="atoms", add_to_sums=False, sep=","):
 		"""
 		Generic file reader for lexical data in model directory
 
@@ -175,6 +179,12 @@ class LexData:
 				for row in reader:
 					if not row[0].startswith("#"):
 						out_dict[row[0]][row[1]][row[2]] = int(row[3])
+				return out_dict
+			elif mode == "double_with_sep":
+				out_dict = {}
+				for row in reader:
+					if not row[0].startswith("#"):
+						out_dict[row[0]] = row[1].split(sep)
 				return out_dict
 			else:
 				return dict((rows[0], rows[1]) for rows in reader if not rows[0].startswith('#'))
@@ -415,6 +425,16 @@ class LexData:
 				non_speaker_rules.append(CorefRule(rule))
 
 		return speaker_rules, non_speaker_rules
+
+	def parse_rm_nested_entities(self):
+		rm_string = self.filters["remove_nested_entities"]
+		types = rm_string.split(";")
+		rm_nested_entities = []
+		for ent_type in types:
+			if ent_type.count(",") == 2:
+				nested, func, container = ent_type.split(",")
+				rm_nested_entities.append((nested, func, container))
+		return rm_nested_entities
 
 	def get_morph(self):
 		"""

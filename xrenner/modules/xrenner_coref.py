@@ -121,7 +121,7 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 		elif ante_spec.find("lookahead") == -1:
 			# Reached back too far according to max_dist, stop looking
 			break
-	if len(candidate_list)>0:
+	if len(candidate_list) > 0:
 		candidates_to_remove = []
 		for candidate_item in candidate_list:
 			# Remove items that are prohibited by entity agree mapping
@@ -129,6 +129,11 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 			for pair in agree_entity_mapping:
 				if pair.split(">")[0] == markable.agree and pair.split(">")[1] != candidate_item.entity:
 					candidates_to_remove.append(candidate_item)
+			if candidate_item.entity == lex.filters["person_def_entity"] and (candidate.form != "pronoun" or markable.entity_certainty == "certain") and lex.filters["no_person_agree"].match(markable.agree) is not None:
+				candidates_to_remove.append(candidate_item)
+			elif markable.entity == lex.filters["person_def_entity"] and (markable.form != "pronoun" or markable.entity_certainty == "certain") and lex.filters["no_person_agree"].match(candidate_item.agree) is not None:
+				candidates_to_remove.append(candidate_item)
+
 		for removal in candidates_to_remove:
 			candidate_list.remove(removal)
 		if len(candidate_list)>0:
