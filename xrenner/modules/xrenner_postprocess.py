@@ -30,8 +30,8 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 	# Check for markables to remove in postprocessing
 	if len(lex.filters["remove_head_func"].pattern) > 0:
 		for mark in markables:
-			if lex.filters["remove_head_func"].match(mark.head.func) is not None and (mark.form != "proper" or \
-						mark.entity == "abstract" or \
+			if lex.filters["remove_head_func"].match(mark.head.func) is not None and (mark.form != "proper" or
+						mark.entity == "abstract" or
 						(mark.text in ["U.S.","US"] and mark.func == "nn") or mark.text in lex.first_names): # TODO: de-hardwire Proper restriction matching OntoNotes guidelines; US is interpreted as "American" (amod); forbid abstract nn modifier even if proper
 				splice_out(mark, marks_by_group[mark.group])
 	if len(lex.filters["remove_child_func"].pattern) > 0:
@@ -39,6 +39,11 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 			for child_func in mark.head.child_funcs:
 				if lex.filters["remove_child_func"].match(child_func) is not None and mark.head.func != "cata":
 					splice_out(mark, marks_by_group[mark.group])
+	# Handle nested compound persons
+	if len(lex.rm_nested_entities) > 0:
+		for mark in markables:
+			if remove_nested(mark,markbyhead,lex):
+				splice_out(mark, marks_by_group[mark.group])
 
 	# Remove i in i rule (no overlapping markable coreference in group)
 	# TODO: make this more efficient (iterates all pairwise comparisons)
@@ -215,3 +220,12 @@ def create_envelope(first,second, conll_tokens):
 
 	return envelope
 
+
+def remove_nested(mark,markbyhead,lex):
+	for nested_entity, func, container_entity in lex.rm_nested_entities:
+		if mark.func == func and mark.entity == nested_entity:
+			if mark.head.head in markbyhead:
+				container = markbyhead[mark.head.head]
+				if container.entity == container_entity:
+					return True
+	return False
