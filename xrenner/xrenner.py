@@ -14,7 +14,6 @@ from glob import glob
 from multiprocessing import Process, Value, Lock
 from math import ceil
 
-
 __version__ = "1.4.1"
 xrenner_version = "xrenner V" + __version__
 
@@ -22,21 +21,41 @@ sys.dont_write_bytecode = True
 
 
 class Counter(object):
-	def __init__(self, initval=0):
-		self.docs = Value('i', initval)
-		self.sents = Value('i', initval)
-		self.toks = Value('i', initval)
-		self.lock = Lock()
+	"""
+	Counter to synchronize progress in multiple processes. Set lock to False
+	for single process, especially for running from a subprocess.
+	Note that for verbose behavior, lock must be True, and subprocess invocation
+	may fail.
+	"""
+	def __init__(self, initval=0, lock=True):
+		if lock:
+			self.docs = Value('i', initval)
+			self.sents = Value('i', initval)
+			self.toks = Value('i', initval)
+			self.lock = Lock()
+		else:
+			self.docs = initval
+			self.sents = initval
+			self.toks = initval
+			self.lock = False
 
 	def increment(self,docs,sents,toks):
-		with self.lock:
-			self.docs.value += docs
-			self.sents.value += sents
-			self.toks.value += toks
+		if not self.lock:
+			self.docs += docs
+			self.sents += sents
+			self.toks += toks
+		else:
+			with self.lock:
+				self.docs.value += docs
+				self.sents.value += sents
+				self.toks.value += toks
 
 	def value(self):
-		with self.lock:
-			return (self.docs.value,self.sents.value,self.toks.value)
+		if not self.lock:
+			return (self.docs, self.sents, self.toks)
+		else:
+			with self.lock:
+				return (self.docs.value,self.sents.value,self.toks.value)
 
 def xrenner_worker(data,options,total_docs,counter):
 	tokens = 0
@@ -87,7 +106,6 @@ if __name__ == "__main__":
 	parser.add_argument('--version', action='version', version=xrenner_version, help="show xrenner version number and quit")
 
 	total_docs = 0
-	counter = Counter(0)
 
 	# Check if -t is invoked and run unit tests instead of parsing command line
 	if len(sys.argv) > 1 and sys.argv[1] in ["-t", "--test"]:
@@ -104,6 +122,9 @@ if __name__ == "__main__":
 			sys.stderr.write("\nReading language model...\n")
 
 		data = glob(options.file)
+		if data == []:
+			sys.stderr.write("\nCan't find input at " + options.file +"\nAborting\n")
+			sys.exit()
 		if not isinstance(data, list):
 			split_data = [data]
 		else:
@@ -112,7 +133,13 @@ if __name__ == "__main__":
 			chunk_size = int(ceil(len(data)/float(procs)))
 			split_data = [data[i:i + chunk_size] for i in xrange(0, len(data), chunk_size)]
 
+		if procs > 1 or options.verbose:
+			lock = True
+		else:
+			lock = False
+		counter = Counter(0,lock=lock)
 		jobs = []
+
 		for sublist in split_data:
 			p = Process(target=xrenner_worker,args=(sublist,options,len(data),counter))
 			jobs.append(p)
