@@ -54,6 +54,7 @@ class Xrenner:
 		"""
 		self.docname = name
 
+	#@profile
 	def analyze(self, infile, out_format):
 		"""
 		Method to run coreference analysis with loaded model
@@ -278,6 +279,8 @@ class Xrenner:
 			return output_webanno(conll_tokens[1:], markables)
 		elif out_format == "conll":
 			return output_conll(conll_tokens, markstart_dict, markend_dict, self.docname, True)
+		elif out_format == "conll_sent":
+			return output_conll_sent(conll_tokens, markstart_dict, markend_dict, self.docname, True)
 		elif out_format == "onto":
 			return output_onto(conll_tokens, markstart_dict, markend_dict, self.docname)
 		elif out_format == "unittest":
@@ -288,6 +291,7 @@ class Xrenner:
 		else:
 			return output_SGML(conll_tokens, markstart_dict, markend_dict)
 
+	#@profile
 	def process_sentence(self, tokoffset, sentence):
 		"""
 		Function to analyze a single sentence
@@ -346,7 +350,7 @@ class Xrenner:
 		for tok1 in conll_tokens[tokoffset + 1:]:
 			# Affix tokens can't be markable heads - assume parser error and fix if desired
 			# DEBUG POINT
-			if tok1.text.strip() == lex.debug["ana"]:
+			if tok1.text == lex.debug["ana"]:
 				pass
 			if lex.filters["postprocess_parser"]:
 				if ((lex.filters["mark_head_pos"].match(tok1.pos) is not None and lex.filters["mark_forbidden_func"].match(tok1.func) is None) or
@@ -426,7 +430,7 @@ class Xrenner:
 		for tok in conll_tokens[tokoffset + 1:]:
 			# Markable heads should match specified pos or pos+func combinations,
 			# ruling out stop list items with appropriate functions
-			if tok.text.strip() == lex.debug["ana"]:
+			if tok.text == lex.debug["ana"]:
 				pass
 			# TODO: consider switch for lex.filters["stop_func"].match(tok.func)
 			if ((lex.filters["mark_head_pos"].match(tok.pos) is not None and lex.filters["mark_forbidden_func"].match(tok.func) is None) or
@@ -518,7 +522,7 @@ class Xrenner:
 			this_markable = Markable("referent_" + str(self.markcounter), mark.head, mark.form,
 									 mark.definiteness, mark.start, mark.end, mark.text, mark.core_text, mark.entity, mark.entity_certainty,
 									 mark.subclass, "new", mark.agree, mark.sentence, "none", "none", self.groupcounter,
-									 mark.alt_entities, mark.alt_subclasses, mark.alt_agree,mark.cardinality,mark.submarks,mark.coordinate)
+									 mark.alt_entities, mark.alt_subclasses, mark.alt_agree,mark.cardinality,mark.submarks,mark.coordinate,mark.agree_certainty)
 			markables.append(this_markable)
 			markables_by_head[mark_id] = this_markable
 			markstart_dict[this_markable.start].append(this_markable)
