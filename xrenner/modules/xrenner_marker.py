@@ -117,6 +117,10 @@ def resolve_mark_entity(mark, lex):
 		if "no_entity_sim" in lex.debug["ablations"]:
 			use_entity_sims= False
 
+	## DEBUG POINT ##
+	if mark.text == lex.debug["ana"]:
+		pass
+
 	parent_text = mark.head.head_text
 	if mark.form == "pronoun":
 		if re.search(r'[12]',mark.agree):  # Explicit 1st or 2nd person pronoun
@@ -281,6 +285,7 @@ def resolve_mark_entity(mark, lex):
 		mark.entity = mark.entity.split("/")[0]
 	elif mark.entity == lex.filters["person_def_entity"] and mark.agree == lex.filters["default_agree"] and mark.form != "pronoun":
 		mark.agree = lex.filters["person_def_agree"]
+		mark.agree_certainty = "uncertain"
 	if "\t" in mark.entity:  # This is a subclass bearing solution
 		mark.subclass = mark.entity.split("\t")[1]
 		mark.entity = mark.entity.split("\t")[0]
@@ -293,6 +298,7 @@ def resolve_mark_entity(mark, lex):
 			mark.agree = lex.names[no_affix_mark]
 	if mark.entity == lex.filters["person_def_entity"] and mark.agree is None:
 		mark.agree = lex.filters["person_def_agree"]
+		mark.agree_certainty = "uncertain"
 	if mark.entity == "" and mark.core_text.upper() == mark.core_text and re.search(r"[A-ZÄÖÜ]", mark.core_text) is not None:  # Unknown all caps entity, guess acronym default
 		mark.entity = lex.filters["all_caps_entity"]
 		mark.entity_certainty = "uncertain"
@@ -337,13 +343,13 @@ def resolve_entity_cascade(entity_text, mark, lex):
 	if entity_text in lex.names or entity_text in lex.last_names or entity_text in lex.first_names:
 		if (entity_text[0].istitle() or not lex.filters["cap_names"]) and person_entity not in mark.alt_entities:
 			if mark.head.head_text in lex.entity_deps:
-				if mark.func in lex.entity_deps[mark.head.head_text] and len(lex.entity_deps[mark.head.head_text])==1 and lex.entity_deps[mark.head.head_text][mark.func] > 5:
+				if mark.func in lex.entity_deps[mark.head.head_text]:# and len(lex.entity_deps[mark.head.head_text])==1 and lex.entity_deps[mark.head.head_text][mark.func] > 5:
 					mark.alt_entities.append(lex.filters["person_def_entity"])
 					mark.alt_subclasses.append(lex.filters["person_def_entity"])
 					name_agree = ""
 					if entity_text in lex.names:
 						name_agree = lex.names[entity_text]
-					elif entity_text in lex.first_names:
+					elif entity_text in lex.first_names and not entity_text in lex.last_names:
 						name_agree = lex.first_names[entity_text]
 					options[person_entity] = (person_entity, person_entity, name_agree,"names_match")
 	if len(mark.alt_entities) < 1 and 0 < entity_text.count(" ") < 3 and lex.filters["person_def_entity"] not in mark.alt_entities:
@@ -767,6 +773,10 @@ def disambiguate_entity(mark,lex):
 	:param lex: the :class:`.LexData` object with gazetteer information and model settings
 	:return: predicted entity type as string
 	"""
+	##DEBUG POINT##
+	if mark.text in lex.debug["ana"]:
+		pass
+
 	parent_text = mark.head.head_text
 	scores = defaultdict(float)
 	entity_freqs = defaultdict(int)
@@ -776,6 +786,15 @@ def disambiguate_entity(mark,lex):
 	if parent_text in lex.entity_deps:
 		if mark.func in lex.entity_deps[parent_text]:
 			entity_freqs.update(lex.entity_deps[parent_text][mark.func])
+
+	if len(entity_freqs) == 0:  # No dependency info, use similar dependencies if available
+		if parent_text in lex.similar:
+			for similar_parent in lex.similar[parent_text]:
+				if similar_parent in lex.entity_deps:
+					if mark.func in lex.entity_deps[similar_parent]:
+						entity_freqs.update(lex.entity_deps[similar_parent][mark.func])
+						break  # Quit after most similar found
+
 
 	if len(entity_freqs) == 0:  # No dependency info, use entity sum proportions
 		entity_freqs = lex.entity_sums
