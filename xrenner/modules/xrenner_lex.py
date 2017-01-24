@@ -21,6 +21,7 @@ class LexData:
 	Use model argument to define subdirectory under models/ for reading different sets of
 	configuration files.
 	"""
+	#@profile
 	def __init__(self, model,override=None):
 		"""
 		:param model: model - string name of the model to read from models/
@@ -71,8 +72,8 @@ class LexData:
 		# Mandatory files must be included in model
 		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.read_delim(self.model_files['coref_rules.tab'], 'single'))
 		self.coref_rules = self.non_speaker_rules
-		self.entities = self.read_delim(self.model_files['entities.tab'], 'triple')
-		self.entity_heads = self.read_delim(self.model_files['entity_heads.tab'], 'triple', 'atoms', True)
+		self.entities = self.read_delim(self.model_files['entities.tab'], 'quadruple')
+		self.entity_heads = self.read_delim(self.model_files['entity_heads.tab'], 'quadruple', 'atoms', True)
 		self.pronouns = self.read_delim(self.model_files['pronouns.tab'], 'double')
 		# Get configuration
 		self.filters = self.get_filters(override)
@@ -84,7 +85,7 @@ class LexData:
 		self.open_close_punct = self.read_delim(self.model_files['open_close_punct.tab']) if "open_close_punct.tab" in self.model_files else {}
 		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
 		self.entity_mods = self.read_delim(self.model_files['entity_mods.tab'], 'triple', 'mod_atoms') if "entity_mods.tab" in self.model_files else {}
-		self.entity_deps = self.read_delim(self.model_files['entity_deps.tab'], 'quadruple') if "entity_deps.tab" in self.model_files else {}
+		self.entity_deps = self.read_delim(self.model_files['entity_deps.tab'], 'quadruple_numeric') if "entity_deps.tab" in self.model_files else {}
 		self.hasa = self.read_delim(self.model_files['hasa.tab'], 'triple_numeric') if "hasa.tab" in self.model_files else {}
 		self.coref = self.read_delim(self.model_files['coref.tab']) if "coref.tab" in self.model_files else {}
 		self.numbers = self.read_delim(self.model_files['numbers.tab'], 'double') if "numbers.tab" in self.model_files else {}
@@ -131,7 +132,7 @@ class LexData:
 		Generic file reader for lexical data in model directory
 
 		:param filename: string - name of the file
-		:param mode: single, double, triple, quadruple, triple_numeric or low reading mode
+		:param mode: single, double, triple, quadruple, quadruple_numeric, triple_numeric or low reading mode
 		:param atom_list_name: list of atoms to use for triple reader mode
 		:return: compiled lexical data, usually a structured dictionary or set depending on number of columns
 		"""
@@ -168,13 +169,29 @@ class LexData:
 						else:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2]]
 				return out_dict
+			elif mode == "quadruple":
+				out_dict = {}
+				for rows in reader:
+					if not rows[0].startswith('#'):
+						if rows[2].endswith('@'):
+							rows[2] = rows[2][0:-1]
+							atom_list[rows[0]] = rows[1]
+						if add_to_sums:
+							self.entity_sums[rows[1]] += 1
+						if len(rows) < 4:
+							rows.append("0")
+						if rows[0] in out_dict:
+							out_dict[rows[0]].append(rows[1] + "\t" + rows[2] + "\t" + rows[3])
+						else:
+							out_dict[rows[0]] = [rows[1] + "\t" + rows[2] + "\t" + rows[3]]
+				return out_dict
 			elif mode == "triple_numeric":
 				out_dict = defaultdict(lambda: defaultdict(int))
 				for row in reader:
 					if not row[0].startswith("#"):
 						out_dict[row[0]][row[1]] = int(row[2])
 				return out_dict
-			elif mode == "quadruple":
+			elif mode == "quadruple_numeric":
 				out_dict = defaultdict(lambda: defaultdict(lambda: defaultdict(str)))
 				for row in reader:
 					if not row[0].startswith("#"):

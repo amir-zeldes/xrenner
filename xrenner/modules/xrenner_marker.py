@@ -28,6 +28,8 @@ def is_atomic(mark, atoms, lex):
 	# Do not accept a markable [New] within atomic [New Zealand]
 	if marktext in atoms:
 		return True
+	elif marktext.lower() in atoms:
+		return True
 	# Remove possible prefix tokens to reject [The [United] Kingdom] if [United Kingdom] in atoms
 	elif remove_prefix_tokens(marktext, lex).strip() in atoms:
 		return True
@@ -159,7 +161,7 @@ def resolve_mark_entity(mark, lex):
 			# For coordinate markables we expect the constituents to determine the entity in assign_coordinate_entity.
 			# An exception to this is when the entire coordination is listed in the entities list.
 			if entity == "":
-				entity = resolve_entity_cascade(mark.text.strip(), mark, lex)
+				entity = resolve_entity_cascade(mark.text, mark, lex)
 			if entity == "":
 				entity = resolve_entity_cascade(mark.core_text, mark, lex)
 		else:
@@ -340,18 +342,23 @@ def resolve_entity_cascade(entity_text, mark, lex):
 				mark.alt_entities.append(parsed_entity[0])
 				mark.alt_subclasses.append(parsed_entity[1])
 				options[parsed_entity[0]] = parsed_entity
+	# Add the person entity based on a possible name despite seeing alternative entities
+	# If and only if this is supported by a unique dependency cue (only person dependencies found, well attested)
 	if entity_text in lex.names or entity_text in lex.last_names or entity_text in lex.first_names:
 		if (entity_text[0].istitle() or not lex.filters["cap_names"]) and person_entity not in mark.alt_entities:
 			if mark.head.head_text in lex.entity_deps:
-				if mark.func in lex.entity_deps[mark.head.head_text]:# and len(lex.entity_deps[mark.head.head_text])==1 and lex.entity_deps[mark.head.head_text][mark.func] > 5:
-					mark.alt_entities.append(lex.filters["person_def_entity"])
-					mark.alt_subclasses.append(lex.filters["person_def_entity"])
-					name_agree = ""
-					if entity_text in lex.names:
-						name_agree = lex.names[entity_text]
-					elif entity_text in lex.first_names and not entity_text in lex.last_names:
-						name_agree = lex.first_names[entity_text]
-					options[person_entity] = (person_entity, person_entity, name_agree,"names_match")
+				if mark.func in lex.entity_deps[mark.head.head_text]:
+					if lex.filters["person_def_entity"] in lex.entity_deps[mark.head.head_text][mark.func]:
+						# Must be attested > 5 times; relaxing this can lower precision substantially
+						if lex.entity_deps[mark.head.head_text][mark.func][lex.filters["person_def_entity"]] > 5 and len(lex.entity_deps[mark.head.head_text])==1:
+							mark.alt_entities.append(lex.filters["person_def_entity"])
+							mark.alt_subclasses.append(lex.filters["person_def_entity"])
+							name_agree = ""
+							if entity_text in lex.names:
+								name_agree = lex.names[entity_text]
+							elif entity_text in lex.first_names and not entity_text in lex.last_names:
+								name_agree = lex.first_names[entity_text]
+							options[person_entity] = (person_entity, person_entity, name_agree,"names_match")
 	if len(mark.alt_entities) < 1 and 0 < entity_text.count(" ") < 3 and lex.filters["person_def_entity"] not in mark.alt_entities:
 		if entity_text.split(" ")[0] in lex.first_names and entity_text.split(" ")[-1] in lex.last_names:
 			if entity_text[0].istitle() or not lex.filters["cap_names"]:
@@ -378,11 +385,11 @@ def parse_entity(entity_text, certainty="uncertain"):
 	"""
 	Parses: entity -tab- subclass(/agree) + certainty into a tuple
 
-	:param entity_text: the string to parse, must contain excatly one tab
+	:param entity_text: the string to parse, must contain excatly two tabs
 	:param certainty: the certainty string at end of tuple, default 'uncertain'
 	:return: quadruple of (entity, subclass, agree, certainty)
 	"""
-	entity, subclass = entity_text.split("\t")
+	entity, subclass, freq = entity_text.split("\t")
 	if "/" in subclass:
 		subclass, agree = subclass.split("/")
 	else:
@@ -404,9 +411,9 @@ def resolve_mark_agree(mark, lex):
 	else:
 		if mark.form == "pronoun":
 			if mark.text.strip() in lex.pronouns:
-				return lex.pronouns[mark.text.strip()]
-			elif mark.text.lower().strip() in lex.pronouns:
-				return lex.pronouns[mark.text.lower().strip()]
+				return lex.pronouns[mark.text]
+			elif mark.text.lower() in lex.pronouns:
+				return lex.pronouns[mark.text.lower()]
 		if mark.form == "proper":
 			if mark.core_text.strip() in lex.names:
 				return [lex.names[mark.core_text]]
@@ -414,13 +421,15 @@ def resolve_mark_agree(mark, lex):
 			mark.agree_certainty = "pos_agree_mappings"
 			return [lex.pos_agree_mappings[mark.head.pos]]
 		elif mark.core_text in lex.entities:
-			for entry in lex.entities[mark.core_text]:
+			for full_entry in lex.entities[mark.core_text]:
+				entry = full_entry.split("\t")[1]
 				if "/" in entry:
 					if mark.agree == "":
 						mark.agree = entry[entry.find("/") + 1:]
 					mark.alt_agree.append(entry[entry.find("/") + 1:])
 		elif mark.head.text in lex.entity_heads:
-			for entry in lex.entity_heads[mark.head.text.strip()]:
+			for full_entry in lex.entity_heads[mark.head.text]:
+				entry = full_entry.split("\t")[1]
 				if "/" in entry:
 					if mark.agree == "":
 						mark.agree = entry[entry.find("/") + 1:]
@@ -785,22 +794,48 @@ def disambiguate_entity(mark,lex):
 		scores[lex.filters["default_entity"]] += 0.0001
 	if parent_text in lex.entity_deps:
 		if mark.func in lex.entity_deps[parent_text]:
-			entity_freqs.update(lex.entity_deps[parent_text][mark.func])
+			for alt_entity in mark.alt_entities:
+				if alt_entity in lex.entity_deps[parent_text][mark.func]:
+					entity_freqs[alt_entity] = lex.entity_deps[parent_text][mark.func][alt_entity]
 
 	if len(entity_freqs) == 0:  # No dependency info, use similar dependencies if available
 		if parent_text in lex.similar:
 			for similar_parent in lex.similar[parent_text]:
 				if similar_parent in lex.entity_deps:
 					if mark.func in lex.entity_deps[similar_parent]:
-						entity_freqs.update(lex.entity_deps[similar_parent][mark.func])
-						break  # Quit after most similar found
+						for alt_entity in mark.alt_entities:
+							if alt_entity in lex.entity_deps[similar_parent][mark.func]:
+								entity_freqs[alt_entity] = lex.entity_deps[similar_parent][mark.func][alt_entity]
 
+	# Check for ties
+	break_tie = False
+	if len(entity_freqs) > 0:
+		best_freq = max(entity_freqs.values())
+		best_entities = [k for k, v in entity_freqs.items() if v == best_freq]
+		if len(best_entities) > 1:
+			break_tie = True
+
+	if len(entity_freqs) == 0 or break_tie:  # No similar dependencies, get frequency information from entities if available
+		if mark.text in lex.entities:
+			for entity_entry in lex.entities[mark.text]:
+				entity_type, entity_subtype, freq = entity_entry.split("\t")
+				freq = int(freq)
+				if freq > 0:
+					entity_freqs[entity_type] += freq
+	if len(entity_freqs) == 0 or break_tie:  # No similar dependencies, get frequency information from heads if available
+		if mark.head.text in lex.entity_heads:
+			for entity_entry in lex.entity_heads[mark.head.text]:
+				entity_type, entity_subtype, freq = entity_entry.split("\t")
+				freq = int(freq)
+				if freq > 0:
+					entity_freqs[entity_type] += freq
 
 	if len(entity_freqs) == 0:  # No dependency info, use entity sum proportions
 		entity_freqs = lex.entity_sums
 
 	for entity_type in mark.alt_entities:
 		scores[entity_type] += entity_freqs[entity_type]
+
 
 	best_entity = max(scores.iterkeys(), key=(lambda key: scores[key]))
 	return best_entity
