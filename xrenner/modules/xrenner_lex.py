@@ -93,6 +93,7 @@ class LexData:
 		self.antonyms = self.read_antonyms() if "antonyms.tab" in self.model_files else {}
 		self.isa = self.read_isa() if "isa.tab" in self.model_files else {}
 		self.similar = self.read_delim(self.model_files['similar.tab'], 'double_with_sep') if "similar.tab" in self.model_files else {}
+		self.nominalizations = self.read_delim(self.model_files['nominalizations.tab'], 'triple_numeric') if "nominalizations.tab" in self.model_files else {}
 		self.debug = self.read_delim(self.model_files['debug.tab']) if "debug.tab" in self.model_files else {"ana":"","ante":"","ablations":""}
 		additional_atoms = self.read_delim(self.model_files['atoms.tab'], 'double') if "atoms.tab" in self.model_files else {}
 

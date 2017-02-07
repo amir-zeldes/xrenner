@@ -563,6 +563,8 @@ def stems_compatible(verb, noun, lex):
 	noun_stem = lex.filters["stemmer_deletes"].sub("",noun.text)
 	if verb_stem == noun_stem and len(noun_stem)>3:
 		return True
+	if noun.text in lex.nominalizations[verb.text]:
+		return True
 	return False
 
 
