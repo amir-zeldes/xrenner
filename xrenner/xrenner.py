@@ -11,12 +11,87 @@ Author: Amir Zeldes
 import argparse, sys
 from modules.xrenner_xrenner import Xrenner
 from glob import glob
+from multiprocessing import Process, Value, Lock
+from math import ceil
 
-
-__version__ = "1.4.1" 
+__version__ = "1.4.1"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
+
+
+class Counter(object):
+	"""
+	Counter to synchronize progress in multiple processes. Set lock to False
+	for single process, especially for running from a subprocess.
+	Note that for verbose behavior, lock must be True, and subprocess invocation
+	may fail.
+	"""
+	def __init__(self, initval=0, lock=True):
+		if lock:
+			self.docs = Value('i', initval)
+			self.sents = Value('i', initval)
+			self.toks = Value('i', initval)
+			self.lock = Lock()
+		else:
+			self.docs = initval
+			self.sents = initval
+			self.toks = initval
+			self.lock = False
+
+	def increment(self,docs,sents,toks):
+		if not self.lock:
+			self.docs += docs
+			self.sents += sents
+			self.toks += toks
+		else:
+			with self.lock:
+				self.docs.value += docs
+				self.sents.value += sents
+				self.toks.value += toks
+
+	def value(self):
+		if not self.lock:
+			return (self.docs, self.sents, self.toks)
+		else:
+			with self.lock:
+				return (self.docs.value,self.sents.value,self.toks.value)
+
+def xrenner_worker(data,options,total_docs,counter):
+	tokens = 0
+	sentences = 0
+
+	model = options.model
+	override = options.override
+	xrenner = Xrenner(model, override)
+
+	for file_ in data:
+
+		output = xrenner.analyze(file_, options.format)
+		tokens += len(xrenner.conll_tokens)-1
+		sentences += xrenner.sent_num-1
+
+		if options.format == "none":
+			pass
+		elif options.format != "paula":
+			if len(data) > 1:
+				if options.format == "webanno":
+					extension = "xmi"
+				else:
+					extension = options.format
+				outfile = xrenner.docname + "." + extension
+				handle = open(outfile, 'w')
+				handle.write(output)
+				handle.close()
+			else:
+				print output
+
+		counter.increment(1,xrenner.sent_num-1,len(xrenner.conll_tokens)-1)
+		docs, sents, toks = counter.value()
+
+		if options.verbose and len(data) > 1:
+			sys.stderr.write("Document " + str(docs) + "/" + str(total_docs) + ": " +
+								 "Processed " + str(len(xrenner.conll_tokens)-1) + " tokens in " + str(xrenner.sent_num-1) + " sentences.\n")
 
 if __name__ == "__main__":
 
@@ -25,13 +100,12 @@ if __name__ == "__main__":
 	parser.add_argument('-m', '--model', action="store", dest="model", default="eng", help="input model directory name, in models/")
 	parser.add_argument('-x', '--override', action="store", dest="override", default=None, help="specify a section in the model's override.ini file with alternative settings")
 	parser.add_argument('-v', '--verbose', action="store_true", help="output run time and summary")
-	parser.add_argument('file', action="store", help="input file name to process")
 	parser.add_argument('-t', '--test', action="store_true", dest="test", help="run unit tests and quit")
+	parser.add_argument('-p', '--procs', type=int, choices=xrange(1,17), dest="procs", help="number of processes for multithreading", default=2)
+	parser.add_argument('file', action="store", help="input file name to process")
 	parser.add_argument('--version', action='version', version=xrenner_version, help="show xrenner version number and quit")
 
-	total_tokens = 0
-	total_sentences = 0
-	docnum = 0
+	total_docs = 0
 
 	# Check if -t is invoked and run unit tests instead of parsing command line
 	if len(sys.argv) > 1 and sys.argv[1] in ["-t", "--test"]:
@@ -42,44 +116,39 @@ if __name__ == "__main__":
 	# Not a test run, parse command line as usual
 	else:
 		options = parser.parse_args()
+		procs = options.procs
 		if options.verbose:
 			import modules.timing
-			sys.stderr.write("\nReading language model...\n") 
-
-		model = options.model
-		override = options.override
-		xrenner = Xrenner(model, override)
+			sys.stderr.write("\nReading language model...\n")
 
 		data = glob(options.file)
-		if not isinstance(data,list):
-			data = [data]
-		for file_ in data:
+		if data == []:
+			sys.stderr.write("\nCan't find input at " + options.file +"\nAborting\n")
+			sys.exit()
+		if not isinstance(data, list):
+			split_data = [data]
+		else:
+			if len(data) < procs:  # Do not use more processes than files to process
+				procs = len(data)
+			chunk_size = int(ceil(len(data)/float(procs)))
+			split_data = [data[i:i + chunk_size] for i in xrange(0, len(data), chunk_size)]
 
-			docnum += 1
+		if procs > 1 or options.verbose:
+			lock = True
+		else:
+			lock = False
+		counter = Counter(0,lock=lock)
+		jobs = []
 
-			if options.verbose:
-				if len(data) > 1:
-					sys.stderr.write("Processing document " + str(docnum) + "/" + str(len(data)) + "... ") 
-				else:
-					sys.stderr.write("Processing document...\n")
+		for sublist in split_data:
+			p = Process(target=xrenner_worker,args=(sublist,options,len(data),counter))
+			jobs.append(p)
+			p.start()
 
-			output = xrenner.analyze(file_, options.format)
-			total_tokens += len(xrenner.conll_tokens)-1
-			total_sentences += xrenner.sent_num-1
-			
-			if options.format == "none":
-				pass
-			elif options.format != "paula":
-				if len(data) > 1:
-					outfile = xrenner.docname + "." + options.format
-					handle = open(outfile, 'w')
-					handle.write(output)
-					handle.close()
-				else:
-					print output
+		for j in jobs:
+			j.join()
 
-			if options.verbose and len(data) > 1:
-				sys.stderr.write("Processed " + str(len(xrenner.conll_tokens)-1) + " tokens in " + str(xrenner.sent_num-1) + " sentences.\n")
+		total_docs, total_sentences, total_tokens = counter.value()
 
 		if options.verbose:
 			sys.stderr.write("="*40 + "\n")

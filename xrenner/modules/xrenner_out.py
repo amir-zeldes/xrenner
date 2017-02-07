@@ -128,6 +128,60 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name, output_i
 	return output_string
 
 
+def output_conll_sent(conll_tokens, markstart_dict, markend_dict, file_name, output_infstat=False):
+	"""
+	Outputs analysis results in CoNLL format, one token per line and markables with opening
+	and closing numbered brackets. Compatible with CoNLL scorer.
+
+	:param conll_tokens: List of all processed ParsedToken objects in the document
+	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
+	:param markend_dict: Dictionary from markable ending token ids to Markable objects
+	:param file_name: name of the source file (dependency data) to create header for CoNLL file
+	:param output_infstat: whether to append the infstat property of each markable in a separate column (default False)
+	:return: serialized conll format in plain text
+	"""
+	output_string = "# begin document " + str(file_name).replace(".conll10", "") + "\n"
+	i = -1
+	current_sent = ""
+	for out_tok in conll_tokens[1:]:
+		if current_sent != out_tok.sentence.sent_num:
+			current_sent = out_tok.sentence.sent_num
+			output_string += "\n"
+			i = 0
+
+		i += 1
+		coref_col = ""
+		line = str(i) + "\t" + out_tok.text + "\t"
+		infstat_col = ""
+		if output_infstat:
+			infstat_col = "_"
+		if int(out_tok.id) in markstart_dict:
+			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
+				coref_col += "(" + str(out_mark.group)
+				if output_infstat:
+					infstat_col = out_mark.infstat
+				if int(out_tok.id) in markend_dict:
+					if out_mark in markend_dict[int(out_tok.id)]:
+						coref_col += ")"
+						markend_dict[int(out_tok.id)].remove(out_mark)
+		if int(out_tok.id) in markend_dict:
+			for out_mark in markend_dict[int(out_tok.id)]:
+				if out_mark in markstart_dict[int(out_tok.id)]:
+					coref_col += ")"
+				else:
+					if len(coref_col) > 0:
+						if coref_col[-1].isdigit():
+							coref_col += "|"  # Use pipe to separate group 1 opening and 2 closing leading to (12) -> (1|2)
+					coref_col += str(out_mark.group) + ")"
+		if int(out_tok.id) not in markstart_dict and int(out_tok.id) not in markend_dict:
+			coref_col = "_"
+
+		line += infstat_col + "\t" + coref_col
+		output_string += line + "\n"
+	output_string += "# end document\n\n"
+	return output_string
+
+
 def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 	"""
 	Outputs analysis results as HTML (assuming jquery, xrenner css and js files), one token per line and
@@ -338,18 +392,23 @@ def output_webanno(conll_tokens, markables):
 	all_ids_string = ""
 	text_length = 0
 	for token in conll_tokens:
-		if token.text == '"':
-			text_string += "&quot; "
-			text_length += 2
-		elif token.text == '>':
-			text_string += "&gt; "
-			text_length += 2
-		elif token.text == '<':
-			text_string += "&lt; "
-			text_length += 2
-		else:
-			text_string += token.text + " "
-			text_length += len(token.text) + 1
+		escape_offset = 0
+		escaped_token = token.text
+		if '&' in escaped_token:
+			escaped_token = escaped_token.replace('&', "&amp;")
+			escape_offset += 4 * token.text.count("&")
+		if '"' in escaped_token:
+			escaped_token = escaped_token.replace('"',"&quot;")
+			escape_offset += 5 * token.text.count('"')
+		if '>' in escaped_token:
+			escaped_token = escaped_token.replace('>', "&gt;")
+			escape_offset += 3 * token.text.count(">")
+		if '<' in escaped_token:
+			escaped_token = escaped_token.replace('<', "&lt;")
+			escape_offset += 3 * token.text.count("<")
+
+		text_string += escaped_token + " "
+		text_length += len(token.text.decode("utf-8")) + 1
 
 	output += text_string
 	output += '"/>\n<type2:DocumentMetaData xmi:id="10001" sofa="12000" begin="0" end="' + str(text_length - 1) + '"'
@@ -369,17 +428,17 @@ def output_webanno(conll_tokens, markables):
 	tok_ends = []
 
 	for token in conll_tokens:
-		output += '\t<type4:Token xmi:id="' + str(int(token.id) + 1) + '" sofa="12000" begin="' + str(cursor) + '" end="' + str(cursor + len(token.text)) + '"/>\n'
+		output += '\t<type4:Token xmi:id="' + str(int(token.id) + 1) + '" sofa="12000" begin="' + str(cursor) + '" end="' + str(cursor + len(token.text.decode("utf-8"))) + '"/>\n'
 		all_ids_string += str(int(token.id) + 1) + " "
 		tok_starts.append(cursor)
-		tok_ends.append(cursor + len(token.text))
+		tok_ends.append(cursor + len(token.text.decode("utf-8")))
 
 		if token.sentence.sent_num > current_sent:
 			sentences_string += '\t<type4:Sentence xmi:id="' + str(4000 + current_sent) + '" sofa="12000" begin="' + str(sent_begin) + '" end="' + str(cursor - 1) + '"/>\n'
 			all_ids_string += str(4000 + current_sent) + " "
 			current_sent += 1
 			sent_begin = cursor
-		cursor += len(token.text) + 1
+		cursor += len(token.text.decode("utf-8")) + 1
 
 	sentences_string += '\t<type4:Sentence xmi:id="' + str(4000 + current_sent) + '" sofa="12000" begin="' + str(sent_begin) + '" end="' + str(cursor - 1) + '"/>\n'
 	all_ids_string += str(4000 + current_sent) + " "

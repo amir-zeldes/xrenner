@@ -7,6 +7,7 @@ Author: Amir Zeldes
 import sys
 
 class ParsedToken:
+	#@profile
 	def __init__(self, tok_id, text, lemma, pos, morph, head, func, sentence, modifiers, child_funcs, child_strings, lex, quoted=False, head2="_", func2="_"):
 		self.id = tok_id
 		self.text = text.strip()
@@ -38,7 +39,7 @@ class ParsedToken:
 
 class Markable:
 	def __init__(self, mark_id, head, form, definiteness, start, end, text, core_text, entity, entity_certainty, subclass, infstat, agree, sentence,
-				 antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree,cardinality=0, submarks=[], coordinate=False):
+				 antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree,cardinality=0, submarks=[], coordinate=False, agree_certainty=""):
 		self.id = mark_id
 		self.head = head
 		self.form = form
@@ -51,7 +52,7 @@ class Markable:
 		self.subclass = subclass
 		self.infstat = infstat
 		self.agree = agree
-		self.agree_certainty = ""
+		self.agree_certainty = agree_certainty
 		self.sentence = sentence
 		self.antecedent = antecedent
 		self.coref_type = coref_type

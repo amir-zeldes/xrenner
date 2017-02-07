@@ -50,7 +50,7 @@ def cardinality_compatible(mark1,mark2,lex):
 				return False
 	return True
 
-
+#@profile
 def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=True):
 	"""
 	Checks whether the dependents of two markables are compatible for possible coreference
@@ -209,6 +209,12 @@ def agree_compatible(mark1, mark2, lex):
 		return True
 	elif (((mark1.agree is None or mark1.agree == '') and lex.filters["agree_with_unknown"].match(mark2.agree) is not None)
 	or ((mark2.agree is None or mark2.agree == '') and lex.filters["agree_with_unknown"].match(mark1.agree) is not None)):
+		return True
+	elif (mark1.agree_certainty=="uncertain") and (mark2.agree != '') and mark1.agree != mark2.agree:
+		mark1.agree = mark2.agree
+		return True
+	elif (mark2.agree_certainty=="uncertain") and (mark1.agree != '') and mark1.agree != mark2.agree:
+		mark2.agree = mark1.agree
 		return True
 	else:
 		return False
@@ -556,6 +562,8 @@ def stems_compatible(verb, noun, lex):
 	verb_stem = lex.filters["stemmer_deletes"].sub("",verb.text)
 	noun_stem = lex.filters["stemmer_deletes"].sub("",noun.text)
 	if verb_stem == noun_stem and len(noun_stem)>3:
+		return True
+	if noun.text in lex.nominalizations[verb.text]:
 		return True
 	return False
 
