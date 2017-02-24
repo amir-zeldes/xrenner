@@ -8,14 +8,14 @@ Author: Amir Zeldes
 """
 
 from collections import OrderedDict
-from xrenner_out import *
-from xrenner_classes import *
-from xrenner_coref import *
-from xrenner_preprocess import *
-from xrenner_marker import make_markable
-from xrenner_lex import *
-from xrenner_postprocess import postprocess_coref
-from depedit import DepEdit
+from .xrenner_out import *
+from .xrenner_classes import *
+from .xrenner_coref import *
+from .xrenner_preprocess import *
+from .xrenner_marker import make_markable
+from .xrenner_lex import *
+from .xrenner_postprocess import postprocess_coref
+from .depedit import DepEdit
 import ntpath, os
 
 

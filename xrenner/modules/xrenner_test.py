@@ -7,8 +7,8 @@ Author: Amir Zeldes
 from collections import defaultdict
 import unittest
 import re, os
-from xrenner_xrenner import Xrenner
-from xrenner_coref import find_antecedent
+from .xrenner_xrenner import Xrenner
+from .xrenner_coref import find_antecedent
 
 def generate_test(conll_tokens, markables, parse, model="eng", name="test"):
 	tok_count = len(conll_tokens)

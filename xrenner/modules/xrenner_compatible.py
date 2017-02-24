@@ -1,7 +1,7 @@
 import re
-from xrenner_marker import remove_suffix_tokens
-from xrenner_propagate import *
-from xrenner_classes import Markable
+from .xrenner_marker import remove_suffix_tokens
+from .xrenner_propagate import *
+from .xrenner_classes import Markable, ParsedToken
 from math import log
 
 """

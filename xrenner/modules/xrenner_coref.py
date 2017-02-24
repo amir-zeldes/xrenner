@@ -1,7 +1,7 @@
-from xrenner_marker import *
-from xrenner_compatible import *
-from xrenner_propagate import *
-from xrenner_rule import CorefRule, ConstraintMatcher
+from .xrenner_marker import *
+from .xrenner_compatible import *
+from .xrenner_propagate import *
+from .xrenner_rule import CorefRule, ConstraintMatcher
 
 """
 Coreference resolution module. Iterates through markables to find possible matches based on rules.

@@ -7,7 +7,14 @@ import re
 import ConfigParser
 import sys
 from collections import defaultdict
-from xrenner_rule import CorefRule
+from .xrenner_rule import CorefRule
+
+if sys.version_info[0] < 3:
+	# Python 2
+	from ConfigParser import ConfigParser, NoSectionError
+else:
+	# Python 3
+	from configparser import NoSectionError, RawConfigParser as ConfigParser
 
 """
 LexData class - container object for lexical information, gazetteers etc.
@@ -31,7 +38,8 @@ class LexData:
 		self.model = model
 		self.atoms = {}
 		self.mod_atoms = {}
-
+		self.dump = None  # Place holder for data dump destination
+		
 		# Lookup model path
 
 		if os.sep in self.model:  # Check if model provided is an absolute or relative path
@@ -282,18 +290,18 @@ class LexData:
 		"""
 
 		#e.g., override = 'OntoNotes'
-		config = ConfigParser.ConfigParser()
+		config = ConfigParser()
 
 		config.readfp(self.model_files["config.ini"])
 		filters = {}
 		options = config.options("main")
 
 		if override:
-			config_ovrd = ConfigParser.ConfigParser()
+			config_ovrd = ConfigParser()
 			config_ovrd.readfp(self.model_files['override.ini'])
 			try:
 				options_ovrd = config_ovrd.options(override)
-			except ConfigParser.NoSectionError:
+			except NoSectionError:
 				sys.stderr.write("\nNo section " + override + " in override.ini in model " + self.model + "\n")
 				sys.exit()
 

@@ -3,7 +3,8 @@
 
 import re
 from collections import defaultdict, OrderedDict
-from xrenner_classes import Markable
+from .xrenner_classes import Markable
+from six import iteritems, iterkeys
 
 """
 Marker module for markable entity recognition. Establishes compatibility between entity features
@@ -135,7 +136,7 @@ def resolve_mark_entity(mark, lex):
 			if use_entity_deps:
 				if parent_text in lex.entity_deps:
 					if mark.head.func in lex.entity_deps[parent_text]:
-						entity = max(lex.entity_deps[parent_text][mark.head.func].iterkeys(), key=(lambda key: lex.entity_deps[parent_text][mark.head.func][key]))
+						entity = max(iterkeys(lex.entity_deps[parent_text][mark.head.func]), key=(lambda key: lex.entity_deps[parent_text][mark.head.func][key]))
 				if entity == "":  # No literal match for dependency, fall back to similar heads
 					if parent_text in lex.similar and use_entity_sims:
 						similar_heads = lex.similar[parent_text]

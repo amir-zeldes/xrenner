@@ -1,4 +1,4 @@
-# encoding=utf8
+# -*- coding: utf-8 -*-
 import sys
 import operator
 import re
