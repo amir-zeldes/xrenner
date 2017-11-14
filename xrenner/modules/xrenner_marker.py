@@ -151,7 +151,7 @@ def resolve_mark_entity(mark, lex):
 									else:
 										similar_dict = lex.entity_deps[similar_head][mark.head.func]
 									if len(similar_dict) > 0:
-										entity = max(similar_dict.iterkeys(),
+										entity = max(similar_dict,
 													 key=(lambda key: similar_dict[key]))
 										break
 			if entity == "":  # Entity dependency information not used; no way to guess entity
@@ -260,9 +260,9 @@ def resolve_mark_entity(mark, lex):
 				norm_sim_probs = {}
 
 				# Normalize - each information source hedges its bets based on how many guesses it makes
-				for key, value in dep_probs.iteritems():
+				for key, value in iteritems(dep_probs):
 					norm_dep_probs[key] = value/total_deps
-				for key, value in sim_probs.iteritems():
+				for key, value in iteritems(sim_probs):
 					norm_sim_probs[key] = value/total_sims
 
 				joint_probs = defaultdict(float)
@@ -274,7 +274,7 @@ def resolve_mark_entity(mark, lex):
 				# Bias in favor of default entity to break ties
 				joint_probs[lex.filters["default_entity"]] += 0.0000001
 
-				entity = max(joint_probs.iterkeys(), key=(lambda key: joint_probs[key]))
+				entity = max(joint_probs, key=(lambda key: joint_probs[key]))
 
 	if entity != "":
 		mark.entity = entity
@@ -653,7 +653,7 @@ def replace_head_with_lemma(mark):
 def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex):
 	if tok.id in descendants:
 		tokenspan = descendants[tok.id] + [tok.id]
-		tokenspan = map(int, tokenspan)
+		tokenspan = list(map(int, tokenspan))
 		tokenspan.sort()
 		marktext = ""
 		start = min(tokenspan)
@@ -838,6 +838,6 @@ def disambiguate_entity(mark,lex):
 		scores[entity_type] += entity_freqs[entity_type]
 
 
-	best_entity = max(scores.iterkeys(), key=(lambda key: scores[key]))
+	best_entity = max(iterkeys(scores), key=(lambda key: scores[key]))
 	return best_entity
 
