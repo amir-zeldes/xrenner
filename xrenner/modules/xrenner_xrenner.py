@@ -284,7 +284,7 @@ class Xrenner:
 		elif out_format == "onto":
 			return output_onto(conll_tokens, markstart_dict, markend_dict, self.docname)
 		elif out_format == "unittest":
-			from xrenner_test import generate_test
+			from .xrenner_test import generate_test
 			return generate_test(conll_tokens, markables, parse, self.model)
 		elif out_format == "none":
 			return ""

@@ -6,9 +6,15 @@ Author: Amir Zeldes
 
 from collections import defaultdict
 import unittest
-import re, os
+import re, os, sys
 from .xrenner_xrenner import Xrenner
 from .xrenner_coref import find_antecedent
+
+if sys.version_info[0] < 3:
+	python_version = 2
+else:
+	python_version = 3
+
 
 def generate_test(conll_tokens, markables, parse, model="eng", name="test"):
 	tok_count = len(conll_tokens)
@@ -72,7 +78,7 @@ def generate_test(conll_tokens, markables, parse, model="eng", name="test"):
 
 def setUpModule():
 	# Read test/tests.dat
-	print "\nxrenner unit tests\n" + "=" * 20 + "\nReading test cases from test/tests.dat"
+	print("\nxrenner unit tests\n" + "=" * 20 + "\nReading test cases from test/tests.dat")
 	file = os.path.dirname(os.path.realpath(__file__)) + os.sep + ".." + os.sep + "test" + os.sep + "tests.dat"
 	test_data = ""
 	with open(file, 'rb') as f:
@@ -81,7 +87,11 @@ def setUpModule():
 	# Populate cases with Case objects
 	global cases
 	cases = {}
-	case_list = test_data.split("-----")
+	if python_version < 3:
+		case_list = test_data.split("-----")
+	else:
+		case_list = test_data.decode().split("-----")
+
 	for case in case_list:
 		case = case.strip()
 		if len(case) > 0:
@@ -89,7 +99,7 @@ def setUpModule():
 			cases[case_to_add.name] = case_to_add
 
 	# Initialize an Xrenner object with the language model and assign to module level xrenner variable for all suites
-	print "Initializing xrenner model 'eng'\n"
+	print("Initializing xrenner model 'eng'\n")
 	global xrenner
 	xrenner = Xrenner("eng")
 
@@ -98,7 +108,7 @@ class Test1Model(unittest.TestCase):
 
 	@classmethod
 	def setUpClass(cls):
-		print "\nTesting model integrity\n" + "-"*30
+		print("\nTesting model integrity\n" + "-"*30)
 		global xrenner
 		cls.xrenner = xrenner
 		global cases
@@ -110,7 +120,7 @@ class Test1Model(unittest.TestCase):
 		cls.xrenner = xrenner
 
 	def test_model_files(self):
-		print "Checking model files:  "
+		print("Checking model files:  ")
 		# Check that all model components were read and are filled as expected
 		self.assertTrue(len(self.xrenner.lex.coref_rules),"check that coref_rules is full")
 		self.assertTrue(len(self.xrenner.lex.entities),"check that entities is full")
@@ -137,7 +147,7 @@ class Test2MarkableMethods(unittest.TestCase):
 
 	@classmethod
 	def setUpClass(cls):
-		print "\nRunning markable method tests\n" + "-"*30
+		print("\nRunning markable method tests\n" + "-"*30)
 		global xrenner
 		cls.xrenner = xrenner
 		global cases
@@ -152,7 +162,7 @@ class Test2MarkableMethods(unittest.TestCase):
 
 	def test_name(self):
 		# Jerry B. Clinton
-		print "Run markable name test:  "
+		print("Run markable name test:  ")
 		target = self.cases["mark_name_test"]
 		self.xrenner.analyze(target.parse.split("\n"), "unittest")
 		markables = self.xrenner.markables
@@ -164,7 +174,7 @@ class Test2MarkableMethods(unittest.TestCase):
 	def test_atomic_mod(self):
 		# House Dr. Israel Newspaper
 		# Note that Dr. is a person-marking atomic flagged modifier of the head
-		print "Run atomic modifier test:  "
+		print("Run atomic modifier test:  ")
 		target = self.cases["mark_atomic_mod_test"]
 		self.xrenner.analyze(target.parse.split("\n"), "unittest")
 		markables = self.xrenner.markables
@@ -179,7 +189,7 @@ class Test3CorefMethods(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 
-		print "\nRunning coref method tests\n" + "-"*30
+		print("\nRunning coref method tests\n" + "-"*30)
 		global xrenner
 		cls.xrenner = xrenner
 		global cases
@@ -187,56 +197,56 @@ class Test3CorefMethods(unittest.TestCase):
 
 	def test_cardinality(self):
 		# I saw two birds . The three birds flew .
-		print "Run cardinality test:  "
+		print("Run cardinality test:  ")
 		target = self.cases["cardinality_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(0,result.mark_count,"cardinality test (two birds != the three birds)")
 
 	def test_appos_envelope(self):
 		# Meet [[Mark Smith] , [the Governor]]. [He] is the best.
-		print "Run apposition envelope test:  "
+		print("Run apposition envelope test:  ")
 		target = self.cases["appos_envelope"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"appos envelope test")
 
 	def test_isa(self):
 		# I read [the Walls Street Journal]. [That newspaper] is great.
-		print "Run isa test:  "
+		print("Run isa test:  ")
 		target = self.cases["isa_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"isa test (Wall Street Journal <- newspaper)")
 
 	def test_hasa(self):
 		# The [[CEO] and the taxi driver] ate . [[His] employees] joined them
-		print "Run hasa test:  "
+		print("Run hasa test:  ")
 		target = self.cases["hasa_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"hasa test (CEO, taxi driver <- his employees)")
 
 	def test_dynamic_hasa(self):
 		# Beth was worried about [[Sinead 's] well-being] , and also about Jane . [[Her] well-being] was always a concern .
-		print "Run dynamic hasa test:  "
+		print("Run dynamic hasa test:  ")
 		target = self.cases["dynamic_hasa_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"dynamic hasa test (Sinead 's <- her)")
 
 	def test_entity_dep(self):
 		# I have a book , [a dog] and a car. [It] barked.
-		print "Run entity dep test:  "
+		print("Run entity dep test:  ")
 		target = self.cases["entity_dep_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"entity dep test (a book, a dog <- It barked)")
 
 	def test_affix_morphology(self):
 		# [A blorker] and an animal and a car . Of these , I saw [the person] .
-		print "Run affix morphology test:  "
+		print("Run affix morphology test:  ")
 		target = self.cases["morph_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"affix morph test (a blorker <- the person)")
 
 	def test_verbal_event_stem(self):
 		# John [visited] Spain . [The visit] went well .
-		print "Run verbal event coreference test:  "
+		print("Run verbal event coreference test:  ")
 		target = self.cases["verb_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
 		self.assertEqual(target.chains,result.chains,"verbal event stemming (visited <- the visit	)")

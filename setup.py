@@ -14,6 +14,7 @@ setup(
   keywords = ['NLP', 'coreference', 'NER', 'named entity'],
   classifiers = ['Programming Language :: Python',
 'Programming Language :: Python :: 2',
+'Programming Language :: Python :: 3',
 'License :: OSI Approved :: Apache Software License',
 'Operating System :: OS Independent'],
 )

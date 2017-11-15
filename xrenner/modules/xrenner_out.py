@@ -4,8 +4,6 @@ import operator
 import re
 import os
 
-reload(sys)
-sys.setdefaultencoding('utf8')
 """
 Output module for exporting resolved data to one of the supported serialization formats
 

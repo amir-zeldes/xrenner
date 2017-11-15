@@ -84,7 +84,7 @@ def xrenner_worker(data,options,total_docs,counter):
 				handle.write(output)
 				handle.close()
 			else:
-				print output
+				print(output)
 
 		counter.increment(1,xrenner.sent_num-1,len(xrenner.conll_tokens)-1)
 		docs, sents, toks = counter.value()
@@ -101,7 +101,7 @@ if __name__ == "__main__":
 	parser.add_argument('-x', '--override', action="store", dest="override", default=None, help="specify a section in the model's override.ini file with alternative settings")
 	parser.add_argument('-v', '--verbose', action="store_true", help="output run time and summary")
 	parser.add_argument('-t', '--test', action="store_true", dest="test", help="run unit tests and quit")
-	parser.add_argument('-p', '--procs', type=int, choices=xrange(1,17), dest="procs", help="number of processes for multithreading", default=2)
+	parser.add_argument('-p', '--procs', type=int, choices=range(1,17), dest="procs", help="number of processes for multithreading", default=2)
 	parser.add_argument('file', action="store", help="input file name to process")
 	parser.add_argument('--version', action='version', version=xrenner_version, help="show xrenner version number and quit")
 

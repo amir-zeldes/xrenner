@@ -4,7 +4,6 @@ import os
 from os import listdir
 from os.path import isfile, join
 import re
-import ConfigParser
 import sys
 from collections import defaultdict
 from .xrenner_rule import CorefRule
@@ -63,7 +62,10 @@ class LexData:
 			model_path += os.sep
 			model_files_list = [f for f in listdir(model_path) if isfile(join(model_path, f))]
 			for filename in model_files_list:
-				self.model_files[filename] = open(model_path + filename,'rb')
+				if sys.version_info[0] < 3:  # Python 2
+					self.model_files[filename] = open(model_path + filename, 'rb')
+				else:  # Python 3
+					self.model_files[filename] = open(model_path + filename, 'r', encoding="utf8")
 		else:
 			from zipfile import ZipFile
 			try:

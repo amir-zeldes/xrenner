@@ -6,7 +6,7 @@ Prepare parser output for entity and coreference resolution
 Author: Amir Zeldes
 """
 
-from xrenner_marker import lookup_has_entity
+from .xrenner_marker import lookup_has_entity
 
 def add_child_info(conll_tokens, child_funcs, child_strings):
 	"""

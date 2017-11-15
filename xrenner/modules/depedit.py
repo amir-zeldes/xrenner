@@ -4,18 +4,23 @@
 """
 DepEdit - A simple configurable tool for manipulating dependency trees
 
-Input: CoNLL10 (10 columns, tab-delimited, blank line between sentences)
+Input: CoNLL10 or CoNLLU (10 columns, tab-delimited, blank line between sentences, comments with pound sign #)
 
 Author: Amir Zeldes
 """
 
+from __future__ import print_function
 import argparse
 import re
+from io import open as io_open
 from copy import copy, deepcopy
 import sys
 from collections import defaultdict
+from glob import glob
+from six import iteritems
 
-__version__ = "1.5.1"
+__version__ = "DEVELOP"
+
 
 def escape(string,symbol_to_mask,border_marker):
 	inside = False
@@ -30,8 +35,9 @@ def escape(string,symbol_to_mask,border_marker):
 			output += char
 	return output
 
+
 class ParsedToken:
-	def __init__(self, tok_id, text, lemma, pos, cpos, morph, head, func, head2, func2, num, child_funcs):
+	def __init__(self, tok_id, text, lemma, pos, cpos, morph, head, func, head2, func2, num, child_funcs, position, is_super_tok=False):
 		self.id = tok_id
 		self.text = text
 		self.pos = pos
@@ -44,9 +50,26 @@ class ParsedToken:
 		self.func2 = func2
 		self.num = num
 		self.child_funcs = child_funcs
+		self.position = position
+		self.is_super_tok = is_super_tok
 
 	def __repr__(self):
 		return str(self.text) + " (" + str(self.pos) + "/" + str(self.lemma) + ") " + "<-" + str(self.func)
+
+
+class Sentence:
+
+	def __init__(self,sentence_string=""):
+		self.sentence_string = sentence_string
+		self.length = 0
+		self.annotations = {}
+
+	def print_annos(self):
+		out_string = ""
+		for (key,val) in iteritems(self.annotations):
+			out_string += "# " + key + "=" + val + "\n"
+		return out_string
+
 
 class Transformation:
 
@@ -69,11 +92,26 @@ class Transformation:
 			for def_index, esc_string in enumerate(escaped_definitions):
 				definitions.append(DefinitionMatcher(esc_string,def_index + 1))
 			relations = relation_string.split(";")
-			actions = action_string.split(";")
-			return [definitions, relations, actions]
+			actions = action_string.strip().split(";")
+			aliased_actions = []
+			for action in actions:
+				aliased_actions.append(self.handle_aliases(action))
+			return [definitions, relations, aliased_actions]
+
+	@staticmethod
+	def handle_aliases(orig_action):
+		orig_action = orig_action.replace(":form=",":text=")
+		orig_action = orig_action.replace(":upostag=", ":pos=")
+		orig_action = orig_action.replace(":xpostag=",":cpos=")
+		orig_action = orig_action.replace(":feats=",":morph=")
+		orig_action = orig_action.replace(":deprel=",":func=")
+		orig_action = orig_action.replace(":deps=",":head2=")
+		orig_action = orig_action.replace(":misc=",":func2=")
+		return orig_action
 
 	@staticmethod
 	def normalize_shorthand(criterion_string):
+		criterion_string = criterion_string.replace('.*', '.1,1000')
 		temp = ""
 		while temp != criterion_string:
 			temp = criterion_string
@@ -100,8 +138,9 @@ class Transformation:
 			criteria = node.split("&")
 			criteria = (_crit.replace("%%%%%","&") for _crit in criteria)
 			for criterion in criteria:
-				if not re.match("(text|pos|cpos|lemma|morph|func|head|func2|head2|num)!?=/[^/=]*/",criterion):
-					report+= "Invalid node definition in column 1: " + criterion
+				if not re.match("(text|pos|cpos|lemma|morph|func|head|func2|head2|num|form|upostag|xpostag|feats|deprel|deps|misc)!?=/[^/=]*/",criterion):
+					if not re.match(r"position!?=/first|last|mid/",criterion):
+						report+= "Invalid node definition in column 1: " + criterion
 		for relation in self.relations:
 			if relation == "none" and len(self.relations) == 1:
 				if len(self.definitions) > 1:
@@ -113,12 +152,13 @@ class Transformation:
 				for criterion in criteria:
 					criterion = criterion.strip()
 					if not re.match(r"#[0-9]+((>|\.([0-9]+(,[0-9]+)?)?)#[0-9]+)+",criterion):
-						report += "Column 2 relation setting invalid criterion: " + criterion + ". "
+						report += "Column 2 relation setting invalid criterion: " + criterion + "."
 		for action in self.actions:
 			commands = action.split(";")
 			for command in commands:
-				if not re.match(r"(#[0-9]+>#[0-9]+|#[0-9]+:(func|lemma|text|pos|cpos|morph|head|head2|func2|num)=[^=]*)$",command):
-					report += "Column 3 invalid action definition: " + command + " and the action was " + action
+				if not re.match(r"(#[0-9]+>#[0-9]+|#[0-9]+:(func|lemma|text|pos|cpos|morph|head|head2|func2|num|form|upostag|xpostag|feats|deprel|deps|misc)=[^;]*)$",command):  # Node action
+					if not re.match(r"#S:[A-Za-z_]+=[A-Za-z_]+$|last$", command):  # Sentence annotation action or quit
+						report += "Column 3 invalid action definition: " + command + " and the action was " + action
 		return report
 
 
@@ -133,13 +173,15 @@ class DefinitionMatcher:
 		def_items = self.def_text.split("&")
 		for def_item in def_items:
 			def_item = def_item.replace("%%%%%","&")
-			criterion = def_item.split("=")[0]
+			criterion = def_item.split("=",1)[0]
 			if criterion[-1] == "!":
 				negative_criterion = True
 				criterion = criterion[:-1]
 			else:
 				negative_criterion = False
-			def_value = def_item.split("=")[1][1:-1]
+
+			def_value = def_item.split("=",1)[1][1:-1]
+
 			# Ensure regex is anchored
 			if def_value[0] != "^":
 				def_value = "^" + def_value
@@ -172,6 +214,22 @@ class DefinitionMatcher:
 class Definition:
 
 	def __init__(self, criterion, value, negative=False):
+		# Handle conllu criterion aliases:
+		if criterion == "form":
+			criterion = "text"
+		elif criterion == "upostag":
+			criterion = "pos"
+		elif criterion == "xpostag":
+			criterion = "cpos"
+		elif criterion == "feats":
+			criterion = "morph"
+		elif criterion == "deprel":
+			criterion = "func"
+		elif criterion == "deps":
+			criterion = "head2"
+		elif criterion == "misc":
+			criterion = "func2"
+
 		self.criterion = criterion
 		self.value = value
 		self.match_type = ""
@@ -231,31 +289,48 @@ class Match:
 
 class DepEdit():
 
-	def __init__(self, config_file):
+	def __init__(self, config_file=""):
 		self.transformations = []
+		self.user_transformation_counter = 0
+		if not config_file == "":
+			self.read_config_file(config_file)
+
+	def read_config_file(self, config_file, clear_transformations = False):
+		"""
+		Function to read configuration file. Can be invoked after initialization.
+
+		:param config_file: The file to read instructions from.
+		:param clear_transformations: Whether to discard previous instructions.
+		:return: void
+		"""
+
+		if clear_transformations:
+			self.transformations = []
+			self.user_transformation_counter = 0
 		line_num = 0
 		for instruction in config_file:
 			line_num += 1
 			if len(instruction)>0 and not instruction.startswith(";") and not instruction.startswith("#") and not instruction.strip() =="":
 				self.transformations.append(Transformation(instruction, line_num))
 
-		report = ""
+		trans_report = ""
 		for transformation in self.transformations:
-			trans_report = transformation.validate()
-			if trans_report != "":
-				report += "On line " + str(transformation.line) + ": " + trans_report +"\n"
-		if len(report) > 0:
-			report = "Depedit says: error in configuration file\n" + report
-			sys.stderr.write(report)
+			temp_report = transformation.validate()
+			if temp_report != "":
+				trans_report += "On line " + str(transformation.line) + ": " + temp_report +"\n"
+		if len(trans_report) > 0:
+			trans_report = "Depedit says: error in configuration file\n\n" + trans_report
+			sys.stderr.write(trans_report)
 			sys.exit()
 
-	def process_sentence(self, conll_tokens, tokoffset, transformations):
+	def process_sentence(self, conll_tokens, tokoffset, supertok_offset, transformations):
 		for transformation in transformations:
 			node_matches = defaultdict(list)
 			for def_matcher in transformation.definitions:
-				for token in conll_tokens[tokoffset+1:]:
-					if def_matcher.match(token):
-						node_matches[def_matcher.def_index].append(Match(def_matcher.def_index, token, def_matcher.groups))
+				for token in conll_tokens[tokoffset+supertok_offset+1:]:
+					if not token.is_super_tok:
+						if def_matcher.match(token):
+							node_matches[def_matcher.def_index].append(Match(def_matcher.def_index, token, def_matcher.groups))
 			result_sets = []
 			for relation in transformation.relations:
 				found = self.matches_relation(node_matches, relation, result_sets)
@@ -265,8 +340,10 @@ class DepEdit():
 			self.add_groups(result_sets)
 			if len(result_sets) > 0:
 				for action in transformation.actions:
-					self.execute_action(result_sets, action)
-		return self.serialize_output_tree(conll_tokens[tokoffset + 1:], tokoffset)
+					retval = self.execute_action(result_sets, action)
+					if retval == "last": # Explicit instruction to cease processing
+						return self.serialize_output_tree(conll_tokens[tokoffset + supertok_offset + 1:], tokoffset)
+		return self.serialize_output_tree(conll_tokens[tokoffset + supertok_offset + 1:], tokoffset)
 
 	def matches_relation(self, node_matches, relation, result_sets):
 		if len(relation) == 0:
@@ -294,6 +371,7 @@ class DepEdit():
 				matches[node1].append(tok1)
 				result[node1] = tok1
 				result["rel"] = relation
+				result["matchers"] = [matcher1]
 				result_sets.append(result)
 		else:
 			node1 = relation.split(operator)[0]
@@ -391,7 +469,9 @@ class DepEdit():
 							if all(ids_are_in_bin):
 								nodes_are_identical = list((set_to_merge[nid] == my_bin[nid]) for nid in node_ids)
 								if all(nodes_are_identical):
-									solutions.append(my_bin)
+									my_bin["rels"].append(set_to_merge["rel"])
+									if len(my_bin["rels"]) == rel_count:  # Check if we now have all required relations
+										solutions.append(my_bin)
 
 		merged_bins = []
 		for solution in solutions:
@@ -511,32 +591,39 @@ class DepEdit():
 		for result in result_sets:
 			if len(result) > 0:
 				for action in actions:
-					if ":" in action:  # Unary node instruction
-						node_position = int(action[1:action.find(":")])
-						property = action[action.find(":")+1:action.find("=")]
-						value = action[action.find("=")+1:].strip()
-						group_num_match = re.search(r"(\$[0-9]+[LU]?)",value)
-						if group_num_match is not None:
-							no_dollar = group_num_match.groups(0)[0][1:]
-							case = ""
-							if no_dollar[-1] == "U":
-								case = "upper"
-								no_dollar = no_dollar[0:-1]
-							elif no_dollar[-1] == "L":
-								case = "lower"
-								no_dollar = no_dollar[0:-1]
-							group_num = int(no_dollar)
-							try:
-								group_value = result["groups"][group_num - 1]
-								if case == "lower":
-									group_value = group_value.lower()
-								elif case == "upper":
-									group_value = group_value.upper()
-							except IndexError:
-								sys.stderr.write("The action '" + action + "' refers to a missing regex bracket group '$" + str(group_num) + "'\n")
-								sys.exit()
-							value = re.sub(r"\$[0-9]+[LR]?",group_value,value)
-						setattr(result[node_position],property,value)
+					if action == "last":
+						return "last"
+					elif ":" in action:  # Unary instruction
+						if action.startswith("#S:"):  # Sentence annotation instruction
+							key_val = action.split(":")[1]
+							key, val = key_val.split("=",1)
+							result[1].sentence.annotations[key] = val
+						else: # node instruction
+							node_position = int(action[1:action.find(":")])
+							property = action[action.find(":")+1:action.find("=")]
+							value = action[action.find("=")+1:].strip()
+							group_num_match = re.search(r"(\$[0-9]+[LU]?)",value)
+							if group_num_match is not None:
+								no_dollar = group_num_match.groups(0)[0][1:]
+								case = ""
+								if no_dollar[-1] == "U":
+									case = "upper"
+									no_dollar = no_dollar[0:-1]
+								elif no_dollar[-1] == "L":
+									case = "lower"
+									no_dollar = no_dollar[0:-1]
+								group_num = int(no_dollar)
+								try:
+									group_value = result["groups"][group_num - 1]
+									if case == "lower":
+										group_value = group_value.lower()
+									elif case == "upper":
+										group_value = group_value.upper()
+								except IndexError:
+									sys.stderr.write("The action '" + action + "' refers to a missing regex bracket group '$" + str(group_num) + "'\n")
+									sys.exit()
+								value = re.sub(r"\$[0-9]+[LR]?",group_value,value)
+							setattr(result[node_position],property,value)
 					else:  # Binary instruction
 						if ">" in action:  # Head relation
 							operator = ">"
@@ -547,18 +634,60 @@ class DepEdit():
 							if tok1 != tok2:
 								tok2.head = tok1.id
 
+	def add_transformation(self, *args, **kwargs):
+		"""
+		Flexible function for adding transformations to an imported DepEdit object, rather than reading them from a configuration file
+
+		:param args: a string specifying a transformation line (three specs separated by two tabs), or a tuples of such strings
+		:param kwargs: alternatively, a dictionary supplying three lists for the keys: 'nodes', 'rels', 'actions'
+		:return: void
+		"""
+
+		if len(args)>0:  # Single string transformation(s)
+
+			if not isinstance(args,list): # Make list out of input tuple
+				args = list(arg for arg in args)
+				if isinstance(args[0], list):  # Flatten list in case user provided a list
+					args = args[0]
+			for transformation_string in args:
+				try:
+					self.user_transformation_counter += 1
+					user_line_number = "u" + str(self.user_transformation_counter)
+					new_transformation = Transformation(transformation_string,user_line_number)
+					self.transformations.append(new_transformation)
+				except:
+					raise IOError("Invalid transformation - must be a string")
+		elif "nodes" in kwargs and "rels" in kwargs and "actions" in kwargs:
+			if not (isinstance(kwargs["nodes"], list) and (isinstance(kwargs["nodes"], list)) and (isinstance(kwargs["nodes"], list))):
+				raise IOError("Invalid transformation - must supply three lists in values for keys: nodes, rels, actions")
+			else:
+				node_clause = ";".join(kwargs["nodes"])
+				rel_clause = ";".join(kwargs["rels"])
+				actions_clause = ";".join(kwargs["actions"])
+				transformation_string = "\t".join([node_clause,rel_clause,actions_clause])
+
+				self.user_transformation_counter += 1
+				user_line_number = "u" + str(self.user_transformation_counter)
+				new_transformation = Transformation(transformation_string, user_line_number)
+				self.transformations.append(new_transformation)
+
 	def serialize_output_tree(self,tokens, tokoffset):
 		output_tree = ""
 		for tok in tokens:
-			if tok.head == "0":
+			if tok.is_super_tok:
+				tok_head_string = tok.head
+				tok_id = tok.id
+			elif tok.head == "0":
 				tok_head_string = "0"
+				tok_id = str(int(tok.id) - tokoffset)
 			else:
 				tok_head_string = str(int(tok.head)-tokoffset)
+				tok_id = str(int(tok.id)-tokoffset)
 			if self.input_mode == "8col":
-				output_tree += str(int(tok.id)-tokoffset)+"\t"+tok.text+"\t"+tok.lemma+"\t"+tok.pos+"\t"+tok.cpos+"\t"+tok.morph+\
+				output_tree += tok_id+"\t"+tok.text+"\t"+tok.lemma+"\t"+tok.pos+"\t"+tok.cpos+"\t"+tok.morph+\
 								"\t"+tok_head_string+"\t"+tok.func+"\n"
 			else:
-				output_tree += str(int(tok.id)-tokoffset)+"\t"+tok.text+"\t"+tok.lemma+"\t"+tok.pos+"\t"+tok.cpos+"\t"+tok.morph+\
+				output_tree += tok_id+"\t"+tok.text+"\t"+tok.lemma+"\t"+tok.pos+"\t"+tok.cpos+"\t"+tok.morph+\
 								"\t"+tok_head_string+"\t"+tok.func+"\t"+tok.head2+"\t"+tok.func2+"\n"
 		return output_tree
 
@@ -568,38 +697,67 @@ class DepEdit():
 		conll_tokens = []
 		self.input_mode = "10col"
 		tokoffset = 0
+		supertok_offset = 0
 		sentlength = 0
+		supertok_length = 0
 
 		conll_tokens.append(0)
 		my_output = ""
 		sentence_string = ""
+		current_sentence = Sentence()
 
 		for myline in infile:
 			if sentlength > 0 and "\t" not in myline:
-				my_output += self.process_sentence(conll_tokens, tokoffset, self.transformations)
+				current_sentence.length = sentlength
+				conll_tokens[-1].position = "last"
+				transformed = self.process_sentence(conll_tokens, tokoffset, supertok_offset, self.transformations)
+				transformed = current_sentence.print_annos() + transformed
+				my_output += transformed
 				sentence_string = ""
+				current_sentence = Sentence()
 				if sentlength > 0:
 					tokoffset += sentlength
+					supertok_offset += supertok_length
 				sentlength = 0
+				supertok_length = 0
 			if myline.startswith("#"):  # Preserve comment lines
-					my_output += myline
+					my_output += myline + "\n"
 			elif myline.strip() == "":
 					my_output += "\n"
 			elif myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
 				sentence_string += myline
 				cols = myline.split("\t")
+				if "-" in cols[0]: # potential conllu super-token, just preserve
+					super_tok = True
+					tok_id = cols[0]
+					head_id = cols[6]
+				else:
+					super_tok = False
+					tok_id = str(int(cols[0]) + tokoffset)
+					head_id = str(int(cols[6]) + tokoffset)
 				if len(cols) > 8:
-				# Collect token from line; note that head2 is parsed as a string, which is often "_" for monoplanar trees
-					conll_tokens.append(ParsedToken(str(int(cols[0]) + tokoffset),cols[1],cols[2],cols[3],cols[4],cols[5],str(int(cols[6]) + tokoffset),cols[7].strip(),cols[8],cols[9].strip(),cols[0],[]))
+					# Collect token from line; note that head2 is parsed as a string, which is often "_" for monoplanar trees
+					this_tok = ParsedToken(tok_id, cols[1], cols[2], cols[3], cols[4], cols[5],head_id, cols[7].strip(), cols[8], cols[9].strip(), cols[0], [], "mid",super_tok)
 				else:  # Attempt to read as 8 column Malt input
-					conll_tokens.append(ParsedToken(str(int(cols[0]) + tokoffset),cols[1],cols[2],cols[3],cols[4],cols[5],str(int(cols[6]) + tokoffset),cols[7].strip(),cols[6],cols[7].strip(),cols[0],[]))
+					this_tok = ParsedToken(tok_id,cols[1],cols[2],cols[3],cols[4],cols[5],head_id,cols[7].strip(),cols[6],cols[7].strip(),cols[0],[], "mid",super_tok)
 					self.input_mode = "8col"
-				sentlength += 1
-				children[str(int(cols[6]) + tokoffset)].append(str(int(cols[0]) + tokoffset))
-				child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
+				if cols[0] == "1" and not super_tok:
+					this_tok.position = "first"
+				this_tok.sentence = current_sentence
+				conll_tokens.append(this_tok)
+				if not super_tok:
+					sentlength += 1
+					children[str(int(cols[6]) + tokoffset)].append(tok_id)
+					child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
+				else:
+					supertok_length += 1
 
 		if sentlength > 0:  # Possible final sentence without trailing new line
-			my_output += self.process_sentence(conll_tokens, tokoffset, self.transformations)
+			current_sentence.length = sentlength
+			conll_tokens[-1].position = "last"
+			transformed = self.process_sentence(conll_tokens, tokoffset, supertok_offset, self.transformations)
+			transformed = current_sentence.print_annos() + transformed
+			my_output += transformed
 
 		return my_output
 
@@ -608,13 +766,35 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-c', '--config', action="store", dest="config", default="config.ini", help="Configuration file defining transformation")
 	parser.add_argument('--version', action='version', version=depedit_version)
-	parser.add_argument('file',action="store",help="Input file name to process")
+	parser.add_argument('file',action="store",help="Input file name or glob pattern to process")
 	options = parser.parse_args()
 
-	infile = open(options.file)
-	config_file = open(options.config)
+	try:
+		config_file = io_open(options.config, encoding="utf8")
+	except IOError:
+		sys.stderr.write("\nConfiguration file not found (specify with -c or use the default 'config.ini')\n")
+		sys.exit()
 	depedit = DepEdit(config_file)
-	output_trees = depedit.run_depedit(infile)
-	print output_trees
 
+	files = glob(options.file)
+	for filename in files:
+		infile = io_open(filename, encoding="utf8")
+		output_trees = depedit.run_depedit(infile)
+		if len(files) == 1:
+			# Single file being processed, just print to STDOUT
+			if sys.version_info[0] < 3:
+				print(output_trees.encode("utf-8"))
+			else:
+				print(output_trees)
+		else:
+			# Multiple files, add '.depedit' before extension and write to file
+			outname = filename
+			if "." in filename:
+				extension = outname[outname.rfind(".")+1:]
+				outname = outname[:outname.rfind(".")]
+				outname += ".depedit." + extension
+			else:
+				outname += ".depedit"
+			with open(outname,'w') as f:
+				f.write(output_trees.encode("utf-8"))
 

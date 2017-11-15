@@ -7,8 +7,8 @@ Author: Amir Zeldes and Shuo Zhang
 """
 
 from collections import defaultdict
-from xrenner_classes import *
-from xrenner_marker import markables_overlap, markable_extend_punctuation
+from .xrenner_classes import *
+from .xrenner_marker import markables_overlap, markable_extend_punctuation
 
 
 def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_tokens):
