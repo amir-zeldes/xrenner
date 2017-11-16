@@ -131,7 +131,7 @@ if __name__ == "__main__":
 			if len(data) < procs:  # Do not use more processes than files to process
 				procs = len(data)
 			chunk_size = int(ceil(len(data)/float(procs)))
-			split_data = [data[i:i + chunk_size] for i in xrange(0, len(data), chunk_size)]
+			split_data = [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
 
 		if procs > 1 or options.verbose:
 			lock = True
