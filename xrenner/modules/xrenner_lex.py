@@ -4,7 +4,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 import re
-import sys
+import sys, io
 from collections import defaultdict
 from .xrenner_rule import CorefRule
 
@@ -72,7 +72,10 @@ class LexData:
 				zip = ZipFile(model_path)
 				model_files_list = [f for f in zip.namelist() if not os.path.isdir(f)]
 				for filename in model_files_list:
-					self.model_files[filename] = zip.open(filename)
+					if sys.version_info[0] < 3:  # Python 2
+						self.model_files[filename] = zip.open(filename)
+					else:
+						self.model_files[filename] = io.TextIOWrapper(zip.open(filename), encoding="utf8")
 			except:
 				raise IOError("Could not open model file " + filename)
 
