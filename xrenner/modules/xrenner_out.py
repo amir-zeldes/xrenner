@@ -200,6 +200,7 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 <head>
 	<link rel="stylesheet" href="http://corpling.uis.georgetown.edu/xrenner/css/renner.css" type="text/css" charset="utf-8"/>
 	<link rel="stylesheet" href="https://corpling.uis.georgetown.edu/xrenner/css/font-awesome-4.2.0/css/font-awesome.min.css"/>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 </head>
 <body'''+rtl_style+'''>
 <script src="http://corpling.uis.georgetown.edu/xrenner/script/jquery-1.11.3.min.js"></script>
