@@ -56,6 +56,7 @@ Examples:
 * python xrenner.py -o conll example_in.conll10 > example_out.conll
 * python xrenner.py -m eng -o conll example_in.conll10 > example_out.conll
 
+Note that by default, the English model is invoked (-m eng), and this model expects input in Basic Stanford Typed Dependencies (not Universal Dependencies).
 
 Module usage:
 -------------
