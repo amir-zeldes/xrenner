@@ -27,18 +27,22 @@ class LexData:
 	Use model argument to define subdirectory under models/ for reading different sets of
 	configuration files.
 	"""
-	#@profile
-	def __init__(self, model,override=None):
+
+	def __init__(self, model, xrenner, override=None):
 		"""
 		:param model: model - string name of the model to read from models/
 		:param override: override - optional name of a section to use in models/override.ini
 		"""
 		gc.disable()
 		self.model = model
+		self.docname = "untitled"
 		self.atoms = {}
 		self.mod_atoms = {}
-		self.dump = None  # Place holder for data dump destination
-		
+		self.dump = None  # Placeholder for data dump destination
+		self.dump_headers = []  # Placeholder for data dump feature names
+		self.classifiers = {}  # Holds loaded classifiers from pickled files in model
+		self.xrenner = xrenner
+
 		# Lookup model path
 
 		if os.sep in self.model:  # Check if model provided is an absolute or relative path
@@ -62,9 +66,9 @@ class LexData:
 			model_path += os.sep
 			model_files_list = [f for f in listdir(model_path) if isfile(join(model_path, f))]
 			for filename in model_files_list:
-				if sys.version_info[0] < 3:  # Python 2
+				if sys.version_info[0] < 3 or filename.endswith(".pkl"):  # Python 2 or classifier
 					self.model_files[filename] = open(model_path + filename, 'rb')
-				else:  # Python 3
+				else:  # Python 3, text file
 					self.model_files[filename] = open(model_path + filename, 'r', encoding="utf8")
 		else:
 			from zipfile import ZipFile
@@ -82,15 +86,15 @@ class LexData:
 
 		self.entity_sums = defaultdict(int)
 
-		# Mandatory files must be included in model
-		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.read_delim(self.model_files['coref_rules.tab'], 'single'))
-		self.coref_rules = self.non_speaker_rules
-		self.entities = self.read_delim(self.model_files['entities.tab'], 'quadruple')
-		self.entity_heads = self.read_delim(self.model_files['entity_heads.tab'], 'quadruple', 'atoms', True)
-		self.pronouns = self.read_delim(self.model_files['pronouns.tab'], 'double')
 		# Get configuration
 		self.filters = self.get_filters(override)
 
+		# Mandatory files must be included in model
+		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.read_delim(self.model_files['coref_rules.tab'], 'single'))
+		self.coref_rules = self.non_speaker_rules
+		self.entities = self.read_delim(self.model_files['entities.tab'], 'quadruple') if 'entities.tab' in self.model_files else {}
+		self.entity_heads = self.read_delim(self.model_files['entity_heads.tab'], 'quadruple', 'atoms', True) if 'entity_heads.tab' in self.model_files else {}
+		self.pronouns = self.read_delim(self.model_files['pronouns.tab'], 'double')
 
 		# Optional files improve model accuracy
 		self.names = self.read_delim(self.model_files['names.tab']) if "names.tab" in self.model_files else {}
@@ -99,7 +103,8 @@ class LexData:
 		self.open_close_punct_rev = dict((v, k) for k, v in self.open_close_punct.items())
 		self.entity_mods = self.read_delim(self.model_files['entity_mods.tab'], 'triple', 'mod_atoms') if "entity_mods.tab" in self.model_files else {}
 		self.entity_deps = self.read_delim(self.model_files['entity_deps.tab'], 'quadruple_numeric') if "entity_deps.tab" in self.model_files else {}
-		self.hasa = self.read_delim(self.model_files['hasa.tab'], 'triple_numeric') if "hasa.tab" in self.model_files else {}
+		self.lex_deps = self.read_delim(self.model_files['lex_deps.tab'], 'quadruple_numeric') if "lex_deps.tab" in self.model_files else {}
+		self.hasa = self.read_delim(self.model_files['hasa.tab'], 'triple_numeric') if "hasa.tab" in self.model_files else defaultdict(lambda: defaultdict(int))
 		self.coref = self.read_delim(self.model_files['coref.tab']) if "coref.tab" in self.model_files else {}
 		self.numbers = self.read_delim(self.model_files['numbers.tab'], 'double') if "numbers.tab" in self.model_files else {}
 		self.affix_tokens = self.read_delim(self.model_files['affix_tokens.tab']) if "affix_tokens.tab" in self.model_files else {}
@@ -108,6 +113,7 @@ class LexData:
 		self.similar = self.read_delim(self.model_files['similar.tab'], 'double_with_sep') if "similar.tab" in self.model_files else {}
 		self.nominalizations = self.read_delim(self.model_files['nominalizations.tab'], 'triple_numeric') if "nominalizations.tab" in self.model_files else {}
 		self.debug = self.read_delim(self.model_files['debug.tab']) if "debug.tab" in self.model_files else {"ana":"","ante":"","ablations":""}
+		self.freqs = self.read_delim(self.model_files['freqs.tab'],'double_numeric') if "freqs.tab" in self.model_files else defaultdict(int)
 		additional_atoms = self.read_delim(self.model_files['atoms.tab'], 'double') if "atoms.tab" in self.model_files else {}
 
 		# Compile atom and first + last name data
@@ -198,6 +204,12 @@ class LexData:
 							out_dict[rows[0]].append(rows[1] + "\t" + rows[2] + "\t" + rows[3])
 						else:
 							out_dict[rows[0]] = [rows[1] + "\t" + rows[2] + "\t" + rows[3]]
+				return out_dict
+			elif mode == "double_numeric":
+				out_dict = defaultdict(int)
+				for row in reader:
+					if not row[0].startswith("#"):
+						out_dict[row[0]] = int(row[1])
 				return out_dict
 			elif mode == "triple_numeric":
 				out_dict = defaultdict(lambda: defaultdict(int))
@@ -294,11 +306,11 @@ class LexData:
 		:return: filters - dictionary of settings from config.ini with possible overrides
 		"""
 
-		#e.g., override = 'OntoNotes'
+		#e.g., override = 'GUM'
 		config = ConfigParser()
 
 		config.readfp(self.model_files["config.ini"])
-		filters = {}
+		filters = defaultdict(str)
 		options = config.options("main")
 
 		if override:
@@ -324,6 +336,8 @@ class LexData:
 							filters[option] = config_ovrd.getboolean(override, option)
 						elif option_string.isdigit():
 							filters[option] = config_ovrd.getint(override, option)
+						elif option_string.count(".") == 1 and option_string.replace(".","").isdigit():
+							filters[option] = config_ovrd.getfloat(override, option)
 						else:
 							filters[option] = option_string
 				except:
@@ -342,9 +356,11 @@ class LexData:
 						filters[option] = config.getboolean("main", option)
 					elif option_string.isdigit():
 						filters[option] = config.getint("main", option)
+					elif option_string.count(".") == 1 and option_string.replace(".","").isdigit():
+						filters[option] = config.getfloat("main", option)
 					else:
 						filters[option] = option_string
-			except:
+			except AttributeError:
 				print("exception on %s!" % option)
 				filters[option] = None
 
@@ -438,8 +454,7 @@ class LexData:
 
 		return mappings
 
-	@staticmethod
-	def parse_coref_rules(rule_list):
+	def parse_coref_rules(self,rule_list):
 		"""
 		Reader function to pass coref_rules.tab into CorefRule objects in two lists: one for general rules and
 		one also including rules to use when speaker info is available.
@@ -448,12 +463,44 @@ class LexData:
 		:return: two separate lists of compiled CorefRule objects with and without speaker specifications
 		"""
 
+		rule_num = 0
 		speaker_rules=[]
 		non_speaker_rules=[]
 		for rule in rule_list:
-			speaker_rules.append(CorefRule(rule))
+			rule_num += 1
+			speaker_rules.append(CorefRule(rule, rule_num))
 			if "speaker" not in rule:
-				non_speaker_rules.append(CorefRule(rule))
+				non_speaker_rules.append(CorefRule(rule, rule_num))
+
+		if self.filters["use_classifiers"]:
+			# Load classifiers if available
+			for rule in speaker_rules + non_speaker_rules:
+				if rule.clf_name != "_default_":
+					if rule.thresh is None:
+						rule.thresh = self.filters["score_thresh"]
+					if self.filters["classifier_suffix"] != "":  # Add suffixes (e.g. for different versions in model override)
+						rule.clf_name = rule.clf_name.replace(".pkl", self.filters["classifier_suffix"] + ".pkl")
+					if rule.clf_name not in self.classifiers:
+						rule_file_name = rule.clf_name
+						if rule.clf_name not in self.model_files:  # File name missing, possible Python 2/3 variants available
+							if sys.version_info[0] < 3 and rule.clf_name.replace(".pkl","2.pkl") in self.model_files:
+								rule_file_name = rule.clf_name.replace(".pkl","2.pkl")
+							elif sys.version_info[0] > 2 and rule.clf_name.replace(".pkl","3.pkl") in self.model_files:
+								rule_file_name = rule.clf_name.replace(".pkl","3.pkl")
+						try:
+							from sklearn.externals.joblib import load
+						except Exception as e:
+							print("Unable to import sklearn:\n  * make sure to install sklearn for models using classifiers (pip install sklearm)")
+							sys.exit()
+						from .xrenner_classify import Classifier
+
+						try:
+							clf = load(self.model_files[rule_file_name])
+						except KeyError:
+							print("\nClassifier '" + rule.clf_name + "' was not found in the model - check coref_rules.tab")
+							sys.exit()
+						clf = Classifier(clf[0], clf[1], clf[2])
+						self.classifiers[rule.clf_name] = clf
 
 		return speaker_rules, non_speaker_rules
 
