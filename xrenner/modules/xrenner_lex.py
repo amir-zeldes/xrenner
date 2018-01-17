@@ -28,7 +28,7 @@ class LexData:
 	configuration files.
 	"""
 
-	def __init__(self, model, xrenner, override=None):
+	def __init__(self, model, xrenner, override=None, rule_based=False):
 		"""
 		:param model: model - string name of the model to read from models/
 		:param override: override - optional name of a section to use in models/override.ini
@@ -88,6 +88,8 @@ class LexData:
 
 		# Get configuration
 		self.filters = self.get_filters(override)
+		if rule_based:
+			self.filters["use_classifiers"] = False
 
 		# Mandatory files must be included in model
 		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.read_delim(self.model_files['coref_rules.tab'], 'single'))
@@ -306,7 +308,7 @@ class LexData:
 		:return: filters - dictionary of settings from config.ini with possible overrides
 		"""
 
-		#e.g., override = 'GUM'
+		# e.g. override = 'GUM'
 		config = ConfigParser()
 
 		config.readfp(self.model_files["config.ini"])
@@ -494,7 +496,7 @@ class LexData:
 						try:
 							from sklearn.externals.joblib import load
 						except Exception as e:
-							print("Unable to import sklearn:\n  * make sure to install sklearn for models using classifiers (pip install sklearm)")
+							print("Unable to import sklearn:\n  * this language model uses machine learning classifiers\n  * make sure to install sklearn for models using classifiers (pip install scikit-learn)\n  * you can also use purely rule based heuristics with the option -r (expect lower accuracy)")
 							sys.exit()
 						from .xrenner_classify import Classifier
 

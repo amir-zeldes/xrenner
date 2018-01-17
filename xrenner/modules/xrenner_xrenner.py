@@ -20,7 +20,7 @@ import ntpath, os, io
 
 class Xrenner:
 
-	def __init__(self, model="eng", override=None):
+	def __init__(self, model="eng", override=None, rule_based=False):
 		"""
 		Main class for xrenner coreferencer. Invokes the load method to read model data.
 		
@@ -28,6 +28,7 @@ class Xrenner:
 		:param override: name of a section in models/override.ini if configuration overrides should be applied
 		:return: void
 		"""
+		self.rule_based = rule_based
 		self.load(model, override)
 		if "depedit.ini" in self.lex.model_files:
 			depedit_config = self.lex.model_files["depedit.ini"]
@@ -47,7 +48,7 @@ class Xrenner:
 		"""
 		self.model = model
 		self.override = override
-		self.lex = LexData(self.model, self, self.override)
+		self.lex = LexData(self.model, self, self.override, self.rule_based)
 
 	def set_doc_name(self, name):
 		"""

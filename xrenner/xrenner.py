@@ -95,7 +95,7 @@ def xrenner_worker(data,options,total_docs,counter):
 
 	model = options.model
 	override = options.override
-	xrenner = Xrenner(model, override)
+	xrenner = Xrenner(model, override, options.rulebased)
 
 	if options.dump is not None:
 		xrenner.lex.procid = str(current_process().ident)
@@ -150,6 +150,7 @@ if __name__ == "__main__":
 	parser.add_argument('-o', '--output', action="store", dest="format", default="sgml", help="output format, default: sgml; alternatives: html, paula, webanno, conll, onto, unittest, none")
 	parser.add_argument('-m', '--model', action="store", dest="model", default="eng", help="input model directory name, in models/")
 	parser.add_argument('-x', '--override', action="store", dest="override", default=None, help="specify a section in the model's override.ini file with alternative settings")
+	parser.add_argument('-r', '--rulebased', action="store_true", help="run model without machine learning classifiers")
 	parser.add_argument('-v', '--verbose', action="store_true", help="output run time and summary")
 	parser.add_argument('-t', '--test', action="store_true", dest="test", help="run unit tests and quit")
 	parser.add_argument('-p', '--procs', type=int, choices=range(1,17), dest="procs", help="number of processes for multithreading", default=2)
