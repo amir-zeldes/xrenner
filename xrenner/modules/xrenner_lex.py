@@ -489,10 +489,20 @@ class LexData:
 					if rule.clf_name not in self.classifiers:
 						rule_file_name = rule.clf_name
 						if rule.clf_name not in self.model_files:  # File name missing, possible Python 2/3 variants available
-							if sys.version_info[0] < 3 and rule.clf_name.replace(".pkl","2.pkl") in self.model_files:
-								rule_file_name = rule.clf_name.replace(".pkl","2.pkl")
-							elif sys.version_info[0] > 2 and rule.clf_name.replace(".pkl","3.pkl") in self.model_files:
-								rule_file_name = rule.clf_name.replace(".pkl","3.pkl")
+							if sys.version_info[0] < 3:
+								if rule.clf_name.replace(".pkl","2.pkl") in self.model_files:
+									rule_file_name = rule.clf_name.replace(".pkl","2.pkl")
+								else:
+									if rule.clf_name.replace(".pkl", "3.pkl") in self.model_files:
+										print("This model supports classifiers for Python 3 only.\n  * switch to Python 3 and try running again\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
+										sys.exit()
+							elif sys.version_info[0] > 2:
+								if rule.clf_name.replace(".pkl","3.pkl") in self.model_files:
+									rule_file_name = rule.clf_name.replace(".pkl","3.pkl")
+								else:
+									if rule.clf_name.replace(".pkl", "2.pkl") in self.model_files:
+										print("This model supports classifiers for Python 2 only.\n  * switch to Python 2 and try running again\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
+										sys.exit()
 						try:
 							from sklearn.externals.joblib import load
 						except Exception as e:
