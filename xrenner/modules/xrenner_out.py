@@ -19,6 +19,8 @@ def clean_filename(filename):
 	"""
 	if filename.endswith(".conll10") or filename.endswith(".conllu") and not filename.startswith("."):
 		return filename.replace(".conll10", "").replace(".conllu", "")
+	else:
+		return filename
 
 
 def output_onto(conll_tokens, markstart_dict, markend_dict, file_name):
@@ -98,12 +100,12 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name, output_i
 		line = str(i) + "\t" + out_tok.text + "\t"
 		infstat_col = ""
 		if output_infstat:
-			infstat_col = "_"
+			infstat_col = "_\t"
 		if int(out_tok.id) in markstart_dict:
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
 				coref_col += "(" + str(out_mark.group)
 				if output_infstat:
-					infstat_col = out_mark.infstat
+					infstat_col = out_mark.infstat + "\t"
 				if int(out_tok.id) in markend_dict:
 					if out_mark in markend_dict[int(out_tok.id)]:
 						coref_col += ")"
@@ -120,7 +122,7 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name, output_i
 		if int(out_tok.id) not in markstart_dict and int(out_tok.id) not in markend_dict:
 			coref_col = "_"
 
-		line += infstat_col + "\t" + coref_col
+		line += infstat_col + coref_col
 		output_string += line + "\n"
 	output_string += "# end document\n\n"
 	return output_string
