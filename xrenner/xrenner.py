@@ -8,16 +8,24 @@ Main controller script for entity recognition and coreference resolution
 Author: Amir Zeldes
 """
 
-import argparse, sys
+import argparse, sys, io, os
 from modules.xrenner_xrenner import Xrenner
 from glob import glob
-from multiprocessing import Process, Value, Lock
+from multiprocessing import Process, Value, Lock, current_process, Array
+import ctypes
 from math import ceil
 
-__version__ = "1.4.1"
+__version__ = "2.0.0"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
+
+if sys.version_info[0] > 2:
+	PY3 = True
+else:
+	PY3 = False
+	reload(sys)
+	sys.setdefaultencoding('utf8')
 
 
 class Counter(object):
@@ -32,12 +40,17 @@ class Counter(object):
 			self.docs = Value('i', initval)
 			self.sents = Value('i', initval)
 			self.toks = Value('i', initval)
+			if PY3:
+				self.dump_headers = Array(ctypes.c_char, b"_" * 3000)  # Value(ctypes.c_char_p, "")
+			else:
+				self.dump_headers = Array(ctypes.c_char,"_"*3000)# Value(ctypes.c_char_p, "")
 			self.lock = Lock()
 		else:
 			self.docs = initval
 			self.sents = initval
 			self.toks = initval
 			self.lock = False
+			self.dump_headers = ""
 
 	def increment(self,docs,sents,toks):
 		if not self.lock:
@@ -50,12 +63,31 @@ class Counter(object):
 				self.sents.value += sents
 				self.toks.value += toks
 
+	def set_string(self,new_val):
+		if not self.lock:
+			self.dump_headers = new_val
+		else:
+			with self.lock:
+				self.dump_headers.value = new_val
+
+	def get_string(self):
+		if not self.lock:
+			return self.dump_headers
+		else:
+			with self.lock:
+				return self.dump_headers.value
+
 	def value(self):
 		if not self.lock:
 			return (self.docs, self.sents, self.toks)
 		else:
 			with self.lock:
 				return (self.docs.value,self.sents.value,self.toks.value)
+
+
+def rreplace(s, old, new, occurrence):
+	li = s.rsplit(old, occurrence)
+	return new.join(li)
 
 def xrenner_worker(data,options,total_docs,counter):
 	tokens = 0
@@ -65,8 +97,16 @@ def xrenner_worker(data,options,total_docs,counter):
 	override = options.override
 	xrenner = Xrenner(model, override)
 
+	if options.dump is not None:
+		xrenner.lex.procid = str(current_process().ident)
+		xrenner.lex.dump = io.open(rreplace(options.dump,".", xrenner.lex.procid+".",1),'w',encoding="utf8")
+	else:
+		xrenner.lex.procid = ""
+		xrenner.lex.dump = None
+
 	for file_ in data:
 
+		xrenner.lex.dump_types = set([])  # Empty set of dump rows to avoid duplicates
 		output = xrenner.analyze(file_, options.format)
 		tokens += len(xrenner.conll_tokens)-1
 		sentences += xrenner.sent_num-1
@@ -80,11 +120,14 @@ def xrenner_worker(data,options,total_docs,counter):
 				else:
 					extension = options.format
 				outfile = xrenner.docname + "." + extension
-				handle = open(outfile, 'w')
+				handle = io.open(outfile, 'w', encoding="utf8")
 				handle.write(output)
 				handle.close()
 			else:
-				print(output)
+				if PY3:
+					sys.stdout.buffer.write(output.encode("utf8"))
+				else:
+					print(output)
 
 		counter.increment(1,xrenner.sent_num-1,len(xrenner.conll_tokens)-1)
 		docs, sents, toks = counter.value()
@@ -92,6 +135,14 @@ def xrenner_worker(data,options,total_docs,counter):
 		if options.verbose and len(data) > 1:
 			sys.stderr.write("Document " + str(docs) + "/" + str(total_docs) + ": " +
 								 "Processed " + str(len(xrenner.conll_tokens)-1) + " tokens in " + str(xrenner.sent_num-1) + " sentences.\n")
+
+	if options.dump is not None:
+		xrenner.lex.dump.close()
+		if PY3:
+			counter.set_string(bytes("\t".join(xrenner.lex.dump_headers),encoding="utf8"))
+		else:
+			counter.set_string("\t".join(xrenner.lex.dump_headers))
+
 
 if __name__ == "__main__":
 
@@ -102,6 +153,7 @@ if __name__ == "__main__":
 	parser.add_argument('-v', '--verbose', action="store_true", help="output run time and summary")
 	parser.add_argument('-t', '--test', action="store_true", dest="test", help="run unit tests and quit")
 	parser.add_argument('-p', '--procs', type=int, choices=range(1,17), dest="procs", help="number of processes for multithreading", default=2)
+	parser.add_argument('-d', '--dump', action="store", dest="dump", help="file to dump individual analyses into", default=None)
 	parser.add_argument('file', action="store", help="input file name to process")
 	parser.add_argument('--version', action='version', version=xrenner_version, help="show xrenner version number and quit")
 
@@ -136,15 +188,21 @@ if __name__ == "__main__":
 		if procs > 1 or options.verbose:
 			lock = True
 		else:
-			lock = False
+			lock = True
 		counter = Counter(0,lock=lock)
 		jobs = []
+		dump_files = []
+
+		if options.dump is not None:
+			if "." not in options.dump:
+				options.dump += ".tab"
 
 		for sublist in split_data:
-			p = Process(target=xrenner_worker,args=(sublist,options,len(data),counter))
+			p = Process(target=xrenner_worker, args=(sublist,options,len(data), counter))
 			jobs.append(p)
 			p.start()
-
+			if options.dump is not None:
+				dump_files.append(rreplace(options.dump, ".", str(p.ident)+".",1))
 		for j in jobs:
 			j.join()
 
@@ -153,3 +211,24 @@ if __name__ == "__main__":
 		if options.verbose:
 			sys.stderr.write("="*40 + "\n")
 			sys.stderr.write("Processed " + str(total_tokens) + " tokens in " + str(total_sentences) + " sentences.\n")
+
+		if len(dump_files) > 0:
+			# Merge dump files from multiple processes
+			sys.stderr.write("Collating dump data ... \n")
+			with io.open(options.dump,'w',encoding="utf8") as wfd:
+				if lock:
+					if PY3:
+						headers = counter.dump_headers.value.decode("utf8")
+					else:
+						headers = counter.dump_headers.value
+				else:
+					headers = counter.dump_headers
+				wfd.write(headers + "\n")
+			with io.open(options.dump,'a',encoding="utf8") as wfd:
+				for f in dump_files:
+					with io.open(f,'r', encoding="utf8") as fd:
+						temp = fd.read()
+						wfd.write(temp)
+			for f in dump_files:
+				os.remove(f)
+			sys.stderr.write("Dump written to "+options.dump+"\n")
