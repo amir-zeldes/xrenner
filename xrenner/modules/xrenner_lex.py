@@ -311,6 +311,10 @@ class LexData:
 
 		config.readfp(self.model_files["config.ini"])
 		filters = defaultdict(str)
+
+		# Set up default values for settings from newer versions for backwards compatibility
+		filters["neg_func"] = re.compile("$^")
+
 		options = config.options("main")
 
 		if override:
