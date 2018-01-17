@@ -122,7 +122,7 @@ def resolve_mark_entity(mark, lex):
 
 	## DEBUG POINT ##
 	if mark.text == lex.debug["ana"]:
-		pass
+		a=5
 
 	parent_text = mark.head.head_text
 	if mark.form == "pronoun":
@@ -177,6 +177,7 @@ def resolve_mark_entity(mark, lex):
 			if entity == "":
 				if re.match(r'^(([0-9]+[.,]?)+)$', mark.core_text) is not None:
 					entity = lex.filters["quantity_def_entity"]
+					mark.alt_entities.append(lex.filters["time_def_entity"])
 					mark.entity_certainty = "uncertain"
 			if entity == "":
 				entity = resolve_entity_cascade(mark.text, mark, lex)
@@ -351,7 +352,7 @@ def resolve_entity_cascade(entity_text, mark, lex):
 				if mark.func in lex.entity_deps[mark.head.head_text]:
 					if lex.filters["person_def_entity"] in lex.entity_deps[mark.head.head_text][mark.func]:
 						# Must be attested > 5 times; relaxing this can lower precision substantially
-						if lex.entity_deps[mark.head.head_text][mark.func][lex.filters["person_def_entity"]] > 5 and len(lex.entity_deps[mark.head.head_text])==1:
+						if lex.entity_deps[mark.head.head_text][mark.func][lex.filters["person_def_entity"]] > 5 and len(lex.entity_deps[mark.head.head_text][mark.func])==1:
 							mark.alt_entities.append(lex.filters["person_def_entity"])
 							mark.alt_subclasses.append(lex.filters["person_def_entity"])
 							name_agree = ""
@@ -406,18 +407,25 @@ def resolve_mark_agree(mark, lex):
 	:param lex: the :class:`.LexData` object with gazetteer information and model settings
 	:return: void
 	"""
+
+	# DEBUG POINT #
+	if mark.text == lex.debug["ana"]:
+		a=5
+
 	if mark.head.morph not in ["","_"]:
 		mark.agree_certainty = "head_morph"
 		return [mark.head.morph]
 	else:
 		if mark.form == "pronoun":
-			if mark.text.strip() in lex.pronouns:
+			if mark.text in lex.pronouns:
 				return lex.pronouns[mark.text]
 			elif mark.text.lower() in lex.pronouns:
 				return lex.pronouns[mark.text.lower()]
 		if mark.form == "proper":
-			if mark.core_text.strip() in lex.names:
+			if mark.core_text in lex.names:
 				return [lex.names[mark.core_text]]
+			elif mark.core_text in lex.first_names:  # Single name component core text
+				return [lex.first_names[mark.core_text]]
 		if mark.head.pos in lex.pos_agree_mappings:
 			mark.agree_certainty = "pos_agree_mappings"
 			return [lex.pos_agree_mappings[mark.head.pos]]
@@ -560,7 +568,6 @@ def markable_extend_punctuation(marktext, adjacent_token, punct_dict, direction)
 	return False
 
 
-
 def markables_overlap(mark1, mark2, lex=None):
 	"""
 	Helper function to check if two markables cover some of the same tokens. Note that if the lex argument is specified,
@@ -677,7 +684,7 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 					if conjunct2.id in descendants:
 						tokenspan += descendants[conjunct2.id]
 					tokenspan = map(int, tokenspan)
-					tokenspan.sort()
+					tokenspan = sorted(tokenspan)
 					end = max(tokenspan)
 					marktext = ""
 					for span_token in conll_tokens[start:end + 1]:
