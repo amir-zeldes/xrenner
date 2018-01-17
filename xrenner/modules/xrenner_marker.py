@@ -667,6 +667,7 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 		end = max(tokenspan)
 		for span_token in conll_tokens[start:end + 1]:
 			marktext += span_token.text + " "
+		marktext = marktext.strip()
 	else:
 		marktext = tok.text
 		start = int(tok.id)
