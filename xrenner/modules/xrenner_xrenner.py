@@ -345,11 +345,13 @@ class Xrenner:
 				# Check that neither possessor nor possessed is a pronoun
 				if lex.filters["pronoun_pos"].match(token.pos) is None and lex.filters["pronoun_pos"].match(conll_tokens[int(token.head)].pos) is None:
 					lex.hasa[token.text][conll_tokens[int(token.head)].text] += 2  # Increase by 2: 1 for attestation, 1 for pertinence in this document
+					lex.hasa[token.lemma][conll_tokens[int(token.head)].text] += 1
 			# Check if func2 has additional possessor information
 			if token.func2 != "_":
 				if lex.filters["possessive_func"].match(token.func2) is not None:
 					if lex.filters["pronoun_pos"].match(token.pos) is None and lex.filters["pronoun_pos"].match(conll_tokens[int(token.head2)+tokoffset].pos) is None:
 						lex.hasa[token.text][conll_tokens[int(token.head2)+tokoffset].text] += 2  # Increase by 2: 1 for attestation, 1 for pertinence in this document
+						lex.hasa[token.lemma][conll_tokens[int(token.head2)+tokoffset].text] += 1
 
 		# Find dead areas
 		for tok1 in conll_tokens[tokoffset + 1:]:
