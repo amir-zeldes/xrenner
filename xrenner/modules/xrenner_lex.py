@@ -76,7 +76,7 @@ class LexData:
 				zip = ZipFile(model_path)
 				model_files_list = [f for f in zip.namelist() if not os.path.isdir(f)]
 				for filename in model_files_list:
-					if sys.version_info[0] < 3:  # Python 2
+					if sys.version_info[0] < 3 or filename.endswith(".pkl"):  # Python 2 or classifier
 						self.model_files[filename] = zip.open(filename)
 					else:
 						self.model_files[filename] = io.TextIOWrapper(zip.open(filename), encoding="utf8")
