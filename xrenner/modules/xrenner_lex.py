@@ -496,7 +496,7 @@ class LexData:
 						try:
 							from sklearn.externals.joblib import load
 						except Exception as e:
-							print("Unable to import sklearn:\n  * this language model uses machine learning classifiers\n  * make sure to install sklearn for models using classifiers (pip install scikit-learn)\n  * you can also use purely rule based heuristics with the option -r (expect lower accuracy)")
+							print("Unable to import sklearn:\n  * classifiers in this model require installing sklearn (pip install scikit-learn)\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
 							sys.exit()
 						from .xrenner_classify import Classifier
 
