@@ -14,12 +14,12 @@ import argparse
 import re
 from io import open as io_open
 from copy import copy, deepcopy
-import sys
+import sys, os
 from collections import defaultdict
 from glob import glob
 from six import iteritems
 
-__version__ = "DEVELOP"
+__version__ = "2.1.1"
 
 
 def escape(string,symbol_to_mask,border_marker):
@@ -138,8 +138,8 @@ class Transformation:
 			criteria = node.split("&")
 			criteria = (_crit.replace("%%%%%","&") for _crit in criteria)
 			for criterion in criteria:
-				if not re.match("(text|pos|cpos|lemma|morph|func|head|func2|head2|num|form|upostag|xpostag|feats|deprel|deps|misc)!?=/[^/=]*/",criterion):
-					if not re.match(r"position!?=/first|last|mid/",criterion):
+				if re.match("(text|pos|cpos|lemma|morph|func|head|func2|head2|num|form|upostag|xpostag|feats|deprel|deps|misc)!?=/[^/=]*/",criterion) is None:
+					if re.match(r"position!?=/(first|last|mid)/",criterion) is None:
 						report+= "Invalid node definition in column 1: " + criterion
 		for relation in self.relations:
 			if relation == "none" and len(self.relations) == 1:
@@ -151,7 +151,8 @@ class Transformation:
 				criteria = relation.split(";")
 				for criterion in criteria:
 					criterion = criterion.strip()
-					if not re.match(r"#[0-9]+((>|\.([0-9]+(,[0-9]+)?)?)#[0-9]+)+",criterion):
+					#if not re.match(r"#[0-9]+((>|\.([0-9]+(,[0-9]+)?)?)#[0-9]+)+",criterion):
+					if not re.match(r"(#[0-9]+((>|\.([0-9]+(,[0-9]+)?)?)#[0-9]+)+|#[0-9]+:(text|pos|cpos|lemma|morph|func|head|func2|head2|num|form|upostag|xpostag|feats|deprel|deps|misc)==#[0-9]+)", criterion):
 						report += "Column 2 relation setting invalid criterion: " + criterion + "."
 		for action in self.actions:
 			commands = action.split(";")
@@ -238,7 +239,7 @@ class Definition:
 		self.set_match_type()
 
 	def set_match_type(self):
-		value  = self.value[1:-1]
+		value = self.value[1:-1]
 
 		if self.value == "^.*$" and not self.negative:
 			self.match_func = self.return_true
@@ -308,6 +309,11 @@ class DepEdit():
 			self.transformations = []
 			self.user_transformation_counter = 0
 		line_num = 0
+		if isinstance(config_file, str):
+			if sys.version_info[0] < 3:
+				config_file = open(config_file).readlines()
+			else:
+				config_file = open(config_file,encoding="utf8").readlines()
 		for instruction in config_file:
 			line_num += 1
 			if len(instruction)>0 and not instruction.startswith(";") and not instruction.startswith("#") and not instruction.strip() =="":
@@ -348,7 +354,10 @@ class DepEdit():
 	def matches_relation(self, node_matches, relation, result_sets):
 		if len(relation) == 0:
 			return
-
+		elif "==" in relation:
+			m = re.search(r':(.+)==', relation)
+			operator = m.group()
+			field = m.group(1)
 		elif "." in relation:
 			if re.match(r'.*\.[0-9]', relation):
 				m = re.match(r'.*\.[0-9]*,?[0-9]*#', relation)
@@ -373,6 +382,29 @@ class DepEdit():
 				result["rel"] = relation
 				result["matchers"] = [matcher1]
 				result_sets.append(result)
+		elif "==" in relation:
+			node1 = relation.split(operator)[0]
+			node2 = relation.split(operator)[1]
+			node1=int(node1.replace("#", ""))
+			node2=int(node2.replace("#", ""))
+
+			for matcher1 in node_matches[node1]:
+				tok1 = matcher1.token
+				for matcher2 in node_matches[node2]:
+					tok2 = matcher2.token
+					if self.test_relation(tok1, tok2, field):
+						result_sets.append({node1: tok1, node2: tok2, "rel": relation, "matchers": [matcher1, matcher2] })
+						matches[node1].append(tok1)
+						matches[node2].append(tok2)
+						hits += 1
+
+			for option in [node1,node2]:
+				matchers_to_remove = []
+				for matcher in node_matches[option]:
+					if matcher.token not in matches[option]:
+						matchers_to_remove.append(matcher)
+				for matcher in matchers_to_remove:
+					node_matches[option].remove(matcher)
 		else:
 			node1 = relation.split(operator)[0]
 			node2 = relation.split(operator)[1]
@@ -405,12 +437,12 @@ class DepEdit():
 	@staticmethod
 	def test_relation(node1,node2,operator):
 		if operator == ".":
-			if int(node2.id) == int(node1.id)+1:
+			if int(float(node2.id)) == int(float(node1.id))+1:
 				return True
 			else:
 				return False
 		elif operator == ">":
-			if int(node2.head) == int(node1.id):
+			if int(float(node2.head)) == int(float(node1.id)):
 				return True
 			else:
 				return False
@@ -422,16 +454,20 @@ class DepEdit():
 					max_dist = int(m.group(2).replace(",",""))
 				else:
 					max_dist = min_dist
-				if max_dist >= int(node2.id) - int(node1.id) >= min_dist:
+				if max_dist >= int(float(node2.id)) - int(float(node1.id)) >= min_dist:
 					return True
 				else:
 					return False
 			else:
 				dist = int(m.group(1))
-				if int(node2.id) - int(node1.id) == dist:
+				if int(float(node2.id)) - int(float(node1.id)) == dist:
 					return True
 				else:
 					return False
+		else:
+			val1 = getattr(node1,operator)
+			val2 = getattr(node2,operator)
+			return val1 == val2
 
 
 	def merge_sets(self, sets, node_count, rel_count):
@@ -679,10 +715,15 @@ class DepEdit():
 				tok_id = tok.id
 			elif tok.head == "0":
 				tok_head_string = "0"
-				tok_id = str(int(tok.id) - tokoffset)
+				tok_id = str(float(tok.id) - tokoffset)
 			else:
-				tok_head_string = str(int(tok.head)-tokoffset)
-				tok_id = str(int(tok.id)-tokoffset)
+				tok_head_string = str(float(tok.head)-tokoffset)
+				tok_id = str(float(tok.id)-tokoffset)
+			# Only keep decimal ID component for non-0 ellipsis IDs, e.g. 10.1 - those tokens have normal head '_'
+			tok_id = tok_id.replace(".0","")
+			tok_head_string = tok_head_string.replace(".0","")
+			if "." in tok_id:
+				tok_head_string = "_"
 			if self.input_mode == "8col":
 				output_tree += tok_id+"\t"+tok.text+"\t"+tok.lemma+"\t"+tok.pos+"\t"+tok.cpos+"\t"+tok.morph+\
 								"\t"+tok_head_string+"\t"+tok.func+"\n"
@@ -691,12 +732,17 @@ class DepEdit():
 								"\t"+tok_head_string+"\t"+tok.func+"\t"+tok.head2+"\t"+tok.func2+"\n"
 		return output_tree
 
-	def run_depedit(self, infile):
+	def make_sent_id(self, sent_id):
+		return "# sent_id = " + self.docname + "-" + str(sent_id) + "\n"
+
+	def run_depedit(self, infile, filename="file", sent_id=False, docname=False):
 		children = defaultdict(list)
 		child_funcs = defaultdict(list)
 		conll_tokens = []
 		self.input_mode = "10col"
+		self.docname = filename
 		tokoffset = 0
+		sent_num = 0
 		supertok_offset = 0
 		sentlength = 0
 		supertok_length = 0
@@ -706,12 +752,19 @@ class DepEdit():
 		sentence_string = ""
 		current_sentence = Sentence()
 
+		# Check if DepEdit has been fed an unsplit string programmatically
+		if isinstance(infile,str):
+			infile = infile.split("\n")
+
 		for myline in infile:
 			if sentlength > 0 and "\t" not in myline:
 				current_sentence.length = sentlength
 				conll_tokens[-1].position = "last"
 				transformed = self.process_sentence(conll_tokens, tokoffset, supertok_offset, self.transformations)
 				transformed = current_sentence.print_annos() + transformed
+				sent_num += 1
+				if sent_id:
+					my_output += self.make_sent_id(sent_num)
 				my_output += transformed
 				sentence_string = ""
 				current_sentence = Sentence()
@@ -721,7 +774,7 @@ class DepEdit():
 				sentlength = 0
 				supertok_length = 0
 			if myline.startswith("#"):  # Preserve comment lines
-					my_output += myline + "\n"
+					my_output += myline.strip() + "\n"
 			elif myline.strip() == "":
 					my_output += "\n"
 			elif myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
@@ -733,8 +786,12 @@ class DepEdit():
 					head_id = cols[6]
 				else:
 					super_tok = False
-					tok_id = str(int(cols[0]) + tokoffset)
-					head_id = str(int(cols[6]) + tokoffset)
+					tok_id = str(float(cols[0]) + tokoffset)
+					if cols[6] == "_":
+						sys.stderr.write("DepEdit WARN: head not set for token " + tok_id + " in " + filename + "\n")
+						head_id = str(0 + tokoffset)
+					else:
+						head_id = str(float(cols[6]) + tokoffset)
 				if len(cols) > 8:
 					# Collect token from line; note that head2 is parsed as a string, which is often "_" for monoplanar trees
 					this_tok = ParsedToken(tok_id, cols[1], cols[2], cols[3], cols[4], cols[5],head_id, cols[7].strip(), cols[8], cols[9].strip(), cols[0], [], "mid",super_tok)
@@ -747,8 +804,8 @@ class DepEdit():
 				conll_tokens.append(this_tok)
 				if not super_tok:
 					sentlength += 1
-					children[str(int(cols[6]) + tokoffset)].append(tok_id)
-					child_funcs[(int(cols[6]) + tokoffset)].append(cols[7])
+					children[str(float(head_id) + tokoffset)].append(tok_id)
+					child_funcs[(float(head_id) + tokoffset)].append(cols[7])
 				else:
 					supertok_length += 1
 
@@ -757,17 +814,33 @@ class DepEdit():
 			conll_tokens[-1].position = "last"
 			transformed = self.process_sentence(conll_tokens, tokoffset, supertok_offset, self.transformations)
 			transformed = current_sentence.print_annos() + transformed
+			sent_num += 1
+			if sent_id:
+				my_output += self.make_sent_id(sent_num)
 			my_output += transformed
+
+		if docname:
+			newdoc = '# newdoc id = ' + self.docname + "\n"
+			my_output = newdoc + my_output
 
 		return my_output
 
 if __name__ == "__main__":
 	depedit_version = "DepEdit V" + __version__
 	parser = argparse.ArgumentParser()
+	parser.add_argument('file',action="store",help="Input single file name or glob pattern to process a batch (e.g. *.conll10)")
 	parser.add_argument('-c', '--config', action="store", dest="config", default="config.ini", help="Configuration file defining transformation")
+	parser.add_argument('-d', '--docname', action="store_true", dest="docname", help="Begin output with # newdoc id =...")
+	parser.add_argument('-s', '--sent_id', action="store_true", dest="sent_id", help="Add running sentence ID comments")
+	group = parser.add_argument_group('Batch mode options')
+	group.add_argument('-o', '--outdir', action="store", dest="outdir", default="", help="Output directory in batch mode")
+	group.add_argument('-e', '--extension', action="store", dest="extension", default="", help="Extension for output files in batch mode")
+	group.add_argument('-i', '--infix', action="store", dest="infix", default=".depedit", help="Infix to denote edited files in batch mode (default: .depedit)")
 	parser.add_argument('--version', action='version', version=depedit_version)
-	parser.add_argument('file',action="store",help="Input file name or glob pattern to process")
 	options = parser.parse_args()
+
+	if options.extension.startswith("."):  # Ensure user specified extension does not include leading '.'
+		options.extension = options.extension[1:]
 
 	try:
 		config_file = io_open(options.config, encoding="utf8")
@@ -776,10 +849,19 @@ if __name__ == "__main__":
 		sys.exit()
 	depedit = DepEdit(config_file)
 
+	if sys.platform == "win32":  # Print \n new lines in Windows
+		import os, msvcrt
+		msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+
 	files = glob(options.file)
 	for filename in files:
 		infile = io_open(filename, encoding="utf8")
-		output_trees = depedit.run_depedit(infile)
+		basename = os.path.basename(filename)
+		if options.docname or options.sent_id:
+			docname = basename[:basename.rfind(".")]
+		else:
+			docname = filename
+		output_trees = depedit.run_depedit(infile,docname, sent_id=options.sent_id, docname=options.docname)
 		if len(files) == 1:
 			# Single file being processed, just print to STDOUT
 			if sys.version_info[0] < 3:
@@ -787,14 +869,26 @@ if __name__ == "__main__":
 			else:
 				print(output_trees)
 		else:
-			# Multiple files, add '.depedit' before extension and write to file
-			outname = filename
+			# Multiple files, add '.depedit' or other infix from options before extension and write to file
+			if options.outdir != "":
+				if not options.outdir.endswith(os.sep):
+					options.outdir += os.sep
+			outname = options.outdir + basename
 			if "." in filename:
 				extension = outname[outname.rfind(".")+1:]
+				if options.extension != "":
+					extension = options.extension
 				outname = outname[:outname.rfind(".")]
-				outname += ".depedit." + extension
+				outname += options.infix + "." + extension
 			else:
-				outname += ".depedit"
-			with open(outname,'w') as f:
-				f.write(output_trees.encode("utf-8"))
+				if options.extension == "":
+					outname += options.infix
+				else:
+					outname += options.infix + "." + options.extension
+			if sys.version_info[0] < 3:
+				with open(outname,'wb') as f:
+					f.write(output_trees.encode("utf-8"))
+			else:
+				with open(outname,'w',encoding="utf8") as f:
+					f.write(output_trees.encode("utf-8"))
 
