@@ -20,6 +20,10 @@ def find_antecedent(markable, previous_markables, lex, restrict_rule=""):
 	:param restrict_rule: a string specifying a subset of rules that should be checked (e.g. only rules with 'appos')
 	:return: candidate, matching_rule - the best antecedent and the rule that matched it
 	"""
+
+	# DEBUG point
+	if markable.text == lex.debug["ana"]:
+		a=5
 	candidate = None
 	matching_rule = None
 	for rule in lex.coref_rules:
@@ -27,14 +31,14 @@ def find_antecedent(markable, previous_markables, lex, restrict_rule=""):
 			# If this call of find_antecedent is limited to certain rules, check that the restriction is in the rule
 			if restrict_rule == "" or restrict_rule in rule.ana_spec:
 				if coref_rule_applies(lex, rule.ana_constraints, markable):
-					candidate = search_prev_markables(markable, previous_markables, rule.ante_constraints, rule.ante_spec, lex, rule.max_distance, rule.propagation)
+					candidate = search_prev_markables(markable, previous_markables, rule, lex)
 					if candidate is not None:
 						matching_rule = rule.propagation
 
 	return candidate, matching_rule
 
 
-def search_prev_markables(markable, previous_markables, ante_constraints, ante_spec, lex, max_dist, propagate):
+def search_prev_markables(markable, previous_markables, rule, lex):
 	"""
 	Search for antecedent to specified markable using a specified rule
 	
@@ -47,12 +51,16 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 	:param propagate: Whether to progpagate features upon match and in which direction
 	:return: the selected candidate Markable object
 	"""
-	candidate_list = []
+
+	ante_constraints, ante_spec, rule_num, max_dist, propagate, clf_name = rule.ante_constraints, rule.ante_spec, rule.rule_num, rule.max_distance, rule.propagation, rule.clf_name
+
+	candidate_set = set([])
 	if ante_spec.find("lookahead") > -1:
 		referents_to_loop = previous_markables
 	else:
 		referents_to_loop = reversed(previous_markables)
 	for candidate in referents_to_loop:  # loop through previous markables backwards
+
 		#DEBUG breakpoint:
 		if markable.text == lex.debug["ana"]:
 			a = 5
@@ -67,77 +75,79 @@ def search_prev_markables(markable, previous_markables, ante_constraints, ante_s
 							if markable.form == "pronoun":
 								if agree_compatible(markable, candidate, lex) or (ante_spec.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)):
 									if entities_compatible(markable, candidate, lex) and cardinality_compatible(markable, candidate, lex):
-										candidate_list.append(candidate)
+										candidate_set.add(candidate)
 							elif markable.text == candidate.text or (len(markable.text) > 4 and (candidate.text.lower() == markable.text.lower())):
-								propagate_entity(markable, candidate, propagate)
-								return candidate
+								#propagate_entity(markable, candidate, propagate)
+								candidate_set.add(candidate)
+								#return candidate
 							elif markable.text + "|" + candidate.text in lex.coref and entities_compatible(
 									markable, candidate, lex) and agree_compatible(markable, candidate, lex):
-								markable.coref_type = lex.coref[markable.text + "|" + candidate.text]
-								propagate_entity(markable, candidate)
-								return candidate
+								candidate_set.add(candidate)
+								#return candidate
 							elif markable.core_text + "|" + candidate.core_text in lex.coref and entities_compatible(
 									markable, candidate, lex) and agree_compatible(markable, candidate, lex):
-								markable.coref_type = lex.coref[markable.core_text + "|" + candidate.core_text]
-								propagate_entity(markable, candidate)
-								return candidate
+								candidate_set.add(candidate)
+								#return candidate
 							elif markable.entity == candidate.entity and agree_compatible(markable, candidate, lex) and (markable.head.text == candidate.head.text or
 							(len(markable.head.text) > 3 and (candidate.head.text.lower() == markable.head.text.lower())) or
 							(markable.core_text.count(" ") > 2 and (markable.core_text.lower() == candidate.core_text.lower())) or
 							(markable.head.lemma == candidate.head.lemma and lex.filters["lemma_match_pos"].match(markable.head.pos) is not None
 							and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
 								if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
-									if propagate.startswith("propagate"):
-										propagate_entity(markable, candidate, propagate)
-									return candidate
+									candidate_set.add(candidate)
 							elif markable.entity == candidate.entity and isa(markable, candidate, lex):
-								if propagate.startswith("propagate"):
-									propagate_entity(markable, candidate, propagate)
-								return candidate
+								candidate_set.add(candidate)
 							elif agree_compatible(markable,candidate,lex) and ((markable.head.text == candidate.head.text) or (markable.head.lemma == candidate.head.lemma and
 							lex.filters["lemma_match_pos"].match(markable.head.pos) is not None and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
 								if merge_entities(markable, candidate, previous_markables, lex):
-									if propagate.startswith("propagate"):
-										propagate_entity(markable, candidate, propagate)
-									return candidate
+									candidate_set.add(candidate)
 							elif entities_compatible(markable, candidate, lex) and isa(markable, candidate, lex):
 								if merge_entities(markable, candidate, previous_markables, lex):
-									if propagate.startswith("propagate"):
-										propagate_entity(markable, candidate, propagate)
-									return candidate
-							elif lex.filters["match_acronyms"] and markable.head.text.isupper() or candidate.head.text.isupper():
+									candidate_set.add(candidate)
+						elif lex.filters["match_acronyms"] and markable.head.text.isupper() or candidate.head.text.isupper():
 								if acronym_match(markable, candidate, lex) or acronym_match(candidate, markable, lex):
 									if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
 										if merge_entities(markable, candidate, previous_markables, lex):
-											propagate_entity(markable, candidate, "propagate")
-											return candidate
-							if ante_spec.find("anytext") > -1:
+											candidate_set.add(candidate)
+						if ante_spec.find("anytext") > -1:
 								if (ante_spec.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)) or agree_compatible(markable, candidate, lex):
 									if (ante_spec.find("anycardinality") > -1 or cardinality_compatible(markable,candidate,lex)):
 										if (ante_spec.find("anyentity") > -1 or entities_compatible(markable,candidate,lex)):
-											if propagate.startswith("propagate"):
-												propagate_entity(markable, candidate, propagate)
-											return candidate
+											candidate_set.add(candidate)
 		elif ante_spec.find("lookahead") == -1:
 			# Reached back too far according to max_dist, stop looking
 			break
-	if len(candidate_list) > 0:
-		candidates_to_remove = []
-		for candidate_item in candidate_list:
+
+	if len(candidate_set) > 0:
+		candidates_to_remove = set([])
+		for candidate_item in candidate_set:
 			# Remove items that are prohibited by entity agree mapping
 			agree_entity_mapping = lex.filters["agree_entity_mapping"].split(";")
 			for pair in agree_entity_mapping:
 				if pair.split(">")[0] == markable.agree and pair.split(">")[1] != candidate_item.entity:
-					candidates_to_remove.append(candidate_item)
-			if candidate_item.entity == lex.filters["person_def_entity"] and (candidate.form != "pronoun" or markable.entity_certainty == "certain") and lex.filters["no_person_agree"].match(markable.agree) is not None:
-				candidates_to_remove.append(candidate_item)
+					candidates_to_remove.add(candidate_item)
+			if candidate_item.entity == lex.filters["person_def_entity"] and (candidate_item.form != "pronoun" or markable.entity_certainty == "certain") and lex.filters["no_person_agree"].match(markable.agree) is not None:
+				candidates_to_remove.add(candidate_item)
 			elif markable.entity == lex.filters["person_def_entity"] and (markable.form != "pronoun" or markable.entity_certainty == "certain") and lex.filters["no_person_agree"].match(candidate_item.agree) is not None:
-				candidates_to_remove.append(candidate_item)
+				candidates_to_remove.add(candidate_item)
 
 		for removal in candidates_to_remove:
-			candidate_list.remove(removal)
-		if len(candidate_list)>0:
-			return best_candidate(markable, candidate_list, lex, propagate)
+			candidate_set.remove(removal)
+
+		if len(candidate_set) > 0:
+			take_first = True if ante_spec.find("takefirst") > -1 else False
+			best = best_candidate(markable, candidate_set, lex, rule, take_first=take_first)
+			if best is not None:
+				if markable.text + "|" + best.text in lex.coref:
+					markable.coref_type = lex.coref[markable.text + "|" + best.text]
+					propagate_entity(markable, best, propagate)
+					propagate_entity(markable, best)
+				elif markable.core_text + "|" + best.core_text in lex.coref:
+					markable.coref_type = lex.coref[markable.core_text + "|" + best.core_text]
+					propagate_entity(markable, candidate_item)
+				elif propagate.startswith("propagate"):
+					propagate_entity(markable, best, propagate)
+			return best
 		else:
 			return None
 	else:
