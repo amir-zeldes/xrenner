@@ -30,8 +30,11 @@ class Xrenner:
 		:return: void
 		"""
 		self.load(model, override)
-		depedit_config = self.lex.model_files["depedit.ini"]
-		self.depedit = DepEdit(depedit_config)
+		if "depedit.ini" in self.lex.model_files:
+			depedit_config = self.lex.model_files["depedit.ini"]
+			self.depedit = DepEdit(depedit_config)
+		else:
+			self.depedit = None
 
 	def load(self, model="eng", override=None):
 		"""
@@ -79,7 +82,9 @@ class Xrenner:
 		self.lex.incompatible_mod_pairs = set([])
 		self.lex.incompatible_isa_pairs = set([])
 
-		infile = self.depedit.run_depedit(infile)
+
+		if self.depedit is not None:
+			infile = self.depedit.run_depedit(infile, self.docname)
 		infile = infile.split("\n")
 
 		# Lists and dictionaries to hold tokens and markables
