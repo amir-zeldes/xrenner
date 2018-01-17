@@ -8,7 +8,23 @@ Author: Amir Zeldes
 
 from .xrenner_marker import lookup_has_entity
 
-def add_child_info(conll_tokens, child_funcs, child_strings):
+def add_negated_parents(conll_tokens, offset):
+	"""
+	Sets the neg_parent property on tokens whose head dominates a negation
+
+	:param conll_tokens: token list for this document
+	:param offset: token ID reached in last sentence
+	:return: None
+	"""
+
+	for token in conll_tokens[offset:]:
+		parent_id = token.head
+		if parent_id != "0":
+			if conll_tokens[int(parent_id)].negated:
+				token.neg_parent = True
+
+
+def add_child_info(conll_tokens, child_funcs, child_strings, lex):
 	"""
 	Adds a list of all dependent functions and token strings to each parent token
 	
@@ -21,6 +37,8 @@ def add_child_info(conll_tokens, child_funcs, child_strings):
 		for func in child_funcs[child_id]:
 			if func not in conll_tokens[child_id].child_funcs:
 				conll_tokens[child_id].child_funcs.append(func)
+				if lex.filters["neg_func"].match(func):
+					conll_tokens[child_id].negated = True
 		for tok_text in child_strings[child_id]:
 			if tok_text not in conll_tokens[child_id].child_strings:
 				conll_tokens[child_id].child_strings.append(tok_text)
@@ -74,7 +92,8 @@ def postprocess_parser(conll_tokens, tokoffset, children, stop_ids, lex):
 						not lookup_has_entity(tok1_head.text, tok1_head.lemma, "place", lex) and lookup_has_entity(tok1.text, tok1.lemma, "place", lex):
 							tok1.func = "xrenner_fix"
 							if tok1.id not in children[tok_minus2.id]:
-								children[tok_minus2.id].append(tok1.id)
+								if tok_minus2.head != tok1.id:  # Avoid creating a cycle
+									children[tok_minus2.id].append(tok1.id)
 
 		# Check for markable projecting beyond an apposition to itself and remove from children on violation
 		if lex.filters["apposition_func"].match(tok1.func) is not None and not tok1.id == "1":
@@ -92,7 +111,12 @@ def replace_conj_func(conll_tokens, tokoffset, lex):
 	:param lex: the LexData object with gazetteer information and model settings
 	:return: void
 	"""
+
 	for token in conll_tokens[tokoffset:]:
+		## DEBUG POINT ##
+		if token.text == lex.debug["ana"]:
+			pass
+
 		if lex.filters["conjunct_func"].match(token.func) is not None:
 			for child_func in conll_tokens[int(token.head)].child_funcs:
 				token.child_funcs.append(child_func)
