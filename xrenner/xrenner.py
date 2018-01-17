@@ -127,7 +127,7 @@ def xrenner_worker(data,options,total_docs,counter):
 				if PY3:
 					sys.stdout.buffer.write(output.encode("utf8"))
 				else:
-					print(output)
+					print(output.encode("utf8"))
 
 		counter.increment(1,xrenner.sent_num-1,len(xrenner.conll_tokens)-1)
 		docs, sents, toks = counter.value()
