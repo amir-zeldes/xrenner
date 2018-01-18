@@ -615,6 +615,7 @@ def best_candidate(markable, candidate_set, lex, rule, take_first=False):
 		propagate_entity(markable, best, propagate)
 		propagate_agree(markable, best)
 
+	best.matching_rule = str(rule_num)
 	return best
 
 

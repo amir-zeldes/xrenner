@@ -220,6 +220,8 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 					info_string += "&#10;speaker: " + out_mark.speaker
 				if not out_mark.antecedent == "none":
 					info_string += '&#10;coref_type: ' + out_mark.coref_type
+				if "matching_rule" in out_mark.__dict__:
+					info_string += "&#10;coref_rule: " + out_mark.matching_rule
 				output_string += '<div id="' + out_mark.id + '" head="' + out_mark.head.id + '" onmouseover="highlight_group(' + \
 				"'" + str(out_mark.group) + "'" + ')" onmouseout="unhighlight_group(' + "'" + str(out_mark.group) + "'" + ')" class="referent" group="' + str(out_mark.group) + '" title="' + info_string
 				if not out_mark.antecedent == "none":
