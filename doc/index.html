@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to xrenner’s documentation! &mdash; xrenner 1.4.1 documentation</title>
+  <title>Welcome to xrenner’s documentation! &mdash; xrenner 2.0.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 1.4.1 documentation" href="#"/>
+    <link rel="top" title="xrenner 2.0.0 documentation" href="#"/>
         <link rel="next" title="Using xrenner" href="using.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.4
+                2.0
               </div>
             
           
@@ -85,6 +85,7 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a></li>
 </ul>
 
@@ -172,14 +173,14 @@ design
 <div id="referent_6" head="11" onmouseover="highlight_group('6')" onmouseout="unhighlight_group('6')" class="referent" group="6" title="class: time | subclass: time-unit
 definiteness: def | agree: 
 cardinality: 0 | form: proper
-core_text: Thursday | lemma: Thursday"><span class="entity_type"><i title="time" class="fa fa-clock-o"></i></span>
+core_text: Thursday | lemma: Thursday" style="border-color: aqua; background-color: transparent;"><span class="entity_type"><i title="time" class="fa fa-clock-o"></i></span>
 Thursday
 </div>
 ,
-<div id="referent_8" head="14" onmouseover="highlight_group('8')" onmouseout="unhighlight_group('8')" class="referent" group="8" title="class: quantity | subclass: quantity
+<div id="referent_8" head="14" onmouseover="highlight_group('6')" onmouseout="unhighlight_group('6')" class="referent" group="6" title="class: time | subclass: time-unit
 definiteness: indef | agree: 
 cardinality: 0 | form: common
-core_text: May 7 | lemma: 7"><span class="entity_type"><i title="quantity" class="fa fa-sort-numeric-asc"></i></span>
+core_text: May 7 , 2015| lemma: 7" style="border-color: aqua; background-color: transparent;"><span class="entity_type"><i title="quantity" class="fa fa-sort-numeric-asc"></i></span>
 <div id="referent_7" head="13" onmouseover="highlight_group('7')" onmouseout="unhighlight_group('7')" class="referent" group="7" title="class: time | subclass: time-unit
 definiteness: def | agree: inanim
 cardinality: 0 | form: proper
@@ -187,13 +188,13 @@ core_text: May | lemma: May"><span class="entity_type"><i title="time" class="fa
 May
 </div>
 7
-</div>
 ,
 <div id="referent_9" head="16" onmouseover="highlight_group('9')" onmouseout="unhighlight_group('9')" class="referent" group="9" title="class: time | subclass: time-unit
 definiteness: def | agree: 
 cardinality: 0 | form: proper
 core_text: 2015 | lemma: @card@"><span class="entity_type"><i title="time" class="fa fa-clock-o"></i></span>
 2015
+</div>
 </div>
 On
 <div id="referent_10" head="18" onmouseover="highlight_group('10')" onmouseout="unhighlight_group('10')" class="referent" group="10" title="class: time | subclass: time-unit
@@ -263,11 +264,10 @@ whether
 definiteness: def | agree: plural
 cardinality: 0 | form: common
 core_text: citizens | lemma: citizen"><span class="entity_type"><i title="person" class="fa fa-male"></i></span>
-<div id="referent_17" head="43" onmouseover="highlight_group('15')" onmouseout="unhighlight_group('15')" class="referent" group="15" title="class: abstract | subclass: place
+<div id="referent_17" head="43" onmouseover="highlight_group('8')" onmouseout="unhighlight_group('8')" class="referent" group="8" title="class: abstract | subclass: place
 definiteness: def | agree: plural
 cardinality: 0 | form: pronoun
-core_text:  | lemma: their
-coref_type: ana" antecedent="referent_15" style="border-color: darkmagenta;"><span class="entity_type"><i title="abstract" class="fa fa-cloud"></i></span>
+core_text:  | lemma: their"><span class="entity_type"><i title="abstract" class="fa fa-map-marker"></i></span>
 their
 </div>
 citizens
@@ -316,6 +316,7 @@ one
 <li class="toctree-l2"><a class="reference internal" href="models.html#language-model-files">Language model files</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules.html#classes">Classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules.html#modules">Modules</a></li>
@@ -324,11 +325,6 @@ one
 </li>
 </ul>
 </div>
-<p><strong>In depth guides</strong>:</p>
-<ul class="simple">
-<li>Understanding a model&#8217;s <a class="reference internal" href="config.html"><span class="doc">config.ini</span></a></li>
-<li>Using <a class="reference internal" href="depedit.html"><span class="doc">DepEdit</span></a> to manipulate input</li>
-</ul>
 <p><strong>Papers</strong></p>
 <p>You can find some more information about the system in the following paper. This is also the paper to cite if you use xrenner in publications:</p>
 <p>Zeldes, Amir and Zhang, Shuo (2016) <a class="reference external" href="http://aclweb.org/anthology/W/W16/W16-0713.pdf">When Annotation Schemes Change Rules Help: A Configurable Approach to Coreference Resolution beyond OntoNotes</a>. In: Proceedings of the NAACL2016 Workshop on Coreference Resolution Beyond OntoNotes (CORBON). San Diego, CA, 92-101.</p>
@@ -359,7 +355,7 @@ one
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Amir Zeldes.
+        &copy; Copyright 2018, Amir Zeldes.
 
     </p>
   </div>
@@ -381,7 +377,7 @@ one
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.4.1',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

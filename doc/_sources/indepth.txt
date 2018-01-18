@@ -1,0 +1,9 @@
+=============================
+In depth guides
+=============================
+
+If you want to build a model for a new language or annotation scheme, it is recommended to also read the following in depth guides:
+
+* Understanding a model's :doc:`config.ini <config>`
+* Using :doc:`DepEdit <depedit>` to manipulate input
+* Using :doc:`utils/train_classifier.py <buildclf>` to build stochastic classifiers

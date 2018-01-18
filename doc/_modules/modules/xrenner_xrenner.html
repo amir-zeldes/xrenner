@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_xrenner &mdash; xrenner 1.4.1 documentation</title>
+  <title>modules.xrenner_xrenner &mdash; xrenner 2.0.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 1.4.1 documentation" href="../../index.html"/>
+    <link rel="top" title="xrenner 2.0.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.4
+                2.0
               </div>
             
           
@@ -85,6 +85,7 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../indepth.html">     In depth guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
 </ul>
 
@@ -141,20 +142,19 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">xrenner_out</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">xrenner_classes</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">xrenner_coref</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">xrenner_preprocess</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">xrenner_marker</span> <span class="k">import</span> <span class="n">make_markable</span>
-<span class="kn">from</span> <span class="nn">xrenner_lex</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">xrenner_postprocess</span> <span class="k">import</span> <span class="n">postprocess_coref</span>
-<span class="kn">from</span> <span class="nn">depedit</span> <span class="k">import</span> <span class="n">DepEdit</span>
-<span class="kn">import</span> <span class="nn">ntpath</span><span class="o">,</span> <span class="nn">os</span>
-
+<span class="kn">from</span> <span class="nn">.xrenner_out</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_classes</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_coref</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_preprocess</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_marker</span> <span class="k">import</span> <span class="n">make_markable</span>
+<span class="kn">from</span> <span class="nn">.xrenner_lex</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_postprocess</span> <span class="k">import</span> <span class="n">postprocess_coref</span>
+<span class="kn">from</span> <span class="nn">.depedit</span> <span class="k">import</span> <span class="n">DepEdit</span>
+<span class="kn">import</span> <span class="nn">ntpath</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">io</span>
 
 <div class="viewcode-block" id="Xrenner"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner">[docs]</a><span class="k">class</span> <span class="nc">Xrenner</span><span class="p">:</span>
 
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rule_based</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Main class for xrenner coreferencer. Invokes the load method to read model data.</span>
 <span class="sd">		</span>
@@ -162,9 +162,15 @@
 <span class="sd">		:param override: name of a section in models/override.ini if configuration overrides should be applied</span>
 <span class="sd">		:return: void</span>
 <span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rule_based</span> <span class="o">=</span> <span class="n">rule_based</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">override</span><span class="p">)</span>
-		<span class="n">depedit_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">model_files</span><span class="p">[</span><span class="s2">&quot;depedit.ini&quot;</span><span class="p">]</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">depedit</span> <span class="o">=</span> <span class="n">DepEdit</span><span class="p">(</span><span class="n">depedit_config</span><span class="p">)</span>
+		<span class="k">if</span> <span class="s2">&quot;depedit.ini&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">model_files</span><span class="p">:</span>
+			<span class="n">depedit_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">model_files</span><span class="p">[</span><span class="s2">&quot;depedit.ini&quot;</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">depedit</span> <span class="o">=</span> <span class="n">DepEdit</span><span class="p">(</span><span class="n">depedit_config</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">depedit</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">token_count</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sentence_count</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="Xrenner.load"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.load">[docs]</a>	<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -176,7 +182,7 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">override</span> <span class="o">=</span> <span class="n">override</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">lex</span> <span class="o">=</span> <span class="n">LexData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">override</span><span class="p">)</span></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lex</span> <span class="o">=</span> <span class="n">LexData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">override</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rule_based</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Xrenner.set_doc_name"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.set_doc_name">[docs]</a>	<span class="k">def</span> <span class="nf">set_doc_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -185,8 +191,10 @@
 <span class="sd">		:param name: string, the name to give the document</span>
 <span class="sd">		:return: void</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="n">name</span></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="n">name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="n">name</span>  <span class="c1"># Copy in lex, in case we need access in nested object</span></div>
 
+	<span class="c1">#@profile</span>
 <div class="viewcode-block" id="Xrenner.analyze"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.analyze">[docs]</a>	<span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">,</span> <span class="n">out_format</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Method to run coreference analysis with loaded model</span>
@@ -199,20 +207,33 @@
 		<span class="c1"># Check if this is a file name from the main script or a parse delivered in an import or unittest scenario</span>
 		<span class="k">if</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">infile</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>  <span class="c1"># This is a raw parse as string or list, not a file name</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">docpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">))</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="s2">&quot;untitled&quot;</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">docname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">set_doc_name</span><span class="p">(</span><span class="s2">&quot;untitled&quot;</span><span class="p">)</span>
 			<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
 				<span class="n">infile</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>  <span class="c1"># This is a file name, extract document name and path, then read the file</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">docpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="n">clean_filename</span><span class="p">(</span><span class="n">ntpath</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
-			<span class="n">infile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">set_doc_name</span><span class="p">(</span><span class="n">clean_filename</span><span class="p">(</span><span class="n">ntpath</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">infile</span><span class="p">)))</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">temp</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
+				<span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+			<span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+				<span class="n">temp</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;ISO 8859-1&quot;</span><span class="p">)</span>
+				<span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+			<span class="n">infile</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
 		<span class="c1"># Empty cached lists of incompatible pairs</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">incompatible_mod_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="o">.</span><span class="n">incompatible_isa_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
 
-		<span class="n">infile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depedit</span><span class="o">.</span><span class="n">run_depedit</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-		<span class="n">infile</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depedit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">infile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depedit</span><span class="o">.</span><span class="n">run_depedit</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+			<span class="n">infile</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1"># Count non-comment, non-empty lines to get token count</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">token_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">([</span><span class="n">tok</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">infile</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">)]))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sentence_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">([</span><span class="n">tok</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">infile</span> <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;1</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)]))</span>
 
 		<span class="c1"># Lists and dictionaries to hold tokens and markables</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">conll_tokens</span> <span class="o">=</span> <span class="p">[]</span>
@@ -246,12 +267,16 @@
 		<span class="n">lex</span><span class="o">.</span><span class="n">coref_rules</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">non_speaker_rules</span>
 
 		<span class="k">for</span> <span class="n">myline</span> <span class="ow">in</span> <span class="n">infile</span><span class="p">:</span>
-			<span class="k">if</span> <span class="s2">&quot;#speaker&quot;</span> <span class="ow">in</span> <span class="n">myline</span><span class="p">:</span> <span class="c1"># speaker</span>
-				<span class="n">current_sentence</span><span class="o">.</span><span class="n">speaker</span> <span class="o">=</span> <span class="n">myline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+			<span class="k">if</span> <span class="s2">&quot;speaker&quot;</span> <span class="ow">in</span> <span class="n">myline</span> <span class="ow">and</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">myline</span> <span class="ow">and</span> <span class="n">myline</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>  <span class="c1"># speaker annotation</span>
+				<span class="n">current_sentence</span><span class="o">.</span><span class="n">speaker</span> <span class="o">=</span> <span class="n">myline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 				<span class="n">lex</span><span class="o">.</span><span class="n">coref_rules</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">speaker_rules</span>
+			<span class="k">elif</span> <span class="s2">&quot;s_type&quot;</span> <span class="ow">in</span> <span class="n">myline</span> <span class="ow">and</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">myline</span> <span class="ow">and</span> <span class="n">myline</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>  <span class="c1"># s_type annotation</span>
+				<span class="n">current_sentence</span><span class="o">.</span><span class="n">s_type</span> <span class="o">=</span> <span class="n">myline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 			<span class="k">elif</span> <span class="n">myline</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Only process lines that contain tabs (i.e. conll tokens)</span>
 				<span class="n">current_sentence</span><span class="o">.</span><span class="n">token_count</span> <span class="o">+=</span> <span class="mi">1</span>
 				<span class="n">cols</span> <span class="o">=</span> <span class="n">myline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+				<span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>  <span class="c1"># conllu multi-token line or decimal ID virtual token</span>
+					<span class="k">continue</span>  <span class="c1"># Not currently supported</span>
 				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;open_quote&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">quoted</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
 					<span class="n">quoted</span> <span class="o">=</span> <span class="kc">True</span>
 				<span class="k">elif</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;close_quote&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">quoted</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
@@ -288,6 +313,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">process_sentence</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tokoffset</span><span class="p">,</span> <span class="n">current_sentence</span><span class="p">)</span>
 
 		<span class="n">marks_to_add</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="c1"># TODO: incorporate verbal matching into classification and dumping frameworks</span>
 		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;seek_verb_for_defs&quot;</span><span class="p">]:</span>
 			<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">markables</span><span class="p">:</span>
 				<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;def&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">and</span> <span class="n">mark</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;common&quot;</span> <span class="ow">and</span> \
@@ -306,7 +332,6 @@
 								<span class="n">v_antecedent</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">mark</span><span class="o">.</span><span class="n">group</span>
 								<span class="n">v_antecedent</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s2">&quot;referent_&quot;</span> <span class="o">+</span> <span class="n">v_antecedent</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span>
 								<span class="n">marks_to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v_antecedent</span><span class="p">)</span>
-
 
 		<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">marks_to_add</span><span class="p">:</span>
 			<span class="n">markstart_dict</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
@@ -410,11 +435,13 @@
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;webanno&quot;</span><span class="p">:</span>
 			<span class="k">return</span> <span class="n">output_webanno</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">markables</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;conll&quot;</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">output_conll</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">output_conll</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;conll_sent&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">output_conll_sent</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;onto&quot;</span><span class="p">:</span>
 			<span class="k">return</span> <span class="n">output_onto</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;unittest&quot;</span><span class="p">:</span>
-			<span class="kn">from</span> <span class="nn">xrenner_test</span> <span class="k">import</span> <span class="n">generate_test</span>
+			<span class="kn">from</span> <span class="nn">.xrenner_test</span> <span class="k">import</span> <span class="n">generate_test</span>
 			<span class="k">return</span> <span class="n">generate_test</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markables</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
 			<span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -442,14 +469,17 @@
 		<span class="n">markend_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">markend_dict</span>
 
 		<span class="c1"># Add list of all dependent funcs and strings to each token</span>
-		<span class="n">add_child_info</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">child_funcs</span><span class="p">,</span> <span class="n">child_strings</span><span class="p">)</span>
+		<span class="n">add_child_info</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">child_funcs</span><span class="p">,</span> <span class="n">child_strings</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+		<span class="n">add_negated_parents</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">tokoffset</span><span class="p">)</span>
 
 		<span class="n">mark_candidates_by_head</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 		<span class="n">stop_ids</span> <span class="o">=</span> <span class="p">{}</span>
 		<span class="k">for</span> <span class="n">tok1</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
 			<span class="n">stop_ids</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Assume all tokens are head candidates</span>
 			<span class="n">tok1</span><span class="o">.</span><span class="n">sent_position</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">-</span> <span class="n">tokoffset</span><span class="p">)</span> <span class="o">/</span> <span class="n">sentence</span><span class="o">.</span><span class="n">token_count</span> <span class="c1"># Add relative token positions at sentence as percentages</span>
+			<span class="n">tok1</span><span class="o">.</span><span class="n">doc_position</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_count</span> <span class="c1"># Add relative token positions at document as percentages</span>
 			<span class="n">tok1</span><span class="o">.</span><span class="n">head_text</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># Save parent text for later dependency checks</span>
+			<span class="n">tok1</span><span class="o">.</span><span class="n">head_pos</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">pos</span>  <span class="c1"># Save parent POS for later dependency checks</span>
 
 		<span class="c1"># Post-process parser input based on entity list if desired</span>
 		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;postprocess_parser&quot;</span><span class="p">]:</span>
@@ -469,17 +499,19 @@
 				<span class="c1"># Check that neither possessor nor possessed is a pronoun</span>
 				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pronoun_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pronoun_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 					<span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="p">][</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">text</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span>  <span class="c1"># Increase by 2: 1 for attestation, 1 for pertinence in this document</span>
+					<span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma</span><span class="p">][</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head</span><span class="p">)]</span><span class="o">.</span><span class="n">text</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 			<span class="c1"># Check if func2 has additional possessor information</span>
 			<span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">func2</span> <span class="o">!=</span> <span class="s2">&quot;_&quot;</span><span class="p">:</span>
 				<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;possessive_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">func2</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 					<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pronoun_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;pronoun_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head2</span><span class="p">)</span><span class="o">+</span><span class="n">tokoffset</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 						<span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="p">][</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head2</span><span class="p">)</span><span class="o">+</span><span class="n">tokoffset</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span>  <span class="c1"># Increase by 2: 1 for attestation, 1 for pertinence in this document</span>
+						<span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma</span><span class="p">][</span><span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">head2</span><span class="p">)</span><span class="o">+</span><span class="n">tokoffset</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
 		<span class="c1"># Find dead areas</span>
 		<span class="k">for</span> <span class="n">tok1</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
 			<span class="c1"># Affix tokens can&#39;t be markable heads - assume parser error and fix if desired</span>
 			<span class="c1"># DEBUG POINT</span>
-			<span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+			<span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
 				<span class="k">pass</span>
 			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;postprocess_parser&quot;</span><span class="p">]:</span>
 				<span class="k">if</span> <span class="p">((</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_head_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_forbidden_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span>
@@ -559,7 +591,7 @@
 		<span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="n">tokoffset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
 			<span class="c1"># Markable heads should match specified pos or pos+func combinations,</span>
 			<span class="c1"># ruling out stop list items with appropriate functions</span>
-			<span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+			<span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
 				<span class="k">pass</span>
 			<span class="c1"># TODO: consider switch for lex.filters[&quot;stop_func&quot;].match(tok.func)</span>
 			<span class="k">if</span> <span class="p">((</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_head_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;mark_forbidden_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span>
@@ -651,7 +683,9 @@
 			<span class="n">this_markable</span> <span class="o">=</span> <span class="n">Markable</span><span class="p">(</span><span class="s2">&quot;referent_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">markcounter</span><span class="p">),</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">form</span><span class="p">,</span>
 									 <span class="n">mark</span><span class="o">.</span><span class="n">definiteness</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">core_text</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity_certainty</span><span class="p">,</span>
 									 <span class="n">mark</span><span class="o">.</span><span class="n">subclass</span><span class="p">,</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">agree</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">sentence</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupcounter</span><span class="p">,</span>
-									 <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">cardinality</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">submarks</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">coordinate</span><span class="p">)</span>
+									 <span class="n">mark</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_subclasses</span><span class="p">,</span> <span class="n">mark</span><span class="o">.</span><span class="n">alt_agree</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">cardinality</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">submarks</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">coordinate</span><span class="p">,</span><span class="n">mark</span><span class="o">.</span><span class="n">agree_certainty</span><span class="p">)</span>
+			<span class="n">this_markable</span><span class="o">.</span><span class="n">get_dep_freqs</span><span class="p">(</span><span class="n">lex</span><span class="p">)</span>
+
 			<span class="n">markables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_markable</span><span class="p">)</span>
 			<span class="n">markables_by_head</span><span class="p">[</span><span class="n">mark_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_markable</span>
 			<span class="n">markstart_dict</span><span class="p">[</span><span class="n">this_markable</span><span class="o">.</span><span class="n">start</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_markable</span><span class="p">)</span>
@@ -718,7 +752,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Amir Zeldes.
+        &copy; Copyright 2018, Amir Zeldes.
 
     </p>
   </div>
@@ -740,7 +774,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'1.4.1',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

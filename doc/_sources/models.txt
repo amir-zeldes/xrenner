@@ -6,7 +6,11 @@ Buliding New Language Models
 Introduction
 ************
 
-Beyond the language models that are available in the xrenner distribution, you can build your own models, or modify existing models, by editing their configuration files and gathering lexical data for your target language or domain.
+.. raw:: html
+
+   <p><b style="color:red">new:</b> A starter model with minimal settings for UD data is now included in <b>models/udx</b></p>
+
+Beyond the language models that are available in the xrenner distribution, you can build your own models, or modify existing models, by editing their configuration files and gathering lexical data for your target language or domain, as well as training stochastic classifiers.
 
 A language model in xrenner is defined by a set of files in a directory under the models/ directory, or in a compressed archive containing such files, conventionally marked by the extension .xrm. For exmple, the default English language model is models/eng/, and different models, typically named using ISO 639-2 three letter language codes, can be invoked using the -m option. The following example invokes the German language model, named *deu* (for Deutsch, i.e. German):
 
@@ -23,6 +27,9 @@ At a minimum, a model must include:
 
 * :ref:`config.ini <config_ini>`
 * :ref:`coref_rules.tab <coref_rules_tab>`
+
+It is also highly recommended to include:
+
 * :ref:`pronouns.tab <pronouns_tab>`
 * :ref:`entities.tab <entities_tab>`
 * :ref:`entity_heads.tab <entity_heads_tab>`
@@ -63,7 +70,7 @@ depedit.ini
 
   .. container:: expandable	
   
-      This is the configuration file for the *depedit* module, which preprocesses input dependency trees before the system analyzes them. For detailed documentation see :doc:`depedit.ini <depedit>`
+      This is the configuration file for the *depedit* module, which can be used to preprocess input dependency trees before the system analyzes them. For detailed documentation see :doc:`depedit.ini <depedit>`
 
 	  
 override.ini
@@ -228,21 +235,22 @@ coref_rules.tab
   
 	The file coref_rules.tab lists a cascade of coreference matching rules of the form:
 
-		``ANA;ANT;DIR;DIST;PROP``
+		``ANA;ANT;DIST;PROP(;CLF(;THRESH))``
 
-	Where ANA and ANT are ampersand-separated feature constraints on the anaphor and the antecedent, DIR is the search direction (back, or forward for cataphora), DIST is the maximum distance in sentences to search for a match and PROP is the direction of feature propagation once a match is made, if any. 
+	Where ANA and ANT are ampersand-separated feature constraints on the anaphor and the antecedent, DIST is the maximum distance in sentences to search for a match and PROP is the direction of feature propagation once a match is made, if any. Two further optional components are a classifier file name created by **utils/train_classifier**, and an optional decision threshold to use for that classifier for this rule (see :doc:`Building classifiers <buildclf>`).
 	
 	Feature constraints include markable **text**, **entity** (e.g. *person*), **subclass** (e.g. *politician*), **definiteness** (*def* or *indef*), **form** (common/proper/pronoun), cardinality (numerical modifiers or amount of members in a coordination); features of the head token (**lemma**, **pos**, **func**, whether it is **quoted**, i.e. in quotation marks), as well as existence/non-existence of certain modifiers (**mod**) )or parents/children in a head token's dependency graph (*parent*/*child*); and features of the sentence (**mood** and **speaker**).
 	
 	Feature values can be regular expressions (surrounded by slashes), exact values (surrounded by double quotes), or a reference to the same value as the antecedent, marked *$1* (i.e. the anaphor, conceptually the second mention or $2, is the same as the antecedent, $1). For Boolean features, such as **quoted**, use *True* or *False*. Negative matching can be done using *!=*. For two markables (not) having the same dependency parent (e.g. to control reflexive coreference), there is a legacy shorthand *sameparent* and *!sameparent*, which is the same as *parent=$1* etc. For examples, see below.
 	
-	There are also special flags which allow turning off some compatibility checks, as well as forward lookahead for cataphora. They are:
+	There are also special flags which allow turning off some compatibility checks, as well as switching on forward lookahead for cataphora. They are:
 	
 	* **anyagree** - ignore agreement checking
 	* **anyentity** - ignore entity matching
 	* **anycardinality** - ignore cardinality matching
 	* **anytext** - ignore text of markable and antecedent in comparison
-	* **lookahead** - search for 'antecedent' in subsequent tokens of same sentence (for cataphora)
+	* **lookahead** - search for 'antecedent' in subsequent tokens of same sentence instead of preceding tokkens (for cataphora)
+	* **take_first** - do not perform any scoring: take the first (closest) candidate found (for very high certainty rules, speeds up performance)
 	
 	Feature propagation ensures entity types match across coreferent results, and can have the values:
 	
@@ -250,23 +258,32 @@ coref_rules.tab
 	* **propagate** - automatically propagate from less certainly identified member to more certain one
 	* **propagate_forward** - always propagate from antecedent to anaphor
 	* **propagate_backward** - the reverse of forward
-	* **propagate_invert** - a special setting for cataphora: propagates from earlier cataphor to the later postcedent 
+	* **propagate_invert** - a special setting for cataphora: propagates to earlier cataphor from the later postcedent 
 	
 	Rules are consulted in order, similarly to the sieve approach of Lee et al. (2013), so that the most certain rules are applied first. Every mention has only one antecedent, so that subsequent matching can be skipped, but some aspects of a mention-cluster or ‘entity-mention’ model (cf. Rahman & Ng 2011) are also implemented, for example antonym modifier checks are applied to the entire chain (see :ref:`antonyms.tab <antonyms_tab>`).
 
-	The first rule below illustrates a very 'safe' strategy, searching for proper noun markables with identical text (=$1) in the previous 100 sentences, since these are almost always coreferent, and undertaking no feature propagation. The second rule looks for a mention headed by 'one' with the same modifier as its antecedent within 4 sentences, matching cases like `the new flag ... the new one`. The third rule attempts to match a possessive pronoun (which has not saturated its antecedent yet, if this rule has been reached) to a nominal subject later on in the sentence, matching sentences like `In [her] speech, [Angela Merkel] said...`
+	The first rule below illustrates a very 'safe' strategy, searching for proper noun markables with identical text (=$1) in the previous 100 sentences, since these are almost always coreferent, and undertaking no feature propagation. It takes the vert first candidate found, without scoring. The second rule looks for a mention headed by 'one' with the same modifier as its antecedent within 4 sentences, matching cases like `the new flag ... the new one`. It uses a classifier called clf_one.pkl, and sets a high threshold, demanding high confidence from the classifier (default threshold is 0.5). The third rule attempts to match a possessive pronoun (which has not saturated its antecedent yet, if this rule has been reached) to a nominal subject later on in the sentence, matching sentences like `In [her] speech, [Angela Merkel] said...`. It uses no classifier, meaning it uses xrenner heuristics to choose among candidates, but it will always choose some candidate if available. The heuristic, unlike classifiers, cannot reject an anaphor as 'non-anaphoric', whereas if all classifier candidates score below their threshold, no antecedent is selected.
 
 	    .. code-block:: perl
 
 			#first match identical proper markables
-			form="proper";form="proper"&text=$1;100;nopropagate
+			form="proper";form="proper"&text=$1&take_first;100;nopropagate
 			#identify coreferent light heads based on identical modifiers
-			lemma=/^one$/;mod=$1&anytext&form!="proper"&!sameparent;4;nopropagate
+			lemma=/^one$/;mod=$1&anytext&form!="proper"&!sameparent;4;nopropagate;clf_one.pkl;0.6
 			#salvage unmatched pronouns - cataphoric cases like "in her speech, the chairwoman..."
 			text=/^(his|her|its)$/;form!=/pronoun/&func=/nsubj/&lookahead;0;propagate_invert
 
+	Classifiers are invoked by their name, minus a python specific version. If your classifier is named *pron_clf.pkl*, you may either provide that file in the model directory for whichever Python version you intend to use (ideally: 3.X), or you can provide two files: *pron_clf2.pkl* and *pron_clf3.pkl*, which will be used automatically for the relevant Python version. Note that the classifier name in coref_rules.tab will still be *pron_clf.pkl*. 
+	
+	Additionally, you may supply alternative versions of a classifier to work with different model override profiles (see :doc:`config.ini <config>`). These classifier files may be named with a certain suffix, which is then specified in the override file. For example, a classifier called *gbm_all.pkl* may have an alternate file *gbm_all_gum.pkl* in the model directory, and a corresponding entry in override.ini will specify: 
 
+	    .. code-block:: ini
 
+			classifier_suffix=_gum
+
+	This may be combined with alternative Python 2/3 versions (e.g. *gbm_all_gum2.pkl*, *gbm_all_gum3.pkl*)
+	
+	
 .. _entities_tab:
 
 entities.tab
@@ -276,7 +293,7 @@ entities.tab
 
   .. container:: header
   
-      **mandatory**
+      **optional (but highly recommended)**
 
   .. container:: expandable	
   
@@ -351,7 +368,7 @@ entity_heads.tab
 
   .. container:: header
   
-      **mandatory**
+      **optional (but highly recommended)**
 
   .. container:: expandable	
   
@@ -601,7 +618,7 @@ pronouns.tab
 
   .. container:: header
   
-      **mandatory**
+      **optional (but highly recommended)**
 
   .. container:: expandable	
   
@@ -618,8 +635,30 @@ pronouns.tab
 				it	inanim
 				you	2sg
 				you	2pl
-				
+
+
+similar.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      A two column list of entity heads and comma separated heads that are similar to them. These can be obtained from lexical resources or populated from the top *n* most similar items from trained embeddings. Similar words are used whenever data is unavailable for the head in the first column, but some data is available for words in the second column. The idea is that the non-reliance on embeddings makes this usable even for low resource languages via manual curation, while languages for which embeddings can be obtained allow for quick stored look-up of most similar words without realtime vector space computations.
 	  
+		**example**
+
+		.. code-block:: html
+
+			deal	deals,agreement,pact
+			City	city,Town,mayor
+			May	April,June,March
+
+
 stop_list.tab
 ************************
 
@@ -631,7 +670,7 @@ stop_list.tab
 
   .. container:: expandable	
   
-      This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. *mum 's the word* and not *mum's the word*.  You can also specify entries that are only used as stop items when they are not the whole markable. For example, and entry *Yangtze@* will prevent that string becoming a markable if it is the entire text of the markable, but will not prevent a longer markable such as *Yangtze River* (regardless of which token is the head).
+      This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. *mum 's the word* and not *mum's the word*.  You can also specify entries that are only used as stop items when they are the whole markable. For example, an entry *Yangtze@* will prevent that string becoming a markable if it is the entire text of the markable, but will not prevent a longer markable such as *Yangtze River* (regardless of which token is the head).
 	  
 		**example**
 

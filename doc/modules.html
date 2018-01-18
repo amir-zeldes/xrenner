@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Developers’ module documentation &mdash; xrenner 1.4.1 documentation</title>
+  <title>Developers’ module documentation &mdash; xrenner 2.0.0 documentation</title>
   
 
   
@@ -32,8 +32,8 @@
   
 
   
-    <link rel="top" title="xrenner 1.4.1 documentation" href="index.html"/>
-        <link rel="prev" title="Buliding New Language Models" href="models.html"/> 
+    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/>
+        <link rel="prev" title="In depth guides" href="indepth.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.4
+                2.0
               </div>
             
           
@@ -85,6 +85,7 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">     Developers&#8217; module documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#xrenner">Xrenner</a></li>
@@ -161,7 +162,7 @@
 <blockquote>
 <div><dl class="class">
 <dt id="modules.xrenner_xrenner.Xrenner">
-<em class="property">class </em><code class="descclassname">modules.xrenner_xrenner.</code><code class="descname">Xrenner</code><span class="sig-paren">(</span><em>model='eng'</em>, <em>override=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">modules.xrenner_xrenner.</code><code class="descname">Xrenner</code><span class="sig-paren">(</span><em>model='eng'</em>, <em>override=None</em>, <em>rule_based=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="modules.xrenner_xrenner.Xrenner.analyze">
 <code class="descname">analyze</code><span class="sig-paren">(</span><em>infile</em>, <em>out_format</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner.analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner.analyze" title="Permalink to this definition">¶</a></dt>
@@ -290,8 +291,31 @@
 <blockquote>
 <div><dl class="class">
 <dt id="modules.xrenner_classes.Markable">
-<em class="property">class </em><code class="descclassname">modules.xrenner_classes.</code><code class="descname">Markable</code><span class="sig-paren">(</span><em>mark_id</em>, <em>head</em>, <em>form</em>, <em>definiteness</em>, <em>start</em>, <em>end</em>, <em>text</em>, <em>core_text</em>, <em>entity</em>, <em>entity_certainty</em>, <em>subclass</em>, <em>infstat</em>, <em>agree</em>, <em>sentence</em>, <em>antecedent</em>, <em>coref_type</em>, <em>group</em>, <em>alt_entities</em>, <em>alt_subclasses</em>, <em>alt_agree</em>, <em>cardinality=0</em>, <em>submarks=[]</em>, <em>coordinate=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_classes.html#Markable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_classes.Markable" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">class </em><code class="descclassname">modules.xrenner_classes.</code><code class="descname">Markable</code><span class="sig-paren">(</span><em>mark_id</em>, <em>head</em>, <em>form</em>, <em>definiteness</em>, <em>start</em>, <em>end</em>, <em>text</em>, <em>core_text</em>, <em>entity</em>, <em>entity_certainty</em>, <em>subclass</em>, <em>infstat</em>, <em>agree</em>, <em>sentence</em>, <em>antecedent</em>, <em>coref_type</em>, <em>group</em>, <em>alt_entities</em>, <em>alt_subclasses</em>, <em>alt_agree</em>, <em>cardinality=0</em>, <em>submarks=[]</em>, <em>coordinate=False</em>, <em>agree_certainty=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_classes.html#Markable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_classes.Markable" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="modules.xrenner_classes.Markable.extract_features">
+<code class="descname">extract_features</code><span class="sig-paren">(</span><em>lex</em>, <em>antecedent=None</em>, <em>candidate_list=[]</em>, <em>dump_position=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_classes.html#Markable.extract_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_classes.Markable.extract_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to generate feature representation of markables or markable-antecedent pairs for classifiers</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+<li><strong>antecedent</strong> &#8211; The antecedent Markable potentially coreferring to self</li>
+<li><strong>candidate_list</strong> &#8211; The list of candidate markables under consideration, used to extract cohort size</li>
+<li><strong>dump_position</strong> &#8211; Whether document name + token positions are dumped for each markable to compare to gold</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dictionary of markable properties</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
 
 </div></blockquote>
 </div>
@@ -300,7 +324,7 @@
 <blockquote>
 <div><dl class="class">
 <dt id="modules.xrenner_rule.CorefRule">
-<em class="property">class </em><code class="descclassname">modules.xrenner_rule.</code><code class="descname">CorefRule</code><span class="sig-paren">(</span><em>rule_string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_rule.html#CorefRule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_rule.CorefRule" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">modules.xrenner_rule.</code><code class="descname">CorefRule</code><span class="sig-paren">(</span><em>rule_string</em>, <em>rule_num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_rule.html#CorefRule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_rule.CorefRule" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div></blockquote>
@@ -320,7 +344,7 @@
 <blockquote>
 <div><dl class="class">
 <dt id="modules.xrenner_lex.LexData">
-<em class="property">class </em><code class="descclassname">modules.xrenner_lex.</code><code class="descname">LexData</code><span class="sig-paren">(</span><em>model</em>, <em>override=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">modules.xrenner_lex.</code><code class="descname">LexData</code><span class="sig-paren">(</span><em>model</em>, <em>xrenner</em>, <em>override=None</em>, <em>rule_based=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to hold lexical information from gazetteers and training data.
 Use model argument to define subdirectory under models/ for reading different sets of
 configuration files.</p>
@@ -430,9 +454,9 @@ Uses func_substitute_forward and func_substitute_backward settings in config.ini
 </table>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="method">
 <dt id="modules.xrenner_lex.LexData.parse_coref_rules">
-<em class="property">static </em><code class="descname">parse_coref_rules</code><span class="sig-paren">(</span><em>rule_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.parse_coref_rules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.parse_coref_rules" title="Permalink to this definition">¶</a></dt>
+<code class="descname">parse_coref_rules</code><span class="sig-paren">(</span><em>rule_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.parse_coref_rules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.parse_coref_rules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reader function to pass coref_rules.tab into CorefRule objects in two lists: one for general rules and
 one also including rules to use when speaker info is available.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -480,7 +504,7 @@ dependent manipultations, use depedit module</p>
 
 <dl class="method">
 <dt id="modules.xrenner_lex.LexData.read_delim">
-<code class="descname">read_delim</code><span class="sig-paren">(</span><em>filename</em>, <em>mode='normal'</em>, <em>atom_list_name='atoms'</em>, <em>add_to_sums=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.read_delim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.read_delim" title="Permalink to this definition">¶</a></dt>
+<code class="descname">read_delim</code><span class="sig-paren">(</span><em>filename</em>, <em>mode='normal'</em>, <em>atom_list_name='atoms'</em>, <em>add_to_sums=False</em>, <em>sep='</em>, <em>'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData.read_delim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData.read_delim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic file reader for lexical data in model directory</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -488,7 +512,7 @@ dependent manipultations, use depedit module</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>filename</strong> &#8211; string - name of the file</li>
-<li><strong>mode</strong> &#8211; single, double, triple, quadruple, triple_numeric or low reading mode</li>
+<li><strong>mode</strong> &#8211; double, triple, quadruple, quadruple_numeric, triple_numeric or low reading mode</li>
 <li><strong>atom_list_name</strong> &#8211; list of atoms to use for triple reader mode</li>
 </ul>
 </td>
@@ -524,7 +548,7 @@ dependent manipultations, use depedit module</p>
 <div class="section" id="module-modules.depedit">
 <span id="depedit"></span><h3>depedit<a class="headerlink" href="#module-modules.depedit" title="Permalink to this headline">¶</a></h3>
 <p>DepEdit - A simple configurable tool for manipulating dependency trees</p>
-<p>Input: CoNLL10 (10 columns, tab-delimited, blank line between sentences)</p>
+<p>Input: CoNLL10 or CoNLLU (10 columns, tab-delimited, blank line between sentences, comments with pound sign #)</p>
 <p>Author: Amir Zeldes</p>
 </div>
 <div class="section" id="module-modules.xrenner_compatible">
@@ -575,15 +599,20 @@ dependent manipultations, use depedit module</p>
 
 <dl class="function">
 <dt id="modules.xrenner_compatible.best_candidate">
-<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">best_candidate</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate_list</em>, <em>lex</em>, <em>propagate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#best_candidate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.best_candidate" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">best_candidate</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate_set</em>, <em>lex</em>, <em>rule</em>, <em>take_first=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#best_candidate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.best_candidate" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>markable</strong> &#8211; markable to find best antecedent for</li>
-<li><strong>candidate_list</strong> &#8211; list of markables which are possible antecedents based on some coref_rule</li>
+<li><strong>candidate_set</strong> &#8211; set of markables which are possible antecedents based on some coref_rule</li>
 <li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
+<li><strong>propagate</strong> &#8211; string with feature propagation instructions from coref_rules.tab in lex</li>
+<li><strong>rule_num</strong> &#8211; the rule number of the rule producing the match in coref_rules.tab</li>
+<li><strong>clf_name</strong> &#8211; name of the pickled classifier to use for this rule, or &#8220;_default_&#8221; to use heuristic matching</li>
+<li><strong>take_first</strong> &#8211; boolean, whether to skip matching and use the most recent candidate (minimum token distance).
+This saves time if a rule is guaranteed to produce a unique, correct candidate (e.g. reflexives)</li>
 </ul>
 </td>
 </tr>
@@ -694,8 +723,8 @@ Returns True if merging has occurred.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>markable</strong> &#8211; one of two markables to compare dependents for</li>
-<li><strong>candidate</strong> &#8211; the second markable, which is a candidate antecedent for the other markable</li>
+<li><strong>markable</strong> &#8211; <code class="xref py py-class docutils literal"><span class="pre">Markable</span></code> one of two markables to compare dependents for</li>
+<li><strong>candidate</strong> &#8211; <code class="xref py py-class docutils literal"><span class="pre">Markable</span></code> the second markable, which is a candidate antecedent for the other markable</li>
 <li><strong>lex</strong> &#8211; the LexData object with gazetteer information and model settings</li>
 </ul>
 </td>
@@ -723,6 +752,28 @@ Returns True if merging has occurred.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_compatible.score_match_heuristic">
+<code class="descclassname">modules.xrenner_compatible.</code><code class="descname">score_match_heuristic</code><span class="sig-paren">(</span><em>markable</em>, <em>candidate</em>, <em>features</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_compatible.html#score_match_heuristic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_compatible.score_match_heuristic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic fall-back function for heuristic match scoring when no classifier is available</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>makrable</strong> &#8211; </li>
+<li><strong>candidate</strong> &#8211; </li>
+<li><strong>features</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
 </tr>
 </tbody>
@@ -828,7 +879,7 @@ Otherwise updating succeeds and the update_group returns true</p>
 
 <dl class="function">
 <dt id="modules.xrenner_coref.search_prev_markables">
-<code class="descclassname">modules.xrenner_coref.</code><code class="descname">search_prev_markables</code><span class="sig-paren">(</span><em>markable</em>, <em>previous_markables</em>, <em>ante_constraints</em>, <em>ante_spec</em>, <em>lex</em>, <em>max_dist</em>, <em>propagate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_coref.html#search_prev_markables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_coref.search_prev_markables" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">modules.xrenner_coref.</code><code class="descname">search_prev_markables</code><span class="sig-paren">(</span><em>markable</em>, <em>previous_markables</em>, <em>rule</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_coref.html#search_prev_markables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_coref.search_prev_markables" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search for antecedent to specified markable using a specified rule</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1008,7 +1059,7 @@ e.g. [Mr. Pickwick, who was looking for [his] hat]</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>entity_text</strong> &#8211; the string to parse, must contain excatly one tab</li>
+<li><strong>entity_text</strong> &#8211; the string to parse, must contain excatly two tabs</li>
 <li><strong>certainty</strong> &#8211; the certainty string at end of tuple, default &#8216;uncertain&#8217;</li>
 </ul>
 </td>
@@ -1218,7 +1269,7 @@ annotation scheme</p>
 <p>Author: Amir Zeldes</p>
 <dl class="function">
 <dt id="modules.xrenner_preprocess.add_child_info">
-<code class="descclassname">modules.xrenner_preprocess.</code><code class="descname">add_child_info</code><span class="sig-paren">(</span><em>conll_tokens</em>, <em>child_funcs</em>, <em>child_strings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_preprocess.html#add_child_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_preprocess.add_child_info" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">modules.xrenner_preprocess.</code><code class="descname">add_child_info</code><span class="sig-paren">(</span><em>conll_tokens</em>, <em>child_funcs</em>, <em>child_strings</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_preprocess.html#add_child_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_preprocess.add_child_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a list of all dependent functions and token strings to each parent token</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1232,6 +1283,27 @@ annotation scheme</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.xrenner_preprocess.add_negated_parents">
+<code class="descclassname">modules.xrenner_preprocess.</code><code class="descname">add_negated_parents</code><span class="sig-paren">(</span><em>conll_tokens</em>, <em>offset</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_preprocess.html#add_negated_parents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_preprocess.add_negated_parents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the neg_parent property on tokens whose head dominates a negation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>conll_tokens</strong> &#8211; token list for this document</li>
+<li><strong>offset</strong> &#8211; token ID reached in last sentence</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -1424,7 +1496,7 @@ annotation scheme</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="models.html" class="btn btn-neutral" title="Buliding New Language Models" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="indepth.html" class="btn btn-neutral" title="In depth guides" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -1433,7 +1505,7 @@ annotation scheme</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Amir Zeldes.
+        &copy; Copyright 2018, Amir Zeldes.
 
     </p>
   </div>
@@ -1455,7 +1527,7 @@ annotation scheme</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.4.1',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

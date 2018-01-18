@@ -6,7 +6,7 @@ Using xrenner
 Basic usage
 ***********
 
-To use the default model on English language data, you can run the main script xrenner.py on a text file in the 10 column conll10 format like this:
+To use the default model on English language data, you can run the main script xrenner.py on a text file in the 10 column conll10 or conllu format like this:
 
 ``> python xrenner.py infile.conll10``
 
@@ -20,9 +20,10 @@ The default output format is a simple inline SGML format, but other output forma
 
 If your model includes alternative setting profiles in an override.ini file (or compressed model component), you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:
 
-``> python xrenner.py -x gum infile.conll10``
+``> python xrenner.py -x GUM infile.conll10``
 
-You can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected.
+You can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected. Other options include -r to turn off classifiers (faster, but less accurate for models using classifiers), and -d <FILENAME> to dump all coreference candidate pairs to a file as training data for a classifier (see :doc:`Building classifiers <buildclf>`)
+
 
 *************
 Batch input
@@ -33,6 +34,11 @@ You can use `glob <https://docs.python.org/2/library/glob.html>`_ syntax  to pro
 ``> python xrenner.py *.conll10``
 
 In batch mode, output file names are automatically generated using the input file name, minus extensions like 'conll10' or 'conllu', and suffixed with the output format extension. For PAULA, document directories with names corresponding to the input documents are generated automatically.
+
+If you have multiple cores available, batch mode works much faster by using multiple processes with the option -p, for example:
+
+``> python xrenner.py -x GUM -p 4 *.conll10``
+
 
 
 **********************
@@ -51,9 +57,11 @@ Then you can import the Xrenner object and feed it a string containing a 10 colu
    from xrenner import Xrenner
    
    xrenner = Xrenner()
+   # Get a parse in basic Stanford Dependencies (not UD)
    my_conllx_result = some_parser.parse("John visited Spain. His visit went well.")
    
-   print xrenner.analyze(my_conllx_result,"sgml")
+   sgml_result = xrenner.analyze(my_conllx_result,"sgml")
+   print(sgml_result)
 
 
 Keep in mind that the parser output must match whatever annotation scheme the xrenner model is expecting (tags, label names, head-dependent conventions, etc.)
@@ -62,7 +70,7 @@ Keep in mind that the parser output must match whatever annotation scheme the xr
 Input format
 *************
 
-xrenner uses the 10 column tab delimited conll10 format, with **one line per token** and **a blank line between sentences**. All of the following columns should be included (use an **underscore** for missing values):
+xrenner uses the 10 column tab delimited conll format, with **one line per token** and **a blank line between sentences**. All of the following columns should be included (use an **underscore** for missing values):
 
 1. **ID** - token ID within sentence
 
@@ -80,7 +88,7 @@ xrenner uses the 10 column tab delimited conll10 format, with **one line per tok
 
 8. **func** – dependency function
 
-9. -- 10. – reserved for alternate trees with multiple parentage (not used)
+9. -- 10. – reserved for alternate trees with multiple parentage (DAGs)
 
 **Example**:
 
@@ -103,11 +111,12 @@ xrenner uses the 10 column tab delimited conll10 format, with **one line per tok
 		5	,	,	,	,	_	0	punct	_	_
 		6	2013	2013	CD	CD	_	3	tmod	_	_
 
-It is also possible to include comments on lines beginning with the pound sign. These are generally ignored, with the exception of optional speaker annotations, as in the example below, which can be used as part of :ref:`coref_rules.tab <coref_rules_tab>` (e.g. specifying having the same or different speakers as a condition):
+It is also possible to include comments on lines beginning with the pound sign. These are generally ignored, with the exception of optional sentence type (s_type) and speaker annotations, as in the example below, which can be used as part of :ref:`coref_rules.tab <coref_rules_tab>` (e.g. specifying having the same or different speakers as a condition):
 
 	.. code-block:: html
 	
-		#speaker="Mario J. Lucero"
+		# speaker="Mario J. Lucero"
+		# s_type="decl"
 		1	Heaven	_	NNP	NNP	_	2	nn	_	_
 		2	Sent	_	NNP	NNP	_	3	nn	_	_
 		3	Gaming	_	NNP	NNP	_	6	nsubj	_	_
@@ -124,7 +133,8 @@ It is also possible to include comments on lines beginning with the pound sign. 
 		14	Lucero	_	NNP	NNP	_	6	parataxis	_	_
 		15	.	_	.	.	_	0	punct	_	_
 
-		#speaker="Isabel Ruiz"
+		# speaker="Isabel Ruiz"
+		# s_type="decl"
 		1	And	_	CC	CC	_	6	cc	_	_
 		2	,	_	,	,	_	0	punct	_	_
 		3	I	_	PRP	PRP	_	6	nsubj	_	_
@@ -218,7 +228,7 @@ Note that this format only groups mentions but does not represent antecedents an
 html
 ------
 
-Very similar to sgml, but designed to visualize coreferent groups in same colored divs, and some entity icons, all using Font Awesome (http://fontawesome.io/) and JavaScript (see :doc:`main page <index>` for an example). The css and scripts are available in the utils/ directory. 
+Very similar to sgml, but designed to visualize coreferent groups in same colored divs, and some entity icons, all using Font Awesome (http://fontawesome.io/) and JavaScript (see :doc:`main page <index>` for an example). The css and scripts are available in the utils/vis/ directory. 
 
 onto
 -------

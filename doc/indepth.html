@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Search &mdash; xrenner 2.0.0 documentation</title>
+  <title>In depth guides &mdash; xrenner 2.0.0 documentation</title>
   
 
   
@@ -28,9 +28,13 @@
   
 
   
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
 
   
-    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/> 
+    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/>
+        <link rel="next" title="Developers’ module documentation" href="modules.html"/>
+        <link rel="prev" title="Buliding New Language Models" href="models.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,7 +69,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -79,10 +83,10 @@
           
             
             
-                <ul>
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">     Building your own language models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">     In depth guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a></li>
 </ul>
 
@@ -106,7 +110,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -114,8 +118,12 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li></li>
+    <li>In depth guides</li>
       <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/indepth.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
   </ul>
@@ -124,23 +132,29 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="in-depth-guides">
+<h1>In depth guides<a class="headerlink" href="#in-depth-guides" title="Permalink to this headline">¶</a></h1>
+<p>If you want to build a model for a new language or annotation scheme, it is recommended to also read the following in depth guides:</p>
+<ul class="simple">
+<li>Understanding a model&#8217;s <a class="reference internal" href="config.html"><span class="doc">config.ini</span></a></li>
+<li>Using <a class="reference internal" href="depedit.html"><span class="doc">DepEdit</span></a> to manipulate input</li>
+<li>Using <a class="reference internal" href="buildclf.html"><span class="doc">utils/train_classifier.py</span></a> to build stochastic classifiers</li>
+</ul>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="Developers’ module documentation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="models.html" class="btn btn-neutral" title="Buliding New Language Models" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -178,7 +192,6 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/searchtools.js"></script>
 
   
 
@@ -195,12 +208,17 @@
       });
   </script>
   
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
-   
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
 
 
 </body>
