@@ -141,6 +141,8 @@ class Xrenner:
 			elif myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
 				current_sentence.token_count += 1
 				cols = myline.split("\t")
+				if "." in cols[0] or "-" in cols[0]:  # conllu multi-token line or decimal ID virtual token
+					continue  # Not currently supported
 				if lex.filters["open_quote"].match(cols[1]) is not None and quoted is False:
 					quoted = True
 				elif lex.filters["close_quote"].match(cols[1]) is not None and quoted is True:
