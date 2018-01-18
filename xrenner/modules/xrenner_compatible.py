@@ -539,7 +539,6 @@ def best_candidate(markable, candidate_set, lex, rule, take_first=False):
 	rule_num, clf_name, propagate, score_thresh = rule.rule_num, rule.clf_name, rule.propagation, rule.thresh
 
 	heuristic = True if clf_name == "_default_" or not lex.filters["use_classifiers"] else False
-	score_thresh = lex.filters["score_thresh"]
 
 	if len(candidate_set) == 0:
 		return None
@@ -624,8 +623,9 @@ def stems_compatible(verb, noun, lex):
 	noun_stem = lex.filters["stemmer_deletes"].sub("",noun.text)
 	if verb_stem == noun_stem and len(noun_stem) > 3:
 		return True
-	if noun.text in lex.nominalizations[verb.text]:
-		return True
+	if verb.text in lex.nominalizations:
+		if noun.text in lex.nominalizations[verb.text]:
+			return True
 	return False
 
 

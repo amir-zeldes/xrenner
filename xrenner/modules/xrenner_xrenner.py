@@ -95,7 +95,8 @@ class Xrenner:
 
 		if self.depedit is not None:
 			infile = self.depedit.run_depedit(infile, self.docname)
-		infile = infile.split("\n")
+		if not isinstance(infile,list):
+			infile = infile.split("\n")
 		# Count non-comment, non-empty lines to get token count
 		self.token_count = len(list([tok for tok in infile if not (tok.startswith("#") or len(tok)==0)]))
 		self.sentence_count = len(list([tok for tok in infile if tok.startswith("1\t")]))

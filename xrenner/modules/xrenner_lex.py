@@ -316,6 +316,7 @@ class LexData:
 
 		# Set up default values for settings from newer versions for backwards compatibility
 		filters["neg_func"] = re.compile("$^")
+		filters["score_thresh"] = 0.5
 
 		options = config.options("main")
 
@@ -478,45 +479,44 @@ class LexData:
 			if "speaker" not in rule:
 				non_speaker_rules.append(CorefRule(rule, rule_num))
 
-		if self.filters["use_classifiers"]:
-			# Load classifiers if available
-			for rule in speaker_rules + non_speaker_rules:
-				if rule.clf_name != "_default_":
-					if rule.thresh is None:
-						rule.thresh = self.filters["score_thresh"]
-					if self.filters["classifier_suffix"] != "":  # Add suffixes (e.g. for different versions in model override)
-						rule.clf_name = rule.clf_name.replace(".pkl", self.filters["classifier_suffix"] + ".pkl")
-					if rule.clf_name not in self.classifiers:
-						rule_file_name = rule.clf_name
-						if rule.clf_name not in self.model_files:  # File name missing, possible Python 2/3 variants available
-							if sys.version_info[0] < 3:
-								if rule.clf_name.replace(".pkl","2.pkl") in self.model_files:
-									rule_file_name = rule.clf_name.replace(".pkl","2.pkl")
-								else:
-									if rule.clf_name.replace(".pkl", "3.pkl") in self.model_files:
-										print("This model supports classifiers for Python 3 only.\n  * switch to Python 3 and try running again\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
-										sys.exit()
-							elif sys.version_info[0] > 2:
-								if rule.clf_name.replace(".pkl","3.pkl") in self.model_files:
-									rule_file_name = rule.clf_name.replace(".pkl","3.pkl")
-								else:
-									if rule.clf_name.replace(".pkl", "2.pkl") in self.model_files:
-										print("This model supports classifiers for Python 2 only.\n  * switch to Python 2 and try running again\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
-										sys.exit()
-						try:
-							from sklearn.externals.joblib import load
-						except Exception as e:
-							print("Unable to import sklearn:\n  * classifiers in this model require installing sklearn (pip install scikit-learn)\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
-							sys.exit()
-						from .xrenner_classify import Classifier
+		# Load classifiers if available
+		for rule in speaker_rules + non_speaker_rules:
+			if rule.thresh is None:
+				rule.thresh = self.filters["score_thresh"]
+			if rule.clf_name != "_default_" and self.filters["use_classifiers"]:
+				if self.filters["classifier_suffix"] != "":  # Add suffixes (e.g. for different versions in model override)
+					rule.clf_name = rule.clf_name.replace(".pkl", self.filters["classifier_suffix"] + ".pkl")
+				if rule.clf_name not in self.classifiers:
+					rule_file_name = rule.clf_name
+					if rule.clf_name not in self.model_files:  # File name missing, possible Python 2/3 variants available
+						if sys.version_info[0] < 3:
+							if rule.clf_name.replace(".pkl","2.pkl") in self.model_files:
+								rule_file_name = rule.clf_name.replace(".pkl","2.pkl")
+							else:
+								if rule.clf_name.replace(".pkl", "3.pkl") in self.model_files:
+									print("This model supports classifiers for Python 3 only.\n  * switch to Python 3 and try running again\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
+									sys.exit()
+						elif sys.version_info[0] > 2:
+							if rule.clf_name.replace(".pkl","3.pkl") in self.model_files:
+								rule_file_name = rule.clf_name.replace(".pkl","3.pkl")
+							else:
+								if rule.clf_name.replace(".pkl", "2.pkl") in self.model_files:
+									print("This model supports classifiers for Python 2 only.\n  * switch to Python 2 and try running again\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
+									sys.exit()
+					try:
+						from sklearn.externals.joblib import load
+					except Exception as e:
+						print("Unable to import sklearn:\n  * classifiers in this model require installing sklearn (pip install scikit-learn)\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
+						sys.exit()
+					from .xrenner_classify import Classifier
 
-						try:
-							clf = load(self.model_files[rule_file_name])
-						except KeyError:
-							print("\nClassifier '" + rule.clf_name + "' was not found in the model - check coref_rules.tab")
-							sys.exit()
-						clf = Classifier(clf[0], clf[1], clf[2])
-						self.classifiers[rule.clf_name] = clf
+					try:
+						clf = load(self.model_files[rule_file_name])
+					except KeyError:
+						print("\nClassifier '" + rule.clf_name + "' was not found in the model - check coref_rules.tab")
+						sys.exit()
+					clf = Classifier(clf[0], clf[1], clf[2])
+					self.classifiers[rule.clf_name] = clf
 
 		return speaker_rules, non_speaker_rules
 
