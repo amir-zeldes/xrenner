@@ -11,7 +11,7 @@ setup(
    install_requires=['scikit-learn'],
   url = 'https://github.com/amir-zeldes/xrenner',
   license='Apache License, Version 2.0',
-  download_url = 'https://github.com/amir-zeldes/xrenner/releases/tag/v1.4.1.8',
+  download_url = 'https://github.com/amir-zeldes/xrenner/releases/tag/v2.0.0.0',
   keywords = ['NLP', 'coreference', 'NER', 'named entity'],
   classifiers = ['Programming Language :: Python',
 'Programming Language :: Python :: 2',
