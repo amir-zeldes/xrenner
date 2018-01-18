@@ -8,7 +8,7 @@ setup(
   author = 'Amir Zeldes',
   author_email = 'amir.zeldes@georgetown.edu',
   package_data = {'':['README.rst','LICENSE.txt'],'xrenner':['models/*','test/*','licenses/*']},
-   install_requires=['scikit-learn'],
+   install_requires=['scikit-learn==0.19.0'],
   url = 'https://github.com/amir-zeldes/xrenner',
   license='Apache License, Version 2.0',
   download_url = 'https://github.com/amir-zeldes/xrenner/releases/tag/v2.0.0.1',
