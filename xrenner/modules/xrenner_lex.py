@@ -92,7 +92,7 @@ class LexData:
 			self.filters["use_classifiers"] = False
 
 		# Mandatory files must be included in model
-		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.read_delim(self.model_files['coref_rules.tab'], 'single'))
+		self.speaker_rules, self.non_speaker_rules = self.parse_coref_rules(self.model_files['coref_rules.tab'].read().replace("\r","").split("\n"))
 		self.coref_rules = self.non_speaker_rules
 		self.entities = self.read_delim(self.model_files['entities.tab'], 'quadruple') if 'entities.tab' in self.model_files else {}
 		self.entity_heads = self.read_delim(self.model_files['entity_heads.tab'], 'quadruple', 'atoms', True) if 'entity_heads.tab' in self.model_files else {}
@@ -154,7 +154,7 @@ class LexData:
 		Generic file reader for lexical data in model directory
 
 		:param filename: string - name of the file
-		:param mode: single, double, triple, quadruple, quadruple_numeric, triple_numeric or low reading mode
+		:param mode: double, triple, quadruple, quadruple_numeric, triple_numeric or low reading mode
 		:param atom_list_name: list of atoms to use for triple reader mode
 		:return: compiled lexical data, usually a structured dictionary or set depending on number of columns
 		"""
@@ -166,8 +166,6 @@ class LexData:
 			reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
 			if mode == "low":
 				return set([rows[0].lower() for rows in reader if not rows[0].startswith('#') and not len(rows[0]) == 0])
-			elif mode == "single":
-				return list((rows[0]) for rows in reader if not rows[0].startswith('#') and not len(rows[0].strip()) == 0)
 			elif mode == "double":
 				out_dict = {}
 				for rows in reader:
@@ -473,6 +471,7 @@ class LexData:
 		rule_num = 0
 		speaker_rules=[]
 		non_speaker_rules=[]
+		rule_list = [rule for rule in rule_list if len(rule) > 0 and not rule.startswith("#")]
 		for rule in rule_list:
 			rule_num += 1
 			speaker_rules.append(CorefRule(rule, rule_num))
