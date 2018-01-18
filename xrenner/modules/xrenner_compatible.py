@@ -1,8 +1,8 @@
 import re
-from xrenner_marker import remove_suffix_tokens
-from xrenner_propagate import *
-from xrenner_classes import Markable
-from math import log
+from .xrenner_marker import remove_suffix_tokens
+from .xrenner_propagate import *
+from .xrenner_classes import Markable, ParsedToken
+from collections import OrderedDict
 
 """
 Module for checking compatibility of various features between markables
@@ -14,7 +14,7 @@ Author: Amir Zeldes
 def entities_compatible(mark1, mark2, lex):
 	"""
 	Checks if the entity property of two markables is compatible for possible coreference
-	
+
 	:param mark1: the first of two markables to compare entities
 	:param mark2: the second of two markables to compare entities
 	:param lex: the LexData object with gazetteer information and model settings
@@ -54,9 +54,9 @@ def cardinality_compatible(mark1,mark2,lex):
 def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=True):
 	"""
 	Checks whether the dependents of two markables are compatible for possible coreference
-	
-	:param markable: one of two markables to compare dependents for
-	:param candidate: the second markable, which is a candidate antecedent for the other markable
+
+	:param markable: :class:`Markable` one of two markables to compare dependents for
+	:param candidate: :class:`Markable` the second markable, which is a candidate antecedent for the other markable
 	:param lex: the LexData object with gazetteer information and model settings
 	:return: bool
 	"""
@@ -74,14 +74,13 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 
 	# Do strict 'no new modifiers' check if desired
 	if lex.filters["no_new_modifiers"]:
-		if markable.start > candidate.start:
-			first = candidate
-			second = markable
-		else:
-			first = markable
-			second = candidate
-		first_mods = (comp_mod.text for comp_mod in first.head.modifiers)
-		for mod in second.head.modifiers:
+		first_mark = candidate
+		second_mark = markable
+		if markable.start < candidate.start:
+			first_mark = markable
+			second_mark = candidate
+		first_mods = (comp_mod.text for comp_mod in first_mark.head.modifiers)
+		for mod in second_mark.head.modifiers:
 			if lex.filters["det_func"].match(mod.func) is None:  # Exclude determiners from this check
 				if mod.text not in first_mods:
 					if lex.filters["use_new_modifier_exceptions"]:
@@ -186,7 +185,7 @@ def modifiers_compatible(markable, candidate, lex, allow_force_proper_mod_match=
 def agree_compatible(mark1, mark2, lex):
 	"""
 	Checks if the agree property of two markables is compatible for possible coreference
-	
+
 	:param mark1: the first of two markables to compare agreement
 	:param mark2: the second of two markables to compare agreement
 	:param lex: the LexData object with gazetteer information and model settings
@@ -218,7 +217,7 @@ def merge_entities(mark1, mark2, previous_markables, lex):
 	"""
 	Negotiates entity mismatches across coreferent markables and their groups.
 	Returns True if merging has occurred.
-	
+
 	:param mark1: the first of two markables to merge entities for
 	:param mark2: the second of two markables to merge entities for
 	:param previous_markables: all previous markables which may need to inherit from the model/host
@@ -251,7 +250,7 @@ def update_group(host, model, previous_markables, lex):
 	gathered from a model markable discovered to be possibly coreferent with the host.
 	If incompatible modifiers are discovered the process fails and returns False.
 	Otherwise updating succeeds and the update_group returns true
-	
+
 	:param host: the first markable discovered to be coreferent with the model
 	:param model: the model markable, containing new information for the group
 	:param previous_markables: all previous markables which may need to inherit from the model/host
@@ -490,80 +489,151 @@ def never_agree(candidate, markable, lex):
 	return False
 
 
-def best_candidate(markable,candidate_list,lex, propagate):
+def score_match_heuristic(markable,candidate,features,lex):
+	"""
+	Basic fall-back function for heuristic match scoring when no classifier is available
+
+
+	:param makrable:
+	:param candidate:
+	:param features:
+	:return:
+	"""
+
+	score = 0 - (markable.sentence.sent_num - candidate.sentence.sent_num)
+	score -= ((markable.start - candidate.end) * 0.00001 + (markable.start - candidate.start) * 0.000001)  # Break ties via proximity
+
+	if markable.form != "pronoun":
+		# Default heuristic for lexical NPs is 'most recent match', so the score is done
+		return score
+
+	score += features["d_entidep"]
+	if candidate.entity == lex.filters["person_def_entity"]:  # Introduce slight bias to persons
+		score += 0.1
+	if candidate.entity == lex.filters["subject_func"]:  # Introduce slight bias to subjects
+		score += 0.95
+	if candidate.agree == markable.agree:  # Slight bias to explicitly identical agreement (not just compatible)
+		score += 0.1
+	score += features["d_hasa"]
+
+	return score
+
+
+def best_candidate(markable, candidate_set, lex, rule, take_first=False):
 	"""
 	:param markable: markable to find best antecedent for
-	:param candidate_list: list of markables which are possible antecedents based on some coref_rule
+	:param candidate_set: set of markables which are possible antecedents based on some coref_rule
 	:param lex: the LexData object with gazetteer information and model settings
+	:param propagate: string with feature propagation instructions from coref_rules.tab in lex
+	:param rule_num: the rule number of the rule producing the match in coref_rules.tab
+	:param clf_name: name of the pickled classifier to use for this rule, or "_default_" to use heuristic matching
+	:param take_first: boolean, whether to skip matching and use the most recent candidate (minimum token distance).
+				       This saves time if a rule is guaranteed to produce a unique, correct candidate (e.g. reflexives)
 	:return: Markable object or None (the selected best antecedent markable, if available)
 	"""
-	anaphor_parent = markable.head.head_text
+
+	# DEBUG POINT #
+	if markable.text == lex.debug["ana"]:
+		a=5
+
+	rule_num, clf_name, propagate, score_thresh = rule.rule_num, rule.clf_name, rule.propagation, rule.thresh
+
+	heuristic = True if clf_name == "_default_" or not lex.filters["use_classifiers"] else False
+
+	if len(candidate_set) == 0:
+		return None
+
 	candidate_scores = {}
-	entity_dep_scores = {}
+	candidate_features = {}
+	score_ranking = {}
 	best = None
 
-	use_entity_deps = True
-	if "ablations" in lex.debug:
-		if "no_entity_dep" in lex.debug["ablations"]:
-			use_entity_deps = False
-	use_hasa = True
-	if "ablations" in lex.debug:
-		if "no_hasa" in lex.debug["ablations"]:
-			use_hasa = False
+	for candidate in candidate_set:
+		candidate_features[candidate] = markable.extract_features(lex, candidate, candidate_set, dump_position=False)
+		candidate_scores[candidate] = score_match_heuristic(markable, candidate, candidate_features[candidate], lex)
+		candidate_features[candidate]["rule_num"] = str(rule_num)
 
-	if anaphor_parent in lex.entity_deps and use_entity_deps:
-		if markable.head.func in lex.entity_deps[anaphor_parent]:
-			for entity in lex.entity_deps[anaphor_parent][markable.head.func]:
-				entity_dep_scores[entity] = lex.entity_deps[anaphor_parent][markable.head.func][entity]
-	
-	for candidate in candidate_list:
-		candidate_scores[candidate] = 0 - (markable.sentence.sent_num - candidate.sentence.sent_num)
-		candidate_scores[candidate] -= ((markable.start - candidate.end) * 0.00001 + (markable.start - candidate.start) * 0.000001) # Break ties via proximity
-		if candidate.entity in entity_dep_scores:
-			candidate_scores[candidate] += log(entity_dep_scores[candidate.entity]+1)
-		if candidate.entity == lex.filters["person_def_entity"]:  # Introduce slight bias to persons
-			candidate_scores[candidate] += 0.1
-		if candidate.entity == lex.filters["subject_func"]:  # Introduce slight bias to subjects
-			candidate_scores[candidate] += 0.95
-		if candidate.agree == markable.agree:  # Slight bias to explicitly identical agreement (not just compatible)
-			candidate_scores[candidate] += 0.1
-		if candidate.head.text in lex.hasa and use_hasa and lex.filters["possessive_func"].search(markable.head.func) is not None:  # Text based hasa
-			if anaphor_parent in lex.hasa[candidate.head.text]:
-				candidate_scores[candidate] += log(lex.hasa[candidate.head.text][anaphor_parent]+1) * 1.1
-		elif candidate.head.lemma in lex.hasa and use_hasa and lex.filters["possessive_func"].search(markable.head.func) is not None:  # Lemma based hasa
-			if anaphor_parent in lex.hasa[candidate.head.lemma]:
-				candidate_scores[candidate] += log(lex.hasa[candidate.head.lemma][anaphor_parent]+1) * 0.9
+	for index, candidate in enumerate(OrderedDict(sorted(candidate_scores.items(), key=lambda x: x[1]))):
+		score_ranking[candidate] = 1/float(index+1)
 
-	max_score = ''
+	if lex.dump is not None:  # Only runs if dumping training data
+
+		for candidate in candidate_set:
+			dump_features = markable.extract_features(lex, candidate, candidate_set, dump_position=True)
+			if lex.dump_headers == []:
+				for key in dump_features:
+					lex.dump_headers.append(key)
+				lex.dump_headers.append("heuristic_score")  # Append the heuristic based score for comparison
+				lex.dump_headers.append("rule_num")  # Track rule number for error analysis
+			dump_list = []
+			for key in dump_features:
+				dump_list.append(dump_features[key])
+			dump_list = [str(feat) for feat in dump_list]
+			dump_list.append(str(score_ranking[candidate]))
+			outline = "\t".join(dump_list)
+			if outline not in lex.dump_types:
+				lex.dump_types.add(outline)
+				outline += "\t"+str(rule_num)
+				lex.dump.write(outline+"\n")
+
+	max_score = ""
+
+	if take_first:
+		return min(candidate_set, key=lambda x: abs(markable.start - x.start))
+
+	clf_input = []
+	candidates = []
 	for candidate in candidate_scores:
-		if max_score == '':
+		if lex.dump is None:  # Skip accurate prediction during dump for speed
+			clf_input.append((markable, candidate, candidate_set, lex))
+		candidates.append(candidate)
+
+	## DEBUG POINT ##
+	if markable.text == lex.debug["ana"]:
+		pass
+
+	if lex.dump is None and not heuristic and lex.filters["use_classifiers"]:
+		preds = lex.classifiers[clf_name].classify_many(clf_input)
+		for i, pred in enumerate(preds):
+			candidate_scores[candidates[i]] = pred
+
+	for candidate in candidate_scores:
+		if max_score == "":
 			max_score = candidate_scores[candidate]
 			best = candidate
 		elif candidate_scores[candidate] > max_score:
 			max_score = candidate_scores[candidate]
 			best = candidate
 
-	#if propagate.startswith("propagate"):
-	#	propagate_entity(markable,best,propagate)
-	markable.entity = best.entity
-	#markable.agree = best.agree
-	markable.entity_certainty = "propagated"
-	propagate_agree(markable, best)
+	if max_score < score_thresh:  # The best option is less likely than no coref
+		if heuristic:
+			pass  # In heuristic mode, an antecedent must always be selected from the set
+		else:
+			return None  # In classifier mode, if no candidate scores high enough, None is returned
+
+	if not propagate == "nopropagate":
+		propagate_entity(markable, best, propagate)
+		propagate_agree(markable, best)
+
+	best.matching_rule = str(rule_num)
 	return best
 
 
 def stems_compatible(verb, noun, lex):
 	verb_stem = lex.filters["stemmer_deletes"].sub("",verb.text)
 	noun_stem = lex.filters["stemmer_deletes"].sub("",noun.text)
-	if verb_stem == noun_stem and len(noun_stem)>3:
+	if verb_stem == noun_stem and len(noun_stem) > 3:
 		return True
+	if verb.text in lex.nominalizations:
+		if noun.text in lex.nominalizations[verb.text]:
+			return True
 	return False
 
 
 def acronym_match(mark, candidate, lex):
 	"""
 	Check whether a Markable's text is an acronym of a candidate Markable's text
-	
+
 	:param mark: The Markable object to test
 	:param candidate: The candidate Markable with potentially acronym-matching text
 	:param lex: the LexData object with gazetteer information and model settings

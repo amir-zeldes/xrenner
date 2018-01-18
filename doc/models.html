@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Buliding New Language Models &mdash; xrenner 1.4.1 documentation</title>
+  <title>Buliding New Language Models &mdash; xrenner 2.0.0 documentation</title>
   
 
   
@@ -32,8 +32,8 @@
   
 
   
-    <link rel="top" title="xrenner 1.4.1 documentation" href="index.html"/>
-        <link rel="next" title="Developers’ module documentation" href="modules.html"/>
+    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/>
+        <link rel="next" title="In depth guides" href="indepth.html"/>
         <link rel="prev" title="Using xrenner" href="using.html"/> 
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.4
+                2.0
               </div>
             
           
@@ -111,6 +111,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#numbers-tab">numbers.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#open-close-punctuation-tab">open_close_punctuation.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pronouns-tab">pronouns.tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#similar-tab">similar.tab</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#stop-list-tab">stop_list.tab</a></li>
 </ul>
 </li>
@@ -118,6 +119,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a></li>
 </ul>
 
@@ -167,7 +169,7 @@
 <h1>Buliding New Language Models<a class="headerlink" href="#buliding-new-language-models" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>Beyond the language models that are available in the xrenner distribution, you can build your own models, or modify existing models, by editing their configuration files and gathering lexical data for your target language or domain.</p>
+<p><b style="color:red">new:</b> A starter model with minimal settings for UD data is now included in <b>models/udx</b></p><p>Beyond the language models that are available in the xrenner distribution, you can build your own models, or modify existing models, by editing their configuration files and gathering lexical data for your target language or domain, as well as training stochastic classifiers.</p>
 <p>A language model in xrenner is defined by a set of files in a directory under the models/ directory, or in a compressed archive containing such files, conventionally marked by the extension .xrm. For exmple, the default English language model is models/eng/, and different models, typically named using ISO 639-2 three letter language codes, can be invoked using the -m option. The following example invokes the German language model, named <em>deu</em> (for Deutsch, i.e. German):</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>&gt; python xrenner.py -m deu infile.conll10
 </pre></div>
@@ -178,6 +180,9 @@
 <ul class="simple">
 <li><a class="reference internal" href="#config-ini"><span class="std std-ref">config.ini</span></a></li>
 <li><a class="reference internal" href="#coref-rules-tab"><span class="std std-ref">coref_rules.tab</span></a></li>
+</ul>
+<p>It is also highly recommended to include:</p>
+<ul class="simple">
 <li><a class="reference internal" href="#pronouns-tab"><span class="std std-ref">pronouns.tab</span></a></li>
 <li><a class="reference internal" href="#entities-tab"><span class="std std-ref">entities.tab</span></a></li>
 <li><a class="reference internal" href="#entity-heads-tab"><span class="std std-ref">entity_heads.tab</span></a></li>
@@ -202,7 +207,7 @@ This is the main configuration file for the model. For detailed documentation se
 <div class="header container">
 <strong>optional</strong></div>
 <div class="expandable container">
-This is the configuration file for the <em>depedit</em> module, which preprocesses input dependency trees before the system analyzes them. For detailed documentation see <a class="reference internal" href="depedit.html"><span class="doc">depedit.ini</span></a></div>
+This is the configuration file for the <em>depedit</em> module, which can be used to preprocess input dependency trees before the system analyzes them. For detailed documentation see <a class="reference internal" href="depedit.html"><span class="doc">depedit.ini</span></a></div>
 </div>
 </div>
 <div class="section" id="override-ini">
@@ -336,17 +341,18 @@ the educational system|the education system     coref
 <div class="expandable container">
 <p>The file coref_rules.tab lists a cascade of coreference matching rules of the form:</p>
 <blockquote>
-<div><code class="docutils literal"><span class="pre">ANA;ANT;DIR;DIST;PROP</span></code></div></blockquote>
-<p>Where ANA and ANT are ampersand-separated feature constraints on the anaphor and the antecedent, DIR is the search direction (back, or forward for cataphora), DIST is the maximum distance in sentences to search for a match and PROP is the direction of feature propagation once a match is made, if any.</p>
+<div><code class="docutils literal"><span class="pre">ANA;ANT;DIST;PROP(;CLF(;THRESH))</span></code></div></blockquote>
+<p>Where ANA and ANT are ampersand-separated feature constraints on the anaphor and the antecedent, DIST is the maximum distance in sentences to search for a match and PROP is the direction of feature propagation once a match is made, if any. Two further optional components are a classifier file name created by <strong>utils/train_classifier</strong>, and an optional decision threshold to use for that classifier for this rule (see <a class="reference internal" href="buildclf.html"><span class="doc">Building classifiers</span></a>).</p>
 <p>Feature constraints include markable <strong>text</strong>, <strong>entity</strong> (e.g. <em>person</em>), <strong>subclass</strong> (e.g. <em>politician</em>), <strong>definiteness</strong> (<em>def</em> or <em>indef</em>), <strong>form</strong> (common/proper/pronoun), cardinality (numerical modifiers or amount of members in a coordination); features of the head token (<strong>lemma</strong>, <strong>pos</strong>, <strong>func</strong>, whether it is <strong>quoted</strong>, i.e. in quotation marks), as well as existence/non-existence of certain modifiers (<strong>mod</strong>) )or parents/children in a head token&#8217;s dependency graph (<em>parent</em>/<em>child</em>); and features of the sentence (<strong>mood</strong> and <strong>speaker</strong>).</p>
 <p>Feature values can be regular expressions (surrounded by slashes), exact values (surrounded by double quotes), or a reference to the same value as the antecedent, marked <em>$1</em> (i.e. the anaphor, conceptually the second mention or $2, is the same as the antecedent, $1). For Boolean features, such as <strong>quoted</strong>, use <em>True</em> or <em>False</em>. Negative matching can be done using <em>!=</em>. For two markables (not) having the same dependency parent (e.g. to control reflexive coreference), there is a legacy shorthand <em>sameparent</em> and <em>!sameparent</em>, which is the same as <em>parent=$1</em> etc. For examples, see below.</p>
-<p>There are also special flags which allow turning off some compatibility checks, as well as forward lookahead for cataphora. They are:</p>
+<p>There are also special flags which allow turning off some compatibility checks, as well as switching on forward lookahead for cataphora. They are:</p>
 <ul class="simple">
 <li><strong>anyagree</strong> - ignore agreement checking</li>
 <li><strong>anyentity</strong> - ignore entity matching</li>
 <li><strong>anycardinality</strong> - ignore cardinality matching</li>
 <li><strong>anytext</strong> - ignore text of markable and antecedent in comparison</li>
-<li><strong>lookahead</strong> - search for &#8216;antecedent&#8217; in subsequent tokens of same sentence (for cataphora)</li>
+<li><strong>lookahead</strong> - search for &#8216;antecedent&#8217; in subsequent tokens of same sentence instead of preceding tokkens (for cataphora)</li>
+<li><strong>take_first</strong> - do not perform any scoring: take the first (closest) candidate found (for very high certainty rules, speeds up performance)</li>
 </ul>
 <p>Feature propagation ensures entity types match across coreferent results, and can have the values:</p>
 <ul class="simple">
@@ -354,20 +360,28 @@ the educational system|the education system     coref
 <li><strong>propagate</strong> - automatically propagate from less certainly identified member to more certain one</li>
 <li><strong>propagate_forward</strong> - always propagate from antecedent to anaphor</li>
 <li><strong>propagate_backward</strong> - the reverse of forward</li>
-<li><strong>propagate_invert</strong> - a special setting for cataphora: propagates from earlier cataphor to the later postcedent</li>
+<li><strong>propagate_invert</strong> - a special setting for cataphora: propagates to earlier cataphor from the later postcedent</li>
 </ul>
 <p>Rules are consulted in order, similarly to the sieve approach of Lee et al. (2013), so that the most certain rules are applied first. Every mention has only one antecedent, so that subsequent matching can be skipped, but some aspects of a mention-cluster or ‘entity-mention’ model (cf. Rahman &amp; Ng 2011) are also implemented, for example antonym modifier checks are applied to the entire chain (see <a class="reference internal" href="#antonyms-tab"><span class="std std-ref">antonyms.tab</span></a>).</p>
-<p>The first rule below illustrates a very &#8216;safe&#8217; strategy, searching for proper noun markables with identical text (=$1) in the previous 100 sentences, since these are almost always coreferent, and undertaking no feature propagation. The second rule looks for a mention headed by &#8216;one&#8217; with the same modifier as its antecedent within 4 sentences, matching cases like <cite>the new flag ... the new one</cite>. The third rule attempts to match a possessive pronoun (which has not saturated its antecedent yet, if this rule has been reached) to a nominal subject later on in the sentence, matching sentences like <cite>In [her] speech, [Angela Merkel] said...</cite></p>
+<p>The first rule below illustrates a very &#8216;safe&#8217; strategy, searching for proper noun markables with identical text (=$1) in the previous 100 sentences, since these are almost always coreferent, and undertaking no feature propagation. It takes the vert first candidate found, without scoring. The second rule looks for a mention headed by &#8216;one&#8217; with the same modifier as its antecedent within 4 sentences, matching cases like <cite>the new flag ... the new one</cite>. It uses a classifier called clf_one.pkl, and sets a high threshold, demanding high confidence from the classifier (default threshold is 0.5). The third rule attempts to match a possessive pronoun (which has not saturated its antecedent yet, if this rule has been reached) to a nominal subject later on in the sentence, matching sentences like <cite>In [her] speech, [Angela Merkel] said...</cite>. It uses no classifier, meaning it uses xrenner heuristics to choose among candidates, but it will always choose some candidate if available. The heuristic, unlike classifiers, cannot reject an anaphor as &#8216;non-anaphoric&#8217;, whereas if all classifier candidates score below their threshold, no antecedent is selected.</p>
 <blockquote>
 <div><div class="highlight-perl"><div class="highlight"><pre><span></span><span class="c1">#first match identical proper markables</span>
-<span class="n">form</span><span class="o">=</span><span class="s">&quot;proper&quot;</span><span class="p">;</span><span class="n">form</span><span class="o">=</span><span class="s">&quot;proper&quot;</span><span class="o">&amp;</span><span class="n">text</span><span class="o">=</span><span class="nv">$1</span><span class="p">;</span><span class="mi">100</span><span class="p">;</span><span class="n">nopropagate</span>
+<span class="n">form</span><span class="o">=</span><span class="s">&quot;proper&quot;</span><span class="p">;</span><span class="n">form</span><span class="o">=</span><span class="s">&quot;proper&quot;</span><span class="o">&amp;</span><span class="n">text</span><span class="o">=</span><span class="nv">$1</span><span class="o">&amp;</span><span class="n">take_first</span><span class="p">;</span><span class="mi">100</span><span class="p">;</span><span class="n">nopropagate</span>
 <span class="c1">#identify coreferent light heads based on identical modifiers</span>
-<span class="n">lemma</span><span class="o">=</span><span class="sr">/^one$/</span><span class="p">;</span><span class="n">mod</span><span class="o">=</span><span class="nv">$1</span><span class="o">&amp;</span><span class="n">anytext</span><span class="o">&amp;</span><span class="n">form</span><span class="o">!=</span><span class="s">&quot;proper&quot;</span><span class="o">&amp;!</span><span class="n">sameparent</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="n">nopropagate</span>
+<span class="n">lemma</span><span class="o">=</span><span class="sr">/^one$/</span><span class="p">;</span><span class="n">mod</span><span class="o">=</span><span class="nv">$1</span><span class="o">&amp;</span><span class="n">anytext</span><span class="o">&amp;</span><span class="n">form</span><span class="o">!=</span><span class="s">&quot;proper&quot;</span><span class="o">&amp;!</span><span class="n">sameparent</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="n">nopropagate</span><span class="p">;</span><span class="n">clf_one</span><span class="o">.</span><span class="n">pkl</span><span class="p">;</span><span class="mf">0.6</span>
 <span class="c1">#salvage unmatched pronouns - cataphoric cases like &quot;in her speech, the chairwoman...&quot;</span>
 <span class="n">text</span><span class="o">=</span><span class="sr">/^(his|her|its)$/</span><span class="p">;</span><span class="n">form</span><span class="o">!=</span><span class="sr">/pronoun/</span><span class="o">&amp;</span><span class="n">func</span><span class="o">=</span><span class="sr">/nsubj/</span><span class="o">&amp;</span><span class="n">lookahead</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="n">propagate_invert</span>
 </pre></div>
 </div>
 </div></blockquote>
+<p>Classifiers are invoked by their name, minus a python specific version. If your classifier is named <em>pron_clf.pkl</em>, you may either provide that file in the model directory for whichever Python version you intend to use (ideally: 3.X), or you can provide two files: <em>pron_clf2.pkl</em> and <em>pron_clf3.pkl</em>, which will be used automatically for the relevant Python version. Note that the classifier name in coref_rules.tab will still be <em>pron_clf.pkl</em>.</p>
+<p>Additionally, you may supply alternative versions of a classifier to work with different model override profiles (see <a class="reference internal" href="config.html"><span class="doc">config.ini</span></a>). These classifier files may be named with a certain suffix, which is then specified in the override file. For example, a classifier called <em>gbm_all.pkl</em> may have an alternate file <em>gbm_all_gum.pkl</em> in the model directory, and a corresponding entry in override.ini will specify:</p>
+<blockquote>
+<div><div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">classifier_suffix</span><span class="o">=</span><span class="s">_gum</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>This may be combined with alternative Python 2/3 versions (e.g. <em>gbm_all_gum2.pkl</em>, <em>gbm_all_gum3.pkl</em>)</p>
 </div>
 </div>
 </div>
@@ -375,7 +389,7 @@ the educational system|the education system     coref
 <span id="id6"></span><h4>entities.tab<a class="headerlink" href="#entities-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
-<strong>mandatory</strong></div>
+<strong>optional (but highly recommended)</strong></div>
 <div class="expandable container">
 <blockquote>
 <div><p>The full text entity list file, with three tab delimited columns:</p>
@@ -442,7 +456,7 @@ want    nsubj   person  49
 <span id="id7"></span><h4>entity_heads.tab<a class="headerlink" href="#entity-heads-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
-<strong>mandatory</strong></div>
+<strong>optional (but highly recommended)</strong></div>
 <div class="expandable container">
 <blockquote>
 <div><p>This table has the exact same columns as <a class="reference internal" href="#entities-tab"><span class="std std-ref">entities.tab</span></a>, but the first column contains only one token. The entity_heads table is consulted after no match is found in entities.tab, meaning it is the second priority. Generally speaking, it is good practice to include single word named entities (e.g. <em>London</em>) in entities.tab, since they are a high priority type of exact match. Columns are:</p>
@@ -660,7 +674,7 @@ dozen   12
 <span id="id9"></span><h4>pronouns.tab<a class="headerlink" href="#pronouns-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
-<strong>mandatory</strong></div>
+<strong>optional (but highly recommended)</strong></div>
 <div class="expandable container">
 <p>A table containing all pronoun forms in the language and their possible agreement classes (multiple entries are required for ambiguous cases). Contains two columns:</p>
 <blockquote>
@@ -680,13 +694,31 @@ you     2pl
 </div>
 </div>
 </div>
+<div class="section" id="similar-tab">
+<h4>similar.tab<a class="headerlink" href="#similar-tab" title="Permalink to this headline">¶</a></h4>
+<div class="boggle container">
+<div class="header container">
+<strong>optional</strong></div>
+<div class="expandable container">
+<p>A two column list of entity heads and comma separated heads that are similar to them. These can be obtained from lexical resources or populated from the top <em>n</em> most similar items from trained embeddings. Similar words are used whenever data is unavailable for the head in the first column, but some data is available for words in the second column. The idea is that the non-reliance on embeddings makes this usable even for low resource languages via manual curation, while languages for which embeddings can be obtained allow for quick stored look-up of most similar words without realtime vector space computations.</p>
+<blockquote>
+<div><p><strong>example</strong></p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>deal    deals,agreement,pact
+City    city,Town,mayor
+May     April,June,March
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
 <div class="section" id="stop-list-tab">
 <h4>stop_list.tab<a class="headerlink" href="#stop-list-tab" title="Permalink to this headline">¶</a></h4>
 <div class="boggle container">
 <div class="header container">
 <strong>optional</strong></div>
 <div class="expandable container">
-<p>This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. <em>mum &#8216;s the word</em> and not <em>mum&#8217;s the word</em>.  You can also specify entries that are only used as stop items when they are not the whole markable. For example, and entry <em>Yangtze&#64;</em> will prevent that string becoming a markable if it is the entire text of the markable, but will not prevent a longer markable such as <em>Yangtze River</em> (regardless of which token is the head).</p>
+<p>This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. <em>mum &#8216;s the word</em> and not <em>mum&#8217;s the word</em>.  You can also specify entries that are only used as stop items when they are the whole markable. For example, an entry <em>Yangtze&#64;</em> will prevent that string becoming a markable if it is the entire text of the markable, but will not prevent a longer markable such as <em>Yangtze River</em> (regardless of which token is the head).</p>
 <blockquote>
 <div><p><strong>example</strong></p>
 <div class="highlight-html"><div class="highlight"><pre><span></span># These token sequences are excluded as markable heads
@@ -711,7 +743,7 @@ Yangtze@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="modules.html" class="btn btn-neutral float-right" title="Developers’ module documentation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="indepth.html" class="btn btn-neutral float-right" title="In depth guides" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="using.html" class="btn btn-neutral" title="Using xrenner" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -723,7 +755,7 @@ Yangtze@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Amir Zeldes.
+        &copy; Copyright 2018, Amir Zeldes.
 
     </p>
   </div>
@@ -745,7 +777,7 @@ Yangtze@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.4.1',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>DepEdit &mdash; xrenner 1.4.1 documentation</title>
+  <title>DepEdit &mdash; xrenner 2.0.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 1.4.1 documentation" href="index.html"/> 
+    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4
+                2.0
               </div>
             
           
@@ -84,6 +84,7 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a></li>
 </ul>
 
@@ -134,7 +135,7 @@
 <p>The depedit module offers a powerful tool for manipulating input dependency trees before they are analyzed by the system. It is also available as a standalone script at: <a class="reference external" href="http://corpling.uis.georgetown.edu/depedit/">http://corpling.uis.georgetown.edu/depedit/</a></p>
 <p>The manipulations carried out by the script are determined by the file <em>depedit.ini</em> in the model directory, which may be left empty or missing if depedit should not be used (depedit takes a moment to run, so not using it is an option if very high performance on large amounts of documents is desired). Each rule in the depedit file is a tab-delimited triple, with semicolon delimited instructions in this configuration:</p>
 <p><code class="docutils literal"><span class="pre">feature1=/value/;feature2=/value/...</span>&#160; <span class="pre">#1op#2;#2op#3...</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#1:feature3=value;...#1&gt;#2;...</span></code></p>
-<p>Where features can be:</p>
+<p>Where features include:</p>
 <ul class="simple">
 <li><strong>text</strong> - the token text</li>
 <li><strong>lemma</strong> - the token&#8217;s lemma</li>
@@ -144,14 +145,14 @@
 <li><strong>func</strong> - the dependency label</li>
 <li><strong>head</strong> - the parent feature, only used if specifically targeting roots (head=0)</li>
 </ul>
-<p>And operators <em>op</em> are:</p>
+<p>And operators <em>op</em> include:</p>
 <ul class="simple">
 <li><strong>&gt;</strong> - dominance (#1&gt;#2 means #1 is the head of #2)</li>
 <li><strong>.</strong> - adjacency (#1.#2 means #1 precedes #2)</li>
 <li><strong>.n</strong> - distance (#1.3#2 means #1 is three tokens before #2)</li>
 <li><strong>.n,m</strong> - distance range (#1.3,5#2 means #1 is three-five tokens before #2)</li>
 </ul>
-<p>Below we describe some common scenarios using depedit to preprocess data for coreference resolution; for full documentation see the depedit website.</p>
+<p>Below we describe some common scenarios using depedit to preprocess data for coreference resolution; for further operators and more advanced scenarios see the full documentation on the depedit website.</p>
 <div class="section" id="common-scenarios">
 <h2>Common scenarios<a class="headerlink" href="#common-scenarios" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="fixing-probable-parser-errors">
@@ -183,6 +184,37 @@ func=/det/;func=/poss/;pos=/POS/;text=/.*/      #2&gt;#1;#2&gt;#3;#4&gt;#2      
 </div>
 <p>After this rule runs, the fourth token in the definition governs the first (article is attached to the main noun), and the possessor (#2) will be marked as definite, despite the fact that the article is attached to #4.</p>
 </div>
+<div class="section" id="adding-automatic-sentence-types-for-classification">
+<h3>Adding automatic sentence types for classification<a class="headerlink" href="#adding-automatic-sentence-types-for-classification" title="Permalink to this headline">¶</a></h3>
+<p>If you plan on building a classifier using sentence types as a feature (e.g. tense, modality etc. - see <a class="reference internal" href="buildclf.html"><span class="doc">Building classifiers</span></a>), you can use depedit to give an approximate analysis. Here is an example of rough sentence type annotation with depedit. Note the use of the special instruction <strong>last</strong> to stop processing further rules for this sentences, and the assignment of sentence annotations to #S:</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span># Rough sentence type based on GUM schema
+#WH:: what/who/how verbed?
+func=/root|ROOT/;pos=/WP|WRB/;text=/\?/&amp;position=/last/ #1&gt;#2;#1.*#3    #S:s_type=wh;last
+#WH:: how x is y?
+func=/root|ROOT/;pos=/WP|WRB|WDT/;pos=/^N.*|^J.*/;text=/\?/&amp;position=/last/     #1&gt;#3&gt;#2;#1.*#4 #S:s_type=wh;last
+#WH:: how x does y verb z?
+func=/root|ROOT/;func=/dobj|nsubj/;pos=/WP|WRB|WDT/;pos=/^N.*|^J.*/;text=/\?/&amp;position=/last/   #1&gt;#2&gt;#4&gt;#3;#1.*#5      #S:s_type=wh;last
+#Q:: other sent with question mark
+func=/root|ROOT/;text=/\?/&amp;position=/last/      #1.*#2  #S:s_type=q;last
+#SUB:: x might verb (has subj and modal verb)
+func=/root|ROOT/;func=/nsubj/;pos=/MD/&amp;text!=/.*ll/     #1&gt;#2;#1&gt;#3     #S:s_type=sub;last
+#DECL:: x might verb (has subj and verb or cop)
+func=/root|ROOT/&amp;pos=/V.*/;func=/nsubj/ #1&gt;#2   #S:s_type=decl;last
+func=/root|ROOT/;func=/nsubj/;func=/cop/        #1&gt;#2;#1&gt;#3     #S:s_type=decl;last
+#INF:: has base form verb with &#39;to&#39;
+func=/root|ROOT/&amp;pos=/^V.$/;pos=/TO/    #1&gt;#2   #S:s_type=inf;last
+#IMP:: has base form verb, and no subject (otherwise decl rule should have matched)
+func=/root|ROOT/&amp;pos=/^V.$/     none    #S:s_type=imp;last
+#GER:: has gerund form verb, and no subject (otherwise decl rule should have matched)
+func=/root|ROOT/&amp;pos=/^V.G$/    none    #S:s_type=ger;last
+#INTJ:: has interjection as root
+func=/root|ROOT/&amp;pos=/^UH$/     none    #S:s_type=intj;last
+#FRAG::
+pos=/N.*|IN|PR?P/&amp;func=/root|ROOT/      none    #S:s_type=frag;last
+text=/.*/       none    #S:s_type=decl;last
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 
@@ -196,7 +228,7 @@ func=/det/;func=/poss/;pos=/POS/;text=/.*/      #2&gt;#1;#2&gt;#3;#4&gt;#2      
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Amir Zeldes.
+        &copy; Copyright 2018, Amir Zeldes.
 
     </p>
   </div>
@@ -218,7 +250,7 @@ func=/det/;func=/poss/;pos=/POS/;text=/.*/      #2&gt;#1;#2&gt;#3;#4&gt;#2      
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.4.1',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

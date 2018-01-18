@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>config.ini &mdash; xrenner 1.4.1 documentation</title>
+  <title>config.ini &mdash; xrenner 2.0.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 1.4.1 documentation" href="index.html"/> 
+    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4
+                2.0
               </div>
             
           
@@ -84,6 +84,7 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a></li>
 </ul>
 
@@ -143,12 +144,57 @@
 <h2>General labels and settings<a class="headerlink" href="#general-labels-and-settings" title="Permalink to this headline">¶</a></h2>
 <p>This section defines main dependency label functions that are interpreted by xrenner in special ways. Functions such as subjecthood, apposition, coordination or possession have special meanings for the workflow (for example, possession is checked against the <strong>hasa</strong> table). This section
 also determines the thousands and decimal separators for the language for <strong>cardinality</strong> recognition.</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="c1">### General Function Label Settings ###</span>
+<span class="na">subject_func</span><span class="o">=</span><span class="s">/^nsubj$/</span>
+<span class="na">apposition_func</span><span class="o">=</span><span class="s">/appos/</span>
+<span class="na">possessive_func</span><span class="o">=</span><span class="s">/^poss|prep_of$/</span>
+<span class="c1"># Function for the second conjunct, NOT the conjunction; used to propagate function from first conjunct</span>
+<span class="na">conjunct_func</span><span class="o">=</span><span class="s">/^conj$/</span>
+<span class="c1"># Dependency function identifying a coordinating conjunction</span>
+<span class="na">coord_func</span><span class="o">=</span><span class="s">/^cc$/</span>
+<span class="c1"># Dependency function for determiners (if this function also matches functions in mod_func it will NOT used to rule out incompatible modifiers)</span>
+<span class="na">det_func</span><span class="o">=</span><span class="s">/^(pre)?det|num$/</span>
+<span class="c1"># Dependency function indicating negation</span>
+<span class="na">neg_func</span><span class="o">=</span><span class="s">/^neg$/</span>
+<span class="c1"># Decimal point separator in this language, e.g. period or comma</span>
+<span class="na">decimal_sep</span><span class="o">=</span><span class="s">.</span>
+<span class="c1"># Thousands separator in this language, e.g. comma or period</span>
+<span class="na">thousand_sep</span><span class="o">=</span><span class="s">,</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="markable-detection">
 <h2>Markable detection<a class="headerlink" href="#markable-detection" title="Permalink to this headline">¶</a></h2>
 <p>Settings in this section are used to determin what tokens should be candidates for inclusion in a markable (i.e. an entity mention).
 These include settings for part of speech tags that indicate being a markable head, dependency function labels of descendents of that
 head to include in the markable span, and more.</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="c1"># POS categories to consider for markable heads</span>
+<span class="na">mark_head_pos</span><span class="o">=</span><span class="s">/^(NN?P?S?|PRP\$|PP\$)$/</span>
+<span class="c1"># POS categories to consider for markable head only if dependency function is not (!) ...</span>
+<span class="c1"># This is NOT a regular expression</span>
+<span class="na">pos_func_heads</span><span class="o">=</span><span class="s">CD!num;CD!number;CD!dep;CD!discourse;DT+nsubj;DT+dobj;DT+pobj;DT+prep_in;DT+prep_with;DT+prep_to;DT+prep_at;VB+cata;VV+cata;PRP!npadvmod;PP!npadvmod;$!dep;</span>
+<span class="c1"># POS categories for verbs, only considered if seeking verbal antecedents for definite NPs with no antecedent is switched on</span>
+<span class="na">verb_head_pos</span><span class="o">=</span><span class="s">/^(V[BV][PZD]?)$/</span>
+<span class="c1"># Dependency functions that rule out being a markable head</span>
+<span class="na">mark_forbidden_func</span><span class="o">=</span><span class="s">/amod|mark|punct|discourse|prep_as/</span>
+<span class="c1"># Dependency functions that terminate markable sequence propagation</span>
+<span class="na">non_link_func</span><span class="o">=</span><span class="s">/aux|expl|nsubj|cop|dep|punct|appos|discourse|parataxis|neg|possessive|mark|csubj/</span>
+<span class="c1"># Token values that terminate markable sequence propagation</span>
+<span class="na">non_link_tok</span><span class="o">=</span><span class="s">/[Ww]hen|[Ii]f/</span>
+<span class="c1"># Dependency functions for which stoplist is checked to rule out spurious markables and markable extensions are forbidden</span>
+<span class="na">stop_func</span><span class="o">=</span><span class="s">/amod|nn|xcomp|mwe|dep/</span>
+<span class="c1"># Postprocess parser input to ensure tokens inside known entities depend on the entity head?</span>
+<span class="na">postprocess_parser</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Func substitutions - replace function depending on POS and direction of head - NOT a regular expression</span>
+<span class="na">func_substitute_backward</span><span class="o">=</span><span class="s">NN/dep/appos/;NNS/dep/appos;NNP/dep/appos;NNPS/dep/appos;NP/dep/appos;NPS/dep/appos;CD/dep/appos</span>
+<span class="na">func_substitute_forward</span><span class="o">=</span><span class="s">NN/dep/nn/;NNS/dep/nn;NNP/dep/nn;NNPS/dep/nn;NP/dep/nn;NPS/dep/nn;CD/dep/num</span>
+<span class="c1"># Affix tokens to strip from markable core text</span>
+<span class="na">core_prefixes</span><span class="o">=</span><span class="s">/^ ?([Tt]h([oe](se)?|is|at)|an?|some|all|many|[Mm]y|[Yy]our|[Hh]is|[Hh]er|[Oo]ur|[Tt]heir|[Ii]ts)( |$)/</span>
+<span class="na">core_suffixes</span><span class="o">=</span><span class="s">/ ((&#39;s|&#39;|[Cc]orp\.?|Inc\.?|[Cc]o\.?|&amp;) ?)*$/</span>
+<span class="c1"># Functions that can be stripped when determining atomicity, e.g. if &#39;police department&#39; is atomic, then a modified &#39;rich police department&#39; is too</span>
+<span class="na">non_essential_mod_func</span><span class="o">=</span><span class="s">/amod|quantmod|num|number|det|prep_of|vmod/</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="entity-recognition">
 <h2>Entity recognition<a class="headerlink" href="#entity-recognition" title="Permalink to this headline">¶</a></h2>
@@ -167,6 +213,30 @@ head to include in the markable span, and more.</p>
 </ul>
 </li>
 </ul>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="c1"># Default entity</span>
+<span class="na">default_entity</span><span class="o">=</span><span class="s">abstract</span>
+<span class="c1"># Parts of speech for proper nouns</span>
+<span class="na">proper_pos</span><span class="o">=</span><span class="s">/NN?PS?/</span>
+<span class="c1"># Parts of speech for pronouns</span>
+<span class="na">pronoun_pos</span><span class="o">=</span><span class="s">/PR?P\$?|DT/</span>
+<span class="c1"># What can an article look like which is not part of a person&#39;s actual name?</span>
+<span class="na">articles</span><span class="o">=</span><span class="s">/^([Aa]n?|[Tt]he)$/</span>
+<span class="c1"># What can articles or modifiers look like which entail definiteness?</span>
+<span class="na">definite_articles</span><span class="o">=</span><span class="s">/^([Tt]h(e|is|at|[oe]se)|[Mm]y|[Yy]our|[Hh](is|er)|[Oo]ur|[Tt]heir|&#39;|&#39;s)$/</span>
+<span class="c1"># Are people and place names in this language capitalized?</span>
+<span class="na">cap_names</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Ad hoc lemmatization rules - cascade of POS dependent string replace rules to use if no lemma is available in input</span>
+<span class="na">lemma_rules</span><span class="o">=</span><span class="s">NNP?S/xes$/x/;NNP?S/ches$/ch/;NNP?S/sses$/ss/;NNP?S/ies$/y/;NNP?S/s$//;NPS/xes$/x/;NPS/ches$/ch/;NPS/sses$/ss/;NPS/ies$/y/;NPS/s$//</span>
+<span class="c1"># Edit morphology information - cascade of string replace rules to use on the morph field in conll data if available</span>
+<span class="na">morph_rules</span><span class="o">=</span><span class="s">_/_</span>
+<span class="c1"># Auto lower case bahvior for lemmas when using lemma rules. Possible values: all, except_all_caps, none</span>
+<span class="na">auto_lower_lemma</span><span class="o">=</span><span class="s">except_all_caps</span>
+<span class="c1"># Entity to guess for unknown acronyms</span>
+<span class="na">all_caps_entity</span><span class="o">=</span><span class="s">organization</span>
+<span class="c1"># Maximum of substring suffix used on unknown heads to establish category (e.g. 4 catches -ness as usually abstract)</span>
+<span class="na">max_suffix_length</span><span class="o">=</span><span class="s">8</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="agreement-class-detection">
 <h2>Agreement class detection<a class="headerlink" href="#agreement-class-detection" title="Permalink to this headline">¶</a></h2>
@@ -177,6 +247,37 @@ head to include in the markable span, and more.</p>
 <li><strong>agree_entity_mapping</strong>: similarly, a mapping of agreement classes to entity types. For example, in English, mapping <em>female</em> to <em>person</em> is usually correct: <cite>female&gt;person;male&gt;person</cite></li>
 <li><strong>never_agree_pairs</strong>: semicolon-separated list of plus-separated pairs of agreement classes that are never compatible, e.g. <cite>male+plural</cite></li>
 </ul>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">pos_agree_mapping</span><span class="o">=</span><span class="s">NPS&gt;plural;NNPS&gt;plural;NNS&gt;plural</span>
+<span class="na">agree_entity_mapping</span><span class="o">=</span><span class="s">female&gt;person;male&gt;person</span>
+<span class="na">default_agree</span><span class="o">=</span><span class="s">inanim</span>
+<span class="c1"># Agreement classes compatible with unknown agreement - all other classes will require strict agreement</span>
+<span class="na">agree_with_unknown</span><span class="o">=</span><span class="s">/inanim|male|female/</span>
+<span class="c1"># Strict disagree sets, e.g. male+female; note that putting singular/plural here disrupts possible isa-table connections between the two.</span>
+<span class="c1"># Separate each pair internally with plus, and multiple pairs with semicolon</span>
+<span class="na">never_agree_pairs</span><span class="o">=</span><span class="s">male+female</span>
+<span class="c1"># Does isa matching of subclasses require morphological agreement?</span>
+<span class="na">isa_subclass_agreement</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Agreement classes incompatible with person type entities</span>
+<span class="na">no_person_agree</span><span class="o">=</span><span class="s">/inanim/</span>
+<span class="c1"># Agreement class for coordinate/aggregate entities; plain string NOT a regex (use underscore to assign no special class)</span>
+<span class="na">aggregate_agree</span><span class="o">=</span><span class="s">plural</span>
+<span class="c1"># Default name and agreement for persons and places - set to global default if not using</span>
+<span class="na">person_def_entity</span><span class="o">=</span><span class="s">person</span>
+<span class="na">place_def_entity</span><span class="o">=</span><span class="s">place</span>
+<span class="na">time_def_entity</span><span class="o">=</span><span class="s">time</span>
+<span class="na">object_def_entity</span><span class="o">=</span><span class="s">object</span>
+<span class="na">organization_def_entity</span><span class="o">=</span><span class="s">organization</span>
+<span class="na">quantity_def_entity</span><span class="o">=</span><span class="s">quantity</span>
+<span class="na">event_def_entity</span><span class="o">=</span><span class="s">event</span>
+<span class="na">abstract_def_entity</span><span class="o">=</span><span class="s">abstract</span>
+<span class="na">person_def_agree</span><span class="o">=</span><span class="s">male</span>
+<span class="na">place_def_agree</span><span class="o">=</span><span class="s">inanim</span>
+<span class="na">time_def_agree</span><span class="o">=</span><span class="s">inanim</span>
+<span class="na">organization_def_agree</span><span class="o">=</span><span class="s">inanim</span>
+<span class="na">object_def_agree</span><span class="o">=</span><span class="s">inanim</span>
+<span class="na">quantity_def_agree</span><span class="o">=</span><span class="s">plural</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="coreference-detection">
 <h2>Coreference detection<a class="headerlink" href="#coreference-detection" title="Permalink to this headline">¶</a></h2>
@@ -187,10 +288,62 @@ head to include in the markable span, and more.</p>
 <p><code class="docutils literal"><span class="pre">&#64;.*/^%$</span></code></p>
 <p>The following specification says that a markable headed (&#64;) by the POS tag <em>NNS</em> and having any text (.*), but also not (!) starting (^) with a POS tag matching <em>DT</em> or <em>PRP</em> is forbidden from having an antecedent (English bare plural).</p>
 <p><code class="docutils literal"><span class="pre">&#64;NNS/.*&amp;^!(DT|PRP)/.*</span></code></p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="c1"># Whether to use machine learning classifiers, if available</span>
+<span class="na">use_classifiers</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Default score threshold for classifier positive decision (lower threshold promotes more liberal coreference decisions)</span>
+<span class="na">score_thresh</span><span class="o">=</span><span class="s">0.29</span>
+<span class="c1"># Override/flavor specific classifier file suffix for specific versions of a model (e.g. _GUM in gbm_GUM3.pkl, instead of gbm3.pkl). Usually empty except in an override profile.</span>
+<span class="na">classifier_suffix</span><span class="o">=</span>
+<span class="c1"># Modifier functions that require strictly identical heads for coreference</span>
+<span class="na">ident_mod_func</span><span class="o">=</span><span class="s">/^(poss|titlemod|prep_of)$/</span>
+<span class="c1"># What POS categories should allow lemma matching of heads for coreference? e.g. /^NNS?$/ to allow singular and plural nouns to match based on lemma</span>
+<span class="na">lemma_match_pos</span><span class="o">=</span><span class="s">/none/</span>
+<span class="c1"># Dependency functions that are interpreted as modifiers for compatible modifier, and other modifier checks</span>
+<span class="na">mod_func</span><span class="o">=</span><span class="s">/amod|nn|quantmod|num|number|det|prep_of/</span>
+<span class="c1"># Tokens that mark opening and closing quotation for direct speech detection</span>
+<span class="na">open_quote</span><span class="o">=</span><span class="s">/^([&quot;&#39;”’]|``)$/</span>
+<span class="na">close_quote</span><span class="o">=</span><span class="s">/^([&quot;&#39;”’]|&#39;&#39;)$/</span>
+<span class="c1"># Tokens used to identify a question sentence</span>
+<span class="na">question_mark</span><span class="o">=</span><span class="s">/^\?$/</span>
+<span class="c1"># Markables forbidden to have antecedents - semicolon separated patterns of initial (^x), final ($x) or head(@x) POS + text that rule out antecedent. </span>
+<span class="c1"># Use ! for negation, &amp; for multiple criteria; use e.g. @none/none to switch off</span>
+<span class="na">no_antecedent</span><span class="o">=</span><span class="s">@NNS/.*&amp;^!(DT|PR?P\$)/.*;@.*/^%$</span>
+<span class="c1"># Are indefinite markables allowed to be anaphors (i.e. can they have antecedents)?</span>
+<span class="na">allow_indef_anaphor</span><span class="o">=</span><span class="s">False</span>
+<span class="c1"># Are indefinite markables allowed to be anaphors via isa? (only used if allow_indef_anaphor is True)</span>
+<span class="na">allow_indef_isa</span><span class="o">=</span><span class="s">False</span>
+<span class="c1"># Should we match Title Case entities to acronyms made of each token&#39;s initial letters?</span>
+<span class="na">match_acronyms</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Words to ignore in acronym matching, e.g. &#39;of&#39; in Federal Bureau *of* Investigation &lt;- FBI</span>
+<span class="na">ignore_in_acronym</span><span class="o">=</span><span class="s">/of/</span>
+<span class="c1"># Should it be possible for a later mention to include lexical modifiers not present in the antecedent?</span>
+<span class="na">no_new_modifiers</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Should exceptional new modifiers listed in the new_modifiers file be allowed in subsequent mentions? (only used if no_new_modifiers=True)</span>
+<span class="na">use_new_modifier_exceptions</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Do proper noun modifiers have to match exactly across mentions? (NB: this may include proper modifiers such as Mr.!! Often leaving this False is better)</span>
+<span class="na">proper_mod_must_match</span><span class="o">=</span><span class="s">False</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="postprocessing-settings">
 <h2>Postprocessing settings<a class="headerlink" href="#postprocessing-settings" title="Permalink to this headline">¶</a></h2>
 <p>Settings for sanitizing or altering output, such as removing singletons, or markables with specific grammatical functions which are nevertheless used internally during processing (e.g. predicatives).</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">remove_head_func</span><span class="o">=</span><span class="s">/nn/</span>
+<span class="na">remove_child_func</span><span class="o">=</span><span class="s">/cop/</span>
+<span class="na">remove_singletons</span><span class="o">=</span><span class="s">True</span>
+<span class="na">remove_cataphora</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Should we add a markable around adjacent appositional mentions?</span>
+<span class="na">add_appos_envelopes</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Should we attempt to match definites with no antecedent to a verb of the same stem?</span>
+<span class="na">seek_verb_for_defs</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Specify affixes that the rudimentary stemmer should delete when attempting verbal coreference matching</span>
+<span class="na">stemmer_deletes</span><span class="o">=</span><span class="s">/((:?at)ion|e?ment|ed?|ing|th|al|e?s)$/</span>
+<span class="c1"># Should we allow an additional plural markable around coordinate entities, even if there is no later aggregate reference?</span>
+<span class="na">remove_coordinate_envelopes</span><span class="o">=</span><span class="s">True</span>
+<span class="c1"># Semi-colon separated nested entity types to remove, e.g. person,nn,person;... removes person with function nn nested in a person</span>
+<span class="na">remove_nested_entities</span><span class="o">=</span><span class="s">person,nn,person</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -204,7 +357,7 @@ head to include in the markable span, and more.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Amir Zeldes.
+        &copy; Copyright 2018, Amir Zeldes.
 
     </p>
   </div>
@@ -226,7 +379,7 @@ head to include in the markable span, and more.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.4.1',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_compatible &mdash; xrenner 1.4.1 documentation</title>
+  <title>modules.xrenner_compatible &mdash; xrenner 2.0.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 1.4.1 documentation" href="../../index.html"/>
+    <link rel="top" title="xrenner 2.0.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.4
+                2.0
               </div>
             
           
@@ -85,6 +85,7 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../indepth.html">     In depth guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
 </ul>
 
@@ -132,10 +133,10 @@
             
   <h1>Source code for modules.xrenner_compatible</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">xrenner_marker</span> <span class="k">import</span> <span class="n">remove_suffix_tokens</span>
-<span class="kn">from</span> <span class="nn">xrenner_propagate</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">xrenner_classes</span> <span class="k">import</span> <span class="n">Markable</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">.xrenner_marker</span> <span class="k">import</span> <span class="n">remove_suffix_tokens</span>
+<span class="kn">from</span> <span class="nn">.xrenner_propagate</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_classes</span> <span class="k">import</span> <span class="n">Markable</span><span class="p">,</span> <span class="n">ParsedToken</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Module for checking compatibility of various features between markables</span>
@@ -147,7 +148,7 @@
 <div class="viewcode-block" id="entities_compatible"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.entities_compatible">[docs]</a><span class="k">def</span> <span class="nf">entities_compatible</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Checks if the entity property of two markables is compatible for possible coreference</span>
-<span class="sd">	</span>
+
 <span class="sd">	:param mark1: the first of two markables to compare entities</span>
 <span class="sd">	:param mark2: the second of two markables to compare entities</span>
 <span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
@@ -187,9 +188,9 @@
 <div class="viewcode-block" id="modifiers_compatible"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.modifiers_compatible">[docs]</a><span class="k">def</span> <span class="nf">modifiers_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="n">allow_force_proper_mod_match</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Checks whether the dependents of two markables are compatible for possible coreference</span>
-<span class="sd">	</span>
-<span class="sd">	:param markable: one of two markables to compare dependents for</span>
-<span class="sd">	:param candidate: the second markable, which is a candidate antecedent for the other markable</span>
+
+<span class="sd">	:param markable: :class:`Markable` one of two markables to compare dependents for</span>
+<span class="sd">	:param candidate: :class:`Markable` the second markable, which is a candidate antecedent for the other markable</span>
 <span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
 <span class="sd">	:return: bool</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -207,14 +208,13 @@
 
 	<span class="c1"># Do strict &#39;no new modifiers&#39; check if desired</span>
 	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;no_new_modifiers&quot;</span><span class="p">]:</span>
-		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="n">candidate</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
-			<span class="n">first</span> <span class="o">=</span> <span class="n">candidate</span>
-			<span class="n">second</span> <span class="o">=</span> <span class="n">markable</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">first</span> <span class="o">=</span> <span class="n">markable</span>
-			<span class="n">second</span> <span class="o">=</span> <span class="n">candidate</span>
-		<span class="n">first_mods</span> <span class="o">=</span> <span class="p">(</span><span class="n">comp_mod</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">comp_mod</span> <span class="ow">in</span> <span class="n">first</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">)</span>
-		<span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">second</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
+		<span class="n">first_mark</span> <span class="o">=</span> <span class="n">candidate</span>
+		<span class="n">second_mark</span> <span class="o">=</span> <span class="n">markable</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;</span> <span class="n">candidate</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+			<span class="n">first_mark</span> <span class="o">=</span> <span class="n">markable</span>
+			<span class="n">second_mark</span> <span class="o">=</span> <span class="n">candidate</span>
+		<span class="n">first_mods</span> <span class="o">=</span> <span class="p">(</span><span class="n">comp_mod</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">comp_mod</span> <span class="ow">in</span> <span class="n">first_mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">second_mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">modifiers</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;det_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Exclude determiners from this check</span>
 				<span class="k">if</span> <span class="n">mod</span><span class="o">.</span><span class="n">text</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">first_mods</span><span class="p">:</span>
 					<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;use_new_modifier_exceptions&quot;</span><span class="p">]:</span>
@@ -319,7 +319,7 @@
 <div class="viewcode-block" id="agree_compatible"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.agree_compatible">[docs]</a><span class="k">def</span> <span class="nf">agree_compatible</span><span class="p">(</span><span class="n">mark1</span><span class="p">,</span> <span class="n">mark2</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Checks if the agree property of two markables is compatible for possible coreference</span>
-<span class="sd">	</span>
+
 <span class="sd">	:param mark1: the first of two markables to compare agreement</span>
 <span class="sd">	:param mark2: the second of two markables to compare agreement</span>
 <span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
@@ -351,7 +351,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Negotiates entity mismatches across coreferent markables and their groups.</span>
 <span class="sd">	Returns True if merging has occurred.</span>
-<span class="sd">	</span>
+
 <span class="sd">	:param mark1: the first of two markables to merge entities for</span>
 <span class="sd">	:param mark2: the second of two markables to merge entities for</span>
 <span class="sd">	:param previous_markables: all previous markables which may need to inherit from the model/host</span>
@@ -384,7 +384,7 @@
 <span class="sd">	gathered from a model markable discovered to be possibly coreferent with the host.</span>
 <span class="sd">	If incompatible modifiers are discovered the process fails and returns False.</span>
 <span class="sd">	Otherwise updating succeeds and the update_group returns true</span>
-<span class="sd">	</span>
+
 <span class="sd">	:param host: the first markable discovered to be coreferent with the model</span>
 <span class="sd">	:param model: the model markable, containing new information for the group</span>
 <span class="sd">	:param previous_markables: all previous markables which may need to inherit from the model/host</span>
@@ -623,80 +623,151 @@
 	<span class="k">return</span> <span class="kc">False</span>
 
 
-<div class="viewcode-block" id="best_candidate"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.best_candidate">[docs]</a><span class="k">def</span> <span class="nf">best_candidate</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span><span class="n">candidate_list</span><span class="p">,</span><span class="n">lex</span><span class="p">,</span> <span class="n">propagate</span><span class="p">):</span>
+<div class="viewcode-block" id="score_match_heuristic"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.score_match_heuristic">[docs]</a><span class="k">def</span> <span class="nf">score_match_heuristic</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span><span class="n">candidate</span><span class="p">,</span><span class="n">features</span><span class="p">,</span><span class="n">lex</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Basic fall-back function for heuristic match scoring when no classifier is available</span>
+
+
+<span class="sd">	:param makrable:</span>
+<span class="sd">	:param candidate:</span>
+<span class="sd">	:param features:</span>
+<span class="sd">	:return:</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">score</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span><span class="p">)</span>
+	<span class="n">score</span> <span class="o">-=</span> <span class="p">((</span><span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.00001</span> <span class="o">+</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.000001</span><span class="p">)</span>  <span class="c1"># Break ties via proximity</span>
+
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">form</span> <span class="o">!=</span> <span class="s2">&quot;pronoun&quot;</span><span class="p">:</span>
+		<span class="c1"># Default heuristic for lexical NPs is &#39;most recent match&#39;, so the score is done</span>
+		<span class="k">return</span> <span class="n">score</span>
+
+	<span class="n">score</span> <span class="o">+=</span> <span class="n">features</span><span class="p">[</span><span class="s2">&quot;d_entidep&quot;</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]:</span>  <span class="c1"># Introduce slight bias to persons</span>
+		<span class="n">score</span> <span class="o">+=</span> <span class="mf">0.1</span>
+	<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;subject_func&quot;</span><span class="p">]:</span>  <span class="c1"># Introduce slight bias to subjects</span>
+		<span class="n">score</span> <span class="o">+=</span> <span class="mf">0.95</span>
+	<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">agree</span><span class="p">:</span>  <span class="c1"># Slight bias to explicitly identical agreement (not just compatible)</span>
+		<span class="n">score</span> <span class="o">+=</span> <span class="mf">0.1</span>
+	<span class="n">score</span> <span class="o">+=</span> <span class="n">features</span><span class="p">[</span><span class="s2">&quot;d_hasa&quot;</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="n">score</span></div>
+
+
+<div class="viewcode-block" id="best_candidate"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.best_candidate">[docs]</a><span class="k">def</span> <span class="nf">best_candidate</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate_set</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="n">take_first</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	:param markable: markable to find best antecedent for</span>
-<span class="sd">	:param candidate_list: list of markables which are possible antecedents based on some coref_rule</span>
+<span class="sd">	:param candidate_set: set of markables which are possible antecedents based on some coref_rule</span>
 <span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
+<span class="sd">	:param propagate: string with feature propagation instructions from coref_rules.tab in lex</span>
+<span class="sd">	:param rule_num: the rule number of the rule producing the match in coref_rules.tab</span>
+<span class="sd">	:param clf_name: name of the pickled classifier to use for this rule, or &quot;_default_&quot; to use heuristic matching</span>
+<span class="sd">	:param take_first: boolean, whether to skip matching and use the most recent candidate (minimum token distance).</span>
+<span class="sd">				       This saves time if a rule is guaranteed to produce a unique, correct candidate (e.g. reflexives)</span>
 <span class="sd">	:return: Markable object or None (the selected best antecedent markable, if available)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">anaphor_parent</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">head_text</span>
+
+	<span class="c1"># DEBUG POINT #</span>
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+		<span class="n">a</span><span class="o">=</span><span class="mi">5</span>
+
+	<span class="n">rule_num</span><span class="p">,</span> <span class="n">clf_name</span><span class="p">,</span> <span class="n">propagate</span><span class="p">,</span> <span class="n">score_thresh</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">rule_num</span><span class="p">,</span> <span class="n">rule</span><span class="o">.</span><span class="n">clf_name</span><span class="p">,</span> <span class="n">rule</span><span class="o">.</span><span class="n">propagation</span><span class="p">,</span> <span class="n">rule</span><span class="o">.</span><span class="n">thresh</span>
+
+	<span class="n">heuristic</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">clf_name</span> <span class="o">==</span> <span class="s2">&quot;_default_&quot;</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;use_classifiers&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">False</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidate_set</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">None</span>
+
 	<span class="n">candidate_scores</span> <span class="o">=</span> <span class="p">{}</span>
-	<span class="n">entity_dep_scores</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">candidate_features</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">score_ranking</span> <span class="o">=</span> <span class="p">{}</span>
 	<span class="n">best</span> <span class="o">=</span> <span class="kc">None</span>
 
-	<span class="n">use_entity_deps</span> <span class="o">=</span> <span class="kc">True</span>
-	<span class="k">if</span> <span class="s2">&quot;ablations&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-		<span class="k">if</span> <span class="s2">&quot;no_entity_dep&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ablations&quot;</span><span class="p">]:</span>
-			<span class="n">use_entity_deps</span> <span class="o">=</span> <span class="kc">False</span>
-	<span class="n">use_hasa</span> <span class="o">=</span> <span class="kc">True</span>
-	<span class="k">if</span> <span class="s2">&quot;ablations&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-		<span class="k">if</span> <span class="s2">&quot;no_hasa&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ablations&quot;</span><span class="p">]:</span>
-			<span class="n">use_hasa</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidate_set</span><span class="p">:</span>
+		<span class="n">candidate_features</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">extract_features</span><span class="p">(</span><span class="n">lex</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">candidate_set</span><span class="p">,</span> <span class="n">dump_position</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">=</span> <span class="n">score_match_heuristic</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">candidate_features</span><span class="p">[</span><span class="n">candidate</span><span class="p">],</span> <span class="n">lex</span><span class="p">)</span>
+		<span class="n">candidate_features</span><span class="p">[</span><span class="n">candidate</span><span class="p">][</span><span class="s2">&quot;rule_num&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule_num</span><span class="p">)</span>
 
-	<span class="k">if</span> <span class="n">anaphor_parent</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span> <span class="ow">and</span> <span class="n">use_entity_deps</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span><span class="p">[</span><span class="n">anaphor_parent</span><span class="p">]:</span>
-			<span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span><span class="p">[</span><span class="n">anaphor_parent</span><span class="p">][</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">]:</span>
-				<span class="n">entity_dep_scores</span><span class="p">[</span><span class="n">entity</span><span class="p">]</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">entity_deps</span><span class="p">[</span><span class="n">anaphor_parent</span><span class="p">][</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">][</span><span class="n">entity</span><span class="p">]</span>
-	
-	<span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidate_list</span><span class="p">:</span>
-		<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span><span class="p">)</span>
-		<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">-=</span> <span class="p">((</span><span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.00001</span> <span class="o">+</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.000001</span><span class="p">)</span> <span class="c1"># Break ties via proximity</span>
-		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="ow">in</span> <span class="n">entity_dep_scores</span><span class="p">:</span>
-			<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="n">log</span><span class="p">(</span><span class="n">entity_dep_scores</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">entity</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]:</span>  <span class="c1"># Introduce slight bias to persons</span>
-			<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.1</span>
-		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;subject_func&quot;</span><span class="p">]:</span>  <span class="c1"># Introduce slight bias to subjects</span>
-			<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.95</span>
-		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">agree</span><span class="p">:</span>  <span class="c1"># Slight bias to explicitly identical agreement (not just compatible)</span>
-			<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.1</span>
-		<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">hasa</span> <span class="ow">and</span> <span class="n">use_hasa</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;possessive_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Text based hasa</span>
-			<span class="k">if</span> <span class="n">anaphor_parent</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="p">]:</span>
-				<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="n">log</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="p">][</span><span class="n">anaphor_parent</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.1</span>
-		<span class="k">elif</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">hasa</span> <span class="ow">and</span> <span class="n">use_hasa</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;possessive_func&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Lemma based hasa</span>
-			<span class="k">if</span> <span class="n">anaphor_parent</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">]:</span>
-				<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">+=</span> <span class="n">log</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">hasa</span><span class="p">[</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span><span class="p">][</span><span class="n">anaphor_parent</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.9</span>
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">candidate_scores</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))):</span>
+		<span class="n">score_ranking</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
 
-	<span class="n">max_score</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">dump</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Only runs if dumping training data</span>
+
+		<span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidate_set</span><span class="p">:</span>
+			<span class="n">dump_features</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">extract_features</span><span class="p">(</span><span class="n">lex</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">candidate_set</span><span class="p">,</span> <span class="n">dump_position</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">dump_headers</span> <span class="o">==</span> <span class="p">[]:</span>
+				<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dump_features</span><span class="p">:</span>
+					<span class="n">lex</span><span class="o">.</span><span class="n">dump_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+				<span class="n">lex</span><span class="o">.</span><span class="n">dump_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;heuristic_score&quot;</span><span class="p">)</span>  <span class="c1"># Append the heuristic based score for comparison</span>
+				<span class="n">lex</span><span class="o">.</span><span class="n">dump_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;rule_num&quot;</span><span class="p">)</span>  <span class="c1"># Track rule number for error analysis</span>
+			<span class="n">dump_list</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dump_features</span><span class="p">:</span>
+				<span class="n">dump_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dump_features</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+			<span class="n">dump_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">feat</span><span class="p">)</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">dump_list</span><span class="p">]</span>
+			<span class="n">dump_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">score_ranking</span><span class="p">[</span><span class="n">candidate</span><span class="p">]))</span>
+			<span class="n">outline</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dump_list</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">outline</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">dump_types</span><span class="p">:</span>
+				<span class="n">lex</span><span class="o">.</span><span class="n">dump_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">outline</span><span class="p">)</span>
+				<span class="n">outline</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">rule_num</span><span class="p">)</span>
+				<span class="n">lex</span><span class="o">.</span><span class="n">dump</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outline</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+	<span class="n">max_score</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="n">take_first</span><span class="p">:</span>
+		<span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">candidate_set</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">start</span><span class="p">))</span>
+
+	<span class="n">clf_input</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidate_scores</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">max_score</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">dump</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Skip accurate prediction during dump for speed</span>
+			<span class="n">clf_input</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">candidate_set</span><span class="p">,</span> <span class="n">lex</span><span class="p">))</span>
+		<span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+
+	<span class="c1">## DEBUG POINT ##</span>
+	<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+		<span class="k">pass</span>
+
+	<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">dump</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">heuristic</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;use_classifiers&quot;</span><span class="p">]:</span>
+		<span class="n">preds</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">classifiers</span><span class="p">[</span><span class="n">clf_name</span><span class="p">]</span><span class="o">.</span><span class="n">classify_many</span><span class="p">(</span><span class="n">clf_input</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pred</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">preds</span><span class="p">):</span>
+			<span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidates</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">pred</span>
+
+	<span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidate_scores</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">max_score</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
 			<span class="n">max_score</span> <span class="o">=</span> <span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span>
 			<span class="n">best</span> <span class="o">=</span> <span class="n">candidate</span>
 		<span class="k">elif</span> <span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_score</span><span class="p">:</span>
 			<span class="n">max_score</span> <span class="o">=</span> <span class="n">candidate_scores</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span>
 			<span class="n">best</span> <span class="o">=</span> <span class="n">candidate</span>
 
-	<span class="c1">#if propagate.startswith(&quot;propagate&quot;):</span>
-	<span class="c1">#	propagate_entity(markable,best,propagate)</span>
-	<span class="n">markable</span><span class="o">.</span><span class="n">entity</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">entity</span>
-	<span class="c1">#markable.agree = best.agree</span>
-	<span class="n">markable</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">=</span> <span class="s2">&quot;propagated&quot;</span>
-	<span class="n">propagate_agree</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">best</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">max_score</span> <span class="o">&lt;</span> <span class="n">score_thresh</span><span class="p">:</span>  <span class="c1"># The best option is less likely than no coref</span>
+		<span class="k">if</span> <span class="n">heuristic</span><span class="p">:</span>
+			<span class="k">pass</span>  <span class="c1"># In heuristic mode, an antecedent must always be selected from the set</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">None</span>  <span class="c1"># In classifier mode, if no candidate scores high enough, None is returned</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">propagate</span> <span class="o">==</span> <span class="s2">&quot;nopropagate&quot;</span><span class="p">:</span>
+		<span class="n">propagate_entity</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">best</span><span class="p">,</span> <span class="n">propagate</span><span class="p">)</span>
+		<span class="n">propagate_agree</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">best</span><span class="p">)</span>
+
+	<span class="n">best</span><span class="o">.</span><span class="n">matching_rule</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule_num</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">best</span></div>
 
 
 <span class="k">def</span> <span class="nf">stems_compatible</span><span class="p">(</span><span class="n">verb</span><span class="p">,</span> <span class="n">noun</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
 	<span class="n">verb_stem</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;stemmer_deletes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">verb</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 	<span class="n">noun_stem</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;stemmer_deletes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">noun</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-	<span class="k">if</span> <span class="n">verb_stem</span> <span class="o">==</span> <span class="n">noun_stem</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">noun_stem</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">:</span>
+	<span class="k">if</span> <span class="n">verb_stem</span> <span class="o">==</span> <span class="n">noun_stem</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">noun_stem</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
 		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">if</span> <span class="n">verb</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">nominalizations</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">noun</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">nominalizations</span><span class="p">[</span><span class="n">verb</span><span class="o">.</span><span class="n">text</span><span class="p">]:</span>
+			<span class="k">return</span> <span class="kc">True</span>
 	<span class="k">return</span> <span class="kc">False</span>
 
 
 <div class="viewcode-block" id="acronym_match"><a class="viewcode-back" href="../../modules.html#modules.xrenner_compatible.acronym_match">[docs]</a><span class="k">def</span> <span class="nf">acronym_match</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Check whether a Markable&#39;s text is an acronym of a candidate Markable&#39;s text</span>
-<span class="sd">	</span>
+
 <span class="sd">	:param mark: The Markable object to test</span>
 <span class="sd">	:param candidate: The candidate Markable with potentially acronym-matching text</span>
 <span class="sd">	:param lex: the LexData object with gazetteer information and model settings</span>
@@ -739,7 +810,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Amir Zeldes.
+        &copy; Copyright 2018, Amir Zeldes.
 
     </p>
   </div>
@@ -761,7 +832,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'1.4.1',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

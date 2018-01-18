@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using xrenner &mdash; xrenner 1.4.1 documentation</title>
+  <title>Using xrenner &mdash; xrenner 2.0.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 1.4.1 documentation" href="index.html"/>
+    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/>
         <link rel="next" title="Buliding New Language Models" href="models.html"/>
         <link rel="prev" title="Welcome to xrenner’s documentation!" href="index.html"/> 
 
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.4
+                2.0
               </div>
             
           
@@ -102,6 +102,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a></li>
 </ul>
 
@@ -151,21 +152,23 @@
 <h1>Using xrenner<a class="headerlink" href="#using-xrenner" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="basic-usage">
 <h2>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
-<p>To use the default model on English language data, you can run the main script xrenner.py on a text file in the 10 column conll10 format like this:</p>
+<p>To use the default model on English language data, you can run the main script xrenner.py on a text file in the 10 column conll10 or conllu format like this:</p>
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">infile.conll10</span></code></p>
 <p>If you have other language models, you can use them like this, for example for German:</p>
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-m</span> <span class="pre">deu</span> <span class="pre">infile.conll10</span></code></p>
 <p>The default output format is a simple inline SGML format, but other output formats are available, using the -o option:</p>
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-o</span> <span class="pre">conll</span> <span class="pre">infile.conll10</span></code></p>
 <p>If your model includes alternative setting profiles in an override.ini file (or compressed model component), you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:</p>
-<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-x</span> <span class="pre">gum</span> <span class="pre">infile.conll10</span></code></p>
-<p>You can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected.</p>
+<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-x</span> <span class="pre">GUM</span> <span class="pre">infile.conll10</span></code></p>
+<p>You can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected. Other options include -r to turn off classifiers (faster, but less accurate for models using classifiers), and -d &lt;FILENAME&gt; to dump all coreference candidate pairs to a file as training data for a classifier (see <a class="reference internal" href="buildclf.html"><span class="doc">Building classifiers</span></a>)</p>
 </div>
 <div class="section" id="batch-input">
 <h2>Batch input<a class="headerlink" href="#batch-input" title="Permalink to this headline">¶</a></h2>
 <p>You can use <a class="reference external" href="https://docs.python.org/2/library/glob.html">glob</a> syntax  to process multiple files in batch mode. This will be substantially faster than invoking the xrenner multiple times, since the lexical data will only be loaded once. For example, you can read all .conll10 files in a directory like this:</p>
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">*.conll10</span></code></p>
 <p>In batch mode, output file names are automatically generated using the input file name, minus extensions like &#8216;conll10&#8217; or &#8216;conllu&#8217;, and suffixed with the output format extension. For PAULA, document directories with names corresponding to the input documents are generated automatically.</p>
+<p>If you have multiple cores available, batch mode works much faster by using multiple processes with the option -p, for example:</p>
+<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-x</span> <span class="pre">GUM</span> <span class="pre">-p</span> <span class="pre">4</span> <span class="pre">*.conll10</span></code></p>
 </div>
 <div class="section" id="importing-as-a-module">
 <h2>Importing as a module<a class="headerlink" href="#importing-as-a-module" title="Permalink to this headline">¶</a></h2>
@@ -177,16 +180,18 @@
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xrenner</span> <span class="kn">import</span> <span class="n">Xrenner</span>
 
 <span class="n">xrenner</span> <span class="o">=</span> <span class="n">Xrenner</span><span class="p">()</span>
+<span class="c1"># Get a parse in basic Stanford Dependencies (not UD)</span>
 <span class="n">my_conllx_result</span> <span class="o">=</span> <span class="n">some_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;John visited Spain. His visit went well.&quot;</span><span class="p">)</span>
 
-<span class="k">print</span> <span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">my_conllx_result</span><span class="p">,</span><span class="s2">&quot;sgml&quot;</span><span class="p">)</span>
+<span class="n">sgml_result</span> <span class="o">=</span> <span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">my_conllx_result</span><span class="p">,</span><span class="s2">&quot;sgml&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">sgml_result</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Keep in mind that the parser output must match whatever annotation scheme the xrenner model is expecting (tags, label names, head-dependent conventions, etc.)</p>
 </div>
 <div class="section" id="input-format">
 <h2>Input format<a class="headerlink" href="#input-format" title="Permalink to this headline">¶</a></h2>
-<p>xrenner uses the 10 column tab delimited conll10 format, with <strong>one line per token</strong> and <strong>a blank line between sentences</strong>. All of the following columns should be included (use an <strong>underscore</strong> for missing values):</p>
+<p>xrenner uses the 10 column tab delimited conll format, with <strong>one line per token</strong> and <strong>a blank line between sentences</strong>. All of the following columns should be included (use an <strong>underscore</strong> for missing values):</p>
 <ol class="arabic simple">
 <li><strong>ID</strong> - token ID within sentence</li>
 <li><strong>text</strong> - token text</li>
@@ -196,7 +201,7 @@
 <li><strong>morph</strong> - morphological information for this token (optional)</li>
 <li><strong>head</strong> - ID of head token</li>
 <li><strong>func</strong> – dependency function</li>
-<li>&#8211; 10. – reserved for alternate trees with multiple parentage (not used)</li>
+<li>&#8211; 10. – reserved for alternate trees with multiple parentage (DAGs)</li>
 </ol>
 <p><strong>Example</strong>:</p>
 <blockquote>
@@ -219,9 +224,10 @@
 </pre></div>
 </div>
 </div></blockquote>
-<p>It is also possible to include comments on lines beginning with the pound sign. These are generally ignored, with the exception of optional speaker annotations, as in the example below, which can be used as part of <a class="reference internal" href="models.html#coref-rules-tab"><span class="std std-ref">coref_rules.tab</span></a> (e.g. specifying having the same or different speakers as a condition):</p>
+<p>It is also possible to include comments on lines beginning with the pound sign. These are generally ignored, with the exception of optional sentence type (s_type) and speaker annotations, as in the example below, which can be used as part of <a class="reference internal" href="models.html#coref-rules-tab"><span class="std std-ref">coref_rules.tab</span></a> (e.g. specifying having the same or different speakers as a condition):</p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span>#speaker=&quot;Mario J. Lucero&quot;
+<div><div class="highlight-html"><div class="highlight"><pre><span></span># speaker=&quot;Mario J. Lucero&quot;
+# s_type=&quot;decl&quot;
 1       Heaven  _       NNP     NNP     _       2       nn      _       _
 2       Sent    _       NNP     NNP     _       3       nn      _       _
 3       Gaming  _       NNP     NNP     _       6       nsubj   _       _
@@ -238,7 +244,8 @@
 14      Lucero  _       NNP     NNP     _       6       parataxis       _       _
 15      .       _       .       .       _       0       punct   _       _
 
-#speaker=&quot;Isabel Ruiz&quot;
+# speaker=&quot;Isabel Ruiz&quot;
+# s_type=&quot;decl&quot;
 1       And     _       CC      CC      _       6       cc      _       _
 2       ,       _       ,       ,       _       0       punct   _       _
 3       I       _       PRP     PRP     _       6       nsubj   _       _
@@ -327,7 +334,7 @@ Note that this format only groups mentions but does not represent antecedents an
 </div>
 <div class="section" id="html">
 <h3>html<a class="headerlink" href="#html" title="Permalink to this headline">¶</a></h3>
-<p>Very similar to sgml, but designed to visualize coreferent groups in same colored divs, and some entity icons, all using Font Awesome (<a class="reference external" href="http://fontawesome.io/">http://fontawesome.io/</a>) and JavaScript (see <a class="reference internal" href="index.html"><span class="doc">main page</span></a> for an example). The css and scripts are available in the utils/ directory.</p>
+<p>Very similar to sgml, but designed to visualize coreferent groups in same colored divs, and some entity icons, all using Font Awesome (<a class="reference external" href="http://fontawesome.io/">http://fontawesome.io/</a>) and JavaScript (see <a class="reference internal" href="index.html"><span class="doc">main page</span></a> for an example). The css and scripts are available in the utils/vis/ directory.</p>
 </div>
 <div class="section" id="onto">
 <h3>onto<a class="headerlink" href="#onto" title="Permalink to this headline">¶</a></h3>
@@ -377,7 +384,7 @@ role in the 1969 film Easy Rider
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Amir Zeldes.
+        &copy; Copyright 2018, Amir Zeldes.
 
     </p>
   </div>
@@ -399,7 +406,7 @@ role in the 1969 film Easy Rider
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.4.1',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

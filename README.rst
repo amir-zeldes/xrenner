@@ -10,13 +10,17 @@ https://corpling.uis.georgetown.edu/xrenner/
 Usage::
 
    xrenner.py [options] INFILE (> OUTFILE)
+   xrenner.py [options] *.conllx
 
 Options:
 
--m, --model            input model directory name, in models/, default 'eng'
+-m, --model            input model name in models/, default 'eng'
 -o, --output           output format, default: sgml; alternatives: html, paula, webanno, conll, onto, unittest
--x, --override         specify a section in the model's override.ini file with alternative settings, default=None; possible values such as 'OntoNotes', 'GUM' 
+-x, --override         specify a section model's override.ini file with alternative settings; e.g. OntoNotes or GUM for English
 -v, --verbose          output run time and summary
+-r, --rulebased        rule based operation, disable stochastic classifiers in selected model
+-d, --dump <FILE>      dump all anaphor-antecedent candidate pairs to <FILE> to train classifiers
+-p, --procs NUM        number of processes to run in parallel (only useful if running on multiple documents)
 -t, --test             run unit tests and quit
 --version              print xrenner version and quit
 
@@ -40,11 +44,11 @@ Input format:
 		3	October	October	NP	NNP	_	4	nn	_	_
 		4	9	9	CD	CD	_	1	appos	_	_
 		5	,	,	,	,	_	0	punct	_	_
-		6	2013	2013	CD	CD	_	3	tmod	_	_
+		6	2013	2013	CD	CD	_	4	tmod	_	_
 
 Installation:
 -------------
-Download and use the main xrenner.py script on an input file, or install from PyPI and import as a module::
+Download the repo and use the main xrenner.py script on an input file, or install from PyPI and import as a module::
 
    > pip install xrenner
 
@@ -54,8 +58,9 @@ Examples:
 * python xrenner.py example_in.conll10 > example_out.sgml
 * python xrenner.py -x GUM example_in.conll10 > example_out.sgml
 * python xrenner.py -o conll example_in.conll10 > example_out.conll
-* python xrenner.py -m eng -o conll example_in.conll10 > example_out.conll
+* python xrenner.py -m eng -o conll *.conll10 (automatically names output files based on input files)
 
+Note that by default, the English model is invoked (-m eng), and this model expects input in Basic Stanford Typed Dependencies (not Universal Dependencies).
 
 Module usage:
 -------------
@@ -65,6 +70,9 @@ Module usage:
    from xrenner import Xrenner
    
    xrenner = Xrenner()
+   # Get a parse in basic Stanford Dependencies (not UD)
    my_conllx_result = some_parser.parse("John visited Spain. His visit went well.")
    
-   print xrenner.analyze(my_conllx_result,"sgml")
+   sgml_result = xrenner.analyze(my_conllx_result,"sgml")
+   print(sgml_result)
+   

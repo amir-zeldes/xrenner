@@ -1,0 +1,104 @@
+====================
+Building classifiers
+====================
+xrenner provides a framework for integrating stochastic classifiers using scikit-learn (http://scikit-learn.org/). To train a classifier, you will need to:
+
+1. Dump data of anaphor-antecedent pair candidates that xrenner sees in your corpus
+2. Add information from gold standard data saying whether each pair is correct
+3. Train your classifier
+
+************
+Dumping data
+************
+
+To train a classifier, a dump file is required which lists all of the anaphor-antecedent pairs that xrenner is considering during a run on your data. To create a dump file, run xrenner on all of your conll parse files with the option -d <FILENAME> and your model selected, in this case *jap* for Japanese. Output analyses are not needed, so we can select -o none:
+
+``> python xrenner.py -p 4 -d dumpfile -m jap -o none *.conll10``
+
+If you run xrenner as above, with multiple processes (-p 4), multiple dump files will be created and automatically merged at the end of the run, leaving you with *dumpfile.tab*. An example of such a file can be found in *utils/example_dump.tab*.
+
+The dump file has many columns describing the features observed or predicted by xrenner, and will look something like this:
+
+.. code-block:: html
+
+	position	docname	genre	n_lemma	n_func	n_head_text	n_form	n_pos	n_agree	n_start	n_end	n_cardinality	n_definiteness	n_entity	n_subclass	n_infstat	n_coordinate	n_length	n_mod_count	n_doc_position	n_sent_position	n_quoted	n_negated	n_neg_parent	n_s_type	t_lemma	t_func	t_head_text	t_form	t_pos	t_agree	t_start	t_end	t_cardinality	t_definiteness	t_entity	t_subclass	t_infstat	t_coordinate	t_length	t_mod_count	t_doc_position	t_sent_position	t_quoted	t_negated	t_neg_parent	t_s_type	d_sent	d_tok	d_agr	d_intervene	d_cohort	d_hasa	d_entidep	d_entisimdep	d_lexdep	d_lexsimdep	d_sametext	d_samelemma	d_parent	d_speaker	heuristic_score	rule_num
+	13-16;11-11	GUM_interview_ants	interview	1	appos	Tuesday	common	CD	_	13	16	0	indef	time	time	new	0	4	1	0.013474494706448507	0.6666666666666666	0	0	0	frag	Tuesday	root	ROOT	proper	NP	_	11	11	0	def	time	time-unit	new	0	1	0	0.010587102983638113	0.16666666666666666	0	0	0	frag	0	2	1	2	1	0	4	9	0	0	0	0	-1	0	1.0	9
+	28-35;1-3	GUM_interview_ants	interview	Bos	nsubj	studies	proper	NP	_	28	35	0	def	person	person	new	0	8	2	0.02791145332050048	0.06666666666666667	0	0	0	decl	Bos	nsubj	tells	proper	NP	_	1	3	0	def	person	person	new	0	3	2	0.0028873917228103944	0.3	0	0	0	decl	4	25	1	11	1	0	2	4	1	0	0	1	0	0	1.0	25
+	54-54;42-43	GUM_interview_ants	interview	they	nsubj	experience	pronoun	PP	plural	54	54	0	def	abstract	abstract	new	0	1	0	0.0519730510105871	0.9	1	0	0	decl	insect	nsubj	evolved	common	NNS	plural	42	43	0	indef	animal	animal	new	0	2	1	0.04138594802694899	0.5333333333333333	1	0	0	decl	0	11	1	3	2	0	1	0	0	0	0	0	0	0	1.0	24
+	...
+
+Features refering to the potential ananphor begin with *n_*, and features refering to the antecedent begin with *t_*. Features refering to comparisons of the two begin with *d_*. 
+
+However, notice that there is no column indicating whether the pair is a match or not. To find out, we will need to check for gold responses in a solution file.
+
+******************
+Checking responses
+******************
+
+The script *utils/check_response.py* enriches the dump file with responses from a gold file annotated in the conll coreference format. It contains all documents in one long file, with document names noted wherever they begin. The format looks like this:
+
+.. code-block:: html
+
+	# begin document my_example
+	1	Portrait	_
+	2	shot	_
+	3	of	_
+	4	Dennis	(4
+	5	Hopper	4)
+	6	,	_
+	7	famous	_
+	8	for	_
+	9	his	(4)
+	10	role	_
+	11	in	_
+	12	the	_
+	13	1969	_
+	14	film	_
+	15	Easy	_
+	16	Rider	_
+	...
+
+An example of this format is found in *utils/example_gold.conll*. To enrich the dump file, run the script *check_response.py* like this:
+
+* python check_response.py goldfile.conll dumpfile.tab
+
+Multiple options can modify the behavior of check_response depending on your needs:
+
+-p, --pairs            output only a single negative example for each positive example (reduces training data size but balances the minority class: positive). Entries for markables with no antecedent are all outputted as well.
+-b, --binary           output binary response only; if not used, output also includes error types (e.g. wrong link, missing antecedent, etc.)
+-d, --del_id           delete pair location IDs (prevents cohort based evaluation later, but smaller filesize)
+-a, --appositions      turn off automatic apposition fixing. Apposition fixing is only needed for OntoNotes-style corpora, where appositions are 'wrapped' with an extra markable
+-c, --copulas          turn off automatic copula fixing. Otherwise, copula markables are heuristically restored in corpora which do not annotate copula predicates.
+-s, --single_negative  in addition to --pairs, also output only a single negative example for each cohort that has no viable antecedents (not recommended)
+
+********************
+Train the classifier
+********************
+
+Once a checked file, in a format like *utils/example_dump_response.tab* is ready, we can train a classifier from sklearn's repertoire using *utils/train_classifier.py*. Reading the script is recommended as it contains **a detailed tutorial**.
+
+The script is run as:
+
+``> python train_classifier.py checked_dump.tab``
+
+Additional options:
+
+-t, --thresh           Integer; A frequency threshold, replace rarer values by _unknown_
+-c, --criterion        Fraction; Decision criterion boundary for classifier positive decision (default: 0.5; choosing a lower criterion is often helpful!)
+-d, --devset           Filename; A file listing dev set document names one per line (useful to ensure different classifiers are evaluated on the same data for comparison)
+
+Read the section **Constructing a classifier** within the script and adjust the features and classifier chosen based on your scenario. The script will produce a pickled dump file (\*.pkl), which you can include in your language model directory (see <models>). You can then assign the classifier to some coreference rules in :ref:`coref_rules.tab <coref_rules_tab>`.
+
+********************
+Using sample weights
+********************
+
+By default, sklearn trains classifiers to be right as often as possible on the training data, meaning they should get as many of the lines as possible right. However, for coreference resolution, what we want is often rather different.
+
+Firstly, a more appropriate measure than 'correct rows' is probably 'correct cohorts': how many anaphors are assigned their correct antecedent. But the number of rows per cohort is determined by how many candidates xrenner happens to consider for each cohort. This disproportionately emphasizes the correct classification of candidates with multiple entries.
+
+Conversely, if an anaphor has many potential antecedents, only one of which is actually in the same entity, the classifier may learn to categorically deny any antecedents to this anaphor. This results in 'many correct rows', but leads to bad coreference resolution.
+
+Finally, coreference evaluation metrics are a very complicated topic (see `Pradhan et al. 2014 <http://www.aclweb.org/anthology/P14-2006>`_, `Moosavi & Strube 2016 <http://www.aclweb.org/anthology/P16-1060>`_), and end up favoring rather unpredictable types of behavior. If you are evaluating your model using the conll metrics, different scores may result by being too lenient/stringent with coreference in different cases. For example, if singletons are excluded from the evaluation (as in OntoNotes), then for some metrics, getting the first or last link in a chain wrong results in less penalty than getting a 'middle' mention wrong, which splits the chain into two predicted entities.
+
+These issues mean that it can make sense to weight your training samples differentially: some rows are more important to get right than others. Several sklearn classifiers support sample weighting, such as GradientBoosting and RandomForest. The script in *scripts/get_decision_weights.py* gives a very rudimentary solution to weighting the effect of each wrong decision on the conll metrics for a given document. It can be used, for example, to get average weights for errors such as inventing an anaphor, or linking two true mentions incorrectly. These weights can be assigned at the top of the *train_classifier.py* script, and can be tuned for better overall performance together with the decision threshold (e.g. choosing a lower number than 0.5 as a classifier boundary for accepting coreference).

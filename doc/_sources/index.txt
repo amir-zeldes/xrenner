@@ -19,12 +19,9 @@ Welcome to xrenner's documentation!
 
 	Using xrenner <using>
 	Building your own language models <models>
+	In depth guides <indepth>
 	Developers' module documentation <modules>
 	
-**In depth guides**:
-
-* Understanding a model's :doc:`config.ini <config>`
-* Using :doc:`DepEdit <depedit>` to manipulate input
 
 **Papers**
 

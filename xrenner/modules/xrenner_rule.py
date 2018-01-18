@@ -1,10 +1,19 @@
 import re, operator
 
 class CorefRule:
-	def __init__(self,rule_string):
-		if rule_string.count(";") != 3:
-			raise Exception("coref rule does not contain exactly 3 semicolons: " + rule_string)
-		self.ana_spec, self.ante_spec, self.max_distance, self.propagation = rule_string.split(";")
+	def __init__(self,rule_string, rule_num):
+		if not 3 <= rule_string.count(";") <= 5:
+			raise Exception("coref rule does not contain 3-5 semicolons: " + rule_string)
+		parts = rule_string.split(";")
+		self.ana_spec, self.ante_spec, self.max_distance, self.propagation = parts[0:4]
+		if len(parts) > 4:
+			self.clf_name = parts[4]
+		else:
+			self.clf_name = "_default_"
+		if len(parts) == 6:
+			self.thresh = float(parts[5])
+		else:
+			self.thresh = None
 		self.max_distance = int(self.max_distance)
 		self.ana_constraints = []
 		self.ante_constraints = []
@@ -14,9 +23,10 @@ class CorefRule:
 			self.ante_constraints.append(ConstraintMatcher(item))
 		# Make sure that group failure criteria are first to be checked
 		self.ante_constraints.sort(key=lambda x: x.group_failure, reverse=True)
+		self.rule_num = rule_num
 
 	def __repr__(self):
-		return self.ana_spec + " -> " + self.ante_spec + " (" + str(self.max_distance) + ", " + self.propagation + ")"
+		return self.ana_spec + " -> " + self.ante_spec + " (" + str(self.max_distance) + ", " + self.propagation + ", "+ self.clf_name + ")"
 
 
 class ConstraintMatcher:
@@ -27,7 +37,7 @@ class ConstraintMatcher:
 		self.value = ""
 		self.key = ""
 		self.compiled_re = None
-		self.props = set(["form", "text", "agree", "entity", "subclass", "cardinality","text_lower","lemma","pos","func","quoted","mood","speaker"])
+		self.props = {"form", "text", "agree", "entity", "subclass", "cardinality","text_lower","lemma","pos","func","quoted","mood","speaker"}
 
 		if constraint.endswith("*"):
 			self.group_failure = True
@@ -75,7 +85,7 @@ class ConstraintMatcher:
 			if self.match_type != "bool":
 				self.value = value
 			self.key = key
-		elif constraint == "none" or constraint.startswith("any") or constraint.startswith("look"):
+		elif constraint == "none" or constraint.startswith("any") or constraint.startswith("look") or constraint.startswith("take"):
 			# This is a 'none' matcher or processing instruction, matches anything
 			self.match_type = "none"
 		elif "sameparent" in constraint:  # same or !same style constraint - port to $ for backwards compatibility
@@ -116,6 +126,8 @@ class ConstraintMatcher:
 				return op(anaphor.head.id == mark.head.head)
 			elif self.key == "child":
 				return op(anaphor.head.head == mark.head.id)
+			elif self.key == "hasa":
+				return op(anaphor.head.head_text in lex.hasa[mark.lemma])
 			elif self.key == "parent":
 				if mark.head.head == "0":  # Root token, by definition not same parent as another token
 					retval = op(False)
