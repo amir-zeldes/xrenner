@@ -65,7 +65,7 @@ def search_prev_markables(markable, previous_markables, rule, lex):
 		if markable.text == lex.debug["ana"]:
 			a = 5
 			if candidate.text == lex.debug["ante"]:
-				pass
+				b=6
 		if markable.sentence.sent_num - candidate.sentence.sent_num <= max_dist:
 			if ((int(markable.head.id) > int(candidate.head.id) and
 			ante_spec.find("lookahead") == -1) or (int(markable.head.id) < int(candidate.head.id) and ante_spec.find("lookahead") > -1)):
