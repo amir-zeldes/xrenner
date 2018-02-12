@@ -12,9 +12,14 @@ from .xrenner_marker import markables_overlap, markable_extend_punctuation
 
 
 def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_tokens):
+
+
 	# Collect markable groups
 	marks_by_group = defaultdict(list)
 	for markable in markables:
+		if markable.antecedent is not "none":
+			if markable.group != markable.antecedent.group:
+				markable.group = markable.antecedent.group
 		marks_by_group[markable.group].append(markable)
 
 	# Order markables in each group to ensure backwards chain
