@@ -1,4 +1,5 @@
-import csv
+# -*- coding: utf-8 -*-
+
 import gc
 import os
 from os import listdir
@@ -377,6 +378,16 @@ class LexData:
 			except AttributeError:
 				print("exception on %s!" % option)
 				filters[option] = None
+
+		if ">" in filters["agree_entity_mapping"]:
+			mappings = filters["agree_entity_mapping"].split(";")
+			ent_map = {}
+			for mapping in mappings:
+				key, val = mapping.split(">")
+				ent_map[key] = val
+			filters["agree_entity_mapping"] = ent_map
+		else:
+			filters["agree_entity_mapping"] = {}
 
 		return filters
 
