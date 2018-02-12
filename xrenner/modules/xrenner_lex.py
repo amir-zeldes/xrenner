@@ -171,7 +171,10 @@ class LexData:
 		elif atom_list_name == "mod_atoms":
 			atom_list = self.mod_atoms
 		with filename as csvfile:
-			reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
+			if PY2:
+				reader = unicode_split_reader(csvfile)
+			else:
+				reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
 			if mode == "low":
 				return set([rows[0].lower() for rows in reader if not rows[0].startswith('#') and not len(rows[0]) == 0])
 			elif mode == "double":
