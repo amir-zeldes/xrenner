@@ -424,7 +424,7 @@ def resolve_mark_agree(mark, lex):
 		if mark.form == "proper":
 			if mark.core_text in lex.names:
 				return [lex.names[mark.core_text]]
-			elif mark.core_text in lex.first_names:  # Single name component core text
+			elif mark.core_text in lex.first_names and mark.core_text not in lex.entities and mark.core_text not in lex.entity_heads:  # Single name component core text
 				return [lex.first_names[mark.core_text]]
 		if mark.head.pos in lex.pos_agree_mappings:
 			mark.agree_certainty = "pos_agree_mappings"
