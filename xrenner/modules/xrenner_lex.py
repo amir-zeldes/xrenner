@@ -104,7 +104,7 @@ class LexData:
 		self.coref_rules = self.non_speaker_rules
 		self.entities = self.read_delim(self.model_files['entities.tab'], 'quadruple') if 'entities.tab' in self.model_files else {}
 		self.entity_heads = self.read_delim(self.model_files['entity_heads.tab'], 'quadruple', 'atoms', True) if 'entity_heads.tab' in self.model_files else {}
-		self.pronouns = self.read_delim(self.model_files['pronouns.tab'], 'double')
+		self.pronouns = self.read_delim(self.model_files['pronouns.tab'], 'double') if "pronouns.tab" in self.model_files else {}
 
 		# Optional files improve model accuracy
 		self.names = self.read_delim(self.model_files['names.tab']) if "names.tab" in self.model_files else {}
