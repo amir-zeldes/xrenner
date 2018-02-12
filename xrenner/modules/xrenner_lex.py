@@ -10,10 +10,15 @@ from .xrenner_rule import CorefRule
 
 if sys.version_info[0] < 3:
 	# Python 2
+	PY2 = True
 	from ConfigParser import ConfigParser, NoSectionError
+	def unicode_split_reader(f):
+		return [line.replace("\n","").replace('\\"','"').split('\t') for line in f.readlines()]
 else:
 	# Python 3
+	PY2 = False
 	from configparser import NoSectionError, RawConfigParser as ConfigParser
+	import csv
 
 """
 LexData class - container object for lexical information, gazetteers etc.
@@ -66,10 +71,11 @@ class LexData:
 			model_path += os.sep
 			model_files_list = [f for f in listdir(model_path) if isfile(join(model_path, f))]
 			for filename in model_files_list:
-				if sys.version_info[0] < 3 or filename.endswith(".pkl"):  # Python 2 or classifier
-					self.model_files[filename] = open(model_path + filename, 'rb')
-				else:  # Python 3, text file
-					self.model_files[filename] = open(model_path + filename, 'r', encoding="utf8")
+				if filename.endswith(".pkl"):  # Classifier
+					if not (filename.endswith("3.pkl") and PY2) and not (filename.endswith("2.pkl") and not PY2):  # Skip unpickling unneeded PY2/3 classifiers
+						self.model_files[filename] = open(model_path + filename, 'rb')
+				else:
+					self.model_files[filename] = io.open(model_path + filename, 'r', encoding="utf8")
 		else:
 			from zipfile import ZipFile
 			try:
@@ -77,7 +83,8 @@ class LexData:
 				model_files_list = [f for f in zip.namelist() if not os.path.isdir(f)]
 				for filename in model_files_list:
 					if sys.version_info[0] < 3 or filename.endswith(".pkl"):  # Python 2 or classifier
-						self.model_files[filename] = zip.open(filename)
+						if not (filename.endswith("3.pkl") and PY2) and not (filename.endswith("2.pkl") and not PY2):  # Skip unpickling unneeded PY2/3 classifiers
+							self.model_files[filename] = zip.open(filename)
 					else:
 						self.model_files[filename] = io.TextIOWrapper(zip.open(filename), encoding="utf8")
 			except:
@@ -314,6 +321,8 @@ class LexData:
 
 		# Set up default values for settings from newer versions for backwards compatibility
 		filters["neg_func"] = re.compile("$^")
+		filters["non_extend_pos"] = re.compile("$^")
+		filters["core_infixes"] = re.compile("$^")
 		filters["score_thresh"] = 0.5
 
 		options = config.options("main")
