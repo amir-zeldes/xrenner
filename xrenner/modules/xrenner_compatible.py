@@ -579,6 +579,7 @@ def best_candidate(markable, candidate_set, lex, rule, take_first=False):
 	max_score = ""
 
 	if take_first:
+		markable.matching_rule = str(rule_num)
 		return min(candidate_set, key=lambda x: abs(markable.start - x.start))
 
 	clf_input = []
@@ -615,7 +616,7 @@ def best_candidate(markable, candidate_set, lex, rule, take_first=False):
 		propagate_entity(markable, best, propagate)
 		propagate_agree(markable, best)
 
-	best.matching_rule = str(rule_num)
+	markable.matching_rule = str(rule_num)
 	return best
 
 
