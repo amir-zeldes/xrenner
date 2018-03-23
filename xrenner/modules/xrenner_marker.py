@@ -37,6 +37,8 @@ def is_atomic(mark, atoms, lex):
 	# Remove possible suffix tokens to reject [[New] Zealand 's] is [New Zealand] in atoms
 	elif remove_suffix_tokens(marktext, lex).strip() in atoms:
 		return True
+	elif remove_infix_tokens(marktext, lex).strip() in atoms:
+		return True
 	# Combination of prefix and suffix to reject [The [United] Kingdom 's]
 	elif mark.core_text in atoms:
 		return True
@@ -100,6 +102,17 @@ def remove_prefix_tokens(marktext, lex):
 				if lex.affix_tokens[prefix_candidate.strip()] == "prefix":
 					return re.sub(r'^' + prefix_candidate, "", marktext)
 	return marktext
+
+
+def remove_infix_tokens(marktext, lex):
+	"""
+	Remove infix tokens such as dashes, interfixed articles (in Semitic construct state) etc.
+
+	:param marktext: the markable text string to remove tokens from
+	:param lex: the :class:`.LexData` object with gazetteer information and model settings
+	:return: potentially truncated text
+	"""
+	return lex.filters["core_infixes"].sub(" ", marktext)
 
 
 def resolve_mark_entity(mark, lex):
@@ -168,7 +181,7 @@ def resolve_mark_entity(mark, lex):
 		else:
 			if entity == "":
 				# Try to catch year numbers and hours + minutes
-				if re.match(r'^(1[456789][0-9][0-9]|20[0-9][0-9]|(2[0-3]|1?[0-9]):[0-5][0-9])$', mark.head.text) is not None:
+				if re.match(r'^(1[456789][0-9][0-9]|20[0-9][0-9]|(2[0-3]|1?[0-9]):[0-5][0-9]|ה?תש.".)$', mark.head.text) is not None:
 					entity = lex.filters["time_def_entity"]
 					mark.entity_certainty = "uncertain"
 					mark.subclass = "time-unit" # TODO: de-hardwire this
@@ -424,7 +437,7 @@ def resolve_mark_agree(mark, lex):
 		if mark.form == "proper":
 			if mark.core_text in lex.names:
 				return [lex.names[mark.core_text]]
-			elif mark.core_text in lex.first_names:  # Single name component core text
+			elif mark.core_text in lex.first_names and mark.core_text not in lex.entities and mark.core_text not in lex.entity_heads:  # Single name component core text
 				return [lex.first_names[mark.core_text]]
 		if mark.head.pos in lex.pos_agree_mappings:
 			mark.agree_certainty = "pos_agree_mappings"
@@ -658,7 +671,7 @@ def replace_head_with_lemma(mark):
 
 
 def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_pop, lex):
-	if tok.id in descendants:
+	if tok.id in descendants and lex.filters["non_extend_pos"].match(tok.pos) is None:
 		tokenspan = descendants[tok.id] + [tok.id]
 		tokenspan = list(map(int, tokenspan))
 		tokenspan.sort()
@@ -730,10 +743,10 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 	# DEBUG POINT
 	if this_markable.text == lex.debug["ana"]:
 		pass
-	this_markable.core_text = remove_suffix_tokens(remove_prefix_tokens(this_markable.core_text,lex),lex)
+	this_markable.core_text = remove_infix_tokens(remove_suffix_tokens(remove_prefix_tokens(this_markable.core_text,lex),lex),lex)
 	while this_markable.core_text != core_text:  # Potentially repeat affix stripping as long as core text changes
 		core_text = this_markable.core_text
-		this_markable.core_text = remove_suffix_tokens(remove_prefix_tokens(this_markable.core_text,lex),lex)
+		this_markable.core_text = remove_infix_tokens(remove_suffix_tokens(remove_prefix_tokens(this_markable.core_text,lex),lex),lex)
 	if this_markable.core_text == '':  # Check in case suffix removal has left no core_text
 		this_markable.core_text = marktext.strip()
 	this_markable.text = marktext  # Update core_text with potentially modified markable text

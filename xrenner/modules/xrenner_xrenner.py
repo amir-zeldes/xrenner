@@ -73,7 +73,7 @@ class Xrenner:
 		# Check if this is a file name from the main script or a parse delivered in an import or unittest scenario
 		if "\t" in infile or isinstance(infile,list):  # This is a raw parse as string or list, not a file name
 			self.docpath = os.path.dirname(os.path.abspath("."))
-			if self.lex.docname is None:
+			if self.docname is None or self.lex.docname is None:
 				self.set_doc_name("untitled")
 			if not isinstance(infile,list):
 				infile = infile.replace("\r","").split("\n")
@@ -275,7 +275,10 @@ class Xrenner:
 		if mark.cardinality == 0:
 			mark.cardinality = resolve_cardinality(mark, lex)
 
-		resolve_mark_entity(mark, lex)
+		if mark.agree in lex.filters["agree_entity_mapping"]:
+			mark.entity = lex.filters["agree_entity_mapping"][mark.agree]
+		else:
+			resolve_mark_entity(mark, lex)
 
 		if "ablations" in lex.debug:
 			if "no_subclasses" in lex.debug["ablations"]:

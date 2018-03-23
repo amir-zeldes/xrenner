@@ -65,7 +65,7 @@ def search_prev_markables(markable, previous_markables, rule, lex):
 		if markable.text == lex.debug["ana"]:
 			a = 5
 			if candidate.text == lex.debug["ante"]:
-				pass
+				b=6
 		if markable.sentence.sent_num - candidate.sentence.sent_num <= max_dist:
 			if ((int(markable.head.id) > int(candidate.head.id) and
 			ante_spec.find("lookahead") == -1) or (int(markable.head.id) < int(candidate.head.id) and ante_spec.find("lookahead") > -1)):
@@ -122,9 +122,8 @@ def search_prev_markables(markable, previous_markables, rule, lex):
 		candidates_to_remove = set([])
 		for candidate_item in candidate_set:
 			# Remove items that are prohibited by entity agree mapping
-			agree_entity_mapping = lex.filters["agree_entity_mapping"].split(";")
-			for pair in agree_entity_mapping:
-				if pair.split(">")[0] == markable.agree and pair.split(">")[1] != candidate_item.entity:
+			for agree, ent in iteritems(lex.filters["agree_entity_mapping"]):
+				if markable.agree == agree and candidate_item.entity != ent:
 					candidates_to_remove.add(candidate_item)
 			if candidate_item.entity == lex.filters["person_def_entity"] and (candidate_item.form != "pronoun" or markable.entity_certainty == "certain") and lex.filters["no_person_agree"].match(markable.agree) is not None:
 				candidates_to_remove.add(candidate_item)

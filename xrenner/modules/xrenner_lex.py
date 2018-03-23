@@ -1,4 +1,5 @@
-import csv
+# -*- coding: utf-8 -*-
+
 import gc
 import os
 from os import listdir
@@ -10,10 +11,15 @@ from .xrenner_rule import CorefRule
 
 if sys.version_info[0] < 3:
 	# Python 2
+	PY2 = True
 	from ConfigParser import ConfigParser, NoSectionError
+	def unicode_split_reader(f):
+		return [line.replace("\n","").replace('\\"','"').split('\t') for line in f.readlines()]
 else:
 	# Python 3
+	PY2 = False
 	from configparser import NoSectionError, RawConfigParser as ConfigParser
+	import csv
 
 """
 LexData class - container object for lexical information, gazetteers etc.
@@ -66,10 +72,11 @@ class LexData:
 			model_path += os.sep
 			model_files_list = [f for f in listdir(model_path) if isfile(join(model_path, f))]
 			for filename in model_files_list:
-				if sys.version_info[0] < 3 or filename.endswith(".pkl"):  # Python 2 or classifier
-					self.model_files[filename] = open(model_path + filename, 'rb')
-				else:  # Python 3, text file
-					self.model_files[filename] = open(model_path + filename, 'r', encoding="utf8")
+				if filename.endswith(".pkl"):  # Classifier
+					if not (filename.endswith("3.pkl") and PY2) and not (filename.endswith("2.pkl") and not PY2):  # Skip unpickling unneeded PY2/3 classifiers
+						self.model_files[filename] = open(model_path + filename, 'rb')
+				else:
+					self.model_files[filename] = io.open(model_path + filename, 'r', encoding="utf8")
 		else:
 			from zipfile import ZipFile
 			try:
@@ -77,7 +84,8 @@ class LexData:
 				model_files_list = [f for f in zip.namelist() if not os.path.isdir(f)]
 				for filename in model_files_list:
 					if sys.version_info[0] < 3 or filename.endswith(".pkl"):  # Python 2 or classifier
-						self.model_files[filename] = zip.open(filename)
+						if not (filename.endswith("3.pkl") and PY2) and not (filename.endswith("2.pkl") and not PY2):  # Skip unpickling unneeded PY2/3 classifiers
+							self.model_files[filename] = zip.open(filename)
 					else:
 						self.model_files[filename] = io.TextIOWrapper(zip.open(filename), encoding="utf8")
 			except:
@@ -96,7 +104,7 @@ class LexData:
 		self.coref_rules = self.non_speaker_rules
 		self.entities = self.read_delim(self.model_files['entities.tab'], 'quadruple') if 'entities.tab' in self.model_files else {}
 		self.entity_heads = self.read_delim(self.model_files['entity_heads.tab'], 'quadruple', 'atoms', True) if 'entity_heads.tab' in self.model_files else {}
-		self.pronouns = self.read_delim(self.model_files['pronouns.tab'], 'double')
+		self.pronouns = self.read_delim(self.model_files['pronouns.tab'], 'double') if "pronouns.tab" in self.model_files else {}
 
 		# Optional files improve model accuracy
 		self.names = self.read_delim(self.model_files['names.tab']) if "names.tab" in self.model_files else {}
@@ -163,7 +171,10 @@ class LexData:
 		elif atom_list_name == "mod_atoms":
 			atom_list = self.mod_atoms
 		with filename as csvfile:
-			reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
+			if PY2:
+				reader = unicode_split_reader(csvfile)
+			else:
+				reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
 			if mode == "low":
 				return set([rows[0].lower() for rows in reader if not rows[0].startswith('#') and not len(rows[0]) == 0])
 			elif mode == "double":
@@ -314,6 +325,8 @@ class LexData:
 
 		# Set up default values for settings from newer versions for backwards compatibility
 		filters["neg_func"] = re.compile("$^")
+		filters["non_extend_pos"] = re.compile("$^")
+		filters["core_infixes"] = re.compile("$^")
 		filters["score_thresh"] = 0.5
 
 		options = config.options("main")
@@ -368,6 +381,16 @@ class LexData:
 			except AttributeError:
 				print("exception on %s!" % option)
 				filters[option] = None
+
+		if ">" in filters["agree_entity_mapping"]:
+			mappings = filters["agree_entity_mapping"].split(";")
+			ent_map = {}
+			for mapping in mappings:
+				key, val = mapping.split(">")
+				ent_map[key] = val
+			filters["agree_entity_mapping"] = ent_map
+		else:
+			filters["agree_entity_mapping"] = {}
 
 		return filters
 
