@@ -760,7 +760,6 @@ zhuxi	person	person	1
 「 快可立 」 奶茶	object	product	1
 「 李 资政	person	person	1
 「 美 日 防卫 合作 指南	abstract	work_of_art	1
-一	abstract	law	1
 一	ordinal	ordinal	12
 一	place	fac	1
 一	quantity	money	1
@@ -6566,7 +6565,6 @@ zhuxi	person	person	1
 北二高	place	fac	1
 北二高 交流道	place	fac	1
 北京	place	gpe	463
-北京	time	date	1
 北京 中关村 高 新 技术 区	place	loc	1
 北京 中级 人民 法院	organization	organization	1
 北京 交通 广播	organization	organization	2
@@ -7890,10 +7888,7 @@ zhuxi	person	person	1
 厦门港	place	fac	6
 去中国化	abstract	abstract	2
 去中国化	place	gpe	1
-去年	organization	organization	1
-去年	place	gpe	1
-去年	time	date	300
-去年	time	time	2
+去年	time	time	302
 去年 一 年	time	date	4
 去年 一 至 九月	time	date	1
 去年 一 至 十一月	time	date	1
