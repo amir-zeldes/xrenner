@@ -8107,7 +8107,6 @@ zhuxi	person	person	1
 台凤	organization	organization	2
 台制	abstract	law	1
 台化 公司	organization	organization	1
-台北	person	person	1
 台北	place	city	12
 台北	place	gpe	177
 台北	place	loc	3
@@ -8289,7 +8288,6 @@ zhuxi	person	person	1
 台海 战争	event	event	2
 台港澳资	abstract	abstract	2
 台港澳部	place	gpe	2
-台湾	person	person	4
 台湾 中部 云林县 台西乡 海口地	place	gpe	1
 台湾 人寿 公司	organization	organization	1
 台湾 人权 协会	organization	organization	1
@@ -28065,3 +28063,4 @@ zhuxi	person	person	1
 ｗｏｒｄ	object	product	1
 ｚｏｕｓｕｐｅｒ	person	person	1
 ￥ 28	quantity	money	1
+新台币	quantity	money	10
