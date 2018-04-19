@@ -211,7 +211,7 @@
 104 人力 银行	organization	organization	2
 108万 吨	quantity	quantity	1
 10月	time	date	1
-10％	percent	percent	4
+10％	quantity	percent	4
 1111 人力 银行	organization	organization	3
 11月 15日	time	date	1
 11月 15日 － 25日	time	date	1
@@ -238,10 +238,10 @@
 150 小时	time	date	3
 150 美元	quantity	money	1
 1500 元	quantity	money	2
-150％	percent	percent	1
+150％	quantity	percent	1
 1519年	time	date	1
 1520年	time	date	1
-15％	percent	percent	3
+15％	quantity	percent	3
 1618年	time	date	1
 165 元	quantity	money	1
 1670 元	quantity	money	1
@@ -257,20 +257,20 @@
 1997年	time	date	2
 1998年 至 2006年	time	date	1
 19万 港币	quantity	money	1
-19％ 左右	percent	percent	1
+19％ 左右	quantity	percent	1
 1万 美元	quantity	money	3
 1亿 美元	quantity	money	1
 1月 11日	time	date	1
 1月 14日	time	date	1
 1．8 元	quantity	money	1
-1．9％	percent	percent	1
+1．9％	quantity	percent	1
 1／4 英寸	quantity	quantity	1
 2	place	fac	1
 2 个 多 小时	time	time	1
 2 个 月	time	date	1
 2 天	time	date	1
 2 度	quantity	quantity	1
-2 折 上下	percent	percent	1
+2 折 上下	quantity	percent	1
 20 岁	time	date	1
 20 年	time	date	1
 20 年 前	time	date	1
@@ -306,39 +306,39 @@
 2020年	time	date	1
 20多 岁	time	date	1
 20多 年	time	date	1
-20％	percent	percent	12
-23％	percent	percent	1
+20％	quantity	percent	12
+23％	quantity	percent	1
 24 K	quantity	quantity	1
 25 miles	quantity	quantity	1
 25 ml	quantity	quantity	1
-25%	percent	percent	1
+25%	quantity	percent	1
 250 公斤	quantity	quantity	1
-25％	percent	percent	1
+25％	quantity	percent	1
 28 周年	time	date	1
 28 岁	time	date	2
 28 年	time	date	2
 28日	time	date	1
 2日	time	date	2
 2．4 元	quantity	money	1
-2．4％	percent	percent	1
-2．5％	percent	percent	1
+2．4％	quantity	percent	1
+2．5％	quantity	percent	1
 2．99 美元	quantity	money	1
 3 个 月 后	time	date	1
 3 周	time	date	1
 3 年	time	date	1
-3 折 上下	percent	percent	1
+3 折 上下	quantity	percent	1
 30 元	quantity	money	1
 3000 元 左右	quantity	money	1
-30％	percent	percent	4
-33％	percent	percent	1
+30％	quantity	percent	4
+33％	quantity	percent	1
 35 秒	time	time	1
 35亿 美元	quantity	money	1
 37 人力 银行	organization	organization	1
 3日	time	date	2
-3％	percent	percent	1
-3－4 个 百分点	percent	percent	1
+3％	quantity	percent	1
+3－4 个 百分点	quantity	percent	1
 3．1亿 美元	quantity	money	2
-3．6 折 上下	percent	percent	1
+3．6 折 上下	quantity	percent	1
 4 个 多 小时	time	time	1
 4 个 多 月	time	date	1
 4 年	time	date	1
@@ -350,13 +350,13 @@
 400多 公里	quantity	quantity	1
 40万 吨	quantity	quantity	1
 40万亿 人民币	quantity	money	1
-40％	percent	percent	3
-42％	percent	percent	1
+40％	quantity	percent	3
+42％	quantity	percent	1
 4亿 美元	quantity	money	1
 4月 之前	time	date	1
-4％	percent	percent	1
-4．5％	percent	percent	1
-4．9％	percent	percent	1
+4％	quantity	percent	1
+4．5％	quantity	percent	1
+4．9％	quantity	percent	1
 5 元	quantity	money	2
 5 年	time	date	1
 5 年 后	time	date	1
@@ -364,36 +364,36 @@
 50 分钟	time	date	1
 50 分钟	time	time	1
 5000 元 以下	quantity	money	1
-50％	percent	percent	2
+50％	quantity	percent	2
 51．com	organization	organization	4
 5万 麦	quantity	quantity	1
 5千万 吨	quantity	quantity	2
 5点多	time	time	1
-5％	percent	percent	2
+5％	quantity	percent	2
 6 个 月	time	date	1
 6 年	time	date	1
 6 年 多 前	time	date	1
 6400 元 以上	quantity	money	1
-65％	percent	percent	2
+65％	quantity	percent	2
 67 公里	quantity	quantity	1
 67．65万 吨	quantity	quantity	1
-69％	percent	percent	1
-6％	percent	percent	3
+69％	quantity	percent	1
+6％	quantity	percent	3
 7 天	time	date	1
 70 美元 左右	quantity	money	1
-70％	percent	percent	1
-70％ 以上	percent	percent	1
+70％	quantity	percent	1
+70％ 以上	quantity	percent	1
 7月	time	date	1
 7．1 米	quantity	quantity	1
 8 元	quantity	money	2
 8 磅	quantity	quantity	1
 800 元	quantity	money	2
 8000亿 美元	quantity	money	2
-80％	percent	percent	9
+80％	quantity	percent	9
 8d call	object	product	1
 9 天	time	date	1
-90％	percent	percent	2
-90％ 以上	percent	percent	1
+90％	quantity	percent	2
+90％ 以上	quantity	percent	1
 911	organization	organization	1
 921 大 地震	event	event	1
 92年 至 2005年	time	date	1
@@ -655,7 +655,7 @@ zhuxi	person	person	1
 “ Ｗ ” 布什	person	person	1
 “奈杰尔·斯皮维	person	person	1
 ”第２４	ordinal	ordinal	1
-○．三 倍	percent	percent	1
+○．三 倍	quantity	percent	1
 ○．三 公分	quantity	quantity	1
 ○．三 美元	quantity	money	1
 ○．六 美元	quantity	money	1
@@ -803,7 +803,7 @@ zhuxi	person	person	1
 一 个 月 以后	time	date	2
 一 个 月 内	time	date	1
 一 个 月 前	time	date	2
-一 个 百分点	percent	percent	1
+一 个 百分点	quantity	percent	1
 一 个 礼拜	time	date	6
 一 个 礼拜 后	time	date	1
 一 个 礼拜 多 一点儿	time	date	1
@@ -1177,7 +1177,7 @@ zhuxi	person	person	1
 一千零九十八点二亿 美元	quantity	money	1
 一千零五十五亿 元 人民币	quantity	money	1
 一千零四十五万 美元	quantity	money	1
-一半	percent	percent	1
+一半	quantity	percent	1
 一半 是 海水 一半 是 火焰	abstract	work_of_art	1
 一卡通	object	product	3
 一号	time	date	4
@@ -1230,10 +1230,10 @@ zhuxi	person	person	1
 一点一七二六万亿 元	quantity	money	1
 一点一三亿 美元	quantity	money	1
 一点一六二一万亿 元	quantity	money	1
-一点七 个 百分点	percent	percent	1
-一点三 个 百分点	percent	percent	1
+一点七 个 百分点	quantity	percent	1
+一点三 个 百分点	quantity	percent	1
 一点三亿多 美元	quantity	money	2
-一点九 个 百分点	percent	percent	3
+一点九 个 百分点	quantity	percent	3
 一点九亿 美元	quantity	money	1
 一点二 美元	quantity	money	1
 一点二七亿 元 人民币	quantity	money	1
@@ -1242,9 +1242,9 @@ zhuxi	person	person	1
 一点二亿 美元	quantity	money	1
 一点二六 米	quantity	quantity	1
 一点五亿 美元	quantity	money	4
-一点八 个 百分点	percent	percent	1
+一点八 个 百分点	quantity	percent	1
 一点八亿 元	quantity	money	1
-一点六 个 百分点	percent	percent	1
+一点六 个 百分点	quantity	percent	1
 一点六八亿 元	quantity	money	1
 一点四七亿 元	quantity	money	1
 一点零一万亿 美元	quantity	money	1
@@ -1437,7 +1437,7 @@ zhuxi	person	person	1
 七十六点九四亿 美元	quantity	money	1
 七十六点八亿 美元	quantity	money	1
 七十六点六亿 公斤	quantity	quantity	1
-七十分之一	percent	percent	1
+七十分之一	quantity	percent	1
 七十四 年	time	date	1
 七十多 岁	time	date	2
 七十年代	time	date	4
@@ -1451,7 +1451,7 @@ zhuxi	person	person	1
 七叶树 公园	place	fac	1
 七号	time	date	4
 七四年	time	date	2
-七成	percent	percent	2
+七成	quantity	percent	2
 七时半	time	time	1
 七月	time	date	6
 七月 七日	time	date	1
@@ -1495,7 +1495,7 @@ zhuxi	person	person	1
 万 吨	quantity	quantity	9
 万 美元	quantity	money	1
 万一	person	person	1
-万分之七	percent	percent	1
+万分之七	quantity	percent	1
 万华区	place	loc	1
 万博	place	city	1
 万卡约	place	city	1
@@ -1550,7 +1550,7 @@ zhuxi	person	person	1
 三 个 星期	time	date	5
 三 个 月	time	date	15
 三 个 月 前	time	date	1
-三 个 百分点	percent	percent	1
+三 个 百分点	quantity	percent	1
 三 个 礼拜	time	date	3
 三 五 天	time	date	1
 三 人	quantity	quantity	1
@@ -1629,8 +1629,8 @@ zhuxi	person	person	1
 三军 大学 空军 指挥 参谋 学院	organization	organization	1
 三军 总司令部	organization	organization	1
 三军 球场	place	fac	1
-三分之一	percent	percent	2
-三分之二	percent	percent	4
+三分之一	quantity	percent	2
+三分之二	quantity	percent	4
 三十	time	date	2
 三十 个 工作天	time	date	1
 三十 个 年头	time	date	1
@@ -1749,9 +1749,9 @@ zhuxi	person	person	1
 三幺	event	event	1
 三幺九 枪击案	event	event	5
 三怡	place	gpe	2
-三成一	percent	percent	1
-三成二	percent	percent	1
-三成多	percent	percent	1
+三成一	quantity	percent	1
+三成二	quantity	percent	1
+三成多	quantity	percent	1
 三投斯将军市	place	city	1
 三明	place	city	1
 三明路	place	loc	2
@@ -1802,7 +1802,7 @@ zhuxi	person	person	1
 三点六五亿 美元	quantity	money	1
 三点六亿 元	quantity	money	1
 三点六六亿 元 人民币	quantity	money	1
-三点四 个 百分点	percent	percent	1
+三点四 个 百分点	quantity	percent	1
 三点四七亿 美元	quantity	money	1
 三点四亿 美元	quantity	money	1
 三环 出版社	organization	organization	1
@@ -2108,25 +2108,25 @@ zhuxi	person	person	1
 下雨天	abstract	work_of_art	1
 下龙市	place	city	1
 不 会 台独 也 不 会 将 两国论 入宪	abstract	work_of_art	1
-不 会 超过 百分之五十	percent	percent	1
+不 会 超过 百分之五十	quantity	percent	1
 不 到 一 年	time	date	1
 不 到 七 美元	quantity	money	1
 不 到 二十 年	time	date	1
 不 到 ７点	time	time	1
 不 可能 的 任务	abstract	work_of_art	1
 不 满 一 岁	time	date	1
-不 超过 百分之十	percent	percent	1
-不 足 ２０％	percent	percent	1
+不 超过 百分之十	quantity	percent	1
+不 足 ２０％	quantity	percent	1
 不伦瑞克	place	city	1
 不列颠 哥伦比亚	place	gpe	1
 不列颠哥伦比亚省	place	gpe	1
-不到 10％	percent	percent	1
+不到 10％	quantity	percent	1
 不到 一 个 月	time	date	1
 不到 一 年	time	date	1
 不到 一 年 内	time	date	1
 不到 两 年	time	date	1
 不到 二 年	time	date	1
-不到 百分之五	percent	percent	1
+不到 百分之五	quantity	percent	1
 不到 １ 分 多 里面	time	time	1
 不到 ３ 小时	time	time	1
 不少 年	time	date	1
@@ -2357,13 +2357,13 @@ zhuxi	person	person	1
 两 个 月	time	date	14
 两 个 月 之前	time	date	1
 两 个 月 前	time	date	2
-两 个 百分点	percent	percent	1
+两 个 百分点	quantity	percent	1
 两 个 礼拜	time	date	5
 两 个 钟头	time	time	2
 两 人	quantity	quantity	4
 两 伊 战争	event	event	1
 两 会	event	event	3
-两 倍	percent	percent	1
+两 倍	quantity	percent	1
 两 元 钱	quantity	money	1
 两 党	quantity	quantity	1
 两 公升	quantity	quantity	1
@@ -2404,7 +2404,7 @@ zhuxi	person	person	1
 两 年 多 后	time	date	1
 两 年 多 来	time	date	3
 两 年 来	time	date	4
-两 成	percent	percent	2
+两 成	quantity	percent	2
 两 或 三 磅	quantity	quantity	1
 两 星期	time	date	1
 两 次	quantity	quantity	2
@@ -2457,8 +2457,8 @@ zhuxi	person	person	1
 两千零四年	time	date	1
 两千零四年 的 一月	time	date	1
 两天	time	date	3
-两成	percent	percent	1
-两成五	percent	percent	1
+两成	quantity	percent	1
+两成五	quantity	percent	1
 两栖 爬虫类 收容 中心	place	fac	1
 两栖 爬行 动物 生态 及 保育 研讨会	event	event	1
 两百 人	place	gpe	1
@@ -3364,8 +3364,8 @@ zhuxi	person	person	1
 九寨沟	place	loc	2
 九幺幺	event	event	5
 九幺幺 事件	event	event	2
-九成	percent	percent	1
-九成多	percent	percent	1
+九成	quantity	percent	1
+九成多	quantity	percent	1
 九日	time	date	2
 九月	time	date	3
 九月 一日	time	date	26
@@ -3439,7 +3439,7 @@ zhuxi	person	person	1
 二 、 三 个 月	time	date	1
 二 、 三十万	quantity	money	1
 二 个 月	time	date	1
-二 个 百分点	percent	percent	1
+二 个 百分点	quantity	percent	1
 二 到 十 度	quantity	quantity	1
 二 加 二	abstract	law	1
 二 加 二	event	event	2
@@ -3679,10 +3679,10 @@ zhuxi	person	person	1
 二姐	ordinal	ordinal	1
 二孙女	ordinal	ordinal	1
 二弟	ordinal	ordinal	1
-二成七	percent	percent	1
-二成三	percent	percent	1
-二成二	percent	percent	1
-二成四	percent	percent	1
+二成七	quantity	percent	1
+二成三	quantity	percent	1
+二成二	quantity	percent	1
+二成四	quantity	percent	1
 二战	event	event	11
 二战 国际法 条约	abstract	law	1
 二战 期间	time	date	1
@@ -3720,7 +3720,7 @@ zhuxi	person	person	1
 二点五五亿 美元	quantity	money	1
 二点五亿 元 人民币	quantity	money	1
 二点五亿 美元	quantity	money	2
-二点六 个 百分点	percent	percent	1
+二点六 个 百分点	quantity	percent	1
 二点六五亿 美元	quantity	money	2
 二点六亿 元	quantity	money	1
 二点六亿 元 人民币	quantity	money	1
@@ -3954,7 +3954,7 @@ zhuxi	person	person	1
 五亿多 美元	quantity	money	1
 五六年	time	date	1
 五六点	time	time	1
-五分之一	percent	percent	1
+五分之一	quantity	percent	1
 五十	quantity	money	1
 五十	time	date	1
 五十 元	quantity	money	2
@@ -4023,10 +4023,10 @@ zhuxi	person	person	1
 五常	place	city	1
 五年	time	date	2
 五年 三月 八	time	date	1
-五成	percent	percent	2
-五成一	percent	percent	2
-五成三	percent	percent	1
-五成九	percent	percent	1
+五成	quantity	percent	2
+五成一	quantity	percent	2
+五成三	quantity	percent	1
+五成九	quantity	percent	1
 五所川原市	place	city	1
 五星 红旗	object	product	1
 五月	time	date	1
@@ -4047,7 +4047,7 @@ zhuxi	person	person	1
 五点三二亿 港元	quantity	money	1
 五点三亿 元 人民币	quantity	money	1
 五点六九亿 美元	quantity	money	1
-五点四 个 百分点	percent	percent	1
+五点四 个 百分点	quantity	percent	1
 五百 元	quantity	money	1
 五百 公尺	quantity	quantity	1
 五百 公里	quantity	quantity	1
@@ -5386,7 +5386,7 @@ zhuxi	person	person	1
 八仙 乐园	place	fac	1
 八仙山	place	loc	1
 八几	time	date	1
-八分之一	percent	percent	1
+八分之一	quantity	percent	1
 八十 个 小时	time	date	1
 八十 元 台币	quantity	money	1
 八十 公里	quantity	quantity	1
@@ -5421,7 +5421,7 @@ zhuxi	person	person	1
 八十六 年 九月	time	date	1
 八十六 年 底	time	date	1
 八十几 岁	time	date	1
-八十分之一	percent	percent	1
+八十分之一	quantity	percent	1
 八十四	time	date	1
 八十四 岁	time	date	1
 八十四年	time	date	1
@@ -5444,7 +5444,7 @@ zhuxi	person	person	1
 八四年	time	date	1
 八尾市	place	city	1
 八尾町东葛坂	place	city	1
-八成	percent	percent	2
+八成	quantity	percent	2
 八戸	place	city	1
 八打灵再也	place	city	1
 八月	time	date	13
@@ -5584,7 +5584,7 @@ zhuxi	person	person	1
 六 个 星期	time	date	1
 六 个 月	time	date	5
 六 个 月 后	time	date	2
-六 个 百分点	percent	percent	1
+六 个 百分点	quantity	percent	1
 六 中	event	event	1
 六 公尺	quantity	quantity	1
 六 到 七 小时	time	time	1
@@ -5671,8 +5671,8 @@ zhuxi	person	person	1
 六号	time	date	2
 六号 一早	time	time	1
 六号 上午 七点	time	time	1
-六成	percent	percent	1
-六成三	percent	percent	1
+六成	quantity	percent	1
+六成三	quantity	percent	1
 六日町	place	city	1
 六月	time	date	4
 六月 二十	time	date	1
@@ -6296,7 +6296,7 @@ zhuxi	person	person	1
 到 五 年 以后	time	date	1
 到 六千 元	quantity	money	1
 到 十 天	time	date	1
-到 十六点八 个 百分点	percent	percent	1
+到 十六点八 个 百分点	quantity	percent	1
 到 去年 底	time	date	1
 到 年底	time	date	1
 到 本 世纪 末	time	date	1
@@ -6782,7 +6782,7 @@ zhuxi	person	person	1
 匿名者 下午３：１０	person	person	1
 十 个 亿 吨	quantity	quantity	2
 十 个 月	time	date	1
-十 倍	percent	percent	1
+十 倍	quantity	percent	1
 十 公斤	quantity	quantity	1
 十 公里	quantity	quantity	1
 十 分 钱	quantity	money	1
@@ -6843,7 +6843,7 @@ zhuxi	person	person	1
 十一点	time	time	2
 十一点 二十分	time	time	1
 十一点 四十	time	time	1
-十一点一 个 百分点	percent	percent	1
+十一点一 个 百分点	quantity	percent	1
 十一点钟	time	time	1
 十七 世纪	time	date	2
 十七 世纪 时	time	date	1
@@ -6877,7 +6877,7 @@ zhuxi	person	person	1
 十三万三千 元	quantity	money	1
 十三亿 美元	quantity	money	1
 十三亿五千七百多万 美元	quantity	money	1
-十三分之一	percent	percent	1
+十三分之一	quantity	percent	1
 十三号	time	date	6
 十三日	time	date	4
 十三日 近午	time	date	1
@@ -6905,7 +6905,7 @@ zhuxi	person	person	1
 十二 个 小时	time	date	1
 十二 个 小时	time	time	3
 十二 个 小时 是 以上	time	time	1
-十二 个 百分点	percent	percent	1
+十二 个 百分点	quantity	percent	1
 十二 份	quantity	quantity	1
 十二 天	time	date	2
 十二 岁	time	date	4
@@ -7050,7 +7050,7 @@ zhuxi	person	person	1
 十千 伏	quantity	quantity	1
 十号	time	date	1
 十四 个 小时	time	time	1
-十四 个 百分点	percent	percent	1
+十四 个 百分点	quantity	percent	1
 十四 公里	quantity	quantity	1
 十四 小时	time	date	1
 十四 岁	time	date	2
@@ -7060,7 +7060,7 @@ zhuxi	person	person	1
 十四亿 元 人民币	quantity	money	1
 十四亿 美元	quantity	money	1
 十四号	time	date	2
-十四日	percent	percent	1
+十四日	quantity	percent	1
 十四日	time	date	2
 十四点四一亿 元	quantity	money	1
 十四点四亿 美元	quantity	money	2
@@ -7122,9 +7122,9 @@ zhuxi	person	person	1
 千万 元	quantity	money	2
 千万 吨	quantity	quantity	1
 千万 美元	quantity	money	1
-千万分之一	percent	percent	1
+千万分之一	quantity	percent	1
 千分之一 秒	time	time	1
-千分之八	percent	percent	1
+千分之八	quantity	percent	1
 千千	person	person	14
 千叶市	place	city	1
 千岛湖 事件	event	event	3
@@ -9013,7 +9013,7 @@ zhuxi	person	person	1
 四 年 半	time	date	1
 四 年 多	time	date	2
 四 度	quantity	quantity	3
-四 成	percent	percent	1
+四 成	quantity	percent	1
 四 或 五 磅	quantity	quantity	1
 四 磅	quantity	quantity	2
 四 米	quantity	quantity	1
@@ -9043,9 +9043,9 @@ zhuxi	person	person	1
 四亿多 元	quantity	money	1
 四六 事件	event	event	2
 四六年	time	date	1
-四分之一	percent	percent	5
+四分之一	quantity	percent	5
 四分之一 英亩	quantity	quantity	1
-四分之三	percent	percent	1
+四分之三	quantity	percent	1
 四十	time	date	2
 四十 公尺	quantity	quantity	2
 四十 公斤	quantity	quantity	1
@@ -9144,7 +9144,7 @@ zhuxi	person	person	1
 四川省 电力 公司	organization	organization	1
 四川队	organization	organization	1
 四平市	place	city	1
-四成	percent	percent	1
+四成	quantity	percent	1
 四日市市	place	city	1
 四月	time	date	3
 四月 三日	time	date	2
@@ -9174,7 +9174,7 @@ zhuxi	person	person	1
 四湖乡	place	gpe	1
 四点	time	time	1
 四点 四十	time	time	1
-四点一 个 百分点	percent	percent	1
+四点一 个 百分点	quantity	percent	1
 四点一二亿 元	quantity	money	1
 四点三八亿 元	quantity	money	1
 四点三六亿 美元	quantity	money	1
@@ -10330,7 +10330,7 @@ zhuxi	person	person	1
 多国 驻 香港 总领事馆	organization	organization	1
 多多马	place	capital	1
 多宝	place	city	1
-多少万亿分之一	percent	percent	1
+多少万亿分之一	quantity	percent	1
 多尔内亚努	person	person	2
 多尔马根	place	city	1
 多尼斯	person	person	2
@@ -10531,7 +10531,7 @@ zhuxi	person	person	1
 大章克申	place	city	1
 大竹围	place	fac	1
 大约 一 个 星期	time	date	1
-大约 百分之四十七	percent	percent	1
+大约 百分之四十七	quantity	percent	1
 大约 ２００ 公里	quantity	quantity	1
 大约 ６ 公里	quantity	quantity	1
 大约 ７０００万 年	time	date	1
@@ -11507,7 +11507,7 @@ zhuxi	person	person	1
 将近 千 元	quantity	money	1
 将近 半 个 小时	time	time	1
 将近 四十 平方公里	quantity	quantity	1
-将近 百分之六十	percent	percent	1
+将近 百分之六十	quantity	percent	1
 将近 ＄ 1000	quantity	money	1
 将近 ２０ 年	time	date	1
 将近 ２００ 尺	quantity	quantity	1
@@ -17930,7 +17930,7 @@ zhuxi	person	person	1
 澳督府	place	fac	1
 澳资	abstract	abstract	1
 澳超 联赛	event	event	1
-澳门	percent	percent	1
+澳门	quantity	percent	1
 澳门	place	capital	1
 澳门	place	loc	6
 澳门 、 台湾 、	place	gpe	1
@@ -18790,342 +18790,342 @@ zhuxi	person	person	1
 百万 吨	quantity	quantity	2
 百万 年	time	date	3
 百万 年 前	time	date	1
-百之七十	percent	percent	1
+百之七十	quantity	percent	1
 百亿 元	quantity	money	1
-百分之 四十	percent	percent	1
-百分之5	percent	percent	1
-百分之○．一	percent	percent	1
-百分之○．一七	percent	percent	1
-百分之○．七	percent	percent	1
-百分之○．二	percent	percent	1
-百分之○．二四	percent	percent	1
-百分之一	percent	percent	9
-百分之一点一	percent	percent	2
-百分之一点七	percent	percent	1
-百分之一点三	percent	percent	2
-百分之一点二	percent	percent	1
-百分之一点二五	percent	percent	1
-百分之一点五	percent	percent	1
-百分之一点八	percent	percent	1
-百分之一点六	percent	percent	1
-百分之一百	percent	percent	2
-百分之一百一十三	percent	percent	1
-百分之一百一十九	percent	percent	1
-百分之一百三十	percent	percent	1
-百分之七	percent	percent	2
-百分之七十	percent	percent	19
-百分之七十 七十几	percent	percent	1
-百分之七十 以上	percent	percent	1
-百分之七十 出口	percent	percent	1
-百分之七十 到 九十	percent	percent	1
-百分之七十七．五	percent	percent	1
-百分之七十三	percent	percent	3
-百分之七十三点九	percent	percent	1
-百分之七十三点八	percent	percent	1
-百分之七十九	percent	percent	1
-百分之七十九点二	percent	percent	1
-百分之七十二	percent	percent	1
-百分之七十二点一五	percent	percent	1
-百分之七十五	percent	percent	3
-百分之七十五点一	percent	percent	1
-百分之七十八	percent	percent	2
-百分之七十八点三二	percent	percent	1
-百分之七十六点三三	percent	percent	1
-百分之七十几	percent	percent	1
-百分之七十四	percent	percent	1
-百分之七十点七	percent	percent	1
-百分之七点一	percent	percent	1
-百分之七点七	percent	percent	1
-百分之七点九	percent	percent	1
-百分之七点四	percent	percent	1
-百分之三	percent	percent	14
-百分之三 到 五	percent	percent	1
-百分之三七	percent	percent	1
-百分之三十	percent	percent	12
-百分之三十一	percent	percent	3
-百分之三十一点一	percent	percent	1
-百分之三十一点五	percent	percent	1
-百分之三十七	percent	percent	4
-百分之三十七点四	percent	percent	1
-百分之三十三	percent	percent	1
-百分之三十三点五二	percent	percent	1
-百分之三十三点八	percent	percent	1
-百分之三十三点零五	percent	percent	1
-百分之三十九	percent	percent	1
-百分之三十九点九	percent	percent	1
-百分之三十二	percent	percent	3
-百分之三十二点三	percent	percent	1
-百分之三十二点五	percent	percent	1
-百分之三十五	percent	percent	1
-百分之三十五点四	percent	percent	1
-百分之三十八点二	percent	percent	1
-百分之三十八点六	percent	percent	1
-百分之三十六	percent	percent	1
-百分之三十六 以上	percent	percent	1
-百分之三十六点七	percent	percent	2
-百分之三十六点三	percent	percent	1
-百分之三十六点九	percent	percent	1
-百分之三十六点二	percent	percent	1
-百分之三十六点四	percent	percent	1
-百分之三十四点一	percent	percent	1
-百分之三十四点三	percent	percent	1
-百分之三十点二	percent	percent	2
-百分之三点七	percent	percent	2
-百分之三点九	percent	percent	3
-百分之三点九六	percent	percent	1
-百分之三点二	percent	percent	2
+百分之 四十	quantity	percent	1
+百分之5	quantity	percent	1
+百分之○．一	quantity	percent	1
+百分之○．一七	quantity	percent	1
+百分之○．七	quantity	percent	1
+百分之○．二	quantity	percent	1
+百分之○．二四	quantity	percent	1
+百分之一	quantity	percent	9
+百分之一点一	quantity	percent	2
+百分之一点七	quantity	percent	1
+百分之一点三	quantity	percent	2
+百分之一点二	quantity	percent	1
+百分之一点二五	quantity	percent	1
+百分之一点五	quantity	percent	1
+百分之一点八	quantity	percent	1
+百分之一点六	quantity	percent	1
+百分之一百	quantity	percent	2
+百分之一百一十三	quantity	percent	1
+百分之一百一十九	quantity	percent	1
+百分之一百三十	quantity	percent	1
+百分之七	quantity	percent	2
+百分之七十	quantity	percent	19
+百分之七十 七十几	quantity	percent	1
+百分之七十 以上	quantity	percent	1
+百分之七十 出口	quantity	percent	1
+百分之七十 到 九十	quantity	percent	1
+百分之七十七．五	quantity	percent	1
+百分之七十三	quantity	percent	3
+百分之七十三点九	quantity	percent	1
+百分之七十三点八	quantity	percent	1
+百分之七十九	quantity	percent	1
+百分之七十九点二	quantity	percent	1
+百分之七十二	quantity	percent	1
+百分之七十二点一五	quantity	percent	1
+百分之七十五	quantity	percent	3
+百分之七十五点一	quantity	percent	1
+百分之七十八	quantity	percent	2
+百分之七十八点三二	quantity	percent	1
+百分之七十六点三三	quantity	percent	1
+百分之七十几	quantity	percent	1
+百分之七十四	quantity	percent	1
+百分之七十点七	quantity	percent	1
+百分之七点一	quantity	percent	1
+百分之七点七	quantity	percent	1
+百分之七点九	quantity	percent	1
+百分之七点四	quantity	percent	1
+百分之三	quantity	percent	14
+百分之三 到 五	quantity	percent	1
+百分之三七	quantity	percent	1
+百分之三十	quantity	percent	12
+百分之三十一	quantity	percent	3
+百分之三十一点一	quantity	percent	1
+百分之三十一点五	quantity	percent	1
+百分之三十七	quantity	percent	4
+百分之三十七点四	quantity	percent	1
+百分之三十三	quantity	percent	1
+百分之三十三点五二	quantity	percent	1
+百分之三十三点八	quantity	percent	1
+百分之三十三点零五	quantity	percent	1
+百分之三十九	quantity	percent	1
+百分之三十九点九	quantity	percent	1
+百分之三十二	quantity	percent	3
+百分之三十二点三	quantity	percent	1
+百分之三十二点五	quantity	percent	1
+百分之三十五	quantity	percent	1
+百分之三十五点四	quantity	percent	1
+百分之三十八点二	quantity	percent	1
+百分之三十八点六	quantity	percent	1
+百分之三十六	quantity	percent	1
+百分之三十六 以上	quantity	percent	1
+百分之三十六点七	quantity	percent	2
+百分之三十六点三	quantity	percent	1
+百分之三十六点九	quantity	percent	1
+百分之三十六点二	quantity	percent	1
+百分之三十六点四	quantity	percent	1
+百分之三十四点一	quantity	percent	1
+百分之三十四点三	quantity	percent	1
+百分之三十点二	quantity	percent	2
+百分之三点七	quantity	percent	2
+百分之三点九	quantity	percent	3
+百分之三点九六	quantity	percent	1
+百分之三点二	quantity	percent	2
 百分之三点二	person	person	1
-百分之三点二五	percent	percent	1
-百分之三点五	percent	percent	4
-百分之三点八	percent	percent	1
-百分之三点六	percent	percent	1
-百分之三点四	percent	percent	1
-百分之三．四	percent	percent	1
-百分之两百	percent	percent	1
-百分之九	percent	percent	2
-百分之九 至 百分之十	percent	percent	1
-百分之九十	percent	percent	15
-百分之九十一多	percent	percent	1
-百分之九十七	percent	percent	2
-百分之九十三点一	percent	percent	1
-百分之九十九	percent	percent	2
-百分之九十九点九	percent	percent	3
+百分之三点二五	quantity	percent	1
+百分之三点五	quantity	percent	4
+百分之三点八	quantity	percent	1
+百分之三点六	quantity	percent	1
+百分之三点四	quantity	percent	1
+百分之三．四	quantity	percent	1
+百分之两百	quantity	percent	1
+百分之九	quantity	percent	2
+百分之九 至 百分之十	quantity	percent	1
+百分之九十	quantity	percent	15
+百分之九十一多	quantity	percent	1
+百分之九十七	quantity	percent	2
+百分之九十三点一	quantity	percent	1
+百分之九十九	quantity	percent	2
+百分之九十九点九	quantity	percent	3
 百分之九十九点九	person	person	1
-百分之九十五	percent	percent	2
-百分之九十五 以上	percent	percent	1
-百分之九十五点七	percent	percent	2
-百分之九十六	percent	percent	1
-百分之九十六点二	percent	percent	1
-百分之九千八百	percent	percent	1
-百分之九点一	percent	percent	1
-百分之九点七	percent	percent	2
-百分之九点三	percent	percent	3
-百分之九点三三	percent	percent	1
-百分之九点二	percent	percent	1
-百分之九点六	percent	percent	1
-百分之九点四	percent	percent	1
-百分之二	percent	percent	4
-百分之二十	percent	percent	6
-百分之二十 至 三十	percent	percent	1
-百分之二十 至 三十 之间	percent	percent	1
-百分之二十一	percent	percent	3
-百分之二十一点七	percent	percent	1
-百分之二十一点三三	percent	percent	1
-百分之二十一点九	percent	percent	1
-百分之二十一点九三	percent	percent	1
-百分之二十一点八	percent	percent	1
-百分之二十一点四	percent	percent	1
-百分之二十七	percent	percent	2
-百分之二十七点一四	percent	percent	1
-百分之二十七点六	percent	percent	1
-百分之二十七点四九	percent	percent	1
-百分之二十七点零一	percent	percent	1
-百分之二十三	percent	percent	1
-百分之二十三点二	percent	percent	1
-百分之二十三点六	percent	percent	3
-百分之二十二	percent	percent	1
-百分之二十二点一	percent	percent	1
-百分之二十二点七	percent	percent	1
-百分之二十二点六二	percent	percent	1
-百分之二十五	percent	percent	1
+百分之九十五	quantity	percent	2
+百分之九十五 以上	quantity	percent	1
+百分之九十五点七	quantity	percent	2
+百分之九十六	quantity	percent	1
+百分之九十六点二	quantity	percent	1
+百分之九千八百	quantity	percent	1
+百分之九点一	quantity	percent	1
+百分之九点七	quantity	percent	2
+百分之九点三	quantity	percent	3
+百分之九点三三	quantity	percent	1
+百分之九点二	quantity	percent	1
+百分之九点六	quantity	percent	1
+百分之九点四	quantity	percent	1
+百分之二	quantity	percent	4
+百分之二十	quantity	percent	6
+百分之二十 至 三十	quantity	percent	1
+百分之二十 至 三十 之间	quantity	percent	1
+百分之二十一	quantity	percent	3
+百分之二十一点七	quantity	percent	1
+百分之二十一点三三	quantity	percent	1
+百分之二十一点九	quantity	percent	1
+百分之二十一点九三	quantity	percent	1
+百分之二十一点八	quantity	percent	1
+百分之二十一点四	quantity	percent	1
+百分之二十七	quantity	percent	2
+百分之二十七点一四	quantity	percent	1
+百分之二十七点六	quantity	percent	1
+百分之二十七点四九	quantity	percent	1
+百分之二十七点零一	quantity	percent	1
+百分之二十三	quantity	percent	1
+百分之二十三点二	quantity	percent	1
+百分之二十三点六	quantity	percent	3
+百分之二十二	quantity	percent	1
+百分之二十二点一	quantity	percent	1
+百分之二十二点七	quantity	percent	1
+百分之二十二点六二	quantity	percent	1
+百分之二十五	quantity	percent	1
 百分之二十五 以上	person	person	1
-百分之二十五 到 三十	percent	percent	1
-百分之二十五．七六	percent	percent	1
-百分之二十八	percent	percent	3
-百分之二十六	percent	percent	3
-百分之二十六点五	percent	percent	1
-百分之二十六点四三	percent	percent	1
-百分之二十四	percent	percent	1
-百分之二十四点九	percent	percent	1
-百分之二十四点九七	percent	percent	1
-百分之二十点七	percent	percent	1
-百分之二十点九	percent	percent	1
-百分之二十点五	percent	percent	1
-百分之二点二	percent	percent	1
-百分之二点五	percent	percent	5
-百分之二点五 上升	percent	percent	1
-百分之二点六	percent	percent	2
-百分之二点四	percent	percent	2
-百分之二百八十八	percent	percent	1
-百分之五	percent	percent	8
-百分之五 或 百分之六	percent	percent	1
-百分之五 至 百分之八	percent	percent	1
-百分之五十	percent	percent	15
-百分之五十 以上	percent	percent	3
-百分之五十 至 七十	percent	percent	1
-百分之五十 至 百分之九十	percent	percent	1
-百分之五十一	percent	percent	2
-百分之五十一点二	percent	percent	1
-百分之五十七	percent	percent	1
-百分之五十七点一	percent	percent	1
-百分之五十三	percent	percent	2
-百分之五十三点九	percent	percent	1
-百分之五十二	percent	percent	1
-百分之五十二点二	percent	percent	1
-百分之五十五 以上	percent	percent	1
-百分之五十五 左右	percent	percent	1
-百分之五十八	percent	percent	2
-百分之五十六	percent	percent	2
-百分之五十六点八	percent	percent	1
-百分之五十四	percent	percent	2
-百分之五十四点九	percent	percent	1
-百分之五十点四	percent	percent	1
-百分之五点一	percent	percent	1
-百分之五点七	percent	percent	2
-百分之五点三	percent	percent	1
-百分之五点九	percent	percent	2
-百分之五点九八	percent	percent	1
-百分之五点二	percent	percent	1
-百分之五点五	percent	percent	1
+百分之二十五 到 三十	quantity	percent	1
+百分之二十五．七六	quantity	percent	1
+百分之二十八	quantity	percent	3
+百分之二十六	quantity	percent	3
+百分之二十六点五	quantity	percent	1
+百分之二十六点四三	quantity	percent	1
+百分之二十四	quantity	percent	1
+百分之二十四点九	quantity	percent	1
+百分之二十四点九七	quantity	percent	1
+百分之二十点七	quantity	percent	1
+百分之二十点九	quantity	percent	1
+百分之二十点五	quantity	percent	1
+百分之二点二	quantity	percent	1
+百分之二点五	quantity	percent	5
+百分之二点五 上升	quantity	percent	1
+百分之二点六	quantity	percent	2
+百分之二点四	quantity	percent	2
+百分之二百八十八	quantity	percent	1
+百分之五	quantity	percent	8
+百分之五 或 百分之六	quantity	percent	1
+百分之五 至 百分之八	quantity	percent	1
+百分之五十	quantity	percent	15
+百分之五十 以上	quantity	percent	3
+百分之五十 至 七十	quantity	percent	1
+百分之五十 至 百分之九十	quantity	percent	1
+百分之五十一	quantity	percent	2
+百分之五十一点二	quantity	percent	1
+百分之五十七	quantity	percent	1
+百分之五十七点一	quantity	percent	1
+百分之五十三	quantity	percent	2
+百分之五十三点九	quantity	percent	1
+百分之五十二	quantity	percent	1
+百分之五十二点二	quantity	percent	1
+百分之五十五 以上	quantity	percent	1
+百分之五十五 左右	quantity	percent	1
+百分之五十八	quantity	percent	2
+百分之五十六	quantity	percent	2
+百分之五十六点八	quantity	percent	1
+百分之五十四	quantity	percent	2
+百分之五十四点九	quantity	percent	1
+百分之五十点四	quantity	percent	1
+百分之五点一	quantity	percent	1
+百分之五点七	quantity	percent	2
+百分之五点三	quantity	percent	1
+百分之五点九	quantity	percent	2
+百分之五点九八	quantity	percent	1
+百分之五点二	quantity	percent	1
+百分之五点五	quantity	percent	1
 百分之五点八	person	person	1
-百分之五．四	percent	percent	1
-百分之八	percent	percent	9
-百分之八 、 九十	percent	percent	2
-百分之八 至 百分之九	percent	percent	1
-百分之八十	percent	percent	14
-百分之八十 到 九十	percent	percent	2
-百分之八十一	percent	percent	1
-百分之八十三	percent	percent	1
-百分之八十三点七	percent	percent	1
-百分之八十九点八九	percent	percent	1
-百分之八十九点四	percent	percent	1
-百分之八十二	percent	percent	1
-百分之八十二点四	percent	percent	1
-百分之八十五	percent	percent	3
-百分之八十五点六	percent	percent	1
-百分之八十八	percent	percent	2
-百分之八十八点八	percent	percent	1
-百分之八十四	percent	percent	1
-百分之八十四点三	percent	percent	2
-百分之八十四点四	percent	percent	1
-百分之八点三	percent	percent	1
-百分之八点二	percent	percent	2
+百分之五．四	quantity	percent	1
+百分之八	quantity	percent	9
+百分之八 、 九十	quantity	percent	2
+百分之八 至 百分之九	quantity	percent	1
+百分之八十	quantity	percent	14
+百分之八十 到 九十	quantity	percent	2
+百分之八十一	quantity	percent	1
+百分之八十三	quantity	percent	1
+百分之八十三点七	quantity	percent	1
+百分之八十九点八九	quantity	percent	1
+百分之八十九点四	quantity	percent	1
+百分之八十二	quantity	percent	1
+百分之八十二点四	quantity	percent	1
+百分之八十五	quantity	percent	3
+百分之八十五点六	quantity	percent	1
+百分之八十八	quantity	percent	2
+百分之八十八点八	quantity	percent	1
+百分之八十四	quantity	percent	1
+百分之八十四点三	quantity	percent	2
+百分之八十四点四	quantity	percent	1
+百分之八点三	quantity	percent	1
+百分之八点二	quantity	percent	2
 百分之八点二	person	person	1
-百分之八点六	percent	percent	1
-百分之八点四	percent	percent	1
-百分之六	percent	percent	7
-百分之六十	percent	percent	12
-百分之六十一点九八	percent	percent	1
-百分之六十一点五	percent	percent	1
-百分之六十一点八三	percent	percent	1
-百分之六十七	percent	percent	1
-百分之六十九	percent	percent	2
-百分之六十二	percent	percent	2
-百分之六十二点四	percent	percent	1
-百分之六十五	percent	percent	4
-百分之六十六	percent	percent	1
-百分之六点一	percent	percent	2
-百分之六点七	percent	percent	2
-百分之六点三	percent	percent	3
-百分之六点二	percent	percent	2
-百分之六点二五	percent	percent	1
-百分之六点五	percent	percent	2
-百分之六点八	percent	percent	1
-百分之六点六	percent	percent	1
-百分之六百	percent	percent	1
-百分之十	percent	percent	17
-百分之十 至 十一	percent	percent	2
-百分之十 至 十二	percent	percent	1
-百分之十一	percent	percent	4
-百分之十一 至 十二	percent	percent	1
-百分之十一点七	percent	percent	1
-百分之十一点三	percent	percent	1
-百分之十一点九	percent	percent	2
-百分之十一点二二	percent	percent	1
-百分之十一点五	percent	percent	1
-百分之十七	percent	percent	6
-百分之十七点九	percent	percent	1
-百分之十七点九五	percent	percent	1
-百分之十七点五	percent	percent	2
-百分之十七点六	percent	percent	1
-百分之十七．六	percent	percent	1
-百分之十三	percent	percent	2
-百分之十三 以上	percent	percent	1
-百分之十三 至 十四	percent	percent	1
-百分之十三点一	percent	percent	1
-百分之十三点九	percent	percent	1
-百分之十三点五	percent	percent	3
-百分之十三点六	percent	percent	4
-百分之十三点四	percent	percent	1
-百分之十九	percent	percent	1
-百分之十九点二	percent	percent	1
-百分之十九点八	percent	percent	1
-百分之十九．五四	percent	percent	1
-百分之十二	percent	percent	4
-百分之十二点一	percent	percent	1
-百分之十二点七	percent	percent	1
-百分之十二点五	percent	percent	2
-百分之十二点六	percent	percent	1
-百分之十二．三	percent	percent	1
-百分之十五	percent	percent	9
-百分之十五 到 二十	percent	percent	1
-百分之十五点七	percent	percent	2
-百分之十五点三九	percent	percent	1
-百分之十五点三四	percent	percent	1
-百分之十五点八	percent	percent	2
-百分之十五点六	percent	percent	2
-百分之十八	percent	percent	1
-百分之十八点八	percent	percent	1
-百分之十八点八五	percent	percent	1
-百分之十六	percent	percent	6
-百分之十六点九	percent	percent	1
-百分之十六点零	percent	percent	1
-百分之十几	percent	percent	1
-百分之十四	percent	percent	4
-百分之十四点七	percent	percent	2
-百分之十四点二	percent	percent	1
-百分之十四点五	percent	percent	2
-百分之十四点五三	percent	percent	1
-百分之十四点八	percent	percent	2
-百分之十四点六	percent	percent	1
-百分之十点七	percent	percent	5
-百分之十点三	percent	percent	2
-百分之十点九	percent	percent	3
-百分之十点二九	percent	percent	2
-百分之十点五	percent	percent	1
-百分之十点八	percent	percent	1
-百分之十点四	percent	percent	1
-百分之四	percent	percent	3
-百分之四十	percent	percent	5
-百分之四十一	percent	percent	1
-百分之四十一点七八	percent	percent	1
-百分之四十七点七	percent	percent	2
-百分之四十七点三	percent	percent	1
-百分之四十七点九	percent	percent	1
-百分之四十三	percent	percent	1
-百分之四十三点二	percent	percent	1
-百分之四十二	percent	percent	2
-百分之四十二点九	percent	percent	1
-百分之四十二点二	percent	percent	1
-百分之四十五	percent	percent	3
-百分之四十五点九	percent	percent	1
-百分之四十五点八	percent	percent	1
-百分之四十八	percent	percent	2
-百分之四十八点九三	percent	percent	1
-百分之四十八点二	percent	percent	1
-百分之四十八点五	percent	percent	1
-百分之四十六	percent	percent	2
-百分之四十六点九	percent	percent	1
-百分之四十六点四	percent	percent	1
-百分之四十四	percent	percent	1
-百分之四十四点八	percent	percent	1
-百分之四十点九九	percent	percent	1
-百分之四十点六	percent	percent	1
-百分之四点一	percent	percent	3
-百分之四点一二	percent	percent	1
-百分之四点七	percent	percent	1
-百分之四点三	percent	percent	1
+百分之八点六	quantity	percent	1
+百分之八点四	quantity	percent	1
+百分之六	quantity	percent	7
+百分之六十	quantity	percent	12
+百分之六十一点九八	quantity	percent	1
+百分之六十一点五	quantity	percent	1
+百分之六十一点八三	quantity	percent	1
+百分之六十七	quantity	percent	1
+百分之六十九	quantity	percent	2
+百分之六十二	quantity	percent	2
+百分之六十二点四	quantity	percent	1
+百分之六十五	quantity	percent	4
+百分之六十六	quantity	percent	1
+百分之六点一	quantity	percent	2
+百分之六点七	quantity	percent	2
+百分之六点三	quantity	percent	3
+百分之六点二	quantity	percent	2
+百分之六点二五	quantity	percent	1
+百分之六点五	quantity	percent	2
+百分之六点八	quantity	percent	1
+百分之六点六	quantity	percent	1
+百分之六百	quantity	percent	1
+百分之十	quantity	percent	17
+百分之十 至 十一	quantity	percent	2
+百分之十 至 十二	quantity	percent	1
+百分之十一	quantity	percent	4
+百分之十一 至 十二	quantity	percent	1
+百分之十一点七	quantity	percent	1
+百分之十一点三	quantity	percent	1
+百分之十一点九	quantity	percent	2
+百分之十一点二二	quantity	percent	1
+百分之十一点五	quantity	percent	1
+百分之十七	quantity	percent	6
+百分之十七点九	quantity	percent	1
+百分之十七点九五	quantity	percent	1
+百分之十七点五	quantity	percent	2
+百分之十七点六	quantity	percent	1
+百分之十七．六	quantity	percent	1
+百分之十三	quantity	percent	2
+百分之十三 以上	quantity	percent	1
+百分之十三 至 十四	quantity	percent	1
+百分之十三点一	quantity	percent	1
+百分之十三点九	quantity	percent	1
+百分之十三点五	quantity	percent	3
+百分之十三点六	quantity	percent	4
+百分之十三点四	quantity	percent	1
+百分之十九	quantity	percent	1
+百分之十九点二	quantity	percent	1
+百分之十九点八	quantity	percent	1
+百分之十九．五四	quantity	percent	1
+百分之十二	quantity	percent	4
+百分之十二点一	quantity	percent	1
+百分之十二点七	quantity	percent	1
+百分之十二点五	quantity	percent	2
+百分之十二点六	quantity	percent	1
+百分之十二．三	quantity	percent	1
+百分之十五	quantity	percent	9
+百分之十五 到 二十	quantity	percent	1
+百分之十五点七	quantity	percent	2
+百分之十五点三九	quantity	percent	1
+百分之十五点三四	quantity	percent	1
+百分之十五点八	quantity	percent	2
+百分之十五点六	quantity	percent	2
+百分之十八	quantity	percent	1
+百分之十八点八	quantity	percent	1
+百分之十八点八五	quantity	percent	1
+百分之十六	quantity	percent	6
+百分之十六点九	quantity	percent	1
+百分之十六点零	quantity	percent	1
+百分之十几	quantity	percent	1
+百分之十四	quantity	percent	4
+百分之十四点七	quantity	percent	2
+百分之十四点二	quantity	percent	1
+百分之十四点五	quantity	percent	2
+百分之十四点五三	quantity	percent	1
+百分之十四点八	quantity	percent	2
+百分之十四点六	quantity	percent	1
+百分之十点七	quantity	percent	5
+百分之十点三	quantity	percent	2
+百分之十点九	quantity	percent	3
+百分之十点二九	quantity	percent	2
+百分之十点五	quantity	percent	1
+百分之十点八	quantity	percent	1
+百分之十点四	quantity	percent	1
+百分之四	quantity	percent	3
+百分之四十	quantity	percent	5
+百分之四十一	quantity	percent	1
+百分之四十一点七八	quantity	percent	1
+百分之四十七点七	quantity	percent	2
+百分之四十七点三	quantity	percent	1
+百分之四十七点九	quantity	percent	1
+百分之四十三	quantity	percent	1
+百分之四十三点二	quantity	percent	1
+百分之四十二	quantity	percent	2
+百分之四十二点九	quantity	percent	1
+百分之四十二点二	quantity	percent	1
+百分之四十五	quantity	percent	3
+百分之四十五点九	quantity	percent	1
+百分之四十五点八	quantity	percent	1
+百分之四十八	quantity	percent	2
+百分之四十八点九三	quantity	percent	1
+百分之四十八点二	quantity	percent	1
+百分之四十八点五	quantity	percent	1
+百分之四十六	quantity	percent	2
+百分之四十六点九	quantity	percent	1
+百分之四十六点四	quantity	percent	1
+百分之四十四	quantity	percent	1
+百分之四十四点八	quantity	percent	1
+百分之四十点九九	quantity	percent	1
+百分之四十点六	quantity	percent	1
+百分之四点一	quantity	percent	3
+百分之四点一二	quantity	percent	1
+百分之四点七	quantity	percent	1
+百分之四点三	quantity	percent	1
 百分之四点三	quantity	money	1
-百分之四点九	percent	percent	1
-百分之四点五	percent	percent	2
-百分之四点四	percent	percent	2
-百分之百	percent	percent	11
-百分之负零点五	percent	percent	1
-百分之零点九	percent	percent	1
-百分之零点五	percent	percent	1
-百分之零点八	percent	percent	2
+百分之四点九	quantity	percent	1
+百分之四点五	quantity	percent	2
+百分之四点四	quantity	percent	2
+百分之百	quantity	percent	11
+百分之负零点五	quantity	percent	1
+百分之零点九	quantity	percent	1
+百分之零点五	quantity	percent	1
+百分之零点八	quantity	percent	2
 百分之零点四	person	person	1
-百分之８０	percent	percent	1
+百分之８０	quantity	percent	1
 百合	place	city	1
 百团大战	event	event	22
 百团大战	organization	organization	1
@@ -20153,11 +20153,11 @@ zhuxi	person	person	1
 约 四万五千 元 人民币	quantity	money	1
 约 １万 平方米	quantity	quantity	1
 约 １．８亿 美元	quantity	money	1
-约 ２０ 个 百分点	percent	percent	1
+约 ２０ 个 百分点	quantity	percent	1
 约 ２００ 米	quantity	quantity	1
 约 ２３０万 元 人民币	quantity	money	1
 约 ４亿 美元	quantity	money	1
-约 ７０％	percent	percent	1
+约 ７０％	quantity	percent	1
 约克	place	city	1
 约克镇	place	gpe	1
 约兹加特	place	city	1
@@ -21079,7 +21079,7 @@ zhuxi	person	person	1
 胡宗华	person	person	2
 胡小迪	person	person	3
 胡平	person	person	1
-胡应湘	percent	percent	1
+胡应湘	quantity	percent	1
 胡志强	person	person	4
 胡志明	person	person	1
 胡慧军	person	person	5
@@ -21139,14 +21139,14 @@ zhuxi	person	person	1
 至 七万 吨	quantity	quantity	1
 至 七点八亿 公里	quantity	quantity	1
 至 三 天	time	date	2
-至 两 个 百分点	percent	percent	1
+至 两 个 百分点	quantity	percent	1
 至 十 天	time	date	1
 至 十亿 元	quantity	money	1
 至 四 公里	quantity	quantity	1
 至 四 年	time	date	1
 至 ２１６亿 美元	quantity	money	1
 至 ５０亿 美元	quantity	money	1
-至 ７ 个 百分点	percent	percent	1
+至 ７ 个 百分点	quantity	percent	1
 至 ７ 个 钟头	time	date	1
 至今	time	date	2
 至今为止	time	date	1
@@ -23108,7 +23108,7 @@ zhuxi	person	person	1
 近 半 年 来	time	date	1
 近 四 年	time	date	1
 近 百亿 元 台币	quantity	money	1
-近 百分之三十	percent	percent	1
+近 百分之三十	quantity	percent	1
 近 ２００ 公里	quantity	quantity	1
 近 ２００万 美元	quantity	money	1
 近 ３ 个 小时	time	time	1
@@ -24672,13 +24672,13 @@ zhuxi	person	person	1
 零地带	place	loc	1
 零晨	time	time	1
 零点	time	time	2
-零点一	percent	percent	1
-零点三 个 百分点	percent	percent	2
-零点九	percent	percent	1
+零点一	quantity	percent	1
+零点三 个 百分点	quantity	percent	2
+零点九	quantity	percent	1
 零点五 平方公里	quantity	quantity	1
-零点八 个 百分点	percent	percent	1
-零点六 个 百分点	percent	percent	1
-零点零六 。 百分比	percent	percent	1
+零点八 个 百分点	quantity	percent	1
+零点六 个 百分点	quantity	percent	1
+零点零六 。 百分比	quantity	percent	1
 零零七	person	person	1
 雷	person	person	6
 雷·斯科托	person	person	1
@@ -25859,9 +25859,9 @@ zhuxi	person	person	1
 ０ 到 ６ 岁	time	date	1
 ０．０２ 美元	quantity	money	1
 ０．１９ 美元	quantity	money	1
-０．２％	percent	percent	1
-０．５％	percent	percent	1
-０．６９％	percent	percent	1
+０．２％	quantity	percent	1
+０．５％	quantity	percent	1
+０．６９％	quantity	percent	1
 ００舰	object	product	1
 ０３年 三月	time	date	1
 ０３年 １１月	time	date	1
@@ -25978,11 +25978,11 @@ zhuxi	person	person	1
 １．６ 英里	quantity	quantity	1
 １．８亿 美元	quantity	money	1
 １．８亿多 元	quantity	money	1
-１／３	percent	percent	3
+１／３	quantity	percent	3
 １０ 个 小时	time	time	1
 １０ 个 星期	time	date	1
 １０ 个 月	time	date	2
-１０ 个 百分点	percent	percent	1
+１０ 个 百分点	quantity	percent	1
 １０ 倍	quantity	quantity	1
 １０ 公斤	quantity	quantity	2
 １０ 分钟	time	time	7
@@ -26059,12 +26059,12 @@ zhuxi	person	person	1
 １０月 ８号	time	date	1
 １０月份	time	date	3
 １０点	time	time	2
-１０％	percent	percent	5
-１０％几	percent	percent	1
+１０％	quantity	percent	5
+１０％几	quantity	percent	1
 １０－１１ 度	quantity	quantity	1
 １０－２０亿 元	quantity	money	1
-１０．５％	percent	percent	1
-１０．９％	percent	percent	1
+１０．５％	quantity	percent	1
+１０．９％	quantity	percent	1
 １００ 元	quantity	money	1
 １００ 公尺	quantity	quantity	1
 １００ 公斤	quantity	quantity	1
@@ -26083,7 +26083,7 @@ zhuxi	person	person	1
 １００万 元 人民币	quantity	money	1
 １００万 名	quantity	quantity	1
 １００万 美元	quantity	money	2
-１００万分之一	percent	percent	1
+１００万分之一	quantity	percent	1
 １００亿 美元	quantity	money	1
 １００多 块	quantity	money	1
 １００多 岁	time	date	1
@@ -26091,7 +26091,7 @@ zhuxi	person	person	1
 １００多 斤	quantity	quantity	1
 １００多万 美元	quantity	money	1
 １００多亿 元	quantity	money	1
-１００％	percent	percent	6
+１００％	quantity	percent	6
 １０００ 元	quantity	money	4
 １０００ 岁 左右	time	date	1
 １０００万 人民币	quantity	money	1
@@ -26169,8 +26169,8 @@ zhuxi	person	person	1
 １１月份	time	date	2
 １１点	time	time	2
 １１点３０分	time	time	1
-１１．４％	percent	percent	1
-１１．７％	percent	percent	1
+１１．４％	quantity	percent	1
+１１．７％	quantity	percent	1
 １１．９亿多 元	quantity	money	1
 １１０ 米	quantity	quantity	4
 １１００ 美元	quantity	money	1
@@ -26257,13 +26257,13 @@ zhuxi	person	person	1
 １２．２万亿 元	quantity	money	1
 １２．４亿 美金	quantity	money	1
 １２．５亿 美元	quantity	money	1
-１２．９％	percent	percent	1
+１２．９％	quantity	percent	1
 １２０ 公斤	quantity	quantity	1
 １２０ 公里	quantity	quantity	3
 １２０ 岁	time	date	1
 １２０亿 元	quantity	money	1
 １２０亿 马克	quantity	money	1
-１２０％	percent	percent	1
+１２０％	quantity	percent	1
 １２００ 平米	quantity	quantity	1
 １２００万 元	quantity	money	1
 １２１０ 公里	quantity	quantity	1
@@ -26284,16 +26284,16 @@ zhuxi	person	person	1
 １３ 架	quantity	quantity	1
 １３ 秒 ０２	time	time	1
 １３万 人	quantity	quantity	1
-１３万亿分之一	percent	percent	1
+１３万亿分之一	quantity	percent	1
 １３亿多 元	quantity	money	1
 １３号	time	date	20
 １３号 下午	time	time	2
 １３号 早晨	time	time	1
 １３日	time	date	9
 １３日 １９时	time	time	1
-１３％	percent	percent	2
+１３％	quantity	percent	2
 １３．２亿 美元	quantity	money	1
-１３．６％	percent	percent	1
+１３．６％	quantity	percent	1
 １３０ 公斤	quantity	quantity	1
 １３０ 岁	time	date	1
 １３０ 美元	quantity	money	1
@@ -26337,7 +26337,7 @@ zhuxi	person	person	1
 １５ 年 以上	time	date	1
 １５ 米	quantity	quantity	1
 １５ 美元	quantity	money	1
-１５ ｐｅｒｃｅｎｔ	percent	percent	1
+１５ ｐｅｒｃｅｎｔ	quantity	percent	1
 １５、６ 岁	time	date	1
 １５万 元	quantity	money	3
 １５万 美元	quantity	money	1
@@ -26348,10 +26348,10 @@ zhuxi	person	person	1
 １５号 凌晨	time	time	1
 １５号 至 １６号	time	date	1
 １５日	time	date	2
-１５％	percent	percent	10
-１５．１％	percent	percent	1
+１５％	quantity	percent	10
+１５．１％	quantity	percent	1
 １５．２ 公里	quantity	quantity	1
-１５．５％	percent	percent	1
+１５．５％	quantity	percent	1
 １５０ 元	quantity	money	1
 １５０万 元	quantity	money	2
 １５０万 美元	quantity	money	1
@@ -26378,8 +26378,8 @@ zhuxi	person	person	1
 １６日 晚	time	time	1
 １６日 晚 ６时 ３０分	time	time	1
 １６日 ２３时 ３０分	time	time	1
-１６．５％	percent	percent	1
-１６．９％	percent	percent	1
+１６．５％	quantity	percent	1
+１６．９％	quantity	percent	1
 １６０ 年	time	date	1
 １６００ 元	quantity	money	1
 １６１ 公里	quantity	quantity	1
@@ -26397,8 +26397,8 @@ zhuxi	person	person	1
 １７号 上午 ９点	time	time	1
 １７日	time	date	1
 １７点	time	time	3
-１７％	percent	percent	2
-１７．６％	percent	percent	1
+１７％	quantity	percent	2
+１７．６％	quantity	percent	1
 １７０ 公分 左右	quantity	quantity	1
 １７０万 吨	quantity	quantity	1
 １７０７年	time	date	1
@@ -26422,8 +26422,8 @@ zhuxi	person	person	1
 １８号	time	date	10
 １８号 下午	time	time	1
 １８日	time	date	3
-１８％	percent	percent	2
-１８．９％	percent	percent	1
+１８％	quantity	percent	2
+１８．９％	quantity	percent	1
 １８０ 度	quantity	quantity	1
 １８０多亿 美元	quantity	money	1
 １８００ 元	quantity	money	1
@@ -26446,8 +26446,8 @@ zhuxi	person	person	1
 １９日	time	date	3
 １９日 早上	time	time	1
 １９日 １０时	time	time	1
-１９％	percent	percent	2
-１９．４６％	percent	percent	1
+１９％	quantity	percent	2
+１９．４６％	quantity	percent	1
 １９０多亿 元	quantity	money	1
 １９００年	time	date	1
 １９００年 ２月 ２２日	time	date	1
@@ -26625,7 +26625,7 @@ zhuxi	person	person	1
 ２ 个 小时	time	time	4
 ２ 个 月	time	date	1
 ２ 个 钟头	time	time	2
-２ 到 ４成	percent	percent	1
+２ 到 ４成	quantity	percent	1
 ２ 名	quantity	quantity	1
 ２ 吨	quantity	quantity	2
 ２ 夜	time	time	1
@@ -26665,16 +26665,16 @@ zhuxi	person	person	1
 ２月 ７日	time	date	1
 ２月 ８号	time	date	1
 ２月分	time	date	1
-２％	percent	percent	3
+２％	quantity	percent	3
 ２－３ 度	quantity	quantity	1
 ２．１７亿 美元	quantity	money	1
-２．２％	percent	percent	1
+２．２％	quantity	percent	1
 ２．５亿 美元	quantity	money	2
 ２．６ 公里	quantity	quantity	1
 ２．７亿 元	quantity	money	1
 ２．７６ 美元	quantity	money	1
 ２．９ 英亩	quantity	quantity	1
-２／３	percent	percent	2
+２／３	quantity	percent	2
 ２０	time	date	1
 ２０ 个 小时	time	time	3
 ２０ 元	quantity	money	1
@@ -26715,9 +26715,9 @@ zhuxi	person	person	1
 ２０多亿 元	quantity	money	1
 ２０年 前	time	date	1
 ２０日	time	date	3
-２０％	percent	percent	8
-２０％ 以上	percent	percent	1
-２０．４％	percent	percent	1
+２０％	quantity	percent	8
+２０％ 以上	quantity	percent	1
+２０．４％	quantity	percent	1
 ２００ 元	quantity	money	1
 ２００ 公尺	quantity	quantity	1
 ２００ 名	quantity	quantity	1
@@ -26849,7 +26849,7 @@ zhuxi	person	person	1
 ２１日 中午 １２时	time	time	1
 ２１．５１６ 公里	quantity	quantity	1
 ２１．７万 元 台币	quantity	money	1
-２１．８％	percent	percent	1
+２１．８％	quantity	percent	1
 ２１０亿 元	quantity	money	2
 ２１００ 美元	quantity	money	1
 ２１９０万 美元	quantity	money	1
@@ -26861,8 +26861,8 @@ zhuxi	person	person	1
 ２２号 到 ２９号	time	date	1
 ２２号 夜间	time	time	1
 ２２日	time	date	3
-２２％	percent	percent	2
-２２．５％	percent	percent	1
+２２％	quantity	percent	2
+２２．５％	quantity	percent	1
 ２２０ 千伏	quantity	quantity	1
 ２２００万 美元	quantity	money	1
 ２２００亿 美元	quantity	money	1
@@ -26880,8 +26880,8 @@ zhuxi	person	person	1
 ２３巷	place	loc	1
 ２３日	time	date	9
 ２３日 下午	time	time	1
-２３．４％	percent	percent	1
-２３．５％	percent	percent	1
+２３．４％	quantity	percent	1
+２３．５％	quantity	percent	1
 ２３０亿 美元	quantity	money	2
 ２３５ 公斤	quantity	quantity	1
 ２３６ 人	quantity	quantity	1
@@ -26914,7 +26914,7 @@ zhuxi	person	person	1
 ２５号	time	date	12
 ２５日	time	date	1
 ２５日 晚	time	time	1
-２５％	percent	percent	8
+２５％	quantity	percent	8
 ２５，０００ 美元	quantity	money	1
 ２５０亿 新台币	quantity	money	1
 ２５００ 公里	quantity	quantity	1
@@ -26930,7 +26930,7 @@ zhuxi	person	person	1
 ２６日	time	date	1
 ２６日 凌晨 ６时	time	time	1
 ２６日 早上	time	time	1
-２６％	percent	percent	3
+２６％	quantity	percent	3
 ２６０００ 吨	quantity	quantity	1
 ２６２ 张	quantity	quantity	1
 ２６７ 票	quantity	quantity	1
@@ -26941,7 +26941,7 @@ zhuxi	person	person	1
 ２７号 上午 ９点	time	time	1
 ２７号 下午	time	time	1
 ２７日	time	date	1
-２７％	percent	percent	2
+２７％	quantity	percent	2
 ２７０ 张	quantity	quantity	1
 ２７０多 亩	quantity	quantity	1
 ２７００ 元	quantity	money	1
@@ -26953,7 +26953,7 @@ zhuxi	person	person	1
 ２８号	time	time	1
 ２８号 凌晨	time	time	2
 ２８日	time	date	3
-２８％	percent	percent	1
+２８％	quantity	percent	1
 ２８８	place	fac	9
 ２８８ 道路	place	fac	4
 ２９ 周年 的 台庆	event	event	1
@@ -26962,7 +26962,7 @@ zhuxi	person	person	1
 ２９号 中午	time	time	1
 ２９号 晚	time	time	1
 ２９日	time	date	4
-２９％	percent	percent	1
+２９％	quantity	percent	1
 ２９．５ 公分	quantity	quantity	1
 ２９５ 州际 公路	place	fac	1
 ２：１０分	time	time	1
@@ -27012,10 +27012,10 @@ zhuxi	person	person	1
 ３月 ６日	time	date	1
 ３点钟	time	time	1
 ３．１８ 之后	time	date	1
-３．３％	percent	percent	1
+３．３％	quantity	percent	1
 ３．４５９ 公里	quantity	quantity	1
 ３．５亿 美元	quantity	money	2
-３．５％	percent	percent	3
+３．５％	quantity	percent	3
 ３．６亿 元	quantity	money	1
 ３０ 个 小时	time	date	1
 ３０ 个 月	time	date	1
@@ -27046,8 +27046,8 @@ zhuxi	person	person	1
 ３０多 年	time	date	3
 ３０多 英尺	quantity	quantity	1
 ３０日	time	date	7
-３０％	percent	percent	10
-３０％ 以上	percent	percent	2
+３０％	quantity	percent	10
+３０％ 以上	quantity	percent	2
 ３００ 位	quantity	quantity	1
 ３００ 公斤	quantity	quantity	1
 ３００ 公里	quantity	quantity	1
@@ -27057,7 +27057,7 @@ zhuxi	person	person	1
 ３００多 人	quantity	quantity	2
 ３００多 元	quantity	money	1
 ３００多 公克	quantity	quantity	1
-３００％	percent	percent	1
+３００％	quantity	percent	1
 ３０００ 亩	quantity	quantity	1
 ３０００ 元	quantity	money	1
 ３０００ 吨	quantity	quantity	1
@@ -27074,24 +27074,24 @@ zhuxi	person	person	1
 ３１号	time	date	4
 ３１号 下午	time	time	1
 ３１日	time	date	8
-３１％	percent	percent	1
+３１％	quantity	percent	1
 ３２ 块	quantity	money	1
 ３２ 天	time	date	1
 ３２ 岁	time	date	2
 ３２ 年	time	date	1
-３２％	percent	percent	2
-３２．３％	percent	percent	2
+３２％	quantity	percent	2
+３２．３％	quantity	percent	2
 ３２．７万 平方米	quantity	quantity	1
 ３２００ 公尺	quantity	quantity	1
 ３２８万 元	quantity	money	2
 ３３，０００ 吨	quantity	quantity	1
-３３．１％	percent	percent	1
+３３．１％	quantity	percent	1
 ３３６ 平方米	quantity	quantity	1
 ３３６亿 美元	quantity	money	1
 ３４ 岁	time	date	4
 ３４万５千 伏特	quantity	quantity	1
 ３４亿 元	quantity	money	1
-３４％	percent	percent	1
+３４％	quantity	percent	1
 ３４０亿 美元	quantity	money	1
 ３４００万 美元	quantity	money	1
 ３４２８ 公里	quantity	quantity	1
@@ -27099,7 +27099,7 @@ zhuxi	person	person	1
 ３５ 岁	time	date	4
 ３５ 米 ／ 秒	quantity	quantity	1
 ３５万 元	quantity	money	2
-３５％	percent	percent	1
+３５％	quantity	percent	1
 ３５０ 公里	quantity	quantity	1
 ３５０亿 美元	quantity	money	1
 ３５００ 克	quantity	quantity	1
@@ -27116,7 +27116,7 @@ zhuxi	person	person	1
 ３７．７ 美分	quantity	money	1
 ３７７６ 米	quantity	quantity	1
 ３８万 人次	quantity	quantity	1
-３８％	percent	percent	2
+３８％	quantity	percent	2
 ３８００ 米	quantity	quantity	1
 ３８５万 人	quantity	quantity	1
 ３９０万 美元	quantity	money	1
@@ -27149,8 +27149,8 @@ zhuxi	person	person	1
 ４兆 元 台币	quantity	money	1
 ４号	time	date	7
 ４号 晚	time	time	2
-４成	percent	percent	3
-４成８	percent	percent	1
+４成	quantity	percent	3
+４成８	quantity	percent	1
 ４月	time	date	1
 ４月	time	time	1
 ４月 １２日	time	date	1
@@ -27162,12 +27162,12 @@ zhuxi	person	person	1
 ４月 ７日	time	date	1
 ４月份	time	date	1
 ４点	time	time	1
-４％	percent	percent	1
+４％	quantity	percent	1
 ４，０００万 美元	quantity	money	1
-４．１％	percent	percent	1
+４．１％	quantity	percent	1
 ４．２亿 新元	quantity	money	1
-４．７％	percent	percent	2
-４／５	percent	percent	1
+４．７％	quantity	percent	2
+４／５	quantity	percent	1
 ４０	time	date	1
 ４０ 元	quantity	money	1
 ４０ 公斤	quantity	quantity	1
@@ -27194,9 +27194,9 @@ zhuxi	person	person	1
 ４０多 天	time	date	1
 ４０多 岁	time	date	1
 ４０多万 元	quantity	money	1
-４０％	percent	percent	5
-４０％ 以上	percent	percent	1
-４０．２３％	percent	percent	1
+４０％	quantity	percent	5
+４０％ 以上	quantity	percent	1
+４０．２３％	quantity	percent	1
 ４００ 公斤	quantity	quantity	1
 ４００ 块	quantity	money	1
 ４００ 米	quantity	quantity	2
@@ -27212,7 +27212,7 @@ zhuxi	person	person	1
 ４１ 岁	time	date	2
 ４１ 年	time	date	1
 ４１亿 美元	quantity	money	1
-４１％	percent	percent	1
+４１％	quantity	percent	1
 ４１５亿 日元	quantity	money	1
 ４１７．７ 元	quantity	money	1
 ４１９ 元	quantity	money	1
@@ -27226,31 +27226,31 @@ zhuxi	person	person	1
 ４２５ 公里	quantity	quantity	2
 ４３ 个 小时	time	time	1
 ４３ 岁	time	date	2
-４３％	percent	percent	2
+４３％	quantity	percent	2
 ４３００ 公里	quantity	quantity	1
 ４３００多万 美元	quantity	money	1
 ４４ 小时	time	time	2
 ４４ 岁	time	date	3
 ４４ 秒 ０４	time	time	1
-４４％	percent	percent	1
+４４％	quantity	percent	1
 ４４００多万 平方公里	quantity	quantity	1
 ４４５亿 韩元	quantity	money	1
 ４５ 岁	time	date	2
 ４５ 岁 以下	time	date	1
-４５％	percent	percent	2
+４５％	quantity	percent	2
 ４５．６ 美分	quantity	money	1
 ４５０万 亩	quantity	quantity	1
 ４５００ 只	quantity	quantity	1
 ４５８万 立方米	quantity	quantity	1
 ４６ 岁	time	date	1
-４６％	percent	percent	2
+４６％	quantity	percent	2
 ４６．２ 美分	quantity	money	1
 ４６０	place	fac	2
 ４６０万 美元	quantity	money	2
 ４６６亿 元	quantity	money	1
 ４７ 岁	time	date	3
 ４７ 摄氏度	quantity	quantity	1
-４７％	percent	percent	1
+４７％	quantity	percent	1
 ４７．５亿 立方米	quantity	quantity	1
 ４７００ 元	quantity	money	1
 ４７８ 公克	quantity	quantity	2
@@ -27264,7 +27264,7 @@ zhuxi	person	person	1
 ４８６亿 元	quantity	money	1
 ４９ 年	time	date	1
 ４９万 美元	quantity	money	1
-４９．９％	percent	percent	1
+４９．９％	quantity	percent	1
 ４：４０分	time	time	1
 ５	ordinal	ordinal	2
 ５ 、 ６ 年	time	date	1
@@ -27301,9 +27301,9 @@ zhuxi	person	person	1
 ５号 上午	time	time	2
 ５号 傍晚	time	time	1
 ５号 凌晨	time	time	1
-５成	percent	percent	2
+５成	quantity	percent	2
 ５成	place	gpe	1
-５成５	percent	percent	1
+５成５	quantity	percent	1
 ５日	time	date	1
 ５月	time	date	6
 ５月 底 前	time	date	1
@@ -27319,11 +27319,11 @@ zhuxi	person	person	1
 ５月 ４日	time	date	1
 ５月 ５日	time	date	1
 ５点	time	time	2
-５％	percent	percent	4
+５％	quantity	percent	4
 ５．２０ 之后	time	date	1
 ５．２２亿 美元	quantity	money	2
 ５．３亿 元	quantity	money	1
-５．３％	percent	percent	1
+５．３％	quantity	percent	1
 ５．８２亿	quantity	money	1
 ５．８２亿 美元	quantity	money	1
 ５／１９／０８	time	date	10
@@ -27344,7 +27344,7 @@ zhuxi	person	person	1
 ５０ 年 前	time	date	2
 ５０ 度	quantity	quantity	1
 ５０ 微克	quantity	quantity	1
-５０ 比 ５０	percent	percent	1
+５０ 比 ５０	quantity	percent	1
 ５０ 码	quantity	quantity	1
 ５０ 米	quantity	quantity	1
 ５０ 部	quantity	quantity	1
@@ -27357,8 +27357,8 @@ zhuxi	person	person	1
 ５０多 年 来	time	date	1
 ５０年代	time	date	2
 ５０年代 至 ７０年代	time	date	1
-５０％	percent	percent	5
-５０％ 左右	percent	percent	1
+５０％	quantity	percent	5
+５０％ 左右	quantity	percent	1
 ５０＋ － 年龄	time	date	1
 ５００ 个	quantity	quantity	1
 ５００ 元	quantity	money	1
@@ -27384,12 +27384,12 @@ zhuxi	person	person	1
 ５１ 个 多 比索	quantity	money	1
 ５１ 岁	time	date	2
 ５２ 年	time	date	1
-５２％	percent	percent	2
+５２％	quantity	percent	2
 ５３ 名	quantity	quantity	1
 ５３ 年	time	date	1
-５３％	percent	percent	1
+５３％	quantity	percent	1
 ５３０ 公斤	quantity	quantity	1
-５４％	percent	percent	1
+５４％	quantity	percent	1
 ５４０万 元	quantity	money	1
 ５５ 周年	time	date	2
 ５５ 岁	time	date	5
@@ -27401,12 +27401,12 @@ zhuxi	person	person	1
 ５６ 公斤	quantity	quantity	1
 ５６ 岁	time	date	2
 ５６ 年	time	date	1
-５６％	percent	percent	5
+５６％	quantity	percent	5
 ５６０ 英里	quantity	quantity	1
 ５７０ 米	quantity	quantity	1
 ５７５５／１９／０８	time	date	1
 ５８ 岁	time	date	2
-５８％	percent	percent	1
+５８％	quantity	percent	1
 ５８７６点１１ 点	quantity	quantity	1
 ５９ 岁	time	date	1
 ５９１ 名	quantity	quantity	1
@@ -27449,11 +27449,11 @@ zhuxi	person	person	1
 ６月 中旬	time	date	1
 ６月 １３号 到 １５号	time	date	1
 ６点	time	time	1
-６％	percent	percent	2
+６％	quantity	percent	2
 ６，０００ 亩	quantity	quantity	1
-６．３％	percent	percent	1
+６．３％	quantity	percent	1
 ６．５８ 米	quantity	quantity	1
-６．９％	percent	percent	1
+６．９％	quantity	percent	1
 ６０ 公尺	quantity	quantity	2
 ６０ 天	time	date	3
 ６０ 岁	time	date	7
@@ -27467,8 +27467,8 @@ zhuxi	person	person	1
 ６０多 年 前	time	date	1
 ６０多 度	quantity	quantity	1
 ６０年代	time	date	1
-６０％	percent	percent	4
-６０％ 左右	percent	percent	1
+６０％	quantity	percent	4
+６０％ 左右	quantity	percent	1
 ６０，０００ 公斤	quantity	quantity	1
 ６００ 公尺	quantity	quantity	2
 ６００ 坪	quantity	quantity	2
@@ -27484,7 +27484,7 @@ zhuxi	person	person	1
 ６０００多 名	quantity	quantity	1
 ６０３ 公里	quantity	quantity	1
 ６１４６．５亿 元	quantity	money	1
-６２％	percent	percent	1
+６２％	quantity	percent	1
 ６３ 元	quantity	money	1
 ６３ 岁	time	date	6
 ６３ 年岁	time	date	1
@@ -27493,7 +27493,7 @@ zhuxi	person	person	1
 ６４ 天	time	date	1
 ６４ 岁	time	date	2
 ６４亿 人民币	quantity	money	1
-６４％	percent	percent	2
+６４％	quantity	percent	2
 ６４．２４亿	quantity	money	1
 ６４９０．１ 元	quantity	money	1
 ６５ 公里	quantity	quantity	1
@@ -27502,19 +27502,19 @@ zhuxi	person	person	1
 ６５ 岁 左右	time	date	1
 ６５ 郡	quantity	quantity	1
 ６５亿 日元	quantity	money	1
-６５％	percent	percent	1
-６５．５％	percent	percent	1
+６５％	quantity	percent	1
+６５．５％	quantity	percent	1
 ６６ 岁	time	date	2
 ６６ 米 ０６	quantity	quantity	1
-６６．９％	percent	percent	2
+６６．９％	quantity	percent	2
 ６７ 个	quantity	quantity	1
 ６７ 岁	time	date	1
-６７％	percent	percent	1
+６７％	quantity	percent	1
 ６７０００ 票	quantity	quantity	1
 ６８ 岁	time	date	1
 ６８ 美元	quantity	money	1
 ６８万 元	quantity	money	1
-６８％	percent	percent	1
+６８％	quantity	percent	1
 ６８８７．７亿 元	quantity	money	1
 ６９ 岁	time	date	1
 ６９亿 美元	quantity	money	1
@@ -27538,8 +27538,8 @@ zhuxi	person	person	1
 ７号	time	date	9
 ７号 上午	time	time	1
 ７号 上午 １０点	time	time	1
-７成	percent	percent	1
-７成多	percent	percent	1
+７成	quantity	percent	1
+７成多	quantity	percent	1
 ７月	time	date	3
 ７月 中旬	time	date	1
 ７月 底	time	date	1
@@ -27554,22 +27554,22 @@ zhuxi	person	person	1
 ７点半	time	time	1
 ７点２９分	time	time	1
 ７点４０分	time	time	1
-７％	percent	percent	4
-７．１％	percent	percent	1
+７％	quantity	percent	4
+７．１％	quantity	percent	1
 ７．２２亿 美元	quantity	money	1
 ７．４万亿 元	quantity	money	1
-７．４％	percent	percent	1
+７．４％	quantity	percent	1
 ７．５ 级	quantity	quantity	1
 ７．５亿 新元	quantity	money	1
 ７．５亿 美元	quantity	money	1
-７．５％	percent	percent	2
+７．５％	quantity	percent	2
 ７．６ 级	quantity	quantity	2
-７．７ 个 百分点	percent	percent	1
-７．７％	percent	percent	1
+７．７ 个 百分点	quantity	percent	1
+７．７％	quantity	percent	1
 ７．８ 级	quantity	quantity	3
 ７．８８亿 美元	quantity	money	1
 ７．９ 级	quantity	quantity	1
-７．９％	percent	percent	1
+７．９％	quantity	percent	1
 ７０ 公分	quantity	quantity	1
 ７０ 周年	time	date	1
 ７０ 岁 以上	time	date	1
@@ -27578,8 +27578,8 @@ zhuxi	person	person	1
 ７０多 岁	time	date	1
 ７０年代	time	date	3
 ７０年代 初	time	date	1
-７０％	percent	percent	6
-７０－８０％	percent	percent	1
+７０％	quantity	percent	6
+７０－８０％	quantity	percent	1
 ７００亿 元	quantity	money	1
 ７０００万 元 人民币	quantity	money	1
 ７０００亿 元	quantity	money	1
@@ -27604,13 +27604,13 @@ zhuxi	person	person	1
 ７５ 岁	time	date	1
 ７５ 年	time	date	1
 ７５年	time	date	1
-７５％	percent	percent	3
+７５％	quantity	percent	3
 ７５０ 公斤	quantity	quantity	1
 ７５００ 到 １００００ 美元	quantity	money	1
 ７６ 岁	time	date	1
-７６．５％	percent	percent	1
+７６．５％	quantity	percent	1
 ７７ 岁	time	date	3
-７７％	percent	percent	1
+７７％	quantity	percent	1
 ７８ 岁	time	date	1
 ７８年	time	date	1
 ７８．８９亿 美元	quantity	money	1
@@ -27638,7 +27638,7 @@ zhuxi	person	person	1
 ８万亿 元	quantity	money	1
 ８亿 美元	quantity	money	1
 ８号	time	date	10
-８成	percent	percent	1
+８成	quantity	percent	1
 ８日	time	date	1
 ８日 上午	time	time	1
 ８月	time	date	4
@@ -27660,13 +27660,13 @@ zhuxi	person	person	1
 ８点半	time	time	1
 ８点钟	time	time	1
 ８点０５分	time	time	1
-８％	percent	percent	1
+８％	quantity	percent	1
 ８．０ 级	quantity	quantity	1
-８．２％	percent	percent	1
+８．２％	quantity	percent	1
 ８．４ 分钟	time	time	1
-８．４％	percent	percent	1
+８．４％	quantity	percent	1
 ８．７亿 元	quantity	money	1
-８．９％	percent	percent	1
+８．９％	quantity	percent	1
 ８０	time	date	1
 ８０ 公尺	quantity	quantity	1
 ８０ 公里	quantity	quantity	2
@@ -27676,8 +27676,8 @@ zhuxi	person	person	1
 ８０年代	time	date	8
 ８０年代	time	time	1
 ８０年代 末	time	date	1
-８０％	percent	percent	13
-８０．１％	percent	percent	1
+８０％	quantity	percent	13
+８０．１％	quantity	percent	1
 ８００ 块 钱	quantity	money	1
 ８００ 米	quantity	quantity	1
 ８００ 美元	quantity	money	1
@@ -27706,11 +27706,11 @@ zhuxi	person	person	1
 ８５ 岁	time	date	2
 ８５ 米 １８	quantity	quantity	1
 ８５亿 美元	quantity	money	1
-８５％	percent	percent	2
-８５．９％	percent	percent	1
+８５％	quantity	percent	2
+８５．９％	quantity	percent	1
 ８５０万 美元	quantity	money	1
 ８６ 公里	quantity	quantity	1
-８６．４％	percent	percent	1
+８６．４％	quantity	percent	1
 ８６２，０００ 美元	quantity	money	1
 ８７年	time	date	2
 ８７年 底	time	date	1
@@ -27742,7 +27742,7 @@ zhuxi	person	person	1
 ９号	time	date	14
 ９号 晚	time	time	2
 ９号 深夜	time	time	1
-９成５	percent	percent	1
+９成５	quantity	percent	1
 ９日 下午	time	time	1
 ９月	time	date	9
 ９月 下旬	time	date	1
@@ -27764,8 +27764,8 @@ zhuxi	person	person	1
 ９点半	time	time	2
 ９点多	time	time	1
 ９点３０分 左右	time	time	1
-９％	percent	percent	2
-９．３％	percent	percent	1
+９％	quantity	percent	2
+９．３％	quantity	percent	1
 ９．７０ 美元	quantity	money	1
 ９０ 分钟	time	time	1
 ９０ 年度	time	date	1
@@ -27777,13 +27777,13 @@ zhuxi	person	person	1
 ９０年代 中期	time	date	1
 ９０年代 中期 以前	time	date	1
 ９０年代 早期 和 中期	time	date	1
-９０％	percent	percent	10
+９０％	quantity	percent	10
 ９０．０ 兆赫	quantity	quantity	1
 ９００万 人次	quantity	quantity	1
 ９００万 吨	quantity	quantity	1
 ９００多	quantity	money	1
 ９１ 岁	time	date	2
-９１％	percent	percent	2
+９１％	quantity	percent	2
 ９１１ 事件	event	event	3
 ９１１ 的 英国 遇难者 纪念碑	place	fac	1
 ９１１ 袭击	event	event	1
@@ -27793,7 +27793,7 @@ zhuxi	person	person	1
 ９２１	event	event	1
 ９２１ 地震	event	event	1
 ９３年	time	date	1
-９３．６％	percent	percent	1
+９３．６％	quantity	percent	1
 ９３６万 美元	quantity	money	1
 ９４ 岁	time	date	1
 ９４万	place	fac	1
@@ -27801,7 +27801,7 @@ zhuxi	person	person	1
 ９４０ 号	ordinal	ordinal	1
 ９５	time	date	1
 ９５ 英里	quantity	quantity	2
-９５％	percent	percent	2
+９５％	quantity	percent	2
 ９５００多 票	quantity	quantity	1
 ９５０００万 吨	quantity	quantity	1
 ９６年	time	date	4
@@ -27811,8 +27811,8 @@ zhuxi	person	person	1
 ９７年	time	date	3
 ９７年 ２月	time	date	1
 ９７年 ５月	time	date	1
-９７％	percent	percent	1
-９７．７％	percent	percent	1
+９７％	quantity	percent	1
+９７．７％	quantity	percent	1
 ９８	time	date	2
 ９８年	time	date	5
 ９８年 ５月	time	date	1
@@ -27820,8 +27820,8 @@ zhuxi	person	person	1
 ９９ 年	time	date	1
 ９９年 底	time	date	1
 ９９年 １２月 ８号	time	date	1
-９９％	percent	percent	3
-９９．５％	percent	percent	1
+９９％	quantity	percent	3
+９９．５％	quantity	percent	1
 ９：１５分	time	time	1
 ９：３０	time	time	1
 ：	time	date	1
@@ -27977,7 +27977,7 @@ zhuxi	person	person	1
 Ｓｔａｔｅ－ｏｗｎｅｄ Ａｓｓｅｔｓ Ｓｕｐｅｒｖｉｓｉｏｎ ａｎｄ Ａｄｍｉｎｉｓｔｒａｔｉｏｎ Ｃｏｍｍｉｓｓｉｏｎ	organization	organization	1
 ＳｕｓｅＬｉｎｕｘ	abstract	work_of_art	1
 Ｔ移动 电话	organization	organization	1
-ＴＭＴ	percent	percent	2
+ＴＭＴ	quantity	percent	2
 ＴＭＴ	person	person	4
 ＴＮＴ	object	product	1
 Ｔｅｍｐｌｅ	organization	organization	1
