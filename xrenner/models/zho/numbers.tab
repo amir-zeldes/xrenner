@@ -1,4 +1,6 @@
 # Number words and corresponding Arabic numerals
+零	0
+〇	0
 一	1
 二	2
 三	3
@@ -23,6 +25,14 @@
 玖	9
 十	10
 拾	10
+佰	100
+百	100
+千	1000
+仟	1000
+万	10000
+萬	10000
+亿	100000000
+兆	1000000000000
 one	1
 two	2
 three	3
