@@ -215,7 +215,8 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 				info_string = "class: " + str(out_mark.entity) + " | subclass: " + str(out_mark.subclass) + \
 				              "&#10;definiteness: " + str(out_mark.definiteness) + " | agree: " + str(out_mark.agree) + \
 				              "&#10;cardinality: " + str(out_mark.cardinality) + " | form: "+ str(out_mark.form) + \
-				              "&#10;core_text: " + str(out_mark.core_text) + " | lemma: "+ str(out_mark.lemma)
+				              "&#10;func: " + str(out_mark.func) + \
+				              "&#10;core_text: " + str(out_mark.core_text) + " | lemma: " + str(out_mark.lemma)
 				if out_mark.speaker != "":
 					info_string += "&#10;speaker: " + out_mark.speaker
 				if not out_mark.antecedent == "none":
