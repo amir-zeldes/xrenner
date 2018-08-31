@@ -14,7 +14,8 @@ if sys.version_info[0] < 3:
 	PY2 = True
 	from ConfigParser import ConfigParser, NoSectionError
 	def unicode_split_reader(f):
-		return [line.replace("\n","").replace('\\"','"').split('\t') for line in f.readlines()]
+		return [line.replace("\n","").replace('\\"','"').split('\t') for line in f.read().strip().split("\n")]
+		#return [line.replace("\n","").replace('\\"','"').split('\t') for line in f.readlines()]
 else:
 	# Python 3
 	PY2 = False

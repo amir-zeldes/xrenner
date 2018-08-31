@@ -128,7 +128,7 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name, output_i
 	return output_string
 
 
-def output_conll_sent(conll_tokens, markstart_dict, markend_dict, file_name, output_infstat=False):
+def output_conll_sent(conll_tokens, markstart_dict, markend_dict, file_name, output_infstat=False, output_entity=True):
 	"""
 	Outputs analysis results in CoNLL format, one token per line and markables with opening
 	and closing numbered brackets. Compatible with CoNLL scorer.
@@ -138,6 +138,7 @@ def output_conll_sent(conll_tokens, markstart_dict, markend_dict, file_name, out
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
 	:param file_name: name of the source file (dependency data) to create header for CoNLL file
 	:param output_infstat: whether to append the infstat property of each markable in a separate column (default False)
+	:param output_entity: whether to output entity types in coref ID column (default True)
 	:return: serialized conll format in plain text
 	"""
 	output_string = "# begin document " + str(file_name).replace(".conll10", "") + "\n"
@@ -153,11 +154,11 @@ def output_conll_sent(conll_tokens, markstart_dict, markend_dict, file_name, out
 		coref_col = ""
 		line = str(i) + "\t" + out_tok.text + "\t"
 		infstat_col = ""
-		if output_infstat:
-			infstat_col = "_"
 		if int(out_tok.id) in markstart_dict:
 			for out_mark in sorted(markstart_dict[int(out_tok.id)], key=operator.attrgetter('end'), reverse=True):
 				coref_col += "(" + str(out_mark.group)
+				if output_entity:
+					coref_col += "-" + out_mark.entity
 				if output_infstat:
 					infstat_col = out_mark.infstat
 				if int(out_tok.id) in markend_dict:
@@ -172,7 +173,10 @@ def output_conll_sent(conll_tokens, markstart_dict, markend_dict, file_name, out
 					if len(coref_col) > 0:
 						if coref_col[-1].isdigit():
 							coref_col += "|"  # Use pipe to separate group 1 opening and 2 closing leading to (12) -> (1|2)
-					coref_col += str(out_mark.group) + ")"
+					coref_col += str(out_mark.group)
+					if output_entity:
+						coref_col += "-" + out_mark.entity
+					coref_col += ")"
 		if int(out_tok.id) not in markstart_dict and int(out_tok.id) not in markend_dict:
 			coref_col = "_"
 
@@ -215,7 +219,8 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 				info_string = "class: " + str(out_mark.entity) + " | subclass: " + str(out_mark.subclass) + \
 				              "&#10;definiteness: " + str(out_mark.definiteness) + " | agree: " + str(out_mark.agree) + \
 				              "&#10;cardinality: " + str(out_mark.cardinality) + " | form: "+ str(out_mark.form) + \
-				              "&#10;core_text: " + str(out_mark.core_text) + " | lemma: "+ str(out_mark.lemma)
+				              "&#10;func: " + str(out_mark.func) + \
+				              "&#10;core_text: " + str(out_mark.core_text) + " | lemma: " + str(out_mark.lemma)
 				if out_mark.speaker != "":
 					info_string += "&#10;speaker: " + out_mark.speaker
 				if not out_mark.antecedent == "none":
