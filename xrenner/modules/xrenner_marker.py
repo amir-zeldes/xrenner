@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import re
+import re, csv
 from collections import defaultdict, OrderedDict
 from .xrenner_classes import Markable
 from six import iteritems, iterkeys
@@ -17,7 +17,7 @@ Author: Amir Zeldes
 def is_atomic(mark, atoms, lex):
 	"""
 	Checks if nested markables are allowed within this markable
-	
+
 	:param mark: the :class:`.Markable` to be checked for atomicity
 	:param atoms: list of atomic markable text strings
 	:param lex: the :class:`.LexData` object with gazetteer information and model settings
@@ -115,6 +115,77 @@ def remove_infix_tokens(marktext, lex):
 	return lex.filters["core_infixes"].sub(" ", marktext)
 
 
+def resolve_mark_entity_classify(mark, lex):
+	entity = ""
+	use_entity_deps = True
+	use_entity_sims = True
+	parent_text = mark.head.head_text
+
+	if "ablations" in lex.debug:
+		if "no_entity_dep" in lex.debug["ablations"]:
+			use_entity_deps = False
+		if "no_entity_sim" in lex.debug["ablations"]:
+			use_entity_sims = False
+
+	# Now check what the dependencies predict
+	dep_probs = {}
+	if use_entity_deps:
+		if parent_text in lex.entity_deps:
+			if mark.head.func in lex.entity_deps[parent_text]:
+				dep_probs.update(lex.entity_deps[parent_text][mark.head.func])
+		if len(dep_probs) == 0:  # No literal dependency information found, check if similar heads are known
+			if parent_text in lex.similar:
+				similar_heads = lex.similar[parent_text]
+				for similar_head in similar_heads:
+					if similar_head in lex.entity_deps:
+						if mark.head.func in lex.entity_deps[similar_head]:
+							dep_probs.update(lex.entity_deps[similar_head][mark.head.func])
+							break
+
+	# And check what entity similar words are
+	sim_probs = {}
+	if use_entity_sims:
+		if mark.head.text in lex.similar:
+			for similar_word in lex.similar[mark.head.text]:
+				if similar_word in lex.entity_heads:
+					for entity_type in lex.entity_heads[similar_word]:
+						entity_string = entity_type.split("\t")[0]
+						if entity_string in sim_probs:
+							sim_probs[entity_string] += 1
+						else:
+							sim_probs.update({entity_string: 1})
+
+	# Compare scores to decide between affix vs. dependency evidence vs. embeddings
+	dep_values = list(dep_probs[key] for key in dep_probs)
+	total_deps = float(sum(dep_values))
+	sim_values = list(sim_probs[key] for key in sim_probs)
+	total_sims = float(sum(sim_values))
+	norm_dep_probs = {}
+	norm_sim_probs = {}
+
+	# Normalize - each information source hedges its bets based on how many guesses it makes
+	for key, value in iteritems(dep_probs):
+		norm_dep_probs[key] = value / total_deps
+	for key, value in iteritems(sim_probs):
+		norm_sim_probs[key] = value / total_sims
+
+	# Morph probs
+	head_text = mark.lemma if mark.lemma != "_" and mark.lemma != "" else mark.head.text
+	morph_probs = get_entity_by_affix(head_text, lex)
+
+	# Feature dump
+	dump_features = mark.extract_features(lex, antecedent=None, candidate_list=[], dump_position=False)
+	dump_features['morph_probs'] = morph_probs
+	dump_features['dep_probs'] = dep_probs
+	dump_features['sim_probs'] = sim_probs
+
+	csv_file = open('dump_example_gum.csv', 'a+', newline='')
+	csv_write = csv.writer(csv_file, dialect='excel')
+	feature_entity = list(dump_features.values())
+	csv_write.writerow(feature_entity)
+
+
+
 def resolve_mark_entity(mark, lex):
 	"""
 	Main function to set entity type based on progressively less restricted parts of a markable's text
@@ -131,15 +202,15 @@ def resolve_mark_entity(mark, lex):
 		if "no_entity_dep" in lex.debug["ablations"]:
 			use_entity_deps = False
 		if "no_entity_sim" in lex.debug["ablations"]:
-			use_entity_sims= False
+			use_entity_sims = False
 
 	## DEBUG POINT ##
 	if mark.text == lex.debug["ana"]:
-		a=5
+		a = 5
 
 	parent_text = mark.head.head_text
 	if mark.form == "pronoun":
-		if re.search(r'[12]',mark.agree):  # Explicit 1st or 2nd person pronoun
+		if re.search(r'[12]', mark.agree):  # Explicit 1st or 2nd person pronoun
 			entity = lex.filters["person_def_entity"]
 			mark.entity_certainty = 'certain'
 		elif mark.agree == "male" or mark.agree == "female":  # Possibly human 3rd person
@@ -149,7 +220,8 @@ def resolve_mark_entity(mark, lex):
 			if use_entity_deps:
 				if parent_text in lex.entity_deps:
 					if mark.head.func in lex.entity_deps[parent_text]:
-						entity = max(iterkeys(lex.entity_deps[parent_text][mark.head.func]), key=(lambda key: lex.entity_deps[parent_text][mark.head.func][key]))
+						entity = max(iterkeys(lex.entity_deps[parent_text][mark.head.func]),
+									 key=(lambda key: lex.entity_deps[parent_text][mark.head.func][key]))
 				if entity == "":  # No literal match for dependency, fall back to similar heads
 					if parent_text in lex.similar and use_entity_sims:
 						similar_heads = lex.similar[parent_text]
@@ -181,10 +253,11 @@ def resolve_mark_entity(mark, lex):
 		else:
 			if entity == "":
 				# Try to catch year numbers and hours + minutes
-				if re.match(r'^(1[456789][0-9][0-9]|20[0-9][0-9]|(2[0-3]|1?[0-9]):[0-5][0-9]|ה?תש.".)$', mark.head.text) is not None:
+				if re.match(r'^(1[456789][0-9][0-9]|20[0-9][0-9]|(2[0-3]|1?[0-9]):[0-5][0-9]|ה?תש.".)$',
+							mark.head.text) is not None:
 					entity = lex.filters["time_def_entity"]
 					mark.entity_certainty = "uncertain"
-					mark.subclass = "time-unit" # TODO: de-hardwire this
+					mark.subclass = "time-unit"  # TODO: de-hardwire this
 					mark.definiteness = "def"  # literal year numbers are considered definite like 'proper names'
 					mark.form = "proper"  # literal year numbers are considered definite like 'proper names'
 			if entity == "":
@@ -197,7 +270,7 @@ def resolve_mark_entity(mark, lex):
 			if entity == "":
 				entity = resolve_entity_cascade(replace_head_with_lemma(mark), mark, lex)
 			if entity == "":
-				entity = resolve_entity_cascade(remove_suffix_tokens(mark.text.strip(),lex), mark, lex)
+				entity = resolve_entity_cascade(remove_suffix_tokens(mark.text.strip(), lex), mark, lex)
 			if entity == "":
 				entity = resolve_entity_cascade(remove_prefix_tokens(mark.text.strip(), lex), mark, lex)
 			if entity == "" and mark.core_text != mark.text:
@@ -206,7 +279,8 @@ def resolve_mark_entity(mark, lex):
 				entity = recognize_entity_by_mod(mark, lex)
 			if entity == "" and mark.head.text.istitle():
 				if mark.head.text in lex.last_names:
-					modifiers_match_article = (lex.filters["articles"].match(mod.text) is not None for mod in mark.head.modifiers)
+					modifiers_match_article = (lex.filters["articles"].match(mod.text) is not None for mod in
+											   mark.head.modifiers)
 					modifiers_match_first_name = (mod.text in lex.first_names for mod in mark.head.modifiers)
 					if any(modifiers_match_first_name) and not any(modifiers_match_article):
 						entity = lex.filters["person_def_entity"]
@@ -227,15 +301,21 @@ def resolve_mark_entity(mark, lex):
 			if entity == "":
 				if (mark.head.text.istitle() or not lex.filters["cap_names"]):
 					if mark.head.text in lex.last_names or mark.head.text in lex.first_names:
-						modifiers_match_definite = (lex.filters["definite_articles"].match(mod.text) is not None for mod in mark.head.modifiers)
-						modifiers_match_article = (lex.filters["articles"].match(mod.text) is not None for mod in mark.head.modifiers)
-						modifiers_match_def_entity = (re.sub(r"\t.*","",lex.entity_heads[mod.text.strip().lower()][0]) == lex.filters["default_entity"] for mod in mark.head.modifiers if mod.text.strip().lower() in lex.entity_heads)
-						if not (any(modifiers_match_article) or any(modifiers_match_definite) or any(modifiers_match_def_entity)):
+						modifiers_match_definite = (lex.filters["definite_articles"].match(mod.text) is not None for
+													mod in mark.head.modifiers)
+						modifiers_match_article = (lex.filters["articles"].match(mod.text) is not None for mod in
+												   mark.head.modifiers)
+						modifiers_match_def_entity = (
+						re.sub(r"\t.*", "", lex.entity_heads[mod.text.strip().lower()][0]) == lex.filters[
+							"default_entity"] for mod in mark.head.modifiers if
+						mod.text.strip().lower() in lex.entity_heads)
+						if not (any(modifiers_match_article) or any(modifiers_match_definite) or any(
+								modifiers_match_def_entity)):
 							entity = lex.filters["person_def_entity"]
 			if entity == "":
 				# See what the affix morphology predicts for the head
 				head_text = mark.lemma if mark.lemma != "_" and mark.lemma != "" else mark.head.text
-				morph_probs = get_entity_by_affix(head_text,lex)
+				morph_probs = get_entity_by_affix(head_text, lex)
 
 				# Now check what the dependencies predict
 				dep_probs = {}
@@ -243,7 +323,8 @@ def resolve_mark_entity(mark, lex):
 					if parent_text in lex.entity_deps:
 						if mark.head.func in lex.entity_deps[parent_text]:
 							dep_probs.update(lex.entity_deps[parent_text][mark.head.func])
-					if len(dep_probs) == 0:  # No literal dependency information found, check if similar heads are known
+					if len(
+							dep_probs) == 0:  # No literal dependency information found, check if similar heads are known
 						if parent_text in lex.similar:
 							similar_heads = lex.similar[parent_text]
 							for similar_head in similar_heads:
@@ -263,7 +344,7 @@ def resolve_mark_entity(mark, lex):
 									if entity_string in sim_probs:
 										sim_probs[entity_string] += 1
 									else:
-										sim_probs.update({entity_string:1})
+										sim_probs.update({entity_string: 1})
 
 				# Compare scores to decide between affix vs. dependency evidence vs. embeddings
 				dep_values = list(dep_probs[key] for key in dep_probs)
@@ -275,9 +356,9 @@ def resolve_mark_entity(mark, lex):
 
 				# Normalize - each information source hedges its bets based on how many guesses it makes
 				for key, value in iteritems(dep_probs):
-					norm_dep_probs[key] = value/total_deps
+					norm_dep_probs[key] = value / total_deps
 				for key, value in iteritems(sim_probs):
-					norm_sim_probs[key] = value/total_sims
+					norm_sim_probs[key] = value / total_sims
 
 				joint_probs = defaultdict(float)
 				joint_probs.update(norm_dep_probs)
@@ -287,8 +368,8 @@ def resolve_mark_entity(mark, lex):
 					joint_probs[entity] += sim_probs[entity]
 				# Bias in favor of default entity to break ties
 				joint_probs[lex.filters["default_entity"]] += 0.0000001
-
 				entity = max(joint_probs, key=(lambda key: joint_probs[key]))
+
 
 	if entity != "":
 		mark.entity = entity
@@ -300,7 +381,8 @@ def resolve_mark_entity(mark, lex):
 			mark.alt_agree.append(mark.agree)
 			mark.agree = mark.entity.split("/")[1]
 		mark.entity = mark.entity.split("/")[0]
-	elif mark.entity == lex.filters["person_def_entity"] and mark.agree == lex.filters["default_agree"] and mark.form != "pronoun":
+	elif mark.entity == lex.filters["person_def_entity"] and mark.agree == lex.filters[
+		"default_agree"] and mark.form != "pronoun":
 		mark.agree = lex.filters["person_def_agree"]
 		mark.agree_certainty = "uncertain"
 	if "\t" in mark.entity:  # This is a subclass bearing solution
@@ -316,7 +398,8 @@ def resolve_mark_entity(mark, lex):
 	if mark.entity == lex.filters["person_def_entity"] and mark.agree is None:
 		mark.agree = lex.filters["person_def_agree"]
 		mark.agree_certainty = "uncertain"
-	if mark.entity == "" and mark.core_text.upper() == mark.core_text and re.search(r"[A-ZÄÖÜ]", mark.core_text) is not None:  # Unknown all caps entity, guess acronym default
+	if mark.entity == "" and mark.core_text.upper() == mark.core_text and re.search(r"[A-ZÄÖÜ]",
+																					mark.core_text) is not None:  # Unknown all caps entity, guess acronym default
 		mark.entity = lex.filters["all_caps_entity"]
 		mark.entity_certainty = "uncertain"
 	if mark.entity == "":  # Unknown entity, guess default
@@ -492,7 +575,7 @@ def resolve_cardinality(mark,lex):
 def recognize_entity_by_mod(mark, lex, mark_atoms=False):
 	"""
 	Attempt to recognize entity type based on modifiers
-	
+
 	:param mark: :class:`.Markable` for which to identify the entity type
 	:param modifier_lexicon: The :class:`.LexData` object's modifier list
 	:return: String (entity type, possibly including subtype and agreement)
@@ -522,7 +605,7 @@ def recognize_entity_by_mod(mark, lex, mark_atoms=False):
 def construct_modifier_substring(modifier):
 	"""
 	Creates a list of tokens representing a modifier and all of its submodifiers in sequence
-	
+
 	:param modifier: A ParsedToken object from the modifier list of the head of some markable
 	:return: Text of that modifier together with its modifiers in sequence
 	"""
@@ -555,7 +638,7 @@ def stoplist_prefix_tokens(mark, prefix_dict, keys_to_pop):
 def get_mod_ordered_dict(mod):
 	"""
 	Retrieves the (sub)modifiers of a modifier token
-	
+
 	:param mod: A :class:`.ParsedToken` object representing a modifier of the head of some markable
 	:return: Recursive ordered dictionary of that modifier's own modifiers
 	"""
@@ -756,7 +839,7 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 def lookup_has_entity(text, lemma, entity, lex):
 	"""
 	Checks if a certain token text or lemma have the specific entity listed in the entities or entity_heads lists
-	
+
 	:param text: text of the token
 	:param lemma: lemma of the token
 	:param entity: entity to check for
