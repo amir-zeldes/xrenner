@@ -51,14 +51,64 @@ class CheckGoldAnswer:
         sys.stderr.write('Finished reading gold entities.\n')
         return gold_entities
 
+    def check_gazetteers(self, dump_column, positions):
+        gold_gazetteers = []
+        gazetteers_check = {}
+        entity_gazetteers = csv.reader(open('..\\xrenner\\models\\udx\\entities.tab', 'r'))
+        # entities = [row for row in entity_gazetteers]
+        entity_heads_gazetteers = csv.reader(open('..\\xrenner\\models\\udx\\entity_heads.tab', 'r'))
+        # entity_heads = [row for row in entity_heads_gazetteers]
+        entity_mods_gazetteers = csv.reader(open('..\\xrenner\\models\\udx\\entity_mods.tab', 'r'))
+        # entity_modss = [row for row in entity_mods_gazetteers]
+        gold = open(self.gold_file, encoding='utf-8').readlines()
+        for position in positions:
+            cardinal = 1
+            n_start = position[0]
+            n_end = position[-1]
+            tokens = []
+            for fields in gold:
+                fields = fields.strip().split('\t')
+                if len(fields) <= 1:continue
+                if fields[0].startswith("#"):continue
+                else:
+                    if cardinal >= n_start and cardinal <= n_end:
+                        token = fields[2]
+                        tokens.append(token)
+                    if cardinal > n_end: break
+                    cardinal += 1
+            gazetteers_check[(n_start, n_end)] = tokens
+        for i, headers in enumerate(dump_column):
+            if headers[0] == self.filename:
+                position = (int(headers[8]), int(headers[9]))
+                for doc in self.marks:
+                    for gold_position, gold_entity in self.marks[doc].items():
+                        if position not in self.marks[doc].keys():
+                            gold_gazetteers.append('_')
+                            break
+                        if position == gold_position:
+                            for row in entity_gazetteers:
+                                if " ".join(gazetteers_check[position]) == row[0]:
+                                    gold_gazetteers.append(row[1])
+                                    break
+                            for row in entity_heads_gazetteers:
+                                if " ".join(gazetteers_check[position]) == row[0]:
+                                    gold_gazetteers.append(row[1])
+                                    break
+                            for row in entity_mods_gazetteers:
+                                if " ".join(gazetteers_check[position]) == row[0]:
+                                    gold_gazetteers.append(row[1])
+                                    break
+
     def check_gold_answer(self):
         gold_answer_list = []
+        position_list = []
         csvfile = csv.reader(open(self.response_file, 'r'))
         column = [row for row in csvfile]
         for i, row in enumerate(column):
             headers = row[:]
             if headers[0] == self.filename:
                 position = (int(headers[8]), int(headers[9]))
+                position_list.append(position)
                 for doc in self.marks:
                     for gold_position, gold_entity in self.marks[doc].items():
                         # check positions and assign gold entities to the row
@@ -71,6 +121,9 @@ class CheckGoldAnswer:
 
         sys.stderr.write('Finished checking gold entities of %s, %d gold answers are checked.\n' %
                          (self.filename, len(gold_answer_list)))
+        gold_gazetteers_check = self.check_gazetteers(position_list)
+
+        # check gold gazetteers
 
         with open('dump_files\\%s.csv' % (self.filename), 'w') as f:
             reader = csv.reader(open(self.response_file, 'r'))
