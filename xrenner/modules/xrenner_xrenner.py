@@ -284,7 +284,7 @@ class Xrenner:
         if mark.agree in lex.filters["agree_entity_mapping"]:
             mark.entity = lex.filters["agree_entity_mapping"][mark.agree]
         else:
-            resolve_mark_entity_classify(mark, lex)
+            resolve_mark_entity(mark, lex)
 
         if "ablations" in lex.debug:
             if "no_subclasses" in lex.debug["ablations"]:
