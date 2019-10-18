@@ -117,6 +117,8 @@ def xrenner_worker(data,options,total_docs,counter):
 			if len(data) > 1:
 				if options.format == "webanno":
 					extension = "xmi"
+				if options.format == "webannotsv":
+					extension = "tsv"
 				else:
 					extension = options.format
 				outfile = xrenner.docname + "." + extension
@@ -147,7 +149,7 @@ def xrenner_worker(data,options,total_docs,counter):
 if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-o', '--output', action="store", dest="format", default="sgml", help="output format, default: sgml; alternatives: html, paula, webanno, conll, onto, unittest, none")
+	parser.add_argument('-o', '--output', action="store", dest="format", default="webannotsv", choices=["sgml", "html", "paula", "webanno","webannotsv", "conll", "onto", "unittest", "none"], help="output format, default: sgml; alternatives: html, paula, webanno, webannotsv, conll, onto, unittest, none")
 	parser.add_argument('-m', '--model', action="store", dest="model", default="eng", help="input model directory name, in models/")
 	parser.add_argument('-x', '--override', action="store", dest="override", default=None, help="specify a section in the model's override.ini file with alternative settings")
 	parser.add_argument('-r', '--rulebased', action="store_true", help="run model without machine learning classifiers")

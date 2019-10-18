@@ -3,6 +3,9 @@ import sys
 import operator
 import re
 import os
+import platform
+import xmltodict
+from collections import defaultdict
 
 """
 Output module for exporting resolved data to one of the supported serialization formats
@@ -416,7 +419,10 @@ def output_webanno(conll_tokens, markables):
 			escape_offset += 3 * token.text.count("<")
 
 		text_string += escaped_token + " "
-		text_length += len(token.text.decode("utf-8")) + 1
+		if platform.system() == "Windows":
+			text_length += len(token.text.decode("utf-8")) + 1
+		else:
+			text_length += len(token.text) + 1
 
 	output += text_string
 	output += '"/>\n<type2:DocumentMetaData xmi:id="10001" sofa="12000" begin="0" end="' + str(text_length - 1) + '"'
@@ -436,17 +442,23 @@ def output_webanno(conll_tokens, markables):
 	tok_ends = []
 
 	for token in conll_tokens:
-		output += '\t<type4:Token xmi:id="' + str(int(token.id) + 1) + '" sofa="12000" begin="' + str(cursor) + '" end="' + str(cursor + len(token.text.decode("utf-8"))) + '"/>\n'
+		if platform.system() == "Windows":
+			token_text = token.text.decode("utf-8")
+		else:
+			token_text = token.text
+
+
+		output += '\t<type4:Token xmi:id="' + str(int(token.id) + 1) + '" sofa="12000" begin="' + str(cursor) + '" end="' + str(cursor + len(token_text)) + '"/>\n'
 		all_ids_string += str(int(token.id) + 1) + " "
 		tok_starts.append(cursor)
-		tok_ends.append(cursor + len(token.text.decode("utf-8")))
+		tok_ends.append(cursor + len(token_text))
 
 		if token.sentence.sent_num > current_sent:
 			sentences_string += '\t<type4:Sentence xmi:id="' + str(4000 + current_sent) + '" sofa="12000" begin="' + str(sent_begin) + '" end="' + str(cursor - 1) + '"/>\n'
 			all_ids_string += str(4000 + current_sent) + " "
 			current_sent += 1
 			sent_begin = cursor
-		cursor += len(token.text.decode("utf-8")) + 1
+		cursor += len(token_text) + 1
 
 	sentences_string += '\t<type4:Sentence xmi:id="' + str(4000 + current_sent) + '" sofa="12000" begin="' + str(sent_begin) + '" end="' + str(cursor - 1) + '"/>\n'
 	all_ids_string += str(4000 + current_sent) + " "
@@ -486,6 +498,105 @@ def output_webanno(conll_tokens, markables):
 	output += '<cas:View sofa="12000" members="' + all_ids_string.strip() + '"/>\n</xmi:XMI>\n'
 
 	return output
+
+
+def output_webannotsv(conll_tokens, markables):
+	webannoxmi = xmltodict.parse(output_webanno(conll_tokens, markables))
+
+	output = '''#FORMAT=WebAnno TSV 3.1
+	#T_SP=webanno.custom.Referent|entity|infstat
+	#T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent\n\n\n'''
+
+	tokenstring = webannoxmi['xmi:XMI']['cas:Sofa']['@sofaString']
+
+	endchar2linetok = defaultdict(str)
+
+	sentid2string = defaultdict(str)
+
+
+	for sent in webannoxmi['xmi:XMI']['type4:Sentence']:
+		sent_id = int(sent['@xmi:id']) - 4000
+		sent_start_char = int(sent['@begin'])
+		sent_end_char = int(sent['@end'])
+
+
+		tok_id = 1
+		for tok in webannoxmi['xmi:XMI']['type4:Token']:
+			tok_start_char = int(tok['@begin'])
+			tok_end_char = int(tok['@end'])
+
+			if tok_start_char > sent_end_char:
+				break
+			elif tok_start_char >= sent_start_char:
+				line_ref_string = ''
+				line_type_string = ''
+				line_coref_string = ''
+				line_coref_chain = ''
+
+				if tok_id==1:
+					output += '#Text=%s\n' % (tokenstring[sent_start_char:sent_end_char])
+
+				endchar2linetok[tok_end_char] = '%d-%d' % (sent_id, tok_id)
+				output += '%d-%d\t%d-%d\t%s\t' % \
+						  (sent_id, tok_id, tok_start_char, tok_end_char, tokenstring[tok_start_char:tok_end_char])
+
+				for ref in webannoxmi['xmi:XMI']['custom:Referent']:
+					if tok_start_char >= int(ref['@begin']) and tok_end_char<= int(ref['@end']):
+						line_ref_string += '%s[%d]|' % (ref['@entity'], int(ref['@xmi:id'])-5000)
+						line_type_string += '%s[%d]|' % (ref['@infstat'], int(ref['@xmi:id'])-5000)
+
+						for coref in webannoxmi['xmi:XMI']['custom:Coref']:
+							if int(coref['@begin']) == int(ref['@begin']):
+								line_coref_string += '%s|' % (coref['@type'])
+								line_coref_chain += '%s[%d_%d]|' % (int(coref['@end']), int(coref['@Governor'])-5000, int(coref['@Dependent'])-5000)
+
+				if line_ref_string == '':
+					line_ref_string = '_'
+				elif line_ref_string.endswith('|'):
+					line_ref_string = line_ref_string[:-1]
+
+				if line_type_string == '':
+					line_type_string = '_'
+				elif line_type_string.endswith('|'):
+					line_type_string = line_type_string[:-1]
+
+				if line_coref_chain == '':
+					line_coref_chain = '_'
+				elif line_coref_chain.endswith('|'):
+					line_coref_chain = line_coref_chain[:-1]
+
+
+				if line_coref_string == '':
+					line_coref_string = '_'
+				elif line_coref_string.endswith('|'):
+					line_coref_string = line_coref_string[:-1]
+
+				output += '%s\t%s\t%s\t%s\n' % (line_ref_string, line_type_string, line_coref_string, line_coref_chain)
+
+				tok_id += 1
+
+
+		output += '\n'
+
+
+	# put the coref token back in
+	# TODO: which exact token should the Webanno corefer to ? start, end, or head?
+
+	toreplace = re.findall('\t\d+\[\d+_\d+\][^\t]*\n', output)
+
+	for i in toreplace:
+		chains = [re.findall('((\d+)\[\d+_\d+\])', x) for x in i.strip().split('|')]
+		for id_j in range(len(chains)):
+			chains[id_j] = chains[id_j][0][0].replace(chains[id_j][0][1], endchar2linetok[int(chains[id_j][0][1])])
+		output = output.replace(i, '\t'+'|'.join(chains)+'\n')
+
+
+
+
+
+
+	return output
+
 
 
 def get_glyph(entity_type):

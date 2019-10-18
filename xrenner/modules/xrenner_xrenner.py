@@ -309,6 +309,8 @@ class Xrenner:
             output_PAULA(conll_tokens, markstart_dict, markend_dict, self.docname, self.docpath)
         elif out_format == "webanno":
             return output_webanno(conll_tokens[1:], markables)
+        elif out_format == "webannotsv":
+            return output_webannotsv(conll_tokens[1:], markables)
         elif out_format == "conll":
             return output_conll(conll_tokens, markstart_dict, markend_dict, self.docname, False)
         elif out_format == "conll_sent":
