@@ -509,9 +509,8 @@ def output_webannotsv(conll_tokens, markables):
 
 	tokenstring = webannoxmi['xmi:XMI']['cas:Sofa']['@sofaString']
 
-	endchar2linetok = defaultdict(str)
-
-	sentid2string = defaultdict(str)
+	# ref_id: (ref_start_char, ref_end_char, ref_start_tok, ref_end_tok)
+	refdict = defaultdict(lambda: [None, None, None, None])
 
 
 	for sent in webannoxmi['xmi:XMI']['type4:Sentence']:
@@ -536,19 +535,49 @@ def output_webannotsv(conll_tokens, markables):
 				if tok_id==1:
 					output += '#Text=%s\n' % (tokenstring[sent_start_char:sent_end_char])
 
-				endchar2linetok[tok_end_char] = '%d-%d' % (sent_id, tok_id)
 				output += '%d-%d\t%d-%d\t%s\t' % \
 						  (sent_id, tok_id, tok_start_char, tok_end_char, tokenstring[tok_start_char:tok_end_char])
 
 				for ref in webannoxmi['xmi:XMI']['custom:Referent']:
+
+					refdict[int(ref['@xmi:id'])-5000][0] =  ref['@begin']
+					refdict[int(ref['@xmi:id']) - 5000][1] = ref['@end']
+
 					if tok_start_char >= int(ref['@begin']) and tok_end_char<= int(ref['@end']):
-						line_ref_string += '%s[%d]|' % (ref['@entity'], int(ref['@xmi:id'])-5000)
-						line_type_string += '%s[%d]|' % (ref['@infstat'], int(ref['@xmi:id'])-5000)
+
+						if tok_start_char == int(ref['@begin']) and tok_end_char == int(ref['@end']):
+							line_ref_string += '%s|' % (ref['@entity'])
+							line_type_string += '%s|' % (ref['@infstat'])
+						else:
+							line_ref_string += '%s[%d]|' % (ref['@entity'], int(ref['@xmi:id'])-5000)
+							line_type_string += '%s[%d]|' % (ref['@infstat'], int(ref['@xmi:id'])-5000)
+
+
+						if tok_start_char == int(ref['@begin']):
+							refdict[int(ref['@xmi:id']) - 5000][2] = '%d-%d' % (sent_id, tok_id)
+
+						if tok_end_char == int(ref['@end']):
+							refdict[int(ref['@xmi:id']) - 5000][3] = '%d-%d' % (sent_id, tok_id)
+
+
 
 						for coref in webannoxmi['xmi:XMI']['custom:Coref']:
 							if int(coref['@begin']) == int(ref['@begin']):
-								line_coref_string += '%s|' % (coref['@type'])
-								line_coref_chain += '%s[%d_%d]|' % (int(coref['@end']), int(coref['@Governor'])-5000, int(coref['@Dependent'])-5000)
+								if tok_start_char == int(ref['@begin']) and tok_end_char == int(ref['@end']):
+									# line_coref_chain += '%d[%d_0]|' % (int(ref['@xmi:id'])-5000, int(coref['@Governor']) - 5000)
+									line_coref_chain += '%d[%d_0]|' % (
+										int(coref['@Governor']) - 5000, int(coref['@Governor']) - 5000)
+									line_coref_string += '%s|' % (coref['@type'])
+
+
+								elif tok_start_char == int(ref['@begin']):
+									# line_coref_chain += '%d[%d_%d]|' % (int(ref['@xmi:id'])-5000, int(coref['@Governor'])-5000, int(coref['@Dependent'])-5000)
+									line_coref_chain += '%d[%d_%d]|' % (
+									int(coref['@Governor']) - 5000, int(coref['@Governor']) - 5000, int(coref['@Dependent']) - 5000)
+									line_coref_string += '%s|' % (coref['@type'])
+
+
+
 
 				if line_ref_string == '':
 					line_ref_string = '_'
@@ -587,7 +616,7 @@ def output_webannotsv(conll_tokens, markables):
 	for i in toreplace:
 		chains = [re.findall('((\d+)\[\d+_\d+\])', x) for x in i.strip().split('|')]
 		for id_j in range(len(chains)):
-			chains[id_j] = chains[id_j][0][0].replace(chains[id_j][0][1], endchar2linetok[int(chains[id_j][0][1])])
+			chains[id_j] = chains[id_j][0][0].replace(chains[id_j][0][1]+'[', refdict[int(chains[id_j][0][1])][2]+'[')
 		output = output.replace(i, '\t'+'|'.join(chains)+'\n')
 
 
