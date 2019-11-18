@@ -503,14 +503,21 @@ def output_webanno(conll_tokens, markables):
 def output_webannotsv(conll_tokens, markables):
 	webannoxmi = xmltodict.parse(output_webanno(conll_tokens, markables))
 
-	output = '''#FORMAT=WebAnno TSV 3.1
-	#T_SP=webanno.custom.Referent|entity|infstat
-	#T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent\n\n\n'''
+	# output = '''#FORMAT=WebAnno TSV 3.1
+	# #T_SP=webanno.custom.Referent|entity|infstat
+	# #T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent\n\n\n'''
+
+	output = ['#FORMAT=WebAnno TSV 3.1',
+		'#T_SP=webanno.custom.Referent|entity|infstat',
+		'#T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent',
+	'', '']
 
 	tokenstring = webannoxmi['xmi:XMI']['cas:Sofa']['@sofaString']
 
 	# ref_id: (ref_start_char, ref_end_char, ref_start_tok, ref_end_tok)
 	refdict = defaultdict(lambda: [None, None, None, None])
+
+	singletokens = []
 
 
 	for sent in webannoxmi['xmi:XMI']['type4:Sentence']:
@@ -533,10 +540,16 @@ def output_webannotsv(conll_tokens, markables):
 				line_coref_chain = ''
 
 				if tok_id==1:
-					output += '#Text=%s\n' % (tokenstring[sent_start_char:sent_end_char])
 
-				output += '%d-%d\t%d-%d\t%s\t' % \
-						  (sent_id, tok_id, tok_start_char, tok_end_char, tokenstring[tok_start_char:tok_end_char])
+					# output += '#Text=%s\n' % (tokenstring[sent_start_char:sent_end_char])
+					output.append('#Text=%s' % (tokenstring[sent_start_char:sent_end_char]))
+
+				# output += '%d-%d\t%d-%d\t%s\t' % \
+				# 		  (sent_id, tok_id, tok_start_char, tok_end_char, tokenstring[tok_start_char:tok_end_char])
+
+				line_output = ['%d-%d' % (sent_id, tok_id), '%d-%d' % (tok_start_char, tok_end_char), tokenstring[tok_start_char:tok_end_char]]
+
+
 
 				for ref in webannoxmi['xmi:XMI']['custom:Referent']:
 
@@ -563,18 +576,21 @@ def output_webannotsv(conll_tokens, markables):
 
 						for coref in webannoxmi['xmi:XMI']['custom:Coref']:
 							if int(coref['@begin']) == int(ref['@begin']):
-								if tok_start_char == int(ref['@begin']) and tok_end_char == int(ref['@end']):
-									# line_coref_chain += '%d[%d_0]|' % (int(ref['@xmi:id'])-5000, int(coref['@Governor']) - 5000)
-									line_coref_chain += '%d[%d_0]|' % (
-										int(coref['@Governor']) - 5000, int(coref['@Governor']) - 5000)
-									line_coref_string += '%s|' % (coref['@type'])
 
-
-								elif tok_start_char == int(ref['@begin']):
+								if tok_start_char == int(ref['@begin']):
 									# line_coref_chain += '%d[%d_%d]|' % (int(ref['@xmi:id'])-5000, int(coref['@Governor'])-5000, int(coref['@Dependent'])-5000)
 									line_coref_chain += '%d[%d_%d]|' % (
 									int(coref['@Governor']) - 5000, int(coref['@Governor']) - 5000, int(coref['@Dependent']) - 5000)
 									line_coref_string += '%s|' % (coref['@type'])
+
+
+									if tok_start_char == int(ref['@begin']) and tok_end_char == int(ref['@end']):
+										singletokens.append(int(ref['@xmi:id']) - 5000)
+
+
+									# line_coref_chain += '%d[%d_0]|' % (
+									# 	int(coref['@Governor']) - 5000, int(coref['@Governor']) - 5000)
+									# line_coref_string += '%s|' % (coref['@type'])
 
 
 
@@ -600,28 +616,56 @@ def output_webannotsv(conll_tokens, markables):
 				elif line_coref_string.endswith('|'):
 					line_coref_string = line_coref_string[:-1]
 
-				output += '%s\t%s\t%s\t%s\n' % (line_ref_string, line_type_string, line_coref_string, line_coref_chain)
 
+				line_output += [line_ref_string, line_type_string, line_coref_string, line_coref_chain]
+				# output += '%s\t%s\t%s\t%s\n' % (line_ref_string, line_type_string, line_coref_string, line_coref_chain)
+
+				output.append(line_output)
 				tok_id += 1
 
 
-		output += '\n'
+		# output += '\n'
+		output.append('')
 
 
 	# put the coref token back in
 	# TODO: which exact token should the Webanno corefer to ? start, end, or head?
 
-	toreplace = re.findall('\t\d+\[\d+_\d+\][^\t]*\n', output)
+	# toreplace = re.findall('\t\d+\[\d+_\d+\][^\t]*\n', output)
 
-	for i in toreplace:
-		chains = [re.findall('((\d+)\[\d+_\d+\])', x) for x in i.strip().split('|')]
-		for id_j in range(len(chains)):
-			chains[id_j] = chains[id_j][0][0].replace(chains[id_j][0][1]+'[', refdict[int(chains[id_j][0][1])][2]+'[')
-		output = output.replace(i, '\t'+'|'.join(chains)+'\n')
+	for id_l, l in enumerate(output):
+		if isinstance(l, list):
+			corefcol = l[-1]
+
+			if corefcol != '_':
+
+				chains = [re.split(r'[\[\]_]', x) for x in corefcol.split('|')]
+
+				for id_j in range(len(chains)):
+
+					tokenplace = refdict[int(chains[id_j][0])][2]
+
+					if refdict[int(chains[id_j][1])][2] == refdict[int(chains[id_j][1])][3]:
+						leftid = '0'
+					else:
+						leftid = chains[id_j][1]
+
+					if refdict[int(chains[id_j][2])][2] == refdict[int(chains[id_j][2])][3]:
+						rightid = '0'
+					else:
+						rightid = chains[id_j][2]
+
+					if rightid == '0' and leftid == '0':
+						chains[id_j] = tokenplace
+					else:
+						chains[id_j] = tokenplace + '[' + leftid + '_' + rightid + ']'
+
+				output[id_l][-1] = '|'.join(chains)
 
 
+			output[id_l] = '\t'.join(output[id_l])
 
-
+	output = '\n'.join(output)
 
 
 	return output
