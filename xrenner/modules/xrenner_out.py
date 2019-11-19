@@ -10,8 +10,10 @@ from collections import defaultdict
 """
 Output module for exporting resolved data to one of the supported serialization formats
 
-Author: Amir Zeldes
+Author: Amir Zeldes, Siyao Peng
 """
+
+PY3 = sys.version_info[0] == 3
 
 
 def clean_filename(filename):
@@ -419,10 +421,10 @@ def output_webanno(conll_tokens, markables):
 			escape_offset += 3 * token.text.count("<")
 
 		text_string += escaped_token + " "
-		if platform.system() == "Windows":
-			text_length += len(token.text.decode("utf-8")) + 1
-		else:
+		if PY3:
 			text_length += len(token.text) + 1
+		else:
+			text_length += len(token.text.decode("utf-8")) + 1
 
 	output += text_string
 	output += '"/>\n<type2:DocumentMetaData xmi:id="10001" sofa="12000" begin="0" end="' + str(text_length - 1) + '"'
@@ -442,10 +444,10 @@ def output_webanno(conll_tokens, markables):
 	tok_ends = []
 
 	for token in conll_tokens:
-		if platform.system() == "Windows":
-			token_text = token.text.decode("utf-8")
-		else:
+		if PY3:
 			token_text = token.text
+		else:
+			token_text = token.text.decode("utf-8")
 
 
 		output += '\t<type4:Token xmi:id="' + str(int(token.id) + 1) + '" sofa="12000" begin="' + str(cursor) + '" end="' + str(cursor + len(token_text)) + '"/>\n'
