@@ -159,7 +159,15 @@ class Markable:
 		if dump_position:
 			out_dict["position"] = str(self.start)+"-"+str(self.end)+";"+str(antecedent.start)+"-"+str(antecedent.end)
 		out_dict["docname"] = lex.docname
-		out_dict["genre"] = lex.docname[:4]  # By convention, genre is taken from first 4 chars of file name
+
+		# TODO: Make genre representation configurable
+		# By convention, genre is taken from first 4 chars of file, but for corpora like GUM use part between underscores
+		if lex.docname.startswith("GUM_") or lex.docname.lower().startswith("autogum_") or lex.docname.lower().startswith("amalgum_"):
+			out_dict["genre"] = lex.docname.split("_")[1]
+		elif len(lex.docname) > 4:
+			out_dict["genre"] = lex.docname[:4]
+		else:
+			out_dict["genre"] = "_"  # Too short to detect genre
 
 		log_props = set([])  # Properties to log-transform before dump, if desired
 		bool_props = {"coordinate","quoted","negated","neg_parent"}  # Boolean props to dump as 1 or 0
