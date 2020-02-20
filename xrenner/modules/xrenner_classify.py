@@ -19,7 +19,8 @@ class Classifier:
 		t = str(type(cls))
 		if "Ridge" in t or "Elastic" in t or "Logistic" in t:
 			self.cls_type = "decision"
-		elif "RandomForest" in t or "Perceptron" in t or "StochasticGradient" in t or "Boost" in t:
+		elif "RandomForest" in t or "Perceptron" in t or "StochasticGradient" in t or "Boost" in t or \
+			"XGB" in t:
 			self.cls_type = "tuple"
 		else:
 			self.cls_type = "predict_proba"
