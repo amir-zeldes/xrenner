@@ -51,6 +51,9 @@ class LexData:
 		self.xrenner = xrenner
 		self.entity_oracle = None  # Holds external entity predictions to use instead of system predictions
 		self.oracle_counters = [0,0,0]
+		self.lemma_freqs = defaultdict(float)  # Holds proportional frequency of each lemma in document
+		self.token_count = 0  # Holds copy of token count for document from Xrenner object
+
 		# Lookup model path
 
 		if os.sep in self.model:  # Check if model provided is an absolute or relative path
