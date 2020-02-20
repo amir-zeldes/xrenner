@@ -49,7 +49,8 @@ class LexData:
 		self.dump_headers = []  # Placeholder for data dump feature names
 		self.classifiers = {}  # Holds loaded classifiers from pickled files in model
 		self.xrenner = xrenner
-
+		self.entity_oracle = None  # Holds external entity predictions to use instead of system predictions
+		self.oracle_counters = [0,0,0]
 		# Lookup model path
 
 		if os.sep in self.model:  # Check if model provided is an absolute or relative path
@@ -577,3 +578,21 @@ class LexData:
 							entity_class = entity.split("\t")[0]
 							morph[substring] = {entity_class:1}
 		return morph
+	def read_oracle(self,oracle_file):
+
+		self.entity_oracle = defaultdict(lambda : defaultdict(str))
+		sents = io.open(oracle_file,encoding="utf8").read().strip().split("\n\n")
+
+		for sent in sents:
+			parts = sent.strip().split("\n")
+			if len(parts) == 3:
+				text = parts[0]
+				preds = parts[-1]
+				for pred in preds.split("|"):
+					toks, entity = pred.split()
+					start, end = toks.split(",")
+					end = int(end) - 1
+					start = int(start)
+					self.entity_oracle[text][(start,end)] = entity
+
+
