@@ -26,14 +26,14 @@ def find_antecedent(markable, previous_markables, lex, restrict_rule=""):
 		a=5
 	candidate = None
 	matching_rule = None
-	for rule in lex.coref_rules:
-		if candidate is None:
-			# If this call of find_antecedent is limited to certain rules, check that the restriction is in the rule
-			if restrict_rule == "" or restrict_rule in rule.ana_spec:
-				if coref_rule_applies(lex, rule.ana_constraints, markable):
-					candidate = search_prev_markables(markable, previous_markables, rule, lex)
-					if candidate is not None:
-						matching_rule = rule.propagation
+	for i, rule in enumerate(lex.coref_rules):
+		# If this call of find_antecedent is limited to certain rules, check that the restriction is in the rule
+		if restrict_rule == "" or restrict_rule in rule.ana_spec:
+			if coref_rule_applies(lex, rule.ana_constraints, markable):
+				candidate = search_prev_markables(markable, previous_markables, rule, lex)
+				if candidate is not None:
+					matching_rule = rule.propagation
+					break
 
 	return candidate, matching_rule
 
