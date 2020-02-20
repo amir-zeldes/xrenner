@@ -350,6 +350,17 @@ def run_isa(markable, candidate, lex):
 			if candidate.head.text in markable_mod_texts:
 				return True
 
+	# Check for last name + full name match
+	if markable.entity in ["", lex.filters["person_def_entity"]] and candidate.entity in ["", lex.filters["person_def_entity"]]:
+		if markable.head.text in lex.last_names:
+			candidate_mod_texts = list((mod.text) for mod in candidate.head.modifiers)
+			if markable.head.text in candidate_mod_texts:
+				return True
+		if candidate.head.text in lex.last_names:
+			markable_mod_texts = list((mod.text) for mod in markable.head.modifiers)
+			if candidate.head.text in markable_mod_texts:
+				return True
+
 	# Forbid isa head matching for two distinct proper names except first+full name; NB: use coref table for these if desired
 	if markable.form == "proper" and candidate.form == "proper":
 		if markable.text in lex.names or markable.text in lex.first_names:
@@ -591,7 +602,7 @@ def best_candidate(markable, candidate_set, lex, rule, take_first=False):
 
 	## DEBUG POINT ##
 	if markable.text == lex.debug["ana"]:
-		pass
+		a=4
 
 	if lex.dump is None and not heuristic and lex.filters["use_classifiers"]:
 		preds = lex.classifiers[clf_name].classify_many(clf_input)
