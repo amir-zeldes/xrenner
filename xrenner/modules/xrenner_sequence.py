@@ -11,6 +11,10 @@ Author: Amir Zeldes
 
 import sys, os
 
+script_dir = os.path.dirname(os.path.realpath(__file__)) + os.sep
+
+PY3 = sys.version_info[0] > 2
+
 class StdOutFilter(object):
 	def __init__(self): #, strings_to_filter, stream):
 		self.stream = sys.stdout
@@ -52,11 +56,15 @@ p.end()
 
 class Sequencer:
 	def __init__(self, model_path=None):
-		model_dir = os.sep.join([os.path.dirname(os.path.realpath(__file__)), "..", "models", "_embeddings"]) + os.sep
 		if model_path is None:
-			model_path = "best-model.pt"
-		model_path = model_dir + model_path
-		self.tagger = SequenceTagger.load_from_file(model_path)
+			model_path = script_dir + ".." + os.sep + "models" + os.sep + "_sequence_taggers" + os.sep + "eng_flair_nner_distilbert.pt"
+		elif os.sep not in model_path:  # Assume this is a file in models/_sequence_taggers
+			model_path = script_dir + ".." + os.sep + "models" + os.sep + "_sequence_taggers" + os.sep + model_path
+		if not os.path.exists(model_path):
+			sys.stderr.write("! Sequence tagger model file missing at " + model_path + "\n")
+			sys.stderr.write("! Add the model file or use get_models.py to obtain built-in models\nAborting...\n")
+			quit()
+		self.tagger = SequenceTagger.load(model_path)
 
 	def clear_embeddings(self, sentences, also_clear_word_embeddings=False):
 		"""
@@ -66,11 +74,10 @@ class Sequencer:
 		for sentence in sentences:
 			sentence.clear_embeddings(also_clear_word_embeddings=also_clear_word_embeddings)
 
-	def predict_proba(self, sentences, mini_batch_size=32):
+	def predict_proba(self, sentences):
 		"""
 		Predicts a list of class and class probability tuples for every token in a list of sentences
 		:param sentences: list of space tokenized sentence strings
-		:param mini_batch_size: mini batch size to use
 		:return: the list of sentences containing the labels
 		"""
 
@@ -79,41 +86,18 @@ class Sequencer:
 		sents.sort(key=lambda x:x[0], reverse=True)
 		sentences = [s[2] for s in sents]
 
-		with torch.no_grad():
-			if type(sentences) is Sentence:
-				sentences = [sentences]
-			if isinstance(sentences[0],str):
-				sentences = [Sentence(s) for s in sentences]
-
-			batches = [sentences[x:x + mini_batch_size] for x in range(0, len(sentences), mini_batch_size)]
-			featmats = []
-
-			for i, batch in enumerate(batches):
-
-				with torch.no_grad():
-					feature, lengths, tags = self.tagger.forward(batch, sort=True)
-					#loss = self._calculate_loss(feature, lengths, tags)
-					tags = self.tagger._obtain_labels(feature, lengths)
-
-					featmats.append(feature)
-
-				for (sentence, sent_tags) in zip(batch, tags):
-					for (token, tag) in zip(sentence.tokens, sent_tags):
-
-						token.add_tag_label(self.tagger.tag_type, tag)
-
-				# clearing token embeddings to save memory
-				self.clear_embeddings(batch, also_clear_word_embeddings=True)
+		preds = self.tagger.predict(sentences)
 
 		# sort back
-		sents = [tuple(list(sents[i]) + [s]) for i, s in enumerate(sentences)]
+		sents = [tuple(list(sents[i]) + [s]) for i, s in enumerate(preds)]
 		sents.sort(key=lambda x:x[1])
 		sents = [s[3] for s in sents]
 
 		output = []
 		for s in sents:
 			for tok in s.tokens:
-				output.append((tok.tags['ner'].value.replace("S-",""), tok.tags['ner'].score))
+				output.append((tok.tags['ner'].value.replace("S-","").replace("B-","").replace("I-","").replace("E-",""),
+							   tok.tags['ner'].score))
 
 		return output
 

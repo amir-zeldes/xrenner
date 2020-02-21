@@ -22,15 +22,18 @@ decimal.getcontext().rounding = decimal.ROUND_DOWN
 
 class Xrenner:
 
-	def __init__(self, model="eng", override=None, rule_based=False):
+	def __init__(self, model="eng", override=None, rule_based=False, no_seq=False):
 		"""
 		Main class for xrenner coreferencer. Invokes the load method to read model data.
 		
 		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
 		:param override: name of a section in models/override.ini if configuration overrides should be applied
-		:return: void
+		:param rule_based: do not use machine learning classifiers for coreference resolution
+		:param no_seq: do not use machine learning sequence taggers for entity resolution
 		"""
+
 		self.rule_based = rule_based
+		self.no_seq = no_seq
 		self.load(model, override)
 		if "depedit.ini" in self.lex.model_files:
 			depedit_config = self.lex.model_files["depedit.ini"]
@@ -46,19 +49,21 @@ class Xrenner:
 
 		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
 		:param override: name of a section in models/override.ini if configuration overrides should be applied
-		:return: void
+		:return: None
 		"""
+
 		self.model = model
 		self.override = override
-		self.lex = LexData(self.model, self, self.override, self.rule_based)
+		self.lex = LexData(self.model, self, self.override, self.rule_based, self.no_seq)
 
 	def set_doc_name(self, name):
 		"""
 		Method to manually set the name of the document being processed, rather than deriving it from an input file name.
 
 		:param name: string, the name to give the document
-		:return: void
+		:return: None
 		"""
+		
 		self.docname = name
 		self.lex.docname = name  # Copy in lex, in case we need access in nested object
 

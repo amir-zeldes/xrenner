@@ -95,7 +95,7 @@ def xrenner_worker(data,options,total_docs,counter):
 
 	model = options.model
 	override = options.override
-	xrenner = Xrenner(model, override, options.rulebased)
+	xrenner = Xrenner(model, override, options.rulebased, options.noseq)
 
 	if options.dump is not None:
 		xrenner.lex.procid = str(current_process().ident)
@@ -165,6 +165,7 @@ if __name__ == "__main__":
 	parser.add_argument('-d', '--dump', action="store", dest="dump", help="file to dump individual analyses into", default=None)
 	parser.add_argument('file', action="store", help="input file name to process")
 	parser.add_argument('--oracle', action='store', help="file with oracle entity predictions")
+	parser.add_argument('--noseq', action='store_true', help="do not use sequence tagger for entity classification")
 	parser.add_argument('--version', action='version', version=xrenner_version, help="show xrenner version number and quit")
 
 	total_docs = 0

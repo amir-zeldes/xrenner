@@ -35,10 +35,12 @@ class LexData:
 	configuration files.
 	"""
 
-	def __init__(self, model, xrenner, override=None, rule_based=False):
+	def __init__(self, model, xrenner, override=None, rule_based=False, no_seq=False):
 		"""
 		:param model: model - string name of the model to read from models/
 		:param override: override - optional name of a section to use in models/override.ini
+		:param rule_based: do not use machine learning classifiers for coreference resolution
+		:param no_seq: do not use machine learning sequence taggers for entity resolution
 		"""
 		gc.disable()
 		self.model = model
@@ -160,6 +162,13 @@ class LexData:
 		self.incompatible_mod_pairs = set([])
 		self.incompatible_isa_pairs = set([])
 
+		# Load sequence classifier if specified
+		self.sequencer = None
+		if "sequencer" in self.filters and not no_seq:
+			if len(self.filters["sequencer"]) > 0:
+				from .xrenner_sequence import Sequencer
+				self.sequencer = Sequencer(model_path=self.filters["sequencer"])
+
 		gc.enable()
 
 	def read_delim(self, filename, mode="normal", atom_list_name="atoms", add_to_sums=False, sep=","):
@@ -179,7 +188,7 @@ class LexData:
 			if PY2:
 				reader = unicode_split_reader(csvfile)
 			else:
-				reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
+				reader = csv.reader(csvfile, delimiter='\t', escapechar="\\", quoting=csv.QUOTE_NONE)
 			if mode == "low":
 				return set([rows[0].lower() for rows in reader if not rows[0].startswith('#') and not len(rows[0]) == 0])
 			elif mode == "double":
@@ -581,6 +590,7 @@ class LexData:
 							entity_class = entity.split("\t")[0]
 							morph[substring] = {entity_class:1}
 		return morph
+
 	def read_oracle(self,oracle_file):
 
 		self.entity_oracle = defaultdict(lambda : defaultdict(str))
