@@ -31,7 +31,7 @@ def clean_filename(filename):
 def output_onto(conll_tokens, markstart_dict, markend_dict, file_name):
 	"""
 	Outputs analysis results in OntoNotes .coref XML format
-	
+
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
@@ -61,7 +61,7 @@ def output_onto(conll_tokens, markstart_dict, markend_dict, file_name):
 def output_SGML(conll_tokens, markstart_dict, markend_dict):
 	"""
 	Outputs analysis results as CWB SGML (with nesting), one token per line and markables in <referent> tags
-	
+
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
@@ -89,7 +89,7 @@ def output_conll(conll_tokens, markstart_dict, markend_dict, file_name, output_i
 	"""
 	Outputs analysis results in CoNLL format, one token per line and markables with opening
 	and closing numbered brackets. Compatible with CoNLL scorer.
-	
+
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
@@ -195,7 +195,7 @@ def output_HTML(conll_tokens, markstart_dict, markend_dict, rtl=False):
 	"""
 	Outputs analysis results as HTML (assuming jquery, xrenner css and js files), one token per line and
 	markables in <div> tags with Font Awesome icons and colored groups.
-	
+
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
@@ -253,7 +253,7 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict, docname, docpath):
 	Outputs analysis results as PAULA standoff XML. Separate files for tokens, markables and coreference links
 	plus annotations. This format is the most complete, distinguishing apposition, anaphora, cataphora and other
 	coreference types as edge annotations.
-	
+
 	:param conll_tokens: List of all processed ParsedToken objects in the document
 	:param markstart_dict: Dictionary from markable starting token ids to Markable objects
 	:param markend_dict: Dictionary from markable ending token ids to Markable objects
@@ -359,7 +359,7 @@ def output_PAULA(conll_tokens, markstart_dict, markend_dict, docname, docpath):
 
 		paula_tokens += '<mark id="tok_' + out_tok.id + '" xlink:href="#xpointer(string-range(//body,' + "'', " + str(cursor) + "," + str(len(out_tok.text)) + "))" + '"/><!-- ' + out_tok.text + " -->\n"
 		cursor += len(out_tok.text) + 1
-	
+
 	paula_text += "\n</body>\n</paula>\n"
 	paula_tokens += "</markList>\n</paula>\n"
 	paula_markables += "</markList>\n</paula>\n"
@@ -502,17 +502,18 @@ def output_webanno(conll_tokens, markables):
 	return output
 
 
-def output_webannotsv(conll_tokens, markables):
+def output_webannotsv(conll_tokens, markables, output_infstat=False):
 	webannoxmi = xmltodict.parse(output_webanno(conll_tokens, markables))
 
-	# output = '''#FORMAT=WebAnno TSV 3.1
-	# #T_SP=webanno.custom.Referent|entity|infstat
-	# #T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent\n\n\n'''
-
-	output = ['#FORMAT=WebAnno TSV 3.1',
-		'#T_SP=webanno.custom.Referent|entity|infstat',
-		'#T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent',
-	'', '']
+	if not output_infstat:
+		output = ['#FORMAT=WebAnno TSV 3.2',
+			'#T_SP=webanno.custom.Referent|entity',
+		'', '']
+	else:
+		output = ['#FORMAT=WebAnno TSV 3.2',
+			'#T_SP=webanno.custom.Referent|entity|infstat',
+			'#T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent',
+		'', '']
 
 	tokenstring = webannoxmi['xmi:XMI']['cas:Sofa']['@sofaString']
 
@@ -521,12 +522,10 @@ def output_webannotsv(conll_tokens, markables):
 
 	singletokens = []
 
-
 	for sent in webannoxmi['xmi:XMI']['type4:Sentence']:
 		sent_id = int(sent['@xmi:id']) - 4000
 		sent_start_char = int(sent['@begin'])
 		sent_end_char = int(sent['@end'])
-
 
 		tok_id = 1
 		for tok in webannoxmi['xmi:XMI']['type4:Token']:
@@ -542,15 +541,9 @@ def output_webannotsv(conll_tokens, markables):
 				line_coref_chain = ''
 
 				if tok_id==1:
-
-					# output += '#Text=%s\n' % (tokenstring[sent_start_char:sent_end_char])
 					output.append('#Text=%s' % (tokenstring[sent_start_char:sent_end_char]))
 
-				# output += '%d-%d\t%d-%d\t%s\t' % \
-				# 		  (sent_id, tok_id, tok_start_char, tok_end_char, tokenstring[tok_start_char:tok_end_char])
-
 				line_output = ['%d-%d' % (sent_id, tok_id), '%d-%d' % (tok_start_char, tok_end_char), tokenstring[tok_start_char:tok_end_char]]
-
 
 
 				for ref in webannoxmi['xmi:XMI']['custom:Referent']:
@@ -562,11 +555,12 @@ def output_webannotsv(conll_tokens, markables):
 
 						if tok_start_char == int(ref['@begin']) and tok_end_char == int(ref['@end']):
 							line_ref_string += '%s|' % (ref['@entity'])
-							line_type_string += '%s|' % (ref['@infstat'])
+							if output_infstat:
+								line_type_string += '%s|' % (ref['@infstat'])
 						else:
 							line_ref_string += '%s[%d]|' % (ref['@entity'], int(ref['@xmi:id'])-5000)
-							line_type_string += '%s[%d]|' % (ref['@infstat'], int(ref['@xmi:id'])-5000)
-
+							if output_infstat:
+								line_type_string += '%s[%d]|' % (ref['@infstat'], int(ref['@xmi:id'])-5000)
 
 						if tok_start_char == int(ref['@begin']):
 							refdict[int(ref['@xmi:id']) - 5000][2] = '%d-%d' % (sent_id, tok_id)
@@ -574,28 +568,21 @@ def output_webannotsv(conll_tokens, markables):
 						if tok_end_char == int(ref['@end']):
 							refdict[int(ref['@xmi:id']) - 5000][3] = '%d-%d' % (sent_id, tok_id)
 
+						if 'custom:Coref' in webannoxmi["xmi:XMI"]:
+							if not isinstance(webannoxmi['xmi:XMI']['custom:Coref'],list):
+								webannoxmi['xmi:XMI']['custom:Coref'] = [webannoxmi['xmi:XMI']['custom:Coref']]
+							for coref in webannoxmi['xmi:XMI']['custom:Coref']:
+								if int(coref['@begin']) == int(ref['@begin']):
+
+									if tok_start_char == int(ref['@begin']):
+										# line_coref_chain += '%d[%d_%d]|' % (int(ref['@xmi:id'])-5000, int(coref['@Governor'])-5000, int(coref['@Dependent'])-5000)
+										line_coref_chain += '%d[%d_%d]|' % (
+										int(coref['@Governor']) - 5000, int(coref['@Governor']) - 5000, int(coref['@Dependent']) - 5000)
+										line_coref_string += '%s|' % (coref['@type'])
 
 
-						for coref in webannoxmi['xmi:XMI']['custom:Coref']:
-							if int(coref['@begin']) == int(ref['@begin']):
-
-								if tok_start_char == int(ref['@begin']):
-									# line_coref_chain += '%d[%d_%d]|' % (int(ref['@xmi:id'])-5000, int(coref['@Governor'])-5000, int(coref['@Dependent'])-5000)
-									line_coref_chain += '%d[%d_%d]|' % (
-									int(coref['@Governor']) - 5000, int(coref['@Governor']) - 5000, int(coref['@Dependent']) - 5000)
-									line_coref_string += '%s|' % (coref['@type'])
-
-
-									if tok_start_char == int(ref['@begin']) and tok_end_char == int(ref['@end']):
-										singletokens.append(int(ref['@xmi:id']) - 5000)
-
-
-									# line_coref_chain += '%d[%d_0]|' % (
-									# 	int(coref['@Governor']) - 5000, int(coref['@Governor']) - 5000)
-									# line_coref_string += '%s|' % (coref['@type'])
-
-
-
+										if tok_start_char == int(ref['@begin']) and tok_end_char == int(ref['@end']):
+											singletokens.append(int(ref['@xmi:id']) - 5000)
 
 				if line_ref_string == '':
 					line_ref_string = '_'
@@ -619,32 +606,29 @@ def output_webannotsv(conll_tokens, markables):
 					line_coref_string = line_coref_string[:-1]
 
 
-				line_output += [line_ref_string, line_type_string, line_coref_string, line_coref_chain]
+				if not output_infstat:
+					line_output += [line_ref_string, line_type_string]
+				else:
+					line_output += [line_ref_string, line_type_string, line_coref_string, line_coref_chain]
 				# output += '%s\t%s\t%s\t%s\n' % (line_ref_string, line_type_string, line_coref_string, line_coref_chain)
 
 				output.append(line_output)
 				tok_id += 1
 
-
 		# output += '\n'
 		output.append('')
 
-
 	# put the coref token back in
 	# TODO: which exact token should the Webanno corefer to ? start, end, or head?
-
-	# toreplace = re.findall('\t\d+\[\d+_\d+\][^\t]*\n', output)
 
 	for id_l, l in enumerate(output):
 		if isinstance(l, list):
 			corefcol = l[-1]
 
 			if corefcol != '_':
-
 				chains = [re.split(r'[\[\]_]', x) for x in corefcol.split('|')]
 
 				for id_j in range(len(chains)):
-
 					tokenplace = refdict[int(chains[id_j][0])][2]
 
 					if refdict[int(chains[id_j][1])][2] == refdict[int(chains[id_j][1])][3]:
@@ -664,21 +648,18 @@ def output_webannotsv(conll_tokens, markables):
 
 				output[id_l][-1] = '|'.join(chains)
 
-
 			output[id_l] = '\t'.join(output[id_l])
 
 	output = '\n'.join(output)
 
-
 	return output
-
 
 
 def get_glyph(entity_type):
 	"""
 	Generates appropriate Font Awesome icon strings based on entity type strings, such as
 	a person icon (fa-male) for the 'person' entity, etc.
-	
+
 	:param entity_type: String specifying the entity type to be visualized
 	:return: HTML string with the corresponding Font Awesome icon
 	"""
