@@ -34,6 +34,8 @@ def add_child_info(conll_tokens, child_funcs, child_strings, lex):
 	:return: void
 	"""
 	for child_id in child_funcs:
+		if child_id > len(conll_tokens)-1:
+			continue
 		for func in child_funcs[child_id]:
 			if func not in conll_tokens[child_id].child_funcs:
 				conll_tokens[child_id].child_funcs.append(func)
@@ -81,7 +83,7 @@ def postprocess_parser(conll_tokens, tokoffset, children, stop_ids, lex):
 		# Check for [city], [state/country] apposition -
 		# typical (English model) Stanford parser behavior
 		if tok1.text == lex.debug["ana"]:
-			pass
+			a=5
 		if lex.filters["apposition_func"].match(tok1.func) is not None and not int(tok1.id) < 3:
 			if conll_tokens[int(tok1.id) - 1].text.strip() == ",":
 				tok_minus2 = conll_tokens[int(tok1.id) - 2]
