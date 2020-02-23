@@ -249,7 +249,7 @@ def resolve_mark_entity(mark, lex):
 				if use_sequencer:
 					pred, score = mark.head.seq_pred
 					if pred != "O":
-						mark.entity = pred
+						entity = pred
 						mark.entity_certainty = 'sequencer'
 
 			if entity == "":
