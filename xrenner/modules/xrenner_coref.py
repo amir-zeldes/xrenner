@@ -95,7 +95,8 @@ def search_prev_markables(markable, previous_markables, rule, lex):
 							and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
 								if modifiers_compatible(markable, candidate, lex) and modifiers_compatible(candidate, markable, lex):
 									candidate_set.add(candidate)
-							elif markable.entity == candidate.entity and isa(markable, candidate, lex):
+							elif (markable.entity == candidate.entity or len(set(markable.alt_entities) & set(candidate.alt_entities))>0) and isa(markable, candidate, lex):
+								candidate.isa = True  # This is an 'isa' candidate
 								candidate_set.add(candidate)
 							elif agree_compatible(markable,candidate,lex) and ((markable.head.text == candidate.head.text) or (markable.head.lemma == candidate.head.lemma and
 							lex.filters["lemma_match_pos"].match(markable.head.pos) is not None and lex.filters["lemma_match_pos"].match(candidate.head.pos) is not None)):
@@ -103,6 +104,7 @@ def search_prev_markables(markable, previous_markables, rule, lex):
 									candidate_set.add(candidate)
 							elif entities_compatible(markable, candidate, lex) and isa(markable, candidate, lex):
 								if merge_entities(markable, candidate, previous_markables, lex):
+									candidate.isa = True  # This is an 'isa' candidate
 									candidate_set.add(candidate)
 						elif lex.filters["match_acronyms"] and markable.head.text.isupper() or candidate.head.text.isupper():
 								if acronym_match(markable, candidate, lex) or acronym_match(candidate, markable, lex):
@@ -146,6 +148,12 @@ def search_prev_markables(markable, previous_markables, rule, lex):
 					propagate_entity(markable, candidate_item)
 				elif propagate.startswith("propagate"):
 					propagate_entity(markable, best, propagate)
+			if hasattr(best,"isa"):
+				if best.isa_dir == "markable":
+					markable.isa_partner_head = best.lemma
+				else:
+					best.isa_partner_head = markable.lemma
+				delattr(best,"isa")
 			return best
 		else:
 			return None

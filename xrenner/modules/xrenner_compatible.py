@@ -377,7 +377,7 @@ def run_isa(markable, candidate, lex):
 			if agree_compatible(markable, candidate, lex) and not never_agree(markable, candidate, lex):
 				# Check if this case is already assigned a different lexical head as isa partner
 				if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.lemma:
-					markable.isa_partner_head = candidate.lemma
+					candidate.isa_dir = "markable"
 					return True
 				else:  # Another lemma is already isa-linked to this, e.g. state <- Oregon; so now not also "Nevada"
 					return False
@@ -391,19 +391,19 @@ def run_isa(markable, candidate, lex):
 			if markable.lemma.lower() in subclass_isa:
 				if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.lemma or candidate.isa_partner_head == markable.lemma:
 					if (agree_compatible(markable, candidate, lex) or check_agree is False) and not never_agree(markable, candidate, lex):
-						markable.isa_partner_head = candidate.lemma
+						candidate.isa_dir = "markable"
 						return True
 
 	# Exact text match in isa table - no agreement matching is carried out
 	if markable.text in lex.isa:
 		if candidate.text in lex.isa[markable.text]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
-				candidate.isa_partner_head = markable.head.lemma
+				candidate.isa_dir = "candidate"
 				return True
 	if candidate.text in lex.isa:
 		if markable.text in lex.isa[candidate.text]:
 			if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.head.lemma:
-				markable.isa_partner_head = candidate.head.lemma
+				candidate.isa_dir = "markable"
 				return True
 
 	# Core text isa match
@@ -412,42 +412,43 @@ def run_isa(markable, candidate, lex):
 		if candidate.core_text in lex.isa[markable.core_text] or candidate.head.lemma in lex.isa[markable.core_text]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				if agree_compatible(markable, candidate, lex) and not never_agree(markable, candidate, lex):
-					candidate.isa_partner_head = markable.head.lemma
+					candidate.isa_dir = "candidate"
 					return True
 		# Head-core text isa match - no agreement matching is carried out
 		elif candidate.head.text in lex.isa[markable.core_text]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
-				candidate.isa_partner_head = markable.head.lemma
+				candidate.isa_dir = "candidate"
 				return True
 	elif markable.core_text.isupper():  # Try to title case on all caps entity
 		if markable.core_text.title() in lex.isa:
 			if candidate.core_text in lex.isa[markable.core_text.title()] or candidate.head.lemma in lex.isa[markable.core_text.title()]:
 				if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
-					candidate.isa_partner_head = markable.head.lemma
+					candidate.isa_dir = "candidate"
 					return True
 
 	# Handle cases where a prefix like an article is part of the entity name, but a suffix like a possessive isn't
 	if remove_suffix_tokens(markable.text,lex) in lex.isa:
 		if candidate.head.text in lex.isa[remove_suffix_tokens(markable.text,lex)]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
-				candidate.isa_partner_head = markable.head.lemma
+				#candidate.isa_partner_head = markable.head.lemma
+				candidate.isa_dir = "candidate"
 				return True
 	elif remove_suffix_tokens(candidate.text, lex) in lex.isa:
 		if markable.head.text in lex.isa[remove_suffix_tokens(candidate.text, lex)]:
 			if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.head.lemma:
-				markable.isa_partner_head = candidate.head.lemma
+				candidate.isa_dir = "markable"
 				return True
 
 	# Head-head isa match - no agreement matching is carried out
 	if markable.head.text in lex.isa:
 		if candidate.head.text in lex.isa[markable.head.text]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
-				candidate.isa_partner_head = markable.head.lemma
+				candidate.isa_dir = "candidate"
 				return True
 	if candidate.head.text in lex.isa:
 		if markable.head.text in lex.isa[candidate.head.text]:
 			if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.head.lemma:
-				markable.isa_partner_head = candidate.head.lemma
+				candidate.isa_dir = "markable"
 				return True
 
 	# Lemma based isa matching - check agreement too
@@ -455,13 +456,13 @@ def run_isa(markable, candidate, lex):
 		if candidate.head.lemma in lex.isa[markable.head.lemma] or candidate.head.text in lex.isa[markable.head.lemma]:
 			if candidate.isa_partner_head == "" or candidate.isa_partner_head == markable.head.lemma:
 				if agree_compatible(markable, candidate, lex):
-					candidate.isa_partner_head = markable.head.lemma
+					candidate.isa_dir = "candidate"
 					return True
 	if candidate.head.lemma in lex.isa:
 		if markable.head.lemma in lex.isa[candidate.head.lemma] or markable.head.text in lex.isa[candidate.head.lemma]:
 			if markable.isa_partner_head == "" or markable.isa_partner_head == candidate.head.lemma:
 				if agree_compatible(markable, candidate, lex):
-					markable.isa_partner_head = candidate.head.lemma
+					candidate.isa_dir = "markable"
 					return True
 
 	return False
