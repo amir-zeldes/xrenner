@@ -512,7 +512,11 @@ def score_match_heuristic(markable,candidate,features,lex):
 	"""
 
 	score = 0 - (markable.sentence.sent_num - candidate.sentence.sent_num)
-	score -= ((markable.start - candidate.end) * 0.00001 + (markable.start - candidate.start) * 0.000001)  # Break ties via proximity
+	# Break ties via proximity
+	score -= ((markable.start - candidate.end) * 0.00001 + (markable.start - candidate.start) * 0.000001)
+	# Penalize different entity types, but note heuristic only runs if coref_rules allowed this match in the first place
+	if markable.entity != candidate.entity:
+		score -= 0.1
 
 	if markable.form != "pronoun":
 		# Default heuristic for lexical NPs is 'most recent match', so the score is done
