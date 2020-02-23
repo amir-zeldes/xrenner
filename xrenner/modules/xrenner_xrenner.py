@@ -37,7 +37,7 @@ class Xrenner:
 		self.load(model, override)
 		if "depedit.ini" in self.lex.model_files:
 			depedit_config = self.lex.model_files["depedit.ini"]
-			self.depedit = DepEdit(depedit_config, options=type('', (), {"kill":"supertoks"})())
+			self.depedit = DepEdit(depedit_config, options=type('', (), {"kill":"supertoks", "quiet":True})())
 		else:
 			self.depedit = None
 		self.token_count = 0
@@ -63,7 +63,7 @@ class Xrenner:
 		:param name: string, the name to give the document
 		:return: None
 		"""
-		
+
 		self.docname = name
 		self.lex.docname = name  # Copy in lex, in case we need access in nested object
 
@@ -304,7 +304,8 @@ class Xrenner:
 				children_are_def_articles = (lex.filters["definite_articles"].match(maybe_article) is not None for
 											 maybe_article in
 											 [mark.head.text, mark.text.split(" ")[0]] + mark.head.child_strings)
-				if any(children_are_def_articles):
+				children_are_possessors =  (lex.filters["definite_possessive_func"].match(func) is not None for func in mark.head.child_funcs)
+				if any(children_are_def_articles) or any(children_are_possessors):
 					mark.definiteness = "def"
 				else:
 					mark.definiteness = "indef"
