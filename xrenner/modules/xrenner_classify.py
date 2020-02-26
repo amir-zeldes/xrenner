@@ -51,9 +51,9 @@ class Classifier:
 						encoded.append(self.encoder_dict[header][0].transform(np.array(feats[header])))
 					else:  # ordinal feature
 						if feats[header] in self.encoder_dict[header][2]:
-							encoded.append(self.encoder_dict[header][0].transform([feats[header]]))
+							encoded.append(self.encoder_dict[header][0].transform(np.array([feats[header]]).reshape(-1,1)))
 						else:  # OOV item
-							encoded.append(self.encoder_dict[header][0].transform(["_unknown_"]))
+							encoded.append(self.encoder_dict[header][0].transform(np.array(["_unknown_"]).reshape(-1,1)))
 				else:  # Untransformed numerical feature
 					encoded.append(feats[header])
 			encoded_array = np.array(encoded).reshape((1, -1))
