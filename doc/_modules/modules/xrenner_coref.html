@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_coref &mdash; xrenner 2.0.0 documentation</title>
+  <title>modules.xrenner_coref &mdash; xrenner 2.1.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 2.0.0 documentation" href="../../index.html"/>
+    <link rel="top" title="xrenner 2.1.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                2.0
+                2.1
               </div>
             
           
@@ -160,14 +160,14 @@
 		<span class="n">a</span><span class="o">=</span><span class="mi">5</span>
 	<span class="n">candidate</span> <span class="o">=</span> <span class="kc">None</span>
 	<span class="n">matching_rule</span> <span class="o">=</span> <span class="kc">None</span>
-	<span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">coref_rules</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">candidate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-			<span class="c1"># If this call of find_antecedent is limited to certain rules, check that the restriction is in the rule</span>
-			<span class="k">if</span> <span class="n">restrict_rule</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">restrict_rule</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">ana_spec</span><span class="p">:</span>
-				<span class="k">if</span> <span class="n">coref_rule_applies</span><span class="p">(</span><span class="n">lex</span><span class="p">,</span> <span class="n">rule</span><span class="o">.</span><span class="n">ana_constraints</span><span class="p">,</span> <span class="n">markable</span><span class="p">):</span>
-					<span class="n">candidate</span> <span class="o">=</span> <span class="n">search_prev_markables</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">previous_markables</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
-					<span class="k">if</span> <span class="n">candidate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-						<span class="n">matching_rule</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">propagation</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rule</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">coref_rules</span><span class="p">):</span>
+		<span class="c1"># If this call of find_antecedent is limited to certain rules, check that the restriction is in the rule</span>
+		<span class="k">if</span> <span class="n">restrict_rule</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">restrict_rule</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">ana_spec</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">coref_rule_applies</span><span class="p">(</span><span class="n">lex</span><span class="p">,</span> <span class="n">rule</span><span class="o">.</span><span class="n">ana_constraints</span><span class="p">,</span> <span class="n">markable</span><span class="p">):</span>
+				<span class="n">candidate</span> <span class="o">=</span> <span class="n">search_prev_markables</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">previous_markables</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">candidate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">matching_rule</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">propagation</span>
+					<span class="k">break</span>
 
 	<span class="k">return</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">matching_rule</span></div>
 
@@ -199,7 +199,7 @@
 		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
 			<span class="n">a</span> <span class="o">=</span> <span class="mi">5</span>
 			<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ante&quot;</span><span class="p">]:</span>
-				<span class="k">pass</span>
+				<span class="n">b</span><span class="o">=</span><span class="mi">6</span>
 		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">-</span> <span class="n">candidate</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">&lt;=</span> <span class="n">max_dist</span><span class="p">:</span>
 			<span class="k">if</span> <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">and</span>
 			<span class="n">ante_spec</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;lookahead&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ante_spec</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;lookahead&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
@@ -229,7 +229,8 @@
 							<span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;lemma_match_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)):</span>
 								<span class="k">if</span> <span class="n">modifiers_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">and</span> <span class="n">modifiers_compatible</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">markable</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
 									<span class="n">candidate_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
-							<span class="k">elif</span> <span class="n">markable</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="ow">and</span> <span class="n">isa</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+							<span class="k">elif</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">candidate</span><span class="o">.</span><span class="n">entity</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">alt_entities</span><span class="p">))</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isa</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+								<span class="n">candidate</span><span class="o">.</span><span class="n">isa</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># This is an &#39;isa&#39; candidate</span>
 								<span class="n">candidate_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
 							<span class="k">elif</span> <span class="n">agree_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span><span class="n">candidate</span><span class="p">,</span><span class="n">lex</span><span class="p">)</span> <span class="ow">and</span> <span class="p">((</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="o">==</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">lemma</span> <span class="ow">and</span>
 							<span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;lemma_match_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;lemma_match_pos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)):</span>
@@ -237,6 +238,7 @@
 									<span class="n">candidate_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
 							<span class="k">elif</span> <span class="n">entities_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isa</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
 								<span class="k">if</span> <span class="n">merge_entities</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">previous_markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+									<span class="n">candidate</span><span class="o">.</span><span class="n">isa</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># This is an &#39;isa&#39; candidate</span>
 									<span class="n">candidate_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
 						<span class="k">elif</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;match_acronyms&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">or</span> <span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
 								<span class="k">if</span> <span class="n">acronym_match</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">or</span> <span class="n">acronym_match</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">markable</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
@@ -256,9 +258,8 @@
 		<span class="n">candidates_to_remove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
 		<span class="k">for</span> <span class="n">candidate_item</span> <span class="ow">in</span> <span class="n">candidate_set</span><span class="p">:</span>
 			<span class="c1"># Remove items that are prohibited by entity agree mapping</span>
-			<span class="n">agree_entity_mapping</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;agree_entity_mapping&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
-			<span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">agree_entity_mapping</span><span class="p">:</span>
-				<span class="k">if</span> <span class="n">pair</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">agree</span> <span class="ow">and</span> <span class="n">pair</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">candidate_item</span><span class="o">.</span><span class="n">entity</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">agree</span><span class="p">,</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;agree_entity_mapping&quot;</span><span class="p">]):</span>
+				<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="n">agree</span> <span class="ow">and</span> <span class="n">candidate_item</span><span class="o">.</span><span class="n">entity</span> <span class="o">!=</span> <span class="n">ent</span><span class="p">:</span>
 					<span class="n">candidates_to_remove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate_item</span><span class="p">)</span>
 			<span class="k">if</span> <span class="n">candidate_item</span><span class="o">.</span><span class="n">entity</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="p">(</span><span class="n">candidate_item</span><span class="o">.</span><span class="n">form</span> <span class="o">!=</span> <span class="s2">&quot;pronoun&quot;</span> <span class="ow">or</span> <span class="n">markable</span><span class="o">.</span><span class="n">entity_certainty</span> <span class="o">==</span> <span class="s2">&quot;certain&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;no_person_agree&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">agree</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 				<span class="n">candidates_to_remove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate_item</span><span class="p">)</span>
@@ -281,6 +282,14 @@
 					<span class="n">propagate_entity</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate_item</span><span class="p">)</span>
 				<span class="k">elif</span> <span class="n">propagate</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;propagate&quot;</span><span class="p">):</span>
 					<span class="n">propagate_entity</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">best</span><span class="p">,</span> <span class="n">propagate</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">best</span><span class="p">,</span><span class="s2">&quot;isa&quot;</span><span class="p">):</span>
+				<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">best</span><span class="p">,</span><span class="s2">&quot;isa_dir&quot;</span><span class="p">):</span>
+					<span class="k">if</span> <span class="n">best</span><span class="o">.</span><span class="n">isa_dir</span> <span class="o">==</span> <span class="s2">&quot;markable&quot;</span><span class="p">:</span>
+						<span class="n">markable</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">best</span><span class="o">.</span><span class="n">lemma</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">best</span><span class="o">.</span><span class="n">isa_partner_head</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">lemma</span>
+					<span class="nb">delattr</span><span class="p">(</span><span class="n">best</span><span class="p">,</span><span class="s2">&quot;isa_dir&quot;</span><span class="p">)</span>
+				<span class="nb">delattr</span><span class="p">(</span><span class="n">best</span><span class="p">,</span><span class="s2">&quot;isa&quot;</span><span class="p">)</span>
 			<span class="k">return</span> <span class="n">best</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">return</span> <span class="kc">None</span>
@@ -367,7 +376,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Amir Zeldes.
+        &copy; Copyright 2016-2020, Amir Zeldes.
 
     </p>
   </div>
@@ -389,7 +398,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'2.0.0',
+            VERSION:'2.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

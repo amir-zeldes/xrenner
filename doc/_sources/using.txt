@@ -39,7 +39,7 @@ If you have multiple cores available, batch mode works much faster by using mult
 
 ``> python xrenner.py -x GUM -p 4 *.conll10``
 
-
+Note that if your model uses neural models with large contextualized embeddings (e.g. Bert), multiple processes may not fit in memory when RAM is limited. For "could not allocate memory errors", consider trying -p 1.
 
 **********************
 Importing as a module
@@ -57,10 +57,10 @@ Then you can import the Xrenner object and feed it a string containing a 10 colu
    from xrenner import Xrenner
    
    xrenner = Xrenner()
-   # Get a parse in basic Stanford Dependencies (not UD)
-   my_conllx_result = some_parser.parse("John visited Spain. His visit went well.")
+   # Get a parse in Universal Dependencies
+   my_conllu_result = some_parser.parse("John visited Spain. His visit went well.")
    
-   sgml_result = xrenner.analyze(my_conllx_result,"sgml")
+   sgml_result = xrenner.analyze(my_conllu_result,"sgml")
    print(sgml_result)
 
 
@@ -70,7 +70,7 @@ Keep in mind that the parser output must match whatever annotation scheme the xr
 Input format
 *************
 
-xrenner uses the 10 column tab delimited conll format, with **one line per token** and **a blank line between sentences**. All of the following columns should be included (use an **underscore** for missing values):
+xrenner uses the 10 column tab delimited conllu format, with **one line per token** and **a blank line between sentences**. All of the following columns should be included (use an **underscore** for missing values):
 
 1. **ID** - token ID within sentence
 
@@ -78,9 +78,9 @@ xrenner uses the 10 column tab delimited conll format, with **one line per token
 
 3. **lemma** - dictionary entry for this token (optional)
 
-4. **pos** - part of speech
+4. **upos** - universal part of speech
 
-5. **cpos** - coarse or alternate part of speech (optional)
+5. **xpos** - native part of speech (for English: PTB)
 
 6. **morph** - morphological information for this token (optional)
 
@@ -88,28 +88,29 @@ xrenner uses the 10 column tab delimited conll format, with **one line per token
 
 8. **func** – dependency function
 
-9. -- 10. – reserved for alternate trees with multiple parentage (DAGs)
+9. -- 10. – reserved for alternate trees with multiple parentage (DAGs) and misc. annotations
 
 **Example**:
 
 	.. code-block:: html
 
-		1	Wikinews	Wikinews	NP	NNP	_	2	nsubj	_	_
-		2	interviews	interview	VVZ	VBZ	_	0	root	_	_
-		3	President	president	NN	NN	_	2	dobj	_	_
-		4	of	of	IN	IN	_	3	prep	_	_
-		5	the	the	DT	DT	_	7	det	_	_
-		6	International	international	NP	NNP	_	7	amod	_	_
-		7	Brotherhood	brotherhood	NP	NNP	_	4	pobj	_	_
-		8	of	of	IN	IN	_	7	prep	_	_
-		9	Magicians	magician	NPS	NNPS	_	8	pobj	_	_
-											
-		1	Wednesday	Wednesday	NP	NNP	_	0	root	_	_
-		2	,	,	,	,	_	0	punct	_	_
-		3	October	October	NP	NNP	_	4	nn	_	_
-		4	9	9	CD	CD	_	1	appos	_	_
-		5	,	,	,	,	_	0	punct	_	_
-		6	2013	2013	CD	CD	_	3	tmod	_	_
+		1	Wikinews	_	PROPN	NNP	_	2	nsubj	_	_
+		2	interviews	_	VERB	VBZ	_	0	root	_	_
+		3	President	_	NOUN	NN	_	2	obj	_	_
+		4	of	_	ADP	IN	_	7	case	_	_
+		5	the	_	DET	DT	_	7	det	_	_
+		6	International	_	PROPN	NNP	_	7	amod	_	_
+		7	Brotherhood	_	PROPN	NNP	_	3	nmod	_	_
+		8	of	_	ADP	IN	_	9	case	_	_
+		9	Magicians	_	PROPN	NNPS	_	7	nmod	_	_
+												
+		1	Wednesday	_	PROPN	NNP	_	0	root	_	_
+		2	,	_	PUNCT	,	_	4	punct	_	_
+		3	October	_	PROPN	NNP	_	4	compound	_	_
+		4	9	_	NUM	CD	_	1	appos	_	_
+		5	,	_	PUNCT	,	_	6	punct	_	_
+		6	2013	_	NUM	CD	_	4	nmod:tmod	_	_
+
 
 It is also possible to include comments on lines beginning with the pound sign. These are generally ignored, with the exception of optional sentence type (s_type) and speaker annotations, as in the example below, which can be used as part of :ref:`coref_rules.tab <coref_rules_tab>` (e.g. specifying having the same or different speakers as a condition):
 
@@ -117,31 +118,31 @@ It is also possible to include comments on lines beginning with the pound sign. 
 	
 		# speaker="Mario J. Lucero"
 		# s_type="decl"
-		1	Heaven	_	NNP	NNP	_	2	nn	_	_
-		2	Sent	_	NNP	NNP	_	3	nn	_	_
-		3	Gaming	_	NNP	NNP	_	6	nsubj	_	_
-		4	is	_	VBZ	VBZ	_	6	cop	_	_
-		5	basically	_	RB	RB	_	6	advmod	_	_
-		6	me	_	PRP	PRP	_	0	root	_	_
-		7	and	_	CC	CC	_	6	cc	_	_
-		8	Isabel	_	NNP	NNP	_	6	conj	_	_
-		9	,	_	,	,	_	0	punct	_	_
-		10	I	_	PRP	PRP	_	14	nsubj	_	_
-		11	'm	_	VBP	VBP	_	14	cop	_	_
-		12	Mario	_	NNP	NNP	_	14	nn	_	_
-		13	J.	_	NNP	NNP	_	14	nn	_	_
-		14	Lucero	_	NNP	NNP	_	6	parataxis	_	_
-		15	.	_	.	.	_	0	punct	_	_
+		1	Heaven	_	PROPN	NNP	_	6	nsubj	_	_
+		2	Sent	_	PROPN	NNP	_	1	flat	_	_
+		3	Gaming	_	PROPN	NNP	_	1	flat	_	_
+		4	is	_	AUX	VBZ	_	6	cop	_	_
+		5	basically	_	ADV	RB	_	6	advmod	_	_
+		6	me	_	PRON	PRP	_	0	root	_	_
+		7	and	_	CCONJ	CC	_	8	cc	_	_
+		8	Isabel	_	PROPN	NNP	_	6	conj	_	_
+		9	,	_	PUNCT	,	_	12	punct	_	_
+		10	I	_	PRON	PRP	_	12	nsubj	_	_
+		11	'm	_	AUX	VBP	_	12	cop	_	_
+		12	Mario	_	PROPN	NNP	_	6	parataxis	_	_
+		13	J.	_	PROPN	NNP	_	12	flat	_	_
+		14	Lucero	_	PROPN	NNP	_	12	flat	_	_
+		15	.	_	PUNCT	.	_	6	punct	_	_
 
 		# speaker="Isabel Ruiz"
 		# s_type="decl"
-		1	And	_	CC	CC	_	6	cc	_	_
-		2	,	_	,	,	_	0	punct	_	_
-		3	I	_	PRP	PRP	_	6	nsubj	_	_
-		4	'm	_	VBP	VBP	_	6	cop	_	_
-		5	Isabel	_	NNP	NNP	_	6	nn	_	_
-		6	Ruiz	_	NNP	NNP	_	0	root	_	_
-		7	.	_	.	.	_	0	punct	_	_
+		1	And	_	CCONJ	CC	_	5	cc	_	_
+		2	,	_	PUNCT	,	_	1	punct	_	_
+		3	I	_	PRON	PRP	_	5	nsubj	_	_
+		4	'm	_	AUX	VBP	_	5	cop	_	_
+		5	Isabel	_	PROPN	NNP	_	0	root	_	_
+		6	Ruiz	_	PROPN	NNP	_	5	flat	_	_
+		7	.	_	PUNCT	.	_	5	punct	_	_
 
 
 **************
@@ -251,6 +252,29 @@ paula
 
 The output using PAULA preserves both the exact antecdent chain structure and coreference types, as well as the optional information status annotations designating first mention (*new*) and subsequent mentions (*giv* for 'given').
 
+webannotsv
+--------
+
+Tab-delimited format used by the WebAnno and Inception annotation tools.
+
+**Example**:
+	.. code-block:: html
+
+		#FORMAT=WebAnno TSV 3.2
+		#T_SP=webanno.custom.Referent|entity|infstat
+		#T_RL=webanno.custom.Coref|coreftype|BT_webanno.custom.Referent
+
+		#Text=Charles J. Fillmore
+		1-1	0-7	Charles	person[1]	new[1]	coref	2-1[2_1]	
+		1-2	8-10	J.	person[1]	new[1]	_	_	
+		1-3	11-19	Fillmore	person[1]	new[1]	_	_	
+
+		#Text=Charles J. Fillmore ( August 9 , 1929 – February 13 , 2014 ) was an American linguist and Professor of Linguistics at the University of California , Berkeley .
+		2-1	20-27	Charles	person[2]	giv[2]	coref	2-16[9_2]	
+		2-2	28-30	J.	person[2]	giv[2]	_	_	
+		2-3	31-39	Fillmore	person[2]	giv[2]	_	_	
+
+
 unittest
 --------
 
@@ -259,4 +283,4 @@ This is an internal format used only to generate test cases for xrenner unit tes
 none
 ----
 
-This is a dummy format setting - run the analysis but produce no output.
+This is a dummy format setting - run the analysis but produce no output. Useful when using the -d, --dump option for classifier training data.

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Buliding New Language Models &mdash; xrenner 2.0.0 documentation</title>
+  <title>Buliding New Language Models &mdash; xrenner 2.1.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/>
+    <link rel="top" title="xrenner 2.1.0 documentation" href="index.html"/>
         <link rel="next" title="In depth guides" href="indepth.html"/>
         <link rel="prev" title="Using xrenner" href="using.html"/> 
 
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                2.0
+                2.1
               </div>
             
           
@@ -225,7 +225,7 @@ This is the configuration file for the <em>depedit</em> module, which can be use
 <div><div class="highlight-ini"><div class="highlight"><pre><span></span><span class="k">[GUM]</span>
 
 <span class="c1"># Change the functions breaking the markable span</span>
-<span class="na">non_link_func</span><span class="o">=</span><span class="s">/rcmod|nsubj|cop|aux|dep|punct|appos|vmod|advcl|tmod|discourse|advmod|parataxis/</span>
+<span class="na">non_link_func</span><span class="o">=</span><span class="s">/^(acl|acl:relcl|advcl|aux|aux:pass|expl|nsubj|nsubj:pass|cop|dep|punct|appos|discourse|parataxis|orphan|advmod_neg|case|mark|list|csubj|csubj:pass|cc|obl.*)$/</span>
 <span class="c1"># In this profile we want to keep singletons and cataphora</span>
 <span class="na">remove_cataphora</span><span class="o">=</span><span class="s">False</span>
 <span class="na">remove_singletons</span><span class="o">=</span><span class="s">False</span>
@@ -755,7 +755,7 @@ Yangtze@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Amir Zeldes.
+        &copy; Copyright 2016-2020, Amir Zeldes.
 
     </p>
   </div>
@@ -777,7 +777,7 @@ Yangtze@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.0',
+            VERSION:'2.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>config.ini &mdash; xrenner 2.0.0 documentation</title>
+  <title>config.ini &mdash; xrenner 2.1.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/> 
+    <link rel="top" title="xrenner 2.1.0 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                2.0
+                2.1
               </div>
             
           
@@ -145,17 +145,20 @@
 <p>This section defines main dependency label functions that are interpreted by xrenner in special ways. Functions such as subjecthood, apposition, coordination or possession have special meanings for the workflow (for example, possession is checked against the <strong>hasa</strong> table). This section
 also determines the thousands and decimal separators for the language for <strong>cardinality</strong> recognition.</p>
 <div class="highlight-ini"><div class="highlight"><pre><span></span><span class="c1">### General Function Label Settings ###</span>
-<span class="na">subject_func</span><span class="o">=</span><span class="s">/^nsubj$/</span>
+<span class="na">subject_func</span><span class="o">=</span><span class="s">/^nsubj.*/</span>
 <span class="na">apposition_func</span><span class="o">=</span><span class="s">/appos/</span>
-<span class="na">possessive_func</span><span class="o">=</span><span class="s">/^poss|prep_of$/</span>
+<span class="na">possessive_func</span><span class="o">=</span><span class="s">/^nmod:poss|nmod_of$/</span>
+<span class="na">definite_possessive_func</span><span class="o">=</span><span class="s">/^nmod:poss$/</span>
 <span class="c1"># Function for the second conjunct, NOT the conjunction; used to propagate function from first conjunct</span>
 <span class="na">conjunct_func</span><span class="o">=</span><span class="s">/^conj$/</span>
 <span class="c1"># Dependency function identifying a coordinating conjunction</span>
 <span class="na">coord_func</span><span class="o">=</span><span class="s">/^cc$/</span>
+<span class="c1"># Whether cc attaches left to right (from the first coordinate, e.g. Stanford Dependencies) or right to left (from second coordinate, e.g. Universal Dependencies)</span>
+<span class="na">cc_left_to_right</span><span class="o">=</span><span class="s">False</span>
 <span class="c1"># Dependency function for determiners (if this function also matches functions in mod_func it will NOT used to rule out incompatible modifiers)</span>
-<span class="na">det_func</span><span class="o">=</span><span class="s">/^(pre)?det|num$/</span>
+<span class="na">det_func</span><span class="o">=</span><span class="s">/^(det.*|nummod)$/</span>
 <span class="c1"># Dependency function indicating negation</span>
-<span class="na">neg_func</span><span class="o">=</span><span class="s">/^neg$/</span>
+<span class="na">neg_func</span><span class="o">=</span><span class="s">/^advmod_neg$/</span>
 <span class="c1"># Decimal point separator in this language, e.g. period or comma</span>
 <span class="na">decimal_sep</span><span class="o">=</span><span class="s">.</span>
 <span class="c1"># Thousands separator in this language, e.g. comma or period</span>
@@ -169,30 +172,30 @@ also determines the thousands and decimal separators for the language for <stron
 These include settings for part of speech tags that indicate being a markable head, dependency function labels of descendents of that
 head to include in the markable span, and more.</p>
 <div class="highlight-ini"><div class="highlight"><pre><span></span><span class="c1"># POS categories to consider for markable heads</span>
-<span class="na">mark_head_pos</span><span class="o">=</span><span class="s">/^(NN?P?S?|PRP\$|PP\$)$/</span>
+<span class="na">mark_head_pos</span><span class="o">=</span><span class="s">/^(NN?P?S?|PRP\$|PP\$|NOUN|PROPN)$/</span>
 <span class="c1"># POS categories to consider for markable head only if dependency function is not (!) ...</span>
 <span class="c1"># This is NOT a regular expression</span>
-<span class="na">pos_func_heads</span><span class="o">=</span><span class="s">CD!num;CD!number;CD!dep;CD!discourse;DT+nsubj;DT+dobj;DT+pobj;DT+prep_in;DT+prep_with;DT+prep_to;DT+prep_at;VB+cata;VV+cata;PRP!npadvmod;PP!npadvmod;$!dep;</span>
+<span class="na">pos_func_heads</span><span class="o">=</span><span class="s">CD!amod;CD!nummod;CD!compound;CD!dep;CD!discourse;DT+nsubj;DT+nsubj:pass;DT+obj;DT+obl;DT+nmod;DT+obl_in;DT+obl_with;DT+obl_to;DT+obl_at;VB+cata;VV+cata;PRP!obl:npmod;PP!obl:npmod;$!dep;</span>
 <span class="c1"># POS categories for verbs, only considered if seeking verbal antecedents for definite NPs with no antecedent is switched on</span>
 <span class="na">verb_head_pos</span><span class="o">=</span><span class="s">/^(V[BV][PZD]?)$/</span>
 <span class="c1"># Dependency functions that rule out being a markable head</span>
-<span class="na">mark_forbidden_func</span><span class="o">=</span><span class="s">/amod|mark|punct|discourse|prep_as/</span>
+<span class="na">mark_forbidden_func</span><span class="o">=</span><span class="s">/amod|mark|punct|discourse|obl_as|nmod_as|flat|nummod|goeswith/</span>
 <span class="c1"># Dependency functions that terminate markable sequence propagation</span>
-<span class="na">non_link_func</span><span class="o">=</span><span class="s">/aux|expl|nsubj|cop|dep|punct|appos|discourse|parataxis|neg|possessive|mark|csubj/</span>
+<span class="na">non_link_func</span><span class="o">=</span><span class="s">/^(aux|aux:pass|expl|nsubj|nsubj:pass|cop|dep|punct|appos|discourse|parataxis|orphan|advmod_neg|case|mark|csubj|csubj:pass|cc|list|nmod:tmod|obl.*|attribution)$/</span>
 <span class="c1"># Token values that terminate markable sequence propagation</span>
-<span class="na">non_link_tok</span><span class="o">=</span><span class="s">/[Ww]hen|[Ii]f/</span>
+<span class="na">non_link_tok</span><span class="o">=</span><span class="s">/[Ww]hen|[Ii]f|[Aa]lso|[Tt]hen/</span>
 <span class="c1"># Dependency functions for which stoplist is checked to rule out spurious markables and markable extensions are forbidden</span>
-<span class="na">stop_func</span><span class="o">=</span><span class="s">/amod|nn|xcomp|mwe|dep/</span>
+<span class="na">stop_func</span><span class="o">=</span><span class="s">/amod|compound|xcomp|fixed|dep/</span>
 <span class="c1"># Postprocess parser input to ensure tokens inside known entities depend on the entity head?</span>
 <span class="na">postprocess_parser</span><span class="o">=</span><span class="s">True</span>
 <span class="c1"># Func substitutions - replace function depending on POS and direction of head - NOT a regular expression</span>
 <span class="na">func_substitute_backward</span><span class="o">=</span><span class="s">NN/dep/appos/;NNS/dep/appos;NNP/dep/appos;NNPS/dep/appos;NP/dep/appos;NPS/dep/appos;CD/dep/appos</span>
-<span class="na">func_substitute_forward</span><span class="o">=</span><span class="s">NN/dep/nn/;NNS/dep/nn;NNP/dep/nn;NNPS/dep/nn;NP/dep/nn;NPS/dep/nn;CD/dep/num</span>
+<span class="na">func_substitute_forward</span><span class="o">=</span><span class="s">NN/dep/compound/;NNS/dep/compound;NNP/dep/compound;NNPS/dep/compound;NP/dep/compound;NPS/dep/compound;CD/dep/nummod</span>
 <span class="c1"># Affix tokens to strip from markable core text</span>
 <span class="na">core_prefixes</span><span class="o">=</span><span class="s">/^ ?([Tt]h([oe](se)?|is|at)|an?|some|all|many|[Mm]y|[Yy]our|[Hh]is|[Hh]er|[Oo]ur|[Tt]heir|[Ii]ts)( |$)/</span>
 <span class="na">core_suffixes</span><span class="o">=</span><span class="s">/ ((&#39;s|&#39;|[Cc]orp\.?|Inc\.?|[Cc]o\.?|&amp;) ?)*$/</span>
 <span class="c1"># Functions that can be stripped when determining atomicity, e.g. if &#39;police department&#39; is atomic, then a modified &#39;rich police department&#39; is too</span>
-<span class="na">non_essential_mod_func</span><span class="o">=</span><span class="s">/amod|quantmod|num|number|det|prep_of|vmod/</span>
+<span class="na">non_essential_mod_func</span><span class="o">=</span><span class="s">/amod|nummod|det.*|nmod_of|advcl/</span>
 </pre></div>
 </div>
 </div>
@@ -235,6 +238,14 @@ head to include in the markable span, and more.</p>
 <span class="na">all_caps_entity</span><span class="o">=</span><span class="s">organization</span>
 <span class="c1"># Maximum of substring suffix used on unknown heads to establish category (e.g. 4 catches -ness as usually abstract)</span>
 <span class="na">max_suffix_length</span><span class="o">=</span><span class="s">8</span>
+<span class="c1"># Optional path to serialized pre-trained sequence classifier for entity head classification</span>
+<span class="na">sequencer</span><span class="o">=</span><span class="s">eng_flair_nner_distilbert.pt</span>
+<span class="c1"># Probability threshold to believe sequencer classification as non-referential; use 1.0 to disable</span>
+<span class="na">sequencer_nonref_thresh</span><span class="o">=</span><span class="s">0.99</span>
+<span class="c1"># POS tags which the sequencer is allowed to discard as entity heads if sequencer_nonref_thresh is exceeded</span>
+<span class="na">sequencer_nonref_pos</span><span class="o">=</span><span class="s">/^NN?P?$/</span>
+<span class="c1"># Child function expression which prevents an entity head from being removed, even if sequencer_nonref_thresh is exceeded</span>
+<span class="na">sequencer_nonref_forbidden_childfunc</span><span class="o">=</span><span class="s">/flat/</span>
 </pre></div>
 </div>
 </div>
@@ -291,15 +302,16 @@ head to include in the markable span, and more.</p>
 <div class="highlight-ini"><div class="highlight"><pre><span></span><span class="c1"># Whether to use machine learning classifiers, if available</span>
 <span class="na">use_classifiers</span><span class="o">=</span><span class="s">True</span>
 <span class="c1"># Default score threshold for classifier positive decision (lower threshold promotes more liberal coreference decisions)</span>
-<span class="na">score_thresh</span><span class="o">=</span><span class="s">0.29</span>
+<span class="c1"># Note that best scoring candidate wins regardless of this; the threshold just means NO antecedent is accepted if nothing scores above the threshold</span>
+<span class="na">score_thresh</span><span class="o">=</span><span class="s">0.35</span>
 <span class="c1"># Override/flavor specific classifier file suffix for specific versions of a model (e.g. _GUM in gbm_GUM3.pkl, instead of gbm3.pkl). Usually empty except in an override profile.</span>
 <span class="na">classifier_suffix</span><span class="o">=</span>
 <span class="c1"># Modifier functions that require strictly identical heads for coreference</span>
-<span class="na">ident_mod_func</span><span class="o">=</span><span class="s">/^(poss|titlemod|prep_of)$/</span>
+<span class="na">ident_mod_func</span><span class="o">=</span><span class="s">/^(nmod:poss|titlemod|nmod_of)$/</span>
 <span class="c1"># What POS categories should allow lemma matching of heads for coreference? e.g. /^NNS?$/ to allow singular and plural nouns to match based on lemma</span>
 <span class="na">lemma_match_pos</span><span class="o">=</span><span class="s">/none/</span>
 <span class="c1"># Dependency functions that are interpreted as modifiers for compatible modifier, and other modifier checks</span>
-<span class="na">mod_func</span><span class="o">=</span><span class="s">/amod|nn|quantmod|num|number|det|prep_of/</span>
+<span class="na">mod_func</span><span class="o">=</span><span class="s">/amod|compound|flat|nummod|nmod_of/</span>
 <span class="c1"># Tokens that mark opening and closing quotation for direct speech detection</span>
 <span class="na">open_quote</span><span class="o">=</span><span class="s">/^([&quot;&#39;”’]|``)$/</span>
 <span class="na">close_quote</span><span class="o">=</span><span class="s">/^([&quot;&#39;”’]|&#39;&#39;)$/</span>
@@ -328,7 +340,7 @@ head to include in the markable span, and more.</p>
 <div class="section" id="postprocessing-settings">
 <h2>Postprocessing settings<a class="headerlink" href="#postprocessing-settings" title="Permalink to this headline">¶</a></h2>
 <p>Settings for sanitizing or altering output, such as removing singletons, or markables with specific grammatical functions which are nevertheless used internally during processing (e.g. predicatives).</p>
-<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">remove_head_func</span><span class="o">=</span><span class="s">/nn/</span>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">remove_head_func</span><span class="o">=</span><span class="s">/compound/</span>
 <span class="na">remove_child_func</span><span class="o">=</span><span class="s">/cop/</span>
 <span class="na">remove_singletons</span><span class="o">=</span><span class="s">True</span>
 <span class="na">remove_cataphora</span><span class="o">=</span><span class="s">True</span>
@@ -341,7 +353,7 @@ head to include in the markable span, and more.</p>
 <span class="c1"># Should we allow an additional plural markable around coordinate entities, even if there is no later aggregate reference?</span>
 <span class="na">remove_coordinate_envelopes</span><span class="o">=</span><span class="s">True</span>
 <span class="c1"># Semi-colon separated nested entity types to remove, e.g. person,nn,person;... removes person with function nn nested in a person</span>
-<span class="na">remove_nested_entities</span><span class="o">=</span><span class="s">person,nn,person</span>
+<span class="na">remove_nested_entities</span><span class="o">=</span><span class="s">person,compound,person;person,flat,person</span>
 </pre></div>
 </div>
 </div>
@@ -357,7 +369,7 @@ head to include in the markable span, and more.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Amir Zeldes.
+        &copy; Copyright 2016-2020, Amir Zeldes.
 
     </p>
   </div>
@@ -379,7 +391,7 @@ head to include in the markable span, and more.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.0',
+            VERSION:'2.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

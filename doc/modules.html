@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Developers’ module documentation &mdash; xrenner 2.0.0 documentation</title>
+  <title>Developers’ module documentation &mdash; xrenner 2.1.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/>
+    <link rel="top" title="xrenner 2.1.0 documentation" href="index.html"/>
         <link rel="prev" title="In depth guides" href="indepth.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                2.0
+                2.1
               </div>
             
           
@@ -162,7 +162,7 @@
 <blockquote>
 <div><dl class="class">
 <dt id="modules.xrenner_xrenner.Xrenner">
-<em class="property">class </em><code class="descclassname">modules.xrenner_xrenner.</code><code class="descname">Xrenner</code><span class="sig-paren">(</span><em>model='eng'</em>, <em>override=None</em>, <em>rule_based=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">modules.xrenner_xrenner.</code><code class="descname">Xrenner</code><span class="sig-paren">(</span><em>model='eng'</em>, <em>override=None</em>, <em>rule_based=False</em>, <em>no_seq=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="modules.xrenner_xrenner.Xrenner.analyze">
 <code class="descname">analyze</code><span class="sig-paren">(</span><em>infile</em>, <em>out_format</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_xrenner.html#Xrenner.analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_xrenner.Xrenner.analyze" title="Permalink to this definition">¶</a></dt>
@@ -207,7 +207,7 @@
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -224,7 +224,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>tokoffset</strong> &#8211; the offset in tokens for the beginning of the current sentence within all input tokens</li>
-<li><strong>sentence</strong> &#8211; the Sentence object containin mood, speaker and other information about this sentence</li>
+<li><strong>sentence</strong> &#8211; the Sentence object containing mood, speaker and other information about this sentence</li>
 </ul>
 </td>
 </tr>
@@ -266,7 +266,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; string, the name to give the document</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">void</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -344,7 +344,7 @@
 <blockquote>
 <div><dl class="class">
 <dt id="modules.xrenner_lex.LexData">
-<em class="property">class </em><code class="descclassname">modules.xrenner_lex.</code><code class="descname">LexData</code><span class="sig-paren">(</span><em>model</em>, <em>xrenner</em>, <em>override=None</em>, <em>rule_based=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">modules.xrenner_lex.</code><code class="descname">LexData</code><span class="sig-paren">(</span><em>model</em>, <em>xrenner</em>, <em>override=None</em>, <em>rule_based=False</em>, <em>no_seq=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_lex.html#LexData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_lex.LexData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to hold lexical information from gazetteers and training data.
 Use model argument to define subdirectory under models/ for reading different sets of
 configuration files.</p>
@@ -514,6 +514,8 @@ dependent manipultations, use depedit module</p>
 <li><strong>filename</strong> &#8211; string - name of the file</li>
 <li><strong>mode</strong> &#8211; double, triple, quadruple, quadruple_numeric, triple_numeric or low reading mode</li>
 <li><strong>atom_list_name</strong> &#8211; list of atoms to use for triple reader mode</li>
+<li><strong>add_to_sums</strong> &#8211; whether to sum numbers from multiple instances of the same key</li>
+<li><strong>sep</strong> &#8211; separator for double_with_sep mode</li>
 </ul>
 </td>
 </tr>
@@ -1106,6 +1108,27 @@ e.g. [Mr. Pickwick, who was looking for [his] hat]</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="modules.xrenner_marker.remove_infix_tokens">
+<code class="descclassname">modules.xrenner_marker.</code><code class="descname">remove_infix_tokens</code><span class="sig-paren">(</span><em>marktext</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#remove_infix_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.remove_infix_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove infix tokens such as dashes, interfixed articles (in Semitic construct state) etc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>marktext</strong> &#8211; the markable text string to remove tokens from</li>
+<li><strong>lex</strong> &#8211; the <a class="reference internal" href="#modules.xrenner_lex.LexData" title="modules.xrenner_lex.LexData"><code class="xref py py-class docutils literal"><span class="pre">LexData</span></code></a> object with gazetteer information and model settings</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">potentially truncated text</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="modules.xrenner_marker.remove_prefix_tokens">
 <code class="descclassname">modules.xrenner_marker.</code><code class="descname">remove_prefix_tokens</code><span class="sig-paren">(</span><em>marktext</em>, <em>lex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modules/xrenner_marker.html#remove_prefix_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.xrenner_marker.remove_prefix_tokens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove leading tokens such as articles and other tokens configured as potentially redundant to citation form</p>
@@ -1505,7 +1528,7 @@ annotation scheme</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Amir Zeldes.
+        &copy; Copyright 2016-2020, Amir Zeldes.
 
     </p>
   </div>
@@ -1527,7 +1550,7 @@ annotation scheme</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.0',
+            VERSION:'2.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

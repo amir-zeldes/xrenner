@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_postprocess &mdash; xrenner 2.0.0 documentation</title>
+  <title>modules.xrenner_postprocess &mdash; xrenner 2.1.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 2.0.0 documentation" href="../../index.html"/>
+    <link rel="top" title="xrenner 2.1.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                2.0
+                2.1
               </div>
             
           
@@ -146,9 +146,14 @@
 
 
 <span class="k">def</span> <span class="nf">postprocess_coref</span><span class="p">(</span><span class="n">markables</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="n">markstart</span><span class="p">,</span> <span class="n">markend</span><span class="p">,</span> <span class="n">markbyhead</span><span class="p">,</span> <span class="n">conll_tokens</span><span class="p">):</span>
+
+
 	<span class="c1"># Collect markable groups</span>
 	<span class="n">marks_by_group</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 	<span class="k">for</span> <span class="n">markable</span> <span class="ow">in</span> <span class="n">markables</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">antecedent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">group</span> <span class="o">!=</span> <span class="n">markable</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">group</span><span class="p">:</span>
+				<span class="n">markable</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">markable</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">group</span>
 		<span class="n">marks_by_group</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">markable</span><span class="p">)</span>
 
 	<span class="c1"># Order markables in each group to ensure backwards chain</span>
@@ -374,7 +379,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Amir Zeldes.
+        &copy; Copyright 2016-2020, Amir Zeldes.
 
     </p>
   </div>
@@ -396,7 +401,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'2.0.0',
+            VERSION:'2.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

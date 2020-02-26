@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_test &mdash; xrenner 2.0.0 documentation</title>
+  <title>modules.xrenner_test &mdash; xrenner 2.1.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 2.0.0 documentation" href="../../index.html"/>
+    <link rel="top" title="xrenner 2.1.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                2.0
+                2.1
               </div>
             
           
@@ -307,16 +307,16 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">markables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span> <span class="s2">&quot;person&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test2MarkableMethods.test_atomic_mod"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test2MarkableMethods.test_atomic_mod">[docs]</a>	<span class="k">def</span> <span class="nf">test_atomic_mod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="c1"># House Dr. Israel Newspaper</span>
-		<span class="c1"># Note that Dr. is a person-marking atomic flagged modifier of the head</span>
+		<span class="c1"># Israel Machines Corp.</span>
+		<span class="c1"># Note that Corp. is an organization-marking atomic flagged modifier of the head</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Run atomic modifier test:  &quot;</span><span class="p">)</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;mark_atomic_mod_test&quot;</span><span class="p">]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span> <span class="s2">&quot;unittest&quot;</span><span class="p">)</span>
 		<span class="n">markables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">markables</span>
-		<span class="c1"># Check that there are no nested markables in House Dr. Israel Newspaper</span>
+		<span class="c1"># Check that there are no nested markables in Israel Machines Corp.</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">markables</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
 		<span class="c1"># Check that the name is classified as a person</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">markables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span> <span class="s2">&quot;person&quot;</span><span class="p">)</span></div></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">markables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">entity</span><span class="p">,</span> <span class="s2">&quot;organization&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Test3CorefMethods"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods">[docs]</a><span class="k">class</span> <span class="nc">Test3CorefMethods</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
@@ -345,7 +345,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;appos envelope test&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_isa"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_isa">[docs]</a>	<span class="k">def</span> <span class="nf">test_isa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="c1"># I read [the Walls Street Journal]. [That newspaper] is great.</span>
+		<span class="c1"># I read [the Wall Street Journal]. [That newspaper] is great.</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Run isa test:  &quot;</span><span class="p">)</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;isa_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
@@ -373,11 +373,11 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;entity dep test (a book, a dog &lt;- It barked)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_affix_morphology"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_affix_morphology">[docs]</a>	<span class="k">def</span> <span class="nf">test_affix_morphology</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="c1"># [A blorker] and an animal and a car . Of these , I saw [the person] .</span>
+		<span class="c1"># [A blorker] had a mummelhound in a blargmobile. I saw [the person] .</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Run affix morphology test:  &quot;</span><span class="p">)</span>
 		<span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">[</span><span class="s2">&quot;morph_test&quot;</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span><span class="s2">&quot;unittest&quot;</span><span class="p">))</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;affix morph test (a blorker &lt;- the person)&quot;</span><span class="p">)</span></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">chains</span><span class="p">,</span><span class="s2">&quot;affix morph test (A blorker &lt;- the person)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Test3CorefMethods.test_verbal_event_stem"><a class="viewcode-back" href="../../modules.html#modules.xrenner_test.Test3CorefMethods.test_verbal_event_stem">[docs]</a>	<span class="k">def</span> <span class="nf">test_verbal_event_stem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># John [visited] Spain . [The visit] went well .</span>
@@ -468,7 +468,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Amir Zeldes.
+        &copy; Copyright 2016-2020, Amir Zeldes.
 
     </p>
   </div>
@@ -490,7 +490,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'2.0.0',
+            VERSION:'2.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
