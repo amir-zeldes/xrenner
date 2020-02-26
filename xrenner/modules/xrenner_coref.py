@@ -149,10 +149,12 @@ def search_prev_markables(markable, previous_markables, rule, lex):
 				elif propagate.startswith("propagate"):
 					propagate_entity(markable, best, propagate)
 			if hasattr(best,"isa"):
-				if best.isa_dir == "markable":
-					markable.isa_partner_head = best.lemma
-				else:
-					best.isa_partner_head = markable.lemma
+				if hasattr(best,"isa_dir"):
+					if best.isa_dir == "markable":
+						markable.isa_partner_head = best.lemma
+					else:
+						best.isa_partner_head = markable.lemma
+					delattr(best,"isa_dir")
 				delattr(best,"isa")
 			return best
 		else:
