@@ -67,7 +67,11 @@ class Xrenner:
 		self.docname = name
 		self.lex.docname = name  # Copy in lex, in case we need access in nested object
 
-	#@profile
+	def check_model(self, path=None):
+		# Check for large model files which should be in models/_sequence_taggers/
+		from .get_models import check_models
+		check_models(path)
+
 	def analyze(self, infile, out_format):
 		"""
 		Method to run coreference analysis with loaded model
