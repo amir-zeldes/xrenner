@@ -178,6 +178,8 @@ class LexData:
 		:param filename: string - name of the file
 		:param mode: double, triple, quadruple, quadruple_numeric, triple_numeric or low reading mode
 		:param atom_list_name: list of atoms to use for triple reader mode
+		:param add_to_sums: whether to sum numbers from multiple instances of the same key
+		:param sep: separator for double_with_sep mode
 		:return: compiled lexical data, usually a structured dictionary or set depending on number of columns
 		"""
 		if atom_list_name == "atoms":
@@ -540,9 +542,9 @@ class LexData:
 									print("This model supports classifiers for Python 2 only.\n  * switch to Python 2 and try running again\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
 									sys.exit()
 					try:
-						from sklearn.externals.joblib import load
+						from joblib import load
 					except Exception as e:
-						print("Unable to import sklearn:\n  * classifiers in this model require installing sklearn (pip install scikit-learn)\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
+						print("Unable to import joblib:\n  * classifiers in this model require installing joblib (pip install joblib)\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
 						sys.exit()
 					from .xrenner_classify import Classifier
 
@@ -591,10 +593,12 @@ class LexData:
 							morph[substring] = {entity_class:1}
 		return morph
 
-	def read_oracle(self,oracle_file):
+	def read_oracle(self, oracle_file, as_text=True):
 
 		self.entity_oracle = defaultdict(lambda : defaultdict(str))
-		sents = io.open(oracle_file,encoding="utf8").read().strip().split("\n\n")
+		if not as_text:
+			oracle_file = io.open(oracle_file,encoding="utf8").read()
+		sents = oracle_file.strip().split("\n\n")
 
 		for sent in sents:
 			parts = sent.strip().split("\n")
