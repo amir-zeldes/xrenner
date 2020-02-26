@@ -35,7 +35,8 @@ class StdOutFilter(object):
 			self.stream.flush()
 
 	def flush(self):
-		self.stream.flush()
+		pass
+		#self.stream.flush()
 
 	def start(self):
 		sys.stdout = self

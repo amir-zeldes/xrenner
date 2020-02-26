@@ -239,11 +239,11 @@ class Test3CorefMethods(unittest.TestCase):
 		self.assertEqual(target.chains,result.chains,"entity dep test (a book, a dog <- It barked)")
 
 	def test_affix_morphology(self):
-		# [A blorker] and an animal and a car . Of these , I saw [the person] .
+		# [A blorker] had a mummelhound in a blargmobile. I saw [the person] .
 		print("\nRun affix morphology test:  ")
 		target = self.cases["morph_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
-		self.assertEqual(target.chains,result.chains,"affix morph test (a blorker <- the person)")
+		self.assertEqual(target.chains,result.chains,"affix morph test (A blorker <- the person)")
 
 	def test_verbal_event_stem(self):
 		# John [visited] Spain . [The visit] went well .
