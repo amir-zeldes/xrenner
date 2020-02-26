@@ -15,7 +15,7 @@ from multiprocessing import Process, Value, Lock, current_process, Array
 import ctypes
 from math import ceil
 
-__version__ = "2.0.2"
+__version__ = "2.1.0"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
@@ -95,14 +95,17 @@ def xrenner_worker(data,options,total_docs,counter):
 
 	model = options.model
 	override = options.override
-	xrenner = Xrenner(model, override, options.rulebased)
+	xrenner = Xrenner(model, override, options.rulebased, options.noseq)
 
 	if options.dump is not None:
 		xrenner.lex.procid = str(current_process().ident)
-		xrenner.lex.dump = io.open(rreplace(options.dump,".", xrenner.lex.procid+".",1),'w',encoding="utf8")
+		xrenner.lex.dump = io.open(rreplace(options.dump,".", xrenner.lex.procid+".",1),'w',encoding="utf8",newline="\n")
 	else:
 		xrenner.lex.procid = ""
 		xrenner.lex.dump = None
+
+	if options.oracle is not None:
+		xrenner.lex.read_oracle(options.oracle)
 
 	for file_ in data:
 
@@ -117,6 +120,8 @@ def xrenner_worker(data,options,total_docs,counter):
 			if len(data) > 1:
 				if options.format == "webanno":
 					extension = "xmi"
+				elif options.format == "webannotsv":
+					extension = "tsv"
 				else:
 					extension = options.format
 				outfile = xrenner.docname + "." + extension
@@ -131,6 +136,8 @@ def xrenner_worker(data,options,total_docs,counter):
 
 		counter.increment(1,xrenner.sent_num-1,len(xrenner.conll_tokens)-1)
 		docs, sents, toks = counter.value()
+		if options.verbose and options.oracle is not None:
+			sys.stderr.write("Used oracle for " + str(xrenner.lex.oracle_counters[2]) + " entities, of which " + str(xrenner.lex.oracle_counters[0]) + " had spans in oracle and " + str(xrenner.lex.oracle_counters[1]) + " were different types than xrenner pred\n")
 
 		if options.verbose and len(data) > 1:
 			sys.stderr.write("Document " + str(docs) + "/" + str(total_docs) + ": " +
@@ -147,7 +154,8 @@ def xrenner_worker(data,options,total_docs,counter):
 if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-o', '--output', action="store", dest="format", default="sgml", help="output format, default: sgml; alternatives: html, paula, webanno, conll, onto, unittest, none")
+	parser.add_argument('-o', '--output', action="store", dest="format", default="sgml", help="output format, default: sgml",
+						choices=["sgml", "html", "paula", "webanno", "webannotsv", "conll", "onto", "unittest", "none"])
 	parser.add_argument('-m', '--model', action="store", dest="model", default="eng", help="input model directory name, in models/")
 	parser.add_argument('-x', '--override', action="store", dest="override", default=None, help="specify a section in the model's override.ini file with alternative settings")
 	parser.add_argument('-r', '--rulebased', action="store_true", help="run model without machine learning classifiers")
@@ -156,6 +164,8 @@ if __name__ == "__main__":
 	parser.add_argument('-p', '--procs', type=int, choices=range(1,17), dest="procs", help="number of processes for multithreading", default=2)
 	parser.add_argument('-d', '--dump', action="store", dest="dump", help="file to dump individual analyses into", default=None)
 	parser.add_argument('file', action="store", help="input file name to process")
+	parser.add_argument('--oracle', action='store', help="file with oracle entity predictions")
+	parser.add_argument('--noseq', action='store_true', help="do not use sequence tagger for entity classification")
 	parser.add_argument('--version', action='version', version=xrenner_version, help="show xrenner version number and quit")
 
 	total_docs = 0
@@ -216,7 +226,7 @@ if __name__ == "__main__":
 		if len(dump_files) > 0:
 			# Merge dump files from multiple processes
 			sys.stderr.write("Collating dump data ... \n")
-			with io.open(options.dump,'w',encoding="utf8") as wfd:
+			with io.open(options.dump,'w',encoding="utf8",newline="\n") as wfd:
 				if lock:
 					if PY3:
 						headers = counter.dump_headers.value.decode("utf8")
@@ -233,3 +243,4 @@ if __name__ == "__main__":
 			for f in dump_files:
 				os.remove(f)
 			sys.stderr.write("Dump written to "+options.dump+"\n")
+

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>DepEdit &mdash; xrenner 2.0.0 documentation</title>
+  <title>DepEdit &mdash; xrenner 2.1.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/> 
+    <link rel="top" title="xrenner 2.1.0 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                2.0
+                2.1
               </div>
             
           
@@ -132,15 +132,15 @@
             
   <div class="section" id="depedit">
 <h1>DepEdit<a class="headerlink" href="#depedit" title="Permalink to this headline">¶</a></h1>
-<p>The depedit module offers a powerful tool for manipulating input dependency trees before they are analyzed by the system. It is also available as a standalone script at: <a class="reference external" href="http://corpling.uis.georgetown.edu/depedit/">http://corpling.uis.georgetown.edu/depedit/</a></p>
+<p>The depedit module offers a powerful tool for manipulating input dependency trees before they are analyzed by the system. It is also available as a standalone script at: <a class="reference external" href="http://corpling.uis.georgetown.edu/depedit/">http://corpling.uis.georgetown.edu/depedit/</a>. For more detailed documentation and advanced DepEdit rules, see the documentation on the website.</p>
 <p>The manipulations carried out by the script are determined by the file <em>depedit.ini</em> in the model directory, which may be left empty or missing if depedit should not be used (depedit takes a moment to run, so not using it is an option if very high performance on large amounts of documents is desired). Each rule in the depedit file is a tab-delimited triple, with semicolon delimited instructions in this configuration:</p>
 <p><code class="docutils literal"><span class="pre">feature1=/value/;feature2=/value/...</span>&#160; <span class="pre">#1op#2;#2op#3...</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#1:feature3=value;...#1&gt;#2;...</span></code></p>
 <p>Where features include:</p>
 <ul class="simple">
 <li><strong>text</strong> - the token text</li>
 <li><strong>lemma</strong> - the token&#8217;s lemma</li>
-<li><strong>pos</strong> - the token&#8217;s POS tag (column 4)</li>
-<li><strong>cpos</strong> - the token&#8217;s coarse/other POS tag (column 5)</li>
+<li><strong>upos</strong> - the token&#8217;s POS tag (column 4)</li>
+<li><strong>xpos</strong> - the token&#8217;s other POS tag (column 5)</li>
 <li><strong>morph</strong> - morphological information (column 6)</li>
 <li><strong>func</strong> - the dependency label</li>
 <li><strong>head</strong> - the parent feature, only used if specifically targeting roots (head=0)</li>
@@ -168,7 +168,7 @@ func=/discourse/;func=/dep/     #1&gt;#2   #2:func=discourse
 <h3>Flagging special constructions<a class="headerlink" href="#flagging-special-constructions" title="Permalink to this headline">¶</a></h3>
 <p>Even if a tree is correct, you may be interested in flagging certain constellations as special with new labels, and catching those labels later on with <em>coref_rules.tab</em> or some other configuration. For example:</p>
 <p><strong>cataphora</strong> - suppose you want to catch &#8216;empty&#8217; or cataphoric pronouns such as <em>it&#8217;s good that she came</em>. You can recognize dependency subgraphs corresponding to these and change the pronoun&#8217;s function to a new one.</p>
-<div class="highlight-html"><div class="highlight"><pre><span></span>text=/^[Ii]t$/<span class="ni">&amp;func=/nsubj/;</span>pos=/JJ/;func=/ccomp/       #2&gt;#1;#2&gt;#3     #3:func=cata
+<div class="highlight-html"><div class="highlight"><pre><span></span>text=/^[Ii]t$/<span class="ni">&amp;func=/nsubj/;</span>xpos=/JJ/;func=/ccomp/      #2&gt;#1;#2&gt;#3     #3:func=cata
 </pre></div>
 </div>
 <p>This token can then be ignored by adding the function to forbidden Mark func in config.ini, or it can be caught with a coref rule in coref_rules.tab.</p>
@@ -179,7 +179,7 @@ func=/discourse/;func=/dep/     #1&gt;#2   #2:func=discourse
 information based on complex subgraphs. For example:</p>
 <p><strong>possessor definiteness</strong> - suppose you want both the possessor and possessed NP in an example such as <em>the man&#8217;s brother</em> to be treated as definite. You can recognize this subgraph and add a &#8216;def&#8217; feature to the morphology column of the dependency tree on each head:</p>
 <div class="highlight-html"><div class="highlight"><pre><span></span># Attach preceding article to the possessor noun and mark as definite
-func=/det/;func=/poss/;pos=/POS/;text=/.*/      #2&gt;#1;#2&gt;#3;#4&gt;#2       #4&gt;#1;#2:morph=def
+func=/det/;func=/nmod:poss/;xpos=/POS/;text=/.*/        #2&gt;#1;#2&gt;#3;#4&gt;#2       #4&gt;#1;#2:morph=def
 </pre></div>
 </div>
 <p>After this rule runs, the fourth token in the definition governs the first (article is attached to the main noun), and the possessor (#2) will be marked as definite, despite the fact that the article is attached to #4.</p>
@@ -228,7 +228,7 @@ text=/.*/       none    #S:s_type=decl;last
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Amir Zeldes.
+        &copy; Copyright 2016-2020, Amir Zeldes.
 
     </p>
   </div>
@@ -250,7 +250,7 @@ text=/.*/       none    #S:s_type=decl;last
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.0',
+            VERSION:'2.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using xrenner &mdash; xrenner 2.0.0 documentation</title>
+  <title>Using xrenner &mdash; xrenner 2.1.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
   
 
   
-    <link rel="top" title="xrenner 2.0.0 documentation" href="index.html"/>
+    <link rel="top" title="xrenner 2.1.0 documentation" href="index.html"/>
         <link rel="next" title="Buliding New Language Models" href="models.html"/>
         <link rel="prev" title="Welcome to xrenner’s documentation!" href="index.html"/> 
 
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                2.0
+                2.1
               </div>
             
           
@@ -95,6 +95,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#html">html</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#onto">onto</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#paula">paula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#webannotsv">webannotsv</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#unittest">unittest</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#none">none</a></li>
 </ul>
@@ -169,6 +170,7 @@
 <p>In batch mode, output file names are automatically generated using the input file name, minus extensions like &#8216;conll10&#8217; or &#8216;conllu&#8217;, and suffixed with the output format extension. For PAULA, document directories with names corresponding to the input documents are generated automatically.</p>
 <p>If you have multiple cores available, batch mode works much faster by using multiple processes with the option -p, for example:</p>
 <p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-x</span> <span class="pre">GUM</span> <span class="pre">-p</span> <span class="pre">4</span> <span class="pre">*.conll10</span></code></p>
+<p>Note that if your model uses neural models with large contextualized embeddings (e.g. Bert), multiple processes may not fit in memory when RAM is limited. For &#8220;could not allocate memory errors&#8221;, consider trying -p 1.</p>
 </div>
 <div class="section" id="importing-as-a-module">
 <h2>Importing as a module<a class="headerlink" href="#importing-as-a-module" title="Permalink to this headline">¶</a></h2>
@@ -180,10 +182,10 @@
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xrenner</span> <span class="kn">import</span> <span class="n">Xrenner</span>
 
 <span class="n">xrenner</span> <span class="o">=</span> <span class="n">Xrenner</span><span class="p">()</span>
-<span class="c1"># Get a parse in basic Stanford Dependencies (not UD)</span>
-<span class="n">my_conllx_result</span> <span class="o">=</span> <span class="n">some_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;John visited Spain. His visit went well.&quot;</span><span class="p">)</span>
+<span class="c1"># Get a parse in Universal Dependencies</span>
+<span class="n">my_conllu_result</span> <span class="o">=</span> <span class="n">some_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;John visited Spain. His visit went well.&quot;</span><span class="p">)</span>
 
-<span class="n">sgml_result</span> <span class="o">=</span> <span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">my_conllx_result</span><span class="p">,</span><span class="s2">&quot;sgml&quot;</span><span class="p">)</span>
+<span class="n">sgml_result</span> <span class="o">=</span> <span class="n">xrenner</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">my_conllu_result</span><span class="p">,</span><span class="s2">&quot;sgml&quot;</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">sgml_result</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -191,36 +193,36 @@
 </div>
 <div class="section" id="input-format">
 <h2>Input format<a class="headerlink" href="#input-format" title="Permalink to this headline">¶</a></h2>
-<p>xrenner uses the 10 column tab delimited conll format, with <strong>one line per token</strong> and <strong>a blank line between sentences</strong>. All of the following columns should be included (use an <strong>underscore</strong> for missing values):</p>
+<p>xrenner uses the 10 column tab delimited conllu format, with <strong>one line per token</strong> and <strong>a blank line between sentences</strong>. All of the following columns should be included (use an <strong>underscore</strong> for missing values):</p>
 <ol class="arabic simple">
 <li><strong>ID</strong> - token ID within sentence</li>
 <li><strong>text</strong> - token text</li>
 <li><strong>lemma</strong> - dictionary entry for this token (optional)</li>
-<li><strong>pos</strong> - part of speech</li>
-<li><strong>cpos</strong> - coarse or alternate part of speech (optional)</li>
+<li><strong>upos</strong> - universal part of speech</li>
+<li><strong>xpos</strong> - native part of speech (for English: PTB)</li>
 <li><strong>morph</strong> - morphological information for this token (optional)</li>
 <li><strong>head</strong> - ID of head token</li>
 <li><strong>func</strong> – dependency function</li>
-<li>&#8211; 10. – reserved for alternate trees with multiple parentage (DAGs)</li>
+<li>&#8211; 10. – reserved for alternate trees with multiple parentage (DAGs) and misc. annotations</li>
 </ol>
 <p><strong>Example</strong>:</p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span>1       Wikinews        Wikinews        NP      NNP     _       2       nsubj   _       _
-2       interviews      interview       VVZ     VBZ     _       0       root    _       _
-3       President       president       NN      NN      _       2       dobj    _       _
-4       of      of      IN      IN      _       3       prep    _       _
-5       the     the     DT      DT      _       7       det     _       _
-6       International   international   NP      NNP     _       7       amod    _       _
-7       Brotherhood     brotherhood     NP      NNP     _       4       pobj    _       _
-8       of      of      IN      IN      _       7       prep    _       _
-9       Magicians       magician        NPS     NNPS    _       8       pobj    _       _
+<div><div class="highlight-html"><div class="highlight"><pre><span></span>1       Wikinews        _       PROPN   NNP     _       2       nsubj   _       _
+2       interviews      _       VERB    VBZ     _       0       root    _       _
+3       President       _       NOUN    NN      _       2       obj     _       _
+4       of      _       ADP     IN      _       7       case    _       _
+5       the     _       DET     DT      _       7       det     _       _
+6       International   _       PROPN   NNP     _       7       amod    _       _
+7       Brotherhood     _       PROPN   NNP     _       3       nmod    _       _
+8       of      _       ADP     IN      _       9       case    _       _
+9       Magicians       _       PROPN   NNPS    _       7       nmod    _       _
 
-1       Wednesday       Wednesday       NP      NNP     _       0       root    _       _
-2       ,       ,       ,       ,       _       0       punct   _       _
-3       October October NP      NNP     _       4       nn      _       _
-4       9       9       CD      CD      _       1       appos   _       _
-5       ,       ,       ,       ,       _       0       punct   _       _
-6       2013    2013    CD      CD      _       3       tmod    _       _
+1       Wednesday       _       PROPN   NNP     _       0       root    _       _
+2       ,       _       PUNCT   ,       _       4       punct   _       _
+3       October _       PROPN   NNP     _       4       compound        _       _
+4       9       _       NUM     CD      _       1       appos   _       _
+5       ,       _       PUNCT   ,       _       6       punct   _       _
+6       2013    _       NUM     CD      _       4       nmod:tmod       _       _
 </pre></div>
 </div>
 </div></blockquote>
@@ -228,31 +230,31 @@
 <blockquote>
 <div><div class="highlight-html"><div class="highlight"><pre><span></span># speaker=&quot;Mario J. Lucero&quot;
 # s_type=&quot;decl&quot;
-1       Heaven  _       NNP     NNP     _       2       nn      _       _
-2       Sent    _       NNP     NNP     _       3       nn      _       _
-3       Gaming  _       NNP     NNP     _       6       nsubj   _       _
-4       is      _       VBZ     VBZ     _       6       cop     _       _
-5       basically       _       RB      RB      _       6       advmod  _       _
-6       me      _       PRP     PRP     _       0       root    _       _
-7       and     _       CC      CC      _       6       cc      _       _
-8       Isabel  _       NNP     NNP     _       6       conj    _       _
-9       ,       _       ,       ,       _       0       punct   _       _
-10      I       _       PRP     PRP     _       14      nsubj   _       _
-11      &#39;m      _       VBP     VBP     _       14      cop     _       _
-12      Mario   _       NNP     NNP     _       14      nn      _       _
-13      J.      _       NNP     NNP     _       14      nn      _       _
-14      Lucero  _       NNP     NNP     _       6       parataxis       _       _
-15      .       _       .       .       _       0       punct   _       _
+1       Heaven  _       PROPN   NNP     _       6       nsubj   _       _
+2       Sent    _       PROPN   NNP     _       1       flat    _       _
+3       Gaming  _       PROPN   NNP     _       1       flat    _       _
+4       is      _       AUX     VBZ     _       6       cop     _       _
+5       basically       _       ADV     RB      _       6       advmod  _       _
+6       me      _       PRON    PRP     _       0       root    _       _
+7       and     _       CCONJ   CC      _       8       cc      _       _
+8       Isabel  _       PROPN   NNP     _       6       conj    _       _
+9       ,       _       PUNCT   ,       _       12      punct   _       _
+10      I       _       PRON    PRP     _       12      nsubj   _       _
+11      &#39;m      _       AUX     VBP     _       12      cop     _       _
+12      Mario   _       PROPN   NNP     _       6       parataxis       _       _
+13      J.      _       PROPN   NNP     _       12      flat    _       _
+14      Lucero  _       PROPN   NNP     _       12      flat    _       _
+15      .       _       PUNCT   .       _       6       punct   _       _
 
 # speaker=&quot;Isabel Ruiz&quot;
 # s_type=&quot;decl&quot;
-1       And     _       CC      CC      _       6       cc      _       _
-2       ,       _       ,       ,       _       0       punct   _       _
-3       I       _       PRP     PRP     _       6       nsubj   _       _
-4       &#39;m      _       VBP     VBP     _       6       cop     _       _
-5       Isabel  _       NNP     NNP     _       6       nn      _       _
-6       Ruiz    _       NNP     NNP     _       0       root    _       _
-7       .       _       .       .       _       0       punct   _       _
+1       And     _       CCONJ   CC      _       5       cc      _       _
+2       ,       _       PUNCT   ,       _       1       punct   _       _
+3       I       _       PRON    PRP     _       5       nsubj   _       _
+4       &#39;m      _       AUX     VBP     _       5       cop     _       _
+5       Isabel  _       PROPN   NNP     _       0       root    _       _
+6       Ruiz    _       PROPN   NNP     _       5       flat    _       _
+7       .       _       PUNCT   .       _       5       punct   _       _
 </pre></div>
 </div>
 </div></blockquote>
@@ -354,13 +356,36 @@ role in the 1969 film Easy Rider
 <p><a class="reference external" href="https://www.sfb632.uni-potsdam.de/images/doc/PAULA_P1.1.2013.1.21a.pdf">PAULA XML</a> is a highly expressive, graph-like stand off XML format. Because PAULA documents are directory structures with multiple files, there is no need to specify an output file (&gt; outfile) when using PAULA output.</p>
 <p>The output using PAULA preserves both the exact antecdent chain structure and coreference types, as well as the optional information status annotations designating first mention (<em>new</em>) and subsequent mentions (<em>giv</em> for &#8216;given&#8217;).</p>
 </div>
+<div class="section" id="webannotsv">
+<h3>webannotsv<a class="headerlink" href="#webannotsv" title="Permalink to this headline">¶</a></h3>
+<p>Tab-delimited format used by the WebAnno and Inception annotation tools.</p>
+<dl class="docutils">
+<dt><strong>Example</strong>:</dt>
+<dd><div class="first last highlight-html"><div class="highlight"><pre><span></span>#FORMAT=WebAnno TSV 3.2
+#T_SP=webanno.custom.Referent|entity|infstat
+#T_RL=webanno.custom.Coref|coreftype|BT_webanno.custom.Referent
+
+#Text=Charles J. Fillmore
+1-1     0-7     Charles person[1]       new[1]  coref   2-1[2_1]
+1-2     8-10    J.      person[1]       new[1]  _       _
+1-3     11-19   Fillmore        person[1]       new[1]  _       _
+
+#Text=Charles J. Fillmore ( August 9 , 1929 – February 13 , 2014 ) was an American linguist and Professor of Linguistics at the University of California , Berkeley .
+2-1     20-27   Charles person[2]       giv[2]  coref   2-16[9_2]
+2-2     28-30   J.      person[2]       giv[2]  _       _
+2-3     31-39   Fillmore        person[2]       giv[2]  _       _
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
 <div class="section" id="unittest">
 <h3>unittest<a class="headerlink" href="#unittest" title="Permalink to this headline">¶</a></h3>
 <p>This is an internal format used only to generate test cases for xrenner unit tests.</p>
 </div>
 <div class="section" id="none">
 <h3>none<a class="headerlink" href="#none" title="Permalink to this headline">¶</a></h3>
-<p>This is a dummy format setting - run the analysis but produce no output.</p>
+<p>This is a dummy format setting - run the analysis but produce no output. Useful when using the -d, &#8211;dump option for classifier training data.</p>
 </div>
 </div>
 </div>
@@ -384,7 +409,7 @@ role in the 1969 film Easy Rider
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Amir Zeldes.
+        &copy; Copyright 2016-2020, Amir Zeldes.
 
     </p>
   </div>
@@ -406,7 +431,7 @@ role in the 1969 film Easy Rider
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2.0.0',
+            VERSION:'2.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -35,10 +35,12 @@ class LexData:
 	configuration files.
 	"""
 
-	def __init__(self, model, xrenner, override=None, rule_based=False):
+	def __init__(self, model, xrenner, override=None, rule_based=False, no_seq=False):
 		"""
 		:param model: model - string name of the model to read from models/
 		:param override: override - optional name of a section to use in models/override.ini
+		:param rule_based: do not use machine learning classifiers for coreference resolution
+		:param no_seq: do not use machine learning sequence taggers for entity resolution
 		"""
 		gc.disable()
 		self.model = model
@@ -49,6 +51,10 @@ class LexData:
 		self.dump_headers = []  # Placeholder for data dump feature names
 		self.classifiers = {}  # Holds loaded classifiers from pickled files in model
 		self.xrenner = xrenner
+		self.entity_oracle = None  # Holds external entity predictions to use instead of system predictions
+		self.oracle_counters = [0,0,0]
+		self.lemma_freqs = defaultdict(float)  # Holds proportional frequency of each lemma in document
+		self.token_count = 0  # Holds copy of token count for document from Xrenner object
 
 		# Lookup model path
 
@@ -156,6 +162,13 @@ class LexData:
 		self.incompatible_mod_pairs = set([])
 		self.incompatible_isa_pairs = set([])
 
+		# Load sequence classifier if specified
+		self.sequencer = None
+		if "sequencer" in self.filters and not no_seq:
+			if len(self.filters["sequencer"]) > 0:
+				from .xrenner_sequence import Sequencer
+				self.sequencer = Sequencer(model_path=self.filters["sequencer"])
+
 		gc.enable()
 
 	def read_delim(self, filename, mode="normal", atom_list_name="atoms", add_to_sums=False, sep=","):
@@ -165,6 +178,8 @@ class LexData:
 		:param filename: string - name of the file
 		:param mode: double, triple, quadruple, quadruple_numeric, triple_numeric or low reading mode
 		:param atom_list_name: list of atoms to use for triple reader mode
+		:param add_to_sums: whether to sum numbers from multiple instances of the same key
+		:param sep: separator for double_with_sep mode
 		:return: compiled lexical data, usually a structured dictionary or set depending on number of columns
 		"""
 		if atom_list_name == "atoms":
@@ -175,7 +190,7 @@ class LexData:
 			if PY2:
 				reader = unicode_split_reader(csvfile)
 			else:
-				reader = csv.reader(csvfile, delimiter='\t', escapechar="\\")
+				reader = csv.reader(csvfile, delimiter='\t', escapechar="\\", quoting=csv.QUOTE_NONE)
 			if mode == "low":
 				return set([rows[0].lower() for rows in reader if not rows[0].startswith('#') and not len(rows[0]) == 0])
 			elif mode == "double":
@@ -527,9 +542,9 @@ class LexData:
 									print("This model supports classifiers for Python 2 only.\n  * switch to Python 2 and try running again\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
 									sys.exit()
 					try:
-						from sklearn.externals.joblib import load
+						from joblib import load
 					except Exception as e:
-						print("Unable to import sklearn:\n  * classifiers in this model require installing sklearn (pip install scikit-learn)\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
+						print("Unable to import joblib:\n  * classifiers in this model require installing joblib (pip install joblib)\n  * alternatively switch off classifiers with the option -r (expect lower accuracy)")
 						sys.exit()
 					from .xrenner_classify import Classifier
 
@@ -577,3 +592,24 @@ class LexData:
 							entity_class = entity.split("\t")[0]
 							morph[substring] = {entity_class:1}
 		return morph
+
+	def read_oracle(self, oracle_file, as_text=True):
+
+		self.entity_oracle = defaultdict(lambda : defaultdict(str))
+		if not as_text:
+			oracle_file = io.open(oracle_file,encoding="utf8").read()
+		sents = oracle_file.strip().split("\n\n")
+
+		for sent in sents:
+			parts = sent.strip().split("\n")
+			if len(parts) == 3:
+				text = parts[0]
+				preds = parts[-1]
+				for pred in preds.split("|"):
+					toks, entity = pred.split()
+					start, end = toks.split(",")
+					end = int(end) - 1
+					start = int(start)
+					self.entity_oracle[text][(start,end)] = entity
+
+

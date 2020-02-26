@@ -1,7 +1,7 @@
 ========
 DepEdit
 ========
-The depedit module offers a powerful tool for manipulating input dependency trees before they are analyzed by the system. It is also available as a standalone script at: http://corpling.uis.georgetown.edu/depedit/
+The depedit module offers a powerful tool for manipulating input dependency trees before they are analyzed by the system. It is also available as a standalone script at: http://corpling.uis.georgetown.edu/depedit/. For more detailed documentation and advanced DepEdit rules, see the documentation on the website.
 
 The manipulations carried out by the script are determined by the file *depedit.ini* in the model directory, which may be left empty or missing if depedit should not be used (depedit takes a moment to run, so not using it is an option if very high performance on large amounts of documents is desired). Each rule in the depedit file is a tab-delimited triple, with semicolon delimited instructions in this configuration:
 
@@ -11,8 +11,8 @@ Where features include:
 
 * **text** - the token text 
 * **lemma** - the token's lemma 
-* **pos** - the token's POS tag (column 4) 
-* **cpos** - the token's coarse/other POS tag (column 5)
+* **upos** - the token's POS tag (column 4) 
+* **xpos** - the token's other POS tag (column 5)
 * **morph** - morphological information (column 6) 
 * **func** - the dependency label
 * **head** - the parent feature, only used if specifically targeting roots (head=0)
@@ -49,7 +49,7 @@ Even if a tree is correct, you may be interested in flagging certain constellati
 
 .. code-block:: html
 
-	text=/^[Ii]t$/&func=/nsubj/;pos=/JJ/;func=/ccomp/	#2>#1;#2>#3	#3:func=cata
+	text=/^[Ii]t$/&func=/nsubj/;xpos=/JJ/;func=/ccomp/	#2>#1;#2>#3	#3:func=cata
 
 This token can then be ignored by adding the function to forbidden Mark func in config.ini, or it can be caught with a coref rule in coref_rules.tab.
 
@@ -63,7 +63,7 @@ information based on complex subgraphs. For example:
 .. code-block:: html
 
 	# Attach preceding article to the possessor noun and mark as definite
-	func=/det/;func=/poss/;pos=/POS/;text=/.*/	#2>#1;#2>#3;#4>#2	#4>#1;#2:morph=def
+	func=/det/;func=/nmod:poss/;xpos=/POS/;text=/.*/	#2>#1;#2>#3;#4>#2	#4>#1;#2:morph=def
 
 After this rule runs, the fourth token in the definition governs the first (article is attached to the main noun), and the possessor (#2) will be marked as definite, despite the fact that the article is attached to #4. 
 

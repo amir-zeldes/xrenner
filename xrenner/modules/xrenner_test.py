@@ -173,16 +173,16 @@ class Test2MarkableMethods(unittest.TestCase):
 		self.assertEqual(markables[0].entity, "person")
 
 	def test_atomic_mod(self):
-		# House Dr. Israel Newspaper
-		# Note that Dr. is a person-marking atomic flagged modifier of the head
+		# Israel Machines Corp.
+		# Note that Corp. is an organization-marking atomic flagged modifier of the head
 		print("\nRun atomic modifier test:  ")
 		target = self.cases["mark_atomic_mod_test"]
 		self.xrenner.analyze(target.parse.split("\n"), "unittest")
 		markables = self.xrenner.markables
-		# Check that there are no nested markables in House Dr. Israel Newspaper
+		# Check that there are no nested markables in Israel Machines Corp.
 		self.assertEqual(len(markables), 1)
 		# Check that the name is classified as a person
-		self.assertEqual(markables[0].entity, "person")
+		self.assertEqual(markables[0].entity, "organization")
 
 
 class Test3CorefMethods(unittest.TestCase):
@@ -211,7 +211,7 @@ class Test3CorefMethods(unittest.TestCase):
 		self.assertEqual(target.chains,result.chains,"appos envelope test")
 
 	def test_isa(self):
-		# I read [the Walls Street Journal]. [That newspaper] is great.
+		# I read [the Wall Street Journal]. [That newspaper] is great.
 		print("\nRun isa test:  ")
 		target = self.cases["isa_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
@@ -239,11 +239,11 @@ class Test3CorefMethods(unittest.TestCase):
 		self.assertEqual(target.chains,result.chains,"entity dep test (a book, a dog <- It barked)")
 
 	def test_affix_morphology(self):
-		# [A blorker] and an animal and a car . Of these , I saw [the person] .
+		# [A blorker] had a mummelhound in a blargmobile. I saw [the person] .
 		print("\nRun affix morphology test:  ")
 		target = self.cases["morph_test"]
 		result = Case(self.xrenner.analyze(target.parse.split("\n"),"unittest"))
-		self.assertEqual(target.chains,result.chains,"affix morph test (a blorker <- the person)")
+		self.assertEqual(target.chains,result.chains,"affix morph test (A blorker <- the person)")
 
 	def test_verbal_event_stem(self):
 		# John [visited] Spain . [The visit] went well .

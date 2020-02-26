@@ -19,7 +19,8 @@ class Classifier:
 		t = str(type(cls))
 		if "Ridge" in t or "Elastic" in t or "Logistic" in t:
 			self.cls_type = "decision"
-		elif "RandomForest" in t or "Perceptron" in t or "StochasticGradient" in t or "Boost" in t:
+		elif "RandomForest" in t or "Perceptron" in t or "StochasticGradient" in t or "Boost" in t or \
+			"XGB" in t:
 			self.cls_type = "tuple"
 		else:
 			self.cls_type = "predict_proba"
@@ -50,9 +51,9 @@ class Classifier:
 						encoded.append(self.encoder_dict[header][0].transform(np.array(feats[header])))
 					else:  # ordinal feature
 						if feats[header] in self.encoder_dict[header][2]:
-							encoded.append(self.encoder_dict[header][0].transform([feats[header]]))
+							encoded.append(self.encoder_dict[header][0].transform(np.array([feats[header]]).reshape(-1,1)))
 						else:  # OOV item
-							encoded.append(self.encoder_dict[header][0].transform(["_unknown_"]))
+							encoded.append(self.encoder_dict[header][0].transform(np.array(["_unknown_"]).reshape(-1,1)))
 				else:  # Untransformed numerical feature
 					encoded.append(feats[header])
 			encoded_array = np.array(encoded).reshape((1, -1))

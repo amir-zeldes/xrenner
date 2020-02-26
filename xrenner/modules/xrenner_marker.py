@@ -127,14 +127,17 @@ def resolve_mark_entity(mark, lex):
 	entity = ""
 	use_entity_deps = True
 	use_entity_sims = True
+	use_sequencer = True if lex.sequencer is not None else False
 	if "ablations" in lex.debug:
 		if "no_entity_dep" in lex.debug["ablations"]:
 			use_entity_deps = False
 		if "no_entity_sim" in lex.debug["ablations"]:
 			use_entity_sims= False
+		if "no_sequencer" in lex.debug["ablations"]:
+			use_sequencer = False
 
 	## DEBUG POINT ##
-	if mark.text == lex.debug["ana"]:
+	if mark.text == lex.debug["ana"] or mark.head.text == lex.debug["ana"]:
 		a=5
 
 	parent_text = mark.head.head_text
@@ -146,17 +149,26 @@ def resolve_mark_entity(mark, lex):
 			entity = lex.filters["person_def_entity"]
 			mark.entity_certainty = 'uncertain'
 		else:
-			if use_entity_deps:
+			if use_sequencer:
+				pred, score = mark.head.seq_pred
+				if pred != "O":
+					entity = pred
+					mark.entity_certainty = 'sequencer'
+			if use_entity_deps and entity == "":
 				if parent_text in lex.entity_deps:
-					if mark.head.func in lex.entity_deps[parent_text]:
-						entity = max(iterkeys(lex.entity_deps[parent_text][mark.head.func]), key=(lambda key: lex.entity_deps[parent_text][mark.head.func][key]))
+					if mark.head.func in lex.entity_deps[parent_text][mark.head.func]:
+						dep_ents = dict(lex.entity_deps[parent_text][mark.head.func])
+						if lex.filters["no_person_agree"].match(mark.agree) is not None and lex.filters["person_def_entity"] in dep_ents:
+							del dep_ents[lex.filters["person_def_entity"]]
+						if len(dep_ents) > 0:
+							entity = max(iterkeys(dep_ents), key=(lambda key: dep_ents[key]))
 				if entity == "":  # No literal match for dependency, fall back to similar heads
 					if parent_text in lex.similar and use_entity_sims:
 						similar_heads = lex.similar[parent_text]
 						for similar_head in similar_heads:
 							if similar_head in lex.entity_deps:
 								if mark.head.func in lex.entity_deps[similar_head]:
-									if lex.filters["no_person_agree"].match(mark.agree):
+									if lex.filters["no_person_agree"].match(mark.agree) is not None:
 										similar_dict = {}
 										for key, value in lex.entity_deps[similar_head][mark.head.func].items():
 											if key != lex.filters["person_def_entity"]:
@@ -232,6 +244,14 @@ def resolve_mark_entity(mark, lex):
 						modifiers_match_def_entity = (re.sub(r"\t.*","",lex.entity_heads[mod.text.strip().lower()][0]) == lex.filters["default_entity"] for mod in mark.head.modifiers if mod.text.strip().lower() in lex.entity_heads)
 						if not (any(modifiers_match_article) or any(modifiers_match_definite) or any(modifiers_match_def_entity)):
 							entity = lex.filters["person_def_entity"]
+			if entity == "":
+				# Just use sequencer if desired
+				if use_sequencer:
+					pred, score = mark.head.seq_pred
+					if pred != "O":
+						entity = pred
+						mark.entity_certainty = 'sequencer'
+
 			if entity == "":
 				# See what the affix morphology predicts for the head
 				head_text = mark.lemma if mark.lemma != "_" and mark.lemma != "" else mark.head.text
@@ -382,6 +402,9 @@ def resolve_entity_cascade(entity_text, mark, lex):
 					mark.alt_subclasses.append(person_entity)
 					options[person_entity] = (person_entity, person_entity, lex.first_names[entity_text.split(" ")[0]], "name_match")
 
+	if person_entity not in mark.alt_entities and (mark.text in lex.first_names or mark.text in lex.last_names):
+		mark.alt_entities.append(person_entity)
+		options[person_entity] = (person_entity,person_entity,'','name_match')
 	if len(mark.alt_entities) > 1:
 		entity = disambiguate_entity(mark, lex)
 	elif len(mark.alt_entities) == 1:
@@ -466,14 +489,14 @@ def resolve_cardinality(mark,lex):
 	:param lex: the :class:`.LexData` object with gazetteer information and model settings
 	:return: Cardinality as float, zero if unknown
 	"""
-	for mod in mark.head.modifiers:
-		if mod.text in lex.numbers:
-			return int(lex.numbers[mod.text][0])
-		elif mod.text.lower() in lex.numbers:
-			return int(lex.numbers[mod.text.lower()][0])
+	def check_card(mod):
+		if mod in lex.numbers:
+			return int(lex.numbers[mod][0])
+		elif mod.lower() in lex.numbers:
+			return int(lex.numbers[mod.lower()][0])
 		else:
 			thousand_sep = r"\." if lex.filters["thousand_sep"] == "." else lex.filters["thousand_sep"]
-			pure_number_candidate = re.sub(thousand_sep,"",mod.text)
+			pure_number_candidate = re.sub(thousand_sep,"",mod)
 
 			decimal_sep = lex.filters["decimal_sep"]
 			if decimal_sep != ".":
@@ -486,6 +509,18 @@ def resolve_cardinality(mark,lex):
 					numerator = float(parts.groups()[0])
 					denominator = float(parts.groups()[1])
 					return numerator/denominator
+
+	for m in mark.head.modifiers:
+		card = check_card(m.text)
+		if card is not None:
+			return card
+	card = check_card(mark.head.text)
+	if card is not None:
+		return card
+	card = check_card(mark.head.lemma)
+	if card is not None:
+		return card
+
 	return 0
 
 
@@ -688,8 +723,18 @@ def make_markable(tok, conll_tokens, descendants, tokoffset, sentence, keys_to_p
 	# Check for a trailing coordinating conjunction on a descendant of the head and re-connect if necessary
 	if end < len(conll_tokens) - 1:
 		coord = conll_tokens[end + 1]
-		if lex.filters["coord_func"].match(coord.func) is not None and not coord.head == tok.id and int(
-				coord.head) >= start:
+		if lex.filters["cc_left_to_right"]:
+			not_head_child = coord.head != tok.id
+		else:
+			coord_grand_head = 0
+			if int(conll_tokens[int(coord.head)].head) != 0:
+				coord_grand_head = int(conll_tokens[int(coord.head)].head)
+			not_head_child = (conll_tokens[int(coord.head)].head != tok.id
+									and coord_grand_head == int(tok.id)
+									and conll_tokens[int(coord.head)].head != '0'
+									and int(conll_tokens[int(coord.head)].head) > int(tok.id))
+
+		if lex.filters["coord_func"].match(coord.func) is not None and not_head_child and int(coord.head) >= start:
 			conjunct1 = conll_tokens[int(conll_tokens[end + 1].head)]
 			for tok2 in conll_tokens[end + 1:]:
 				if (tok2.head == conjunct1.head and tok2.func == conjunct1.func) or tok2.head == coord.id:
@@ -806,7 +851,14 @@ def disambiguate_entity(mark,lex):
 	"""
 	##DEBUG POINT##
 	if mark.text in lex.debug["ana"]:
-		pass
+		a=3
+
+	# Prefer sequencer entity if it is one of the options
+	use_sequencer = True if lex.sequencer is not None else False
+	if use_sequencer:
+		seq_ent = mark.head.seq_pred[0]
+		if seq_ent in mark.alt_entities:
+			return seq_ent
 
 	parent_text = mark.head.head_text
 	scores = defaultdict(float)

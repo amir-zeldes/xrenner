@@ -16,23 +16,28 @@ from .xrenner_marker import make_markable
 from .xrenner_lex import *
 from .xrenner_postprocess import postprocess_coref
 from .depedit import DepEdit
-import ntpath, os, io
+import ntpath, os, io, decimal
+
+decimal.getcontext().rounding = decimal.ROUND_DOWN
 
 class Xrenner:
 
-	def __init__(self, model="eng", override=None, rule_based=False):
+	def __init__(self, model="eng", override=None, rule_based=False, no_seq=False):
 		"""
 		Main class for xrenner coreferencer. Invokes the load method to read model data.
 		
 		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
 		:param override: name of a section in models/override.ini if configuration overrides should be applied
-		:return: void
+		:param rule_based: do not use machine learning classifiers for coreference resolution
+		:param no_seq: do not use machine learning sequence taggers for entity resolution
 		"""
+
 		self.rule_based = rule_based
+		self.no_seq = no_seq
 		self.load(model, override)
 		if "depedit.ini" in self.lex.model_files:
 			depedit_config = self.lex.model_files["depedit.ini"]
-			self.depedit = DepEdit(depedit_config)
+			self.depedit = DepEdit(depedit_config, options=type('', (), {"kill":"supertoks", "quiet":True})())
 		else:
 			self.depedit = None
 		self.token_count = 0
@@ -44,23 +49,29 @@ class Xrenner:
 
 		:param model:  model directory in models/ specifying settings and gazetteers for this language (default: eng)
 		:param override: name of a section in models/override.ini if configuration overrides should be applied
-		:return: void
+		:return: None
 		"""
+
 		self.model = model
 		self.override = override
-		self.lex = LexData(self.model, self, self.override, self.rule_based)
+		self.lex = LexData(self.model, self, self.override, self.rule_based, self.no_seq)
 
 	def set_doc_name(self, name):
 		"""
 		Method to manually set the name of the document being processed, rather than deriving it from an input file name.
 
 		:param name: string, the name to give the document
-		:return: void
+		:return: None
 		"""
+
 		self.docname = name
 		self.lex.docname = name  # Copy in lex, in case we need access in nested object
 
-	#@profile
+	def check_model(self, path=None):
+		# Check for large model files which should be in models/_sequence_taggers/
+		from .get_models import check_models
+		check_models(path)
+
 	def analyze(self, infile, out_format):
 		"""
 		Method to run coreference analysis with loaded model
@@ -73,7 +84,7 @@ class Xrenner:
 		# Check if this is a file name from the main script or a parse delivered in an import or unittest scenario
 		if "\t" in infile or isinstance(infile,list):  # This is a raw parse as string or list, not a file name
 			self.docpath = os.path.dirname(os.path.abspath("."))
-			if self.docname is None or self.lex.docname is None:
+			if self.lex.docname is None:
 				self.set_doc_name("untitled")
 			if not isinstance(infile,list):
 				infile = infile.replace("\r","").split("\n")
@@ -125,12 +136,27 @@ class Xrenner:
 		markstart_dict = self.markstart_dict
 		markend_dict = self.markend_dict
 
-
+		sentences = []
 		self.sent_num = 1
 		quoted = False
 		current_sentence = Sentence(self.sent_num, self.tokoffset, "")
 
 		lex.coref_rules = lex.non_speaker_rules
+
+		seq_preds = None
+		text = "\n".join(infile).strip()
+		sents = text.split("\n\n")
+		s_texts = []
+		lemmas = []
+		lemma_freqs = defaultdict(float)
+		for s in sents:
+			tablines = [line.split("\t") for line in s.split("\n") if "\t" in line]
+			no_super = [line[1] for line in tablines if "-" not in line[0]]
+			lemmas += [line[2] for line in tablines if "-" not in line[0]]
+			s_texts.append(" ".join(no_super))
+
+		if lex.sequencer is not None:  # Sequence label all tokens before reading sentences
+			seq_preds = lex.sequencer.predict_proba(s_texts)
 
 		for myline in infile:
 			if "speaker" in myline and "=" in myline and myline.startswith("#"):  # speaker annotation
@@ -156,8 +182,11 @@ class Xrenner:
 				else:
 					tok_func = cols[7]
 				head_id = "0" if cols[6] == "0" else str(int(cols[6]) + self.tokoffset)
-				conll_tokens.append(ParsedToken(str(int(cols[0]) + self.tokoffset), cols[1], cols[2], cols[3], cols[5],
-												head_id, tok_func, current_sentence, [], [], [], lex, quoted, cols[8], cols[9]))
+				this_tok = ParsedToken(str(int(cols[0]) + self.tokoffset), cols[1], cols[2], cols[3], cols[5],
+												head_id, tok_func, current_sentence, [], [], [], lex, quoted, cols[8], cols[9])
+				if seq_preds is not None:
+					this_tok.seq_pred = seq_preds[int(cols[0]) + self.tokoffset -1]
+				conll_tokens.append(this_tok)
 				self.sentlength += 1
 				# Check not to add a child if this is a function which discontinues the markable span
 				if not (lex.filters["non_link_func"].match(tok_func) is not None or lex.filters["non_link_tok"].match(cols[1]) is not None):
@@ -166,27 +195,50 @@ class Xrenner:
 				self.child_funcs[(int(cols[6]) + self.tokoffset)].append(tok_func)
 				self.child_strings[(int(cols[6]) + self.tokoffset)].append(cols[1])
 			elif self.sentlength > 0:
-				self.process_sentence(self.tokoffset, current_sentence)
+				#self.process_sentence(self.tokoffset, current_sentence)
 				self.sent_num += 1
 				if self.sentlength > 0:
 					self.tokoffset += self.sentlength
+				current_sentence.length = self.sentlength
+				sentences.append(current_sentence)
 				current_sentence = Sentence(self.sent_num, self.tokoffset, "")
 
 				self.sentlength = 0
 
 		# Handle leftover sentence which did not have trailing newline
 		if self.sentlength > 0:
-			self.process_sentence(self.tokoffset, current_sentence)
+			#self.process_sentence(self.tokoffset, current_sentence)
+			current_sentence.length = self.sentlength
+			sentences.append(current_sentence)
+
+		# Get lemma frequencies for this document
+		token_count = float(len(lemmas))
+		lex.token_count = token_count
+		for lemma in set(lemmas):
+			###lemma_freqs[lemma] = float(round(decimal.Decimal(lemmas.count(lemma)/token_count),4))
+			lemma_freqs[lemma] = lemmas.count(lemma)
+		lex.lemma_freqs = lemma_freqs
+		for tok in conll_tokens:
+			tok.lemma_freq = lemma_freqs[tok.lemma]
+
+		self.tokoffset = 0
+		for snum, sentence in enumerate(sentences):
+			sentence.text = s_texts[snum]
+			self.tokoffset += sentence.start_offset - self.tokoffset
+			self.process_sentence(sentence.start_offset,sentence)
 
 		marks_to_add = []
-		# TODO: incorporate verbal matching into classification and dumping frameworks
+		dump = "" ###
 		if lex.filters["seek_verb_for_defs"]:
 			for mark in self.markables:
 				if mark.definiteness == "def" and mark.antecedent == "none" and mark.form == "common" and \
 				(lex.filters["event_def_entity"] == mark.entity or lex.filters["abstract_def_entity"] == mark.entity):
 					for tok in conll_tokens[0:mark.start]:
 						if lex.filters["verb_head_pos"].match(tok.pos):
+							dump += str(mark.start)+"-"+str(mark.end) + ";"+tok.id+"-"+tok.id+"\t"+str(lex.docname)+"\t"+tok.text+"\t"+mark.head.text+"\t"+str(mark.sent_num-tok.sentence.sent_num)+"\t"
 							if stems_compatible(tok,mark.head,lex):
+								comp = "T"
+								dump += comp + "\n"
 								v_antecedent = make_markable(tok,conll_tokens,{},tok.sentence.start_offset,tok.sentence,[],lex)
 								mark.antecedent = v_antecedent
 								mark.coref_type = "coref"
@@ -198,6 +250,9 @@ class Xrenner:
 								v_antecedent.group = mark.group
 								v_antecedent.id = "referent_" + v_antecedent.head.id
 								marks_to_add.append(v_antecedent)
+							else:
+								comp = "F"
+
 
 		for mark in marks_to_add:
 			markstart_dict[mark.start].append(mark)
@@ -229,7 +284,7 @@ class Xrenner:
 		mark.core_text = mark.core_text.strip()
 		# DEBUG POINT
 		if mark.text == lex.debug["ana"]:
-			pass
+			a=5
 		tok = mark.head
 		if lex.filters["proper_pos"].match(tok.pos) is not None:
 			mark.form = "proper"
@@ -253,7 +308,8 @@ class Xrenner:
 				children_are_def_articles = (lex.filters["definite_articles"].match(maybe_article) is not None for
 											 maybe_article in
 											 [mark.head.text, mark.text.split(" ")[0]] + mark.head.child_strings)
-				if any(children_are_def_articles):
+				children_are_possessors =  (lex.filters["definite_possessive_func"].match(func) is not None for func in mark.head.child_funcs)
+				if any(children_are_def_articles) or any(children_are_possessors):
 					mark.definiteness = "def"
 				else:
 					mark.definiteness = "indef"
@@ -280,6 +336,21 @@ class Xrenner:
 		else:
 			resolve_mark_entity(mark, lex)
 
+		if lex.entity_oracle is not None:
+			if lex.oracle_counters is None:
+				lex.oracle_counters = [0,0,0]
+			sent_text = mark.sentence.text
+			lex.oracle_counters[2] += 1
+			if sent_text in lex.entity_oracle:
+				m_start = mark.start - mark.sentence.start_offset
+				m_end = mark.end - mark.sentence.start_offset
+				if (m_start, m_end) in lex.entity_oracle[sent_text]:
+					lex.oracle_counters[0] += 1
+					if mark.entity != lex.entity_oracle[sent_text][(m_start, m_end)]:
+						lex.oracle_counters[1] += 1
+					mark.entity = lex.entity_oracle[sent_text][(m_start, m_end)]
+
+
 		if "ablations" in lex.debug:
 			if "no_subclasses" in lex.debug["ablations"]:
 				mark.subclass = mark.entity
@@ -303,6 +374,8 @@ class Xrenner:
 			output_PAULA(conll_tokens, markstart_dict, markend_dict, self.docname, self.docpath)
 		elif out_format == "webanno":
 			return output_webanno(conll_tokens[1:], markables)
+		elif out_format == "webannotsv":
+			return output_webannotsv(conll_tokens[1:], markables)
 		elif out_format == "conll":
 			return output_conll(conll_tokens, markstart_dict, markend_dict, self.docname, False)
 		elif out_format == "conll_sent":
@@ -322,20 +395,29 @@ class Xrenner:
 		Function to analyze a single sentence
 		
 		:param tokoffset: the offset in tokens for the beginning of the current sentence within all input tokens
-		:param sentence: the Sentence object containin mood, speaker and other information about this sentence
+		:param sentence: the Sentence object containing mood, speaker and other information about this sentence
 		:return: void
 		"""
+		def is_eligible_submark_head(head_tok):
+			# Note this function ignores pos_func_heads combos
+			if lex.filters["mark_head_pos"].match(head_tok.pos) is not None:
+				if lex.filters["mark_forbidden_func"].match(head_tok.func) is None:
+					return True
+			return False
+
 		markables = self.markables
 		markables_by_head = self.markables_by_head
 
 		lex = self.lex
-		conll_tokens = self.conll_tokens
+		conll_tokens = self.conll_tokens[:tokoffset+sentence.token_count+1]
 		child_funcs = self.child_funcs
 		child_strings = self.child_strings
 		children = self.children
 		descendants = self.descendants
 		markstart_dict = self.markstart_dict
 		markend_dict = self.markend_dict
+
+		use_sequencer = True if lex.sequencer is not None else False
 
 		# Add list of all dependent funcs and strings to each token
 		add_child_info(conll_tokens, child_funcs, child_strings, lex)
@@ -381,7 +463,11 @@ class Xrenner:
 			# Affix tokens can't be markable heads - assume parser error and fix if desired
 			# DEBUG POINT
 			if tok1.text == lex.debug["ana"]:
-				pass
+				a=5
+			if use_sequencer:
+				if tok1.seq_pred[0] == "O" and tok1.seq_pred[1] > lex.filters["sequencer_nonref_thresh"] and lex.filters["sequencer_nonref_pos"].match(tok1.pos) is not None:
+					if not any([lex.filters["sequencer_nonref_forbidden_childfunc"].match(f) is not None for f in tok1.child_funcs]):
+						stop_ids[tok1.id] = True
 			if lex.filters["postprocess_parser"]:
 				if ((lex.filters["mark_head_pos"].match(tok1.pos) is not None and lex.filters["mark_forbidden_func"].match(tok1.func) is None) or
 				pos_func_combo(tok1.pos, tok1.func, lex.filters["pos_func_heads"])) and not (stop_ids[tok1.id]):
@@ -438,20 +524,22 @@ class Xrenner:
 			tok2 = conll_tokens[int(tok1.id) + 1]
 			first_name_candidate = tok1.text.title() if tok1.text.isupper() else tok1.text
 			last_name_candidate = tok2.text.title() if tok2.text.isupper() else tok2.text
-			if first_name_candidate in lex.first_names and last_name_candidate in lex.last_names and tok1.head == tok2.id:
-				stop_ids[tok1.id] = True
+			if not lex.filters["cap_names"] or (first_name_candidate[0].isupper() and last_name_candidate[0].isupper()):
+				if first_name_candidate in lex.first_names and last_name_candidate in lex.last_names and tok1.head == tok2.id:
+					stop_ids[tok1.id] = True
 		# Allow one intervening token, e.g. for middle initial
 		for tok1 in conll_tokens[tokoffset + 1:-2]:
 			tok2 = conll_tokens[int(tok1.id) + 2]
 			first_name_candidate = tok1.text.title() if tok1.text.isupper() else tok1.text
 			middle_name_candidate = conll_tokens[int(tok1.id) + 1].text.title() if tok1.text.isupper() else conll_tokens[int(tok1.id) + 1].text
 			last_name_candidate = tok2.text.title() if tok2.text.isupper() else tok2.text
-			if first_name_candidate in lex.first_names and last_name_candidate in lex.last_names and tok1.head == tok2.id and (re.match(r'^[A-Z]\.$',middle_name_candidate) or middle_name_candidate in lex.first_names):
-				stop_ids[tok1.id] = True
+			if not lex.filters["cap_names"] or (first_name_candidate[0].isupper() and last_name_candidate[0].isupper()):
+				if first_name_candidate in lex.first_names and last_name_candidate in lex.last_names and tok1.head == tok2.id and (re.match(r'^[A-Z]\.$',middle_name_candidate) or middle_name_candidate in lex.first_names):
+					stop_ids[tok1.id] = True
 
-		# Expand children list recursively into descendants
+		# Expand children list recursively into descendants for this sentence
 		for parent_key in children:
-			if int(parent_key) > tokoffset:
+			if int(parent_key) > tokoffset and int(parent_key) <= int(conll_tokens[-1].id):
 				descendants[parent_key] = get_descendants(parent_key, children, [], self.sent_num, conll_tokens)
 
 		keys_to_pop = []
@@ -461,7 +549,7 @@ class Xrenner:
 			# Markable heads should match specified pos or pos+func combinations,
 			# ruling out stop list items with appropriate functions
 			if tok.text == lex.debug["ana"]:
-				pass
+				a=5
 			# TODO: consider switch for lex.filters["stop_func"].match(tok.func)
 			if ((lex.filters["mark_head_pos"].match(tok.pos) is not None and lex.filters["mark_forbidden_func"].match(tok.func) is None) or
 					pos_func_combo(tok.pos, tok.func, lex.filters["pos_func_heads"])) and not (stop_ids[tok.id]):
@@ -513,7 +601,9 @@ class Xrenner:
 						big_markable.coordinate = True
 
 					# Switch the id's so that the big markable has the 1_2_3 style id, and the small has just the head id
-					mark_candidates_by_head[tok.id + submark_id] = big_markable
+					# Check that big_markable's coordinate heads are all eligible
+					if all([is_eligible_submark_head(conll_tokens[int(m)]) for m in big_markable.submarks]):
+						mark_candidates_by_head[tok.id + submark_id] = big_markable
 					mark_candidates_by_head[tok.id] = small_markable
 					big_markable = None
 					small_markable = None
@@ -565,7 +655,7 @@ class Xrenner:
 			if current_markable.text == lex.debug["ana"]:
 				a=5
 				if current_markable.text == lex.debug["ante"]:
-					pass
+					a=5
 			# Revise coordinate markable entities now that we have resolved all of their constituents
 			if len(current_markable.submarks) > 0:
 				assign_coordinate_entity(current_markable,markables_by_head)
@@ -584,6 +674,7 @@ class Xrenner:
 						current_markable = temp
 					current_markable.antecedent = antecedent
 					current_markable.group = antecedent.group
+
 					# Check for apposition function if both markables are in the same sentence
 					if lex.filters["apposition_func"].match(current_markable.head.func) is not None and \
 							current_markable.sentence.sent_num == antecedent.sentence.sent_num:

@@ -35,6 +35,7 @@ class ParsedToken:
 		self.coordinate = False
 		self.head_text = ""
 		self.lex = lex  # Pointer to lex object
+		self.lemma_freq = 0.0
 		self.negated = False
 		self.neg_parent = False
 
@@ -45,7 +46,7 @@ class Markable:
 
 	# Properties refering to markable head, not markable itself
 	tok_props = {"negated", "neg_parent", "pos", "lemma", "morph", "func", "quoted", "modifiers", "child_funcs", "child_strings",
-	 "agree", "doc_position", "sent_position", "head_text", "head_pos"}
+	 "agree", "doc_position", "sent_position", "head_text", "head_pos", "lemma_freq"}
 
 	def __init__(self, mark_id, head, form, definiteness, start, end, text, core_text, entity, entity_certainty, subclass, infstat, agree, sentence,
 				 antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree, cardinality=0, submarks=[], coordinate=False, agree_certainty=""):
@@ -159,7 +160,15 @@ class Markable:
 		if dump_position:
 			out_dict["position"] = str(self.start)+"-"+str(self.end)+";"+str(antecedent.start)+"-"+str(antecedent.end)
 		out_dict["docname"] = lex.docname
-		out_dict["genre"] = lex.docname[:4]  # By convention, genre is taken from first 4 chars of file name
+
+		# TODO: Make genre representation configurable
+		# By convention, genre is taken from first 4 chars of file, but for corpora like GUM use part between underscores
+		if lex.docname.startswith("GUM_") or lex.docname.lower().startswith("autogum_") or lex.docname.lower().startswith("amalgum_"):
+			out_dict["genre"] = lex.docname.split("_")[1]
+		elif len(lex.docname) > 4:
+			out_dict["genre"] = lex.docname[:4]
+		else:
+			out_dict["genre"] = "_"  # Too short to detect genre
 
 		log_props = set([])  # Properties to log-transform before dump, if desired
 		bool_props = {"coordinate","quoted","negated","neg_parent"}  # Boolean props to dump as 1 or 0
@@ -168,10 +177,10 @@ class Markable:
 
 		# TODO: May need to lower() head_text, since cap/uncapped version may be in lex/entity dep score lexicon
 		anaphor_parent = self.head.head_text
-		ana_props = ["lemma","func","head_text","form","pos","agree","start","end",
+		ana_props = ["lemma","func","head_text","form","pos","agree","start","end","lemma_freq",
 						  "cardinality", "definiteness","entity","subclass", "infstat", "coordinate",
 						  "length", "mod_count", "doc_position","sent_position","quoted","negated","neg_parent","s_type"]
-		ante_props = ["lemma","func","head_text","form","pos","agree","start","end",
+		ante_props = ["lemma","func","head_text","form","pos","agree","start","end","lemma_freq",
 						  "cardinality", "definiteness","entity","subclass", "infstat", "coordinate",
 						  "length", "mod_count", "doc_position","sent_position","quoted","negated","neg_parent","s_type"]
 		for prop in ana_props:
@@ -210,6 +219,8 @@ class Markable:
 			out_dict["d_agr"] = int(anaphor.agree == antecedent.agree)
 			out_dict["d_intervene"] = abs(int(re.sub('.*_', '', anaphor.id)) - int(re.sub('.*_', '', antecedent.id)))  # Number of markables between ana and ante
 			out_dict["d_cohort"] = len(candidate_list)
+			out_dict["d_modcount"] = anaphor.mod_count - antecedent.mod_count
+			out_dict["d_samemods"] = len(list(set([m.lemma for m in anaphor.head.modifiers]) & set([m.lemma for m in antecedent.head.modifiers])))
 
 			hasa = 0
 			use_hasa = True
@@ -231,6 +242,9 @@ class Markable:
 			out_dict["d_lexsimdep"] = self.lex_sim_dep_scores[antecedent.head.text]
 			out_dict["d_sametext"] = int(anaphor.text == antecedent.text)
 			out_dict["d_samelemma"] = int(anaphor.lemma == antecedent.lemma)
+
+			out_dict["d_doclen"] = int(anaphor.head.lex.token_count)
+
 
 			# Check if one markable head is the dependency parent of the other
 			if antecedent.head.head == anaphor.head.id:
@@ -280,7 +294,7 @@ class Sentence:
 		self.mood = mood
 		self.speaker = speaker
 		self.token_count = 0
-		self.s_type = "_"  # Initial type will be overwritten if s_type annotation is found in input
+		self.s_type = "_"  # Initial type, will be overwritten if s_type annotation is found in input
 
 	def __repr__(self):
 		mood = "(no mood info)" if self.mood == "" else self.mood
@@ -293,7 +307,10 @@ def get_descendants(parent, children_dict, seen_tokens, sent_num, conll_tokens):
 	my_descendants += children_dict[parent]
 	for child in children_dict[parent]:
 		if child in seen_tokens:
-			sys.stderr.write("\nCycle detected in syntax tree in " + conll_tokens[int(parent)].lex.docname + " in sentence " + str(sent_num) + " (child of token: '" + conll_tokens[int(parent)].text + "')\n")
+			if sys.version_info[0] < 3:
+				sys.stderr.write("\nCycle detected in syntax tree in " + conll_tokens[int(parent)].lex.docname + " in sentence " + str(sent_num) + " (child of token: '" + conll_tokens[int(parent)].text.encode("utf8") + "')\n")
+			else:
+				sys.stderr.write("\nCycle detected in syntax tree in " + conll_tokens[int(parent)].lex.docname + " in sentence " + str(sent_num) + " (child of token: '" + conll_tokens[int(parent)].text + "')\n")
 			sys.exit("Exiting due to invalid input\n")
 		else:
 			seen_tokens += [child]

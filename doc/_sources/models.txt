@@ -99,7 +99,7 @@ override.ini
 				[GUM]
 
 				# Change the functions breaking the markable span
-				non_link_func=/rcmod|nsubj|cop|aux|dep|punct|appos|vmod|advcl|tmod|discourse|advmod|parataxis/
+				non_link_func=/^(acl|acl:relcl|advcl|aux|aux:pass|expl|nsubj|nsubj:pass|cop|dep|punct|appos|discourse|parataxis|orphan|advmod_neg|case|mark|list|csubj|csubj:pass|cc|obl.*)$/
 				# In this profile we want to keep singletons and cataphora
 				remove_cataphora=False
 				remove_singletons=False
