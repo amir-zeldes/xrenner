@@ -22,7 +22,7 @@ from glob import glob
 import io
 from six import iteritems
 
-__version__ = "2.1.7"
+__version__ = "2.2.0"
 
 ALIASES = {"form":"text","upostag":"pos","xpostag":"cpos","feats":"morph","deprel":"func","deps":"head2","misc":"func2",
 		   "xpos": "cpos","upos":"pos"}
@@ -55,6 +55,16 @@ class ParsedToken:
 		self.position = position
 		self.is_super_tok = is_super_tok
 
+	def __getattr__(self, item):
+		if item.startswith("#S:"):
+			key = item.split(":",1)[1]
+			if key in self.sentence.annotations:
+				return self.sentence.annotations[key]
+			elif key in self.sentence.input_annotations:
+				return self.sentence.input_annotations[key]
+			else:
+				return ""
+
 	def __repr__(self):
 		return str(self.text) + " (" + str(self.pos) + "/" + str(self.lemma) + ") " + "<-" + str(self.func)
 
@@ -64,7 +74,8 @@ class Sentence:
 	def __init__(self, sentence_string="", sent_num=0,tokoffset=0):
 		self.sentence_string = sentence_string
 		self.length = 0
-		self.annotations = {}
+		self.annotations = {}  # Dictionary to keep sentence annotations added by DepEdit rules
+		self.input_annotations = {}  # Dictionary with original sentence annotations (i.e. comment lines) in input conll
 		self.sent_num = sent_num
 		self.offset = tokoffset
 
@@ -113,6 +124,7 @@ class Transformation:
 		return criterion_string
 
 	def __init__(self, transformation_text, line):
+		self.transformation_text = transformation_text
 		instructions = self.parse_transformation(transformation_text)
 		if instructions is None:
 			sys.stderr.write("Depedit says: error in configuration file\n"
@@ -132,7 +144,8 @@ class Transformation:
 			for criterion in criteria:
 				if re.match(r"(text|pos|cpos|lemma|morph|func|head|func2|head2|num|form|upos|upostag|xpos|xpostag|feats|deprel|deps|misc)!?=/[^/=]*/", criterion) is None:
 					if re.match(r"position!?=/(first|last|mid)/", criterion) is None:
-						report += "Invalid node definition in column 1: " + criterion
+						if re.match(r"#S:[A-Za-z_]+!?=/[^/\t]+/",criterion) is None:
+							report += "Invalid node definition in column 1: " + criterion
 		for relation in self.relations:
 			if relation == "none" and len(self.relations) == 1:
 				if len(self.definitions) > 1:
@@ -164,6 +177,9 @@ class DefinitionMatcher:
 		self.def_index = def_index
 		self.groups = []
 		self.defs = []
+		self.sent_def = False
+		if def_text.startswith("#S:"):
+			self.sent_def = True
 
 		def_items = self.def_text.split("&")
 		for def_item in def_items:
@@ -213,7 +229,10 @@ class Definition:
 
 	def __init__(self, criterion, value, negative=False):
 		# Handle conllu criterion aliases:
-		self.criterion = ALIASES.get(criterion, criterion)
+		if criterion.startswith("#S:"):  # Sentence annotation
+			self.criterion = criterion
+		else:
+			self.criterion = ALIASES.get(criterion, criterion)
 		self.value = value
 		self.match_type = ""
 		self.compiled_re = None
@@ -259,6 +278,7 @@ class Match:
 		self.def_index = def_index
 		self.token = token
 		self.groups = groups
+		self.sent_def = False  # Whether this is a sentence annotation match
 
 	def __repr__(self):
 		return "#" + str(self.def_index) + ": " + self.token.__repr__
@@ -301,9 +321,11 @@ class DepEdit:
 
 		line_num = 0
 		for instruction in config_file:
+			instruction = instruction.strip()
 			line_num += 1
-			if len(instruction)>0 and not instruction.startswith(";") and not instruction.startswith("#") and not instruction.strip() =="":
-				self.transformations.append(Transformation(instruction, line_num))
+			if len(instruction)>0 and not instruction.startswith(";") and not instruction.startswith("#") \
+					or instruction.startswith("#S:"):
+					self.transformations.append(Transformation(instruction, line_num))
 
 		trans_report = ""
 		for transformation in self.transformations:
@@ -327,7 +349,12 @@ class DepEdit:
 			for def_matcher in transformation.definitions:
 				for token in conll_tokens:
 					if not token.is_super_tok and def_matcher.match(token):
-						node_matches[def_matcher.def_index].append(Match(def_matcher.def_index, token, def_matcher.groups))
+						if def_matcher.sent_def:
+							if len(node_matches[def_matcher.def_index])==0:  # Only add a sentence anno definition once
+								node_matches[def_matcher.def_index] = [Match(def_matcher.def_index, token, def_matcher.groups)]
+								node_matches[def_matcher.def_index][0].sent_def = True
+						else:
+							node_matches[def_matcher.def_index].append(Match(def_matcher.def_index, token, def_matcher.groups))
 			result_sets = []
 			for relation in transformation.relations:
 				if not self.matches_relation(node_matches, relation, result_sets):
@@ -336,7 +363,7 @@ class DepEdit:
 			self.add_groups(result_sets)
 			if len(result_sets) > 0:
 				for action in transformation.actions:
-					retval = self.execute_action(result_sets, action)
+					retval = self.execute_action(result_sets, action, transformation)
 					if retval == "last":  # Explicit instruction to cease processing
 						return
 			if stepwise:
@@ -373,6 +400,7 @@ class DepEdit:
 				result[node1] = tok1
 				result["rel"] = relation
 				result["matchers"] = [matcher1]
+				result["ID2matcher"] = {node1:matcher1}
 				result_sets.append(result)
 		elif "==" in relation:
 			node1 = relation.split(operator)[0]
@@ -385,7 +413,8 @@ class DepEdit:
 				for matcher2 in node_matches[node2]:
 					tok2 = matcher2.token
 					if self.test_relation(tok1, tok2, field):
-						result_sets.append({node1: tok1, node2: tok2, "rel": relation, "matchers": [matcher1, matcher2]})
+						result_sets.append({node1: tok1, node2: tok2, "rel": relation, "matchers": [matcher1, matcher2],
+											"ID2matcher":{node1:matcher1, node2:matcher2}})
 						matches[node1].append(tok1)
 						matches[node2].append(tok2)
 						hits += 1
@@ -407,8 +436,9 @@ class DepEdit:
 				tok1 = matcher1.token
 				for matcher2 in node_matches[node2]:
 					tok2 = matcher2.token
-					if self.test_relation(tok1, tok2, operator):
-						result_sets.append({node1: tok1, node2: tok2, "rel": relation, "matchers": [matcher1, matcher2]})
+					if self.test_relation(tok1, tok2, operator) or matcher1.sent_def:  # Sentence dominance always True
+						result_sets.append({node1: tok1, node2: tok2, "rel": relation, "matchers": [matcher1, matcher2],
+											"ID2matcher":{node1:matcher1, node2:matcher2}})
 						matches[node1].append(tok1)
 						matches[node2].append(tok2)
 						hits += 1
@@ -482,7 +512,7 @@ class DepEdit:
 			bins.append(copy(new_set))
 
 		for my_bin in bins:
-			if len(my_bin) == node_count + 2:
+			if len(my_bin) == node_count + 3:
 				if len(my_bin["rels"]) == rel_count:  # All required relations have been fulfilled
 					solutions.append(my_bin)
 				else:  # Some node pair has multiple relations, check that all are fulfilled
@@ -603,8 +633,7 @@ class DepEdit:
 						groups.append(g)
 			result["groups"] = groups[:]
 
-	@staticmethod
-	def execute_action(result_sets, action_list):
+	def execute_action(self, result_sets, action_list, transformation):
 		actions = action_list.split(";")
 		for result in result_sets:
 			if len(result) > 0:
@@ -618,6 +647,11 @@ class DepEdit:
 							result[1].sentence.annotations[key] = val
 						else:  # node instruction
 							node_position = int(action[1:action.find(":")])
+							if not self.quiet:
+								if result["ID2matcher"][node_position].sent_def:
+									sys.stdout.write("! Warning: Rule is applying a *token* transformation to a *sentence* annotation node:\n")
+									sys.stdout.write("  " + transformation.transformation_text + "\n")
+									sys.stdout.write("  Applying the transformation to first token in sentence.\n")
 							prop = action[action.find(":") + 1:action.find("=")]
 							value = action[action.find("=") + 1:].strip()
 							group_num_matches = re.findall(r"(\$[0-9]+[LU]?)", value)
@@ -762,6 +796,9 @@ class DepEdit:
 			if myline.startswith("#"):  # Preserve comment lines unless kill requested
 				if self.kill not in ["comments", "both"]:
 					output_lines.append(myline.strip())
+				if "=" in myline:
+					key, val = myline[1:].split("=",1)
+					current_sentence.input_annotations[key.strip()] = val.strip()
 			elif not myline:
 				output_lines.append("")
 			elif myline.find("\t") > 0:  # Only process lines that contain tabs (i.e. conll tokens)
