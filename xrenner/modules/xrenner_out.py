@@ -502,12 +502,13 @@ def output_webanno(conll_tokens, markables):
 	return output
 
 
-def output_webannotsv(conll_tokens, markables, output_infstat=False):
+def output_webannotsv(conll_tokens, markables, output_infstat=True):
 	webannoxmi = xmltodict.parse(output_webanno(conll_tokens, markables))
 
 	if not output_infstat:
 		output = ['#FORMAT=WebAnno TSV 3.2',
 			'#T_SP=webanno.custom.Referent|entity',
+			'#T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent',
 		'', '']
 	else:
 		output = ['#FORMAT=WebAnno TSV 3.2',
@@ -606,11 +607,7 @@ def output_webannotsv(conll_tokens, markables, output_infstat=False):
 					line_coref_string = line_coref_string[:-1]
 
 
-				if not output_infstat:
-					line_output += [line_ref_string, line_type_string]
-				else:
-					line_output += [line_ref_string, line_type_string, line_coref_string, line_coref_chain]
-				# output += '%s\t%s\t%s\t%s\n' % (line_ref_string, line_type_string, line_coref_string, line_coref_chain)
+				line_output += [line_ref_string, line_type_string, line_coref_string, line_coref_chain]
 
 				output.append(line_output)
 				tok_id += 1
