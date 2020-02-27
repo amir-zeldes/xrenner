@@ -53,6 +53,18 @@ Input format:
 		6	2013	_	NUM	CD	_	4	nmod:tmod	_	_
 
 
+Format for external NER predictions when using --oracle option:
+
+	.. code-block:: html
+
+		Soaking the Bowl in Boiling Water
+		2,4 object|5,7 substance
+		2,4 object|5,7 substance
+
+		Choose artwork with cool colors .
+		2,6 object|4,6 abstract
+		2,3 object|4,6 abstract
+
 Installation:
 -------------
 Download the repo and use the main xrenner.py script on an input file, or install from PyPI and import as a module::
@@ -69,7 +81,7 @@ Examples:
 
 Note that by default, the English model is invoked (-m eng), and this model expects input in Universal Dependencies.
 
-To use neural entity classification and machine learning coreference prediction, flair and xgboost must be installed (see requirements.txt)
+To use neural entity classification and machine learning coreference prediction with the English model, flair and xgboost must be installed (see requirements.txt)
 
 Module usage:
 -------------
