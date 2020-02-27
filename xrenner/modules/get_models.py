@@ -20,14 +20,14 @@ def check_models(path=None):
 # Check for missing models
 	if path is None:
 		model = "eng_flair_nner_distilbert.pt"
-		path = os.sep.join([script_dir,"models","_sequence_taggers",model])
+		path = os.sep.join([script_dir,"..","models","_sequence_taggers",model])
 	else:
 		model = path.split(os.sep)[-1]
 
 	if not os.path.exists(path):
 		server = "corpling.uis.georgtown.edu"
 		resource = "/".join([server, "amir", "download", model])
-		download_file("https://" + resource, os.sep.join([script_dir,"models","_sequence_taggers",model]))
+		download_file("https://" + resource, os.sep.join([script_dir,"..","models","_sequence_taggers",model]))
 	else:
 		sys.stderr.write("o Model " + model + " already found in models/_sequence_taggers/")
 
