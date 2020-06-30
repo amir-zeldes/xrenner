@@ -79,7 +79,7 @@ class LexData:
 			model_path += os.sep
 			model_files_list = [f for f in listdir(model_path) if isfile(join(model_path, f))]
 			for filename in model_files_list:
-				if filename.endswith(".pkl"):  # Classifier
+				if filename.endswith(".pkl") or filename.endswith(".crf"):  # Classifier
 					if not (filename.endswith("3.pkl") and PY2) and not (filename.endswith("2.pkl") and not PY2):  # Skip unpickling unneeded PY2/3 classifiers
 						self.model_files[filename] = open(model_path + filename, 'rb')
 				else:
@@ -90,13 +90,13 @@ class LexData:
 				zip = ZipFile(model_path)
 				model_files_list = [f for f in zip.namelist() if not os.path.isdir(f)]
 				for filename in model_files_list:
-					if sys.version_info[0] < 3 or filename.endswith(".pkl"):  # Python 2 or classifier
+					if sys.version_info[0] < 3 or filename.endswith(".pkl") or filename.endswith(".crf"):  # Python 2 or classifier
 						if not (filename.endswith("3.pkl") and PY2) and not (filename.endswith("2.pkl") and not PY2):  # Skip unpickling unneeded PY2/3 classifiers
 							self.model_files[filename] = zip.open(filename)
 					else:
 						self.model_files[filename] = io.TextIOWrapper(zip.open(filename), encoding="utf8")
 			except:
-				raise IOError("Could not open model file " + filename)
+				raise IOError("Could not open model file " + model_path)
 
 
 		self.entity_sums = defaultdict(int)
@@ -167,7 +167,13 @@ class LexData:
 		if "sequencer" in self.filters and not no_seq:
 			if len(self.filters["sequencer"]) > 0:
 				from .xrenner_sequence import Sequencer
-				self.sequencer = Sequencer(model_path=self.filters["sequencer"])
+				if self.filters["sequencer"] in self.model_files:  # Sequencer model is in model directory
+					model_file = self.model_files[self.filters["sequencer"]]
+					self.sequencer = Sequencer(model_path=self.filters["sequencer"],pickle=model_file)
+				else:
+					self.sequencer = Sequencer(model_path=self.filters["sequencer"])
+				if "sequencer_override_thresh" not in self.filters:
+					self.filters["sequencer_override_thresh"] = 1.0  # By default, prefer KB entries to sequencer
 
 		gc.enable()
 
@@ -267,15 +273,15 @@ class LexData:
 		:return: dictionary of atoms.
 		"""
 		atoms = self.atoms
-		places = dict((key, value[0]) for key, value in self.entities.items() if value[0].startswith(self.filters["place_def_entity"]+"\t"))
-		atoms.update(places)
-		atoms.update(self.names)
-		persons = dict((key, value[0]) for key, value in self.entities.items() if value[0].startswith(self.filters["person_def_entity"]+"\t"))
-		atoms.update(persons)
-		organizations = dict((key, value[0]) for key, value in self.entities.items() if value[0].startswith(self.filters["organization_def_entity"]+"\t"))
-		atoms.update(organizations)
-		objects = dict((key, value[0]) for key, value in self.entities.items() if value[0].startswith(self.filters["object_def_entity"]+"\t"))
-		atoms.update(objects)
+		if self.filters["default_atomic_named_entities"] == "none":
+			return atoms
+		else:
+			if self.filters["default_atomic_named_entities"] == "":  # unspecified
+				self.filters["default_atomic_named_entities"] = ",".join([self.filters["place_def_entity"],self.filters["person_def_entity"],self.filters["organization_def_entity"],self.filters["object_def_entity"]])
+			atomic_types = self.filters["default_atomic_named_entities"].split(",")
+			for atomic_type in atomic_types:
+				to_add = dict((key, value[0]) for key, value in self.entities.items() if value[0].startswith(atomic_type+"\t"))
+				atoms.update(to_add)
 		return atoms
 
 	@staticmethod
@@ -593,7 +599,7 @@ class LexData:
 							morph[substring] = {entity_class:1}
 		return morph
 
-	def read_oracle(self, oracle_file, as_text=True):
+	def read_oracle(self, oracle_file, as_text=False):
 
 		self.entity_oracle = defaultdict(lambda : defaultdict(str))
 		if not as_text:

@@ -183,6 +183,12 @@ def resolve_mark_entity(mark, lex):
 				entity = lex.filters["default_entity"]
 				mark.entity_certainty = "uncertain"
 	else:
+		if use_sequencer:
+			pred, score = mark.head.seq_pred
+			if pred != "O":
+				if score > lex.filters["sequencer_override_thresh"]:
+					entity = pred
+					mark.entity_certainty = 'sequencer'
 		if mark.coordinate:
 			# For coordinate markables we expect the constituents to determine the entity in assign_coordinate_entity.
 			# An exception to this is when the entire coordination is listed in the entities list.
@@ -664,14 +670,20 @@ def markable_extend_affixes(start, end, conll_tokens, sent_start, lex):
 
 
 def get_entity_by_affix(head_text, lex):
-	affix_max = 0
+	affix_max = int(lex.filters["max_suffix_length"])
 	score = 0
 	entity = ""
 	probs = {}
 	for i in range(1, len(head_text) - 1):
+		if i > affix_max:
+			break
 		candidates = 0
-		if head_text[i:] in lex.morph:
-			options = lex.morph[head_text[i:]]
+		if lex.filters["morph_direction"] == "prefix":
+			substr = head_text[:i]
+		else:
+			substr = head_text[i:]
+		if substr in lex.morph:
+			options = lex.morph[substr]
 			for key, value in options.items():
 				candidates += value
 				entity = key.split("/")[0]
