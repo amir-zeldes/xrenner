@@ -1,4 +1,4 @@
-scikit-learn==0.22.1
+scikit-learn
 xgboost
-flair
+flair>=0.44
 xmltodict
