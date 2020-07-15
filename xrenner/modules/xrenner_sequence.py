@@ -9,7 +9,9 @@ Adapter class to accommodate sequence labeler
 Author: Amir Zeldes
 """
 
-import sys, os, flair
+import sys, os
+from math import log
+from collections import defaultdict
 
 script_dir = os.path.dirname(os.path.realpath(__file__)) + os.sep
 
@@ -188,6 +190,7 @@ class Sequencer:
             p.start()
 
             # Silently import flair/torch
+            import flair
             from flair.data import Sentence
             from flair.models import SequenceTagger
             import torch
@@ -221,6 +224,9 @@ class Sequencer:
 
             preds = self.tagger.predict(sentences)
 
+            if preds is None:  # Newer versions of flair have void predict method, use modified Sentence list
+                preds = sentences
+
             # sort back
             sents = [tuple(list(sents[i]) + [s]) for i, s in enumerate(preds)]
             sents.sort(key=lambda x: x[1])
@@ -228,10 +234,10 @@ class Sequencer:
 
             for s in sents:
                 for tok in s.tokens:
-                    if str(flair.__version__)[0] == "4":
+                    try:
                         label = tok.tags["ner"].value
                         score = tok.tags["ner"].score
-                    else:
+                    except:
                         label = tok.labels[0].value
                         score = tok.labels[0].score
                     output.append(
