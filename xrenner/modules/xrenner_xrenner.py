@@ -32,6 +32,7 @@ class Xrenner:
 		:param no_seq: do not use machine learning sequence taggers for entity resolution
 		"""
 
+		self.docname = "untitled"
 		self.rule_based = rule_based
 		self.no_seq = no_seq
 		self.load(model, override)
