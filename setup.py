@@ -8,7 +8,7 @@ setup(
   author = 'Amir Zeldes',
   author_email = 'amir.zeldes@georgetown.edu',
   package_data = {'':['README.rst','LICENSE.txt'],'xrenner':['models/*','test/*','licenses/*','models/_sequence_taggers/*']},
-   install_requires=['scikit-learn>=0.22.1','xgboost','flair','xmltodict'],
+   install_requires=['scikit-learn>=0.22.1','xgboost','flair==0.4.5','xmltodict'],
   url = 'https://github.com/amir-zeldes/xrenner',
   license='Apache License, Version 2.0',
   download_url = 'https://github.com/amir-zeldes/xrenner/releases/tag/v2.1.2.0',
