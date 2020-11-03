@@ -69,7 +69,7 @@ def featurize_conllu(conllu, feature_spec):
                 feat_dict[key] = getattr(target,attr)[start:end]
             else:
                 sys.stderr.write("ERR: unknown sequencer feature:" + key + "!\n")
-                quit()
+                sys.exit()
 
         return feat_dict
 
@@ -171,7 +171,7 @@ class Sequencer:
                 if not os.path.exists(model_path):
                     sys.stderr.write("! Sequence tagger model file missing at " + model_path + "\n")
                     sys.stderr.write("! Add the model file or use get_models.py to obtain built-in models\nAborting...\n")
-                    quit()
+                    sys.exit()
 
         if model_path.endswith(".crf"):  # Assume CRF Suite model
             from dill import load, loads
