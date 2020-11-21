@@ -52,15 +52,16 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 
 	# Remove i in i rule (no overlapping markable coreference in group)
 	# TODO: make this more efficient (iterates all pairwise comparisons)
-	for group in marks_by_group:
-		for mark1 in marks_by_group[group]:
-			for mark2 in marks_by_group[group]:
-				if not mark1 == mark2:
-					if markables_overlap(mark1, mark2, None):
-						if (mark1.end - mark1.start) > (mark2.end - mark2.start):
-							splice_out(mark2, marks_by_group[group])
-						else:
-							splice_out(mark1, marks_by_group[group])
+	if lex.filters["no_overlap"]:
+		for group in marks_by_group:
+			for mark1 in marks_by_group[group]:
+				for mark2 in marks_by_group[group]:
+					if not mark1 == mark2:
+						if markables_overlap(mark1, mark2, None):
+							if (mark1.end - mark1.start) > (mark2.end - mark2.start):
+								splice_out(mark2, marks_by_group[group])
+							else:
+								splice_out(mark1, marks_by_group[group])
 
 	# Remove cataphora if desired
 	if lex.filters["remove_cataphora"]:
@@ -145,6 +146,18 @@ def postprocess_coref(markables, lex, markstart, markend, markbyhead, conll_toke
 						prev.group = ab_group
 						mark.antecedent = envlop
 						prevprev.antecedent = "none"
+
+	if lex.filters["force_single_type_chains"]:
+		for group in marks_by_group:
+			ent_counts = defaultdict(int)
+			for mark in marks_by_group[group]:
+				ent_counts[mark.entity] += 1
+			most_used = max(ent_counts,key=ent_counts.get)
+			# Check for ties with default entity, which should be preferred
+			if ent_counts[most_used] == ent_counts[lex.filters["default_entity"]]:
+				most_used = lex.filters["default_entity"]
+			for mark in marks_by_group[group]:
+				mark.entity = most_used
 
 	kill_zero_marks(markables, markstart, markend)
 
