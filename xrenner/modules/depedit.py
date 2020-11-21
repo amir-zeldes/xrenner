@@ -22,7 +22,7 @@ from glob import glob
 import io
 from six import iteritems
 
-__version__ = "2.2.0"
+__version__ = "2.3.0.0"
 
 ALIASES = {"form":"text","upostag":"pos","xpostag":"cpos","feats":"morph","deprel":"func","deps":"head2","misc":"func2",
 		   "xpos": "cpos","upos":"pos"}
@@ -85,11 +85,18 @@ class Sentence:
 
 class Transformation:
 
-	def parse_transformation(self, transformation_text):
+	def parse_transformation(self, transformation_text, depedit_container):
 		split_trans = transformation_text.split("\t")
 		if len(split_trans) < 3:
 			return None
 		definition_string, relation_string, action_string = split_trans
+		match_variables = re.findall(r'\{([^}]+)\}',definition_string)
+		for m in match_variables:
+			if m in depedit_container.variables:
+				definition_string = definition_string.replace("{"+m+"}",depedit_container.variables[m])
+			else:
+				sys.stderr.write("! Definition contains undefined variable: {" + m + "}")
+				quit()
 		relation_string = self.normalize_shorthand(relation_string)
 		action_string = self.normalize_shorthand(action_string)
 		definition_string = escape(definition_string, ";", "/")
@@ -123,9 +130,9 @@ class Transformation:
 									  r'\1\2\3;\3\4', criterion_string)
 		return criterion_string
 
-	def __init__(self, transformation_text, line):
+	def __init__(self, transformation_text, line, depedit_container):
 		self.transformation_text = transformation_text
-		instructions = self.parse_transformation(transformation_text)
+		instructions = self.parse_transformation(transformation_text, depedit_container)
 		if instructions is None:
 			sys.stderr.write("Depedit says: error in configuration file\n"
 				  "Malformed instruction on line " + str(line) + " (instruction lines must contain exactly two tabs)\n")
@@ -287,6 +294,7 @@ class Match:
 class DepEdit:
 
 	def __init__(self, config_file="", options=None):
+		self.variables = {}
 		self.transformations = []
 		self.user_transformation_counter = 0
 		self.quiet = False
@@ -323,9 +331,14 @@ class DepEdit:
 		for instruction in config_file:
 			instruction = instruction.strip()
 			line_num += 1
-			if len(instruction)>0 and not instruction.startswith(";") and not instruction.startswith("#") \
+			match_variable = re.match(r'\{([^}]+)\}=/([^\n]+)/',instruction)
+			if match_variable is not None:
+				key = match_variable.group(1)
+				val = match_variable.group(2)
+				self.add_variable(key,val)
+			elif len(instruction)>0 and not instruction.startswith(";") and not instruction.startswith("#") \
 					or instruction.startswith("#S:"):
-					self.transformations.append(Transformation(instruction, line_num))
+					self.transformations.append(Transformation(instruction, line_num, self))
 
 		trans_report = ""
 		for transformation in self.transformations:
@@ -692,6 +705,9 @@ class DepEdit:
 						if tok1 != tok2:
 							tok2.head = tok1.id
 
+	def add_variable(self, key, value):
+		self.variables[key] = value
+
 	def add_transformation(self, *args, **kwargs):
 		"""
 		Flexible function for adding transformations to an imported DepEdit object, rather than reading them from a configuration file
@@ -711,7 +727,7 @@ class DepEdit:
 				try:
 					self.user_transformation_counter += 1
 					user_line_number = "u" + str(self.user_transformation_counter)
-					new_transformation = Transformation(transformation_string,user_line_number)
+					new_transformation = Transformation(transformation_string,user_line_number, self)
 					self.transformations.append(new_transformation)
 				except:
 					raise IOError("Invalid transformation - must be a string")
@@ -726,7 +742,7 @@ class DepEdit:
 
 				self.user_transformation_counter += 1
 				user_line_number = "u" + str(self.user_transformation_counter)
-				new_transformation = Transformation(transformation_string, user_line_number)
+				new_transformation = Transformation(transformation_string, user_line_number, self)
 				self.transformations.append(new_transformation)
 
 	def serialize_output_tree(self, tokens, tokoffset):
