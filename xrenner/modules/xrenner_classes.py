@@ -46,7 +46,7 @@ class Markable:
 
 	# Properties refering to markable head, not markable itself
 	tok_props = {"negated", "neg_parent", "pos", "lemma", "morph", "func", "quoted", "modifiers", "child_funcs", "child_strings",
-	 "agree", "doc_position", "sent_position", "head_text", "head_pos", "lemma_freq"}
+	 "agree", "doc_position", "sent_position", "head_text", "head_pos", "lemma_freq", "sentence"}
 
 	def __init__(self, mark_id, head, form, definiteness, start, end, text, core_text, entity, entity_certainty, subclass, infstat, agree, sentence,
 				 antecedent, coref_type, group, alt_entities, alt_subclasses, alt_agree, cardinality=0, submarks=[], coordinate=False, agree_certainty=""):

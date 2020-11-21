@@ -37,7 +37,7 @@ class ConstraintMatcher:
 		self.value = ""
 		self.key = ""
 		self.compiled_re = None
-		self.props = {"form", "text", "agree", "entity", "subclass", "cardinality","text_lower","lemma","pos","func","quoted","mood","speaker"}
+		self.props = {"form", "text", "agree", "entity", "subclass", "cardinality","text_lower","lemma","pos","func","quoted","mood","speaker","sentence"}
 
 		if constraint.endswith("*"):
 			self.group_failure = True
@@ -99,6 +99,12 @@ class ConstraintMatcher:
 				self.negative = operator.not_
 			self.match_type = "dollar"
 			self.key = "speaker"
+			self.value = "$1"
+		elif "samesentence" in constraint:
+			if constraint[0] == "!":
+				self.negative = operator.not_
+			self.match_type = "dollar"
+			self.key = "sentence"
 			self.value = "$1"
 		elif constraint.startswith("last["):
 			self.match_type = "exact"
