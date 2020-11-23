@@ -1,57 +1,56 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_classes &mdash; xrenner 2.1.0 documentation</title>
+  <title>modules.xrenner_classes &mdash; xrenner 2.2.0 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+
+  
+  
+  
   
 
   
-
-  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-
-  
-    <link rel="top" title="xrenner 2.1.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="../../index.html" class="icon icon-home"> xrenner
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> xrenner
           
 
           
@@ -61,7 +60,7 @@
             
             
               <div class="version">
-                2.1
+                2.2
               </div>
             
           
@@ -78,54 +77,77 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../indepth.html">     In depth guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers' module documentation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">xrenner</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">xrenner</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-    <li>modules.xrenner_classes</li>
+        
+      <li>modules.xrenner_classes</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -139,11 +161,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
 
 <div class="viewcode-block" id="ParsedToken"><a class="viewcode-back" href="../../modules.html#modules.xrenner_classes.ParsedToken">[docs]</a><span class="k">class</span> <span class="nc">ParsedToken</span><span class="p">:</span>
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tok_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">lemma</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">morph</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">sentence</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">,</span> <span class="n">child_funcs</span><span class="p">,</span> <span class="n">child_strings</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="n">quoted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">head2</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">func2</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tok_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">lemma</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">morph</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">sentence</span><span class="p">,</span> <span class="n">modifiers</span><span class="p">,</span> <span class="n">child_funcs</span><span class="p">,</span> <span class="n">child_strings</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="n">quoted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">head2</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">func2</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">tok_id</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">text_lower</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -173,16 +195,16 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">negated</span> <span class="o">=</span> <span class="kc">False</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">neg_parent</span> <span class="o">=</span> <span class="kc">False</span>
 
-	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lemma</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;) &quot;</span> <span class="o">+</span> <span class="s2">&quot;&lt;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;- &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_text</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Markable"><a class="viewcode-back" href="../../modules.html#modules.xrenner_classes.Markable">[docs]</a><span class="k">class</span> <span class="nc">Markable</span><span class="p">:</span>
 
 	<span class="c1"># Properties refering to markable head, not markable itself</span>
 	<span class="n">tok_props</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;negated&quot;</span><span class="p">,</span> <span class="s2">&quot;neg_parent&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;lemma&quot;</span><span class="p">,</span> <span class="s2">&quot;morph&quot;</span><span class="p">,</span> <span class="s2">&quot;func&quot;</span><span class="p">,</span> <span class="s2">&quot;quoted&quot;</span><span class="p">,</span> <span class="s2">&quot;modifiers&quot;</span><span class="p">,</span> <span class="s2">&quot;child_funcs&quot;</span><span class="p">,</span> <span class="s2">&quot;child_strings&quot;</span><span class="p">,</span>
-	 <span class="s2">&quot;agree&quot;</span><span class="p">,</span> <span class="s2">&quot;doc_position&quot;</span><span class="p">,</span> <span class="s2">&quot;sent_position&quot;</span><span class="p">,</span> <span class="s2">&quot;head_text&quot;</span><span class="p">,</span> <span class="s2">&quot;head_pos&quot;</span><span class="p">,</span> <span class="s2">&quot;lemma_freq&quot;</span><span class="p">}</span>
+	 <span class="s2">&quot;agree&quot;</span><span class="p">,</span> <span class="s2">&quot;doc_position&quot;</span><span class="p">,</span> <span class="s2">&quot;sent_position&quot;</span><span class="p">,</span> <span class="s2">&quot;head_text&quot;</span><span class="p">,</span> <span class="s2">&quot;head_pos&quot;</span><span class="p">,</span> <span class="s2">&quot;lemma_freq&quot;</span><span class="p">,</span> <span class="s2">&quot;sentence&quot;</span><span class="p">}</span>
 
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark_id</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">definiteness</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">core_text</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">entity_certainty</span><span class="p">,</span> <span class="n">subclass</span><span class="p">,</span> <span class="n">infstat</span><span class="p">,</span> <span class="n">agree</span><span class="p">,</span> <span class="n">sentence</span><span class="p">,</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark_id</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">definiteness</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">core_text</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">entity_certainty</span><span class="p">,</span> <span class="n">subclass</span><span class="p">,</span> <span class="n">infstat</span><span class="p">,</span> <span class="n">agree</span><span class="p">,</span> <span class="n">sentence</span><span class="p">,</span>
 				 <span class="n">antecedent</span><span class="p">,</span> <span class="n">coref_type</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">alt_entities</span><span class="p">,</span> <span class="n">alt_subclasses</span><span class="p">,</span> <span class="n">alt_agree</span><span class="p">,</span> <span class="n">cardinality</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">submarks</span><span class="o">=</span><span class="p">[],</span> <span class="n">coordinate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">agree_certainty</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">mark_id</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">head</span>
@@ -271,7 +293,7 @@
 						<span class="k">for</span> <span class="n">lexeme</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">lex_deps</span><span class="p">[</span><span class="n">sim</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">]:</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">entity_sim_dep_scores</span><span class="p">[</span><span class="n">lexeme</span><span class="p">]</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">lex_deps</span><span class="p">[</span><span class="n">sim</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">func</span><span class="p">][</span><span class="n">lexeme</span><span class="p">]</span>
 
-	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="n">agree</span> <span class="o">=</span> <span class="s2">&quot;no-agr&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">agree</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">agree</span>
 		<span class="n">defin</span> <span class="o">=</span> <span class="s2">&quot;no-def&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">definiteness</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">definiteness</span>
 		<span class="n">card</span> <span class="o">=</span> <span class="s2">&quot;no-card&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardinality</span>
@@ -397,7 +419,7 @@
 
 		<span class="k">return</span> <span class="n">out_dict</span></div>
 
-	<span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
 		<span class="c1"># Convenience methods to access head token and containing sentence</span>
 		<span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_props</span><span class="p">:</span>
 			<span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">,</span><span class="n">item</span><span class="p">)</span>
@@ -410,7 +432,7 @@
 			<span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sentence</span><span class="p">,</span><span class="n">item</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s2">&quot;child_func_string&quot;</span><span class="p">:</span>
 			<span class="c1"># Check for cached child_func_string</span>
-			<span class="k">if</span> <span class="s2">&quot;child_func_string&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>  <span class="c1"># Convenience property to store semi-colon separated child funcs of head token</span>
+			<span class="k">if</span> <span class="s2">&quot;child_func_string&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>  <span class="c1"># Convenience property to store semi-colon separated child funcs of head token</span>
 				<span class="c1"># Assemble if not yet cached</span>
 				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">child_funcs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">child_func_string</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">child_funcs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span>
@@ -422,7 +444,7 @@
 
 
 <span class="k">class</span> <span class="nc">Sentence</span><span class="p">:</span>
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sent_num</span><span class="p">,</span> <span class="n">start_offset</span><span class="p">,</span> <span class="n">mood</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">speaker</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sent_num</span><span class="p">,</span> <span class="n">start_offset</span><span class="p">,</span> <span class="n">mood</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">speaker</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">=</span> <span class="n">sent_num</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">start_offset</span> <span class="o">=</span> <span class="n">start_offset</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">mood</span> <span class="o">=</span> <span class="n">mood</span>
@@ -430,7 +452,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">token_count</span> <span class="o">=</span> <span class="mi">0</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">s_type</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span>  <span class="c1"># Initial type, will be overwritten if s_type annotation is found in input</span>
 
-	<span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="n">mood</span> <span class="o">=</span> <span class="s2">&quot;(no mood info)&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mood</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">mood</span>
 		<span class="n">speaker</span> <span class="o">=</span> <span class="s2">&quot;(no speaker info)&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">speaker</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">speaker</span>
 		<span class="k">return</span> <span class="s2">&quot;S&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sent_num</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; from T&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, mood: &quot;</span> <span class="o">+</span> <span class="n">mood</span>  <span class="o">+</span> <span class="s2">&quot;, speaker: &quot;</span> <span class="o">+</span> <span class="n">speaker</span> <span class="o">+</span> <span class="s2">&quot;, type: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">s_type</span>
@@ -455,6 +477,7 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
   
@@ -463,11 +486,19 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016-2020, Amir Zeldes.
+        
+        &copy; Copyright 2016-2020, Amir Zeldes
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -479,36 +510,15 @@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'2.1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
   
  <script type="text/javascript">
     $(document).ready(function() {

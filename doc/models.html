@@ -1,58 +1,58 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Buliding New Language Models &mdash; xrenner 2.1.0 documentation</title>
+  <title>Buliding New Language Models &mdash; xrenner 2.2.0 documentation</title>
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
   
 
   
-
-  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-
-  
-    <link rel="top" title="xrenner 2.1.0 documentation" href="index.html"/>
-        <link rel="next" title="In depth guides" href="indepth.html"/>
-        <link rel="prev" title="Using xrenner" href="using.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="In depth guides" href="indepth.html" />
+    <link rel="prev" title="Using xrenner" href="using.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="index.html" class="icon icon-home"> xrenner
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> xrenner
           
 
           
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                2.1
+                2.2
               </div>
             
           
@@ -79,11 +79,15 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="using.html">     Using xrenner</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">     Building your own language models</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
@@ -120,46 +124,67 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers' module documentation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">xrenner</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xrenner</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Buliding New Language Models</li>
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Buliding New Language Models</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/models.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/models.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -171,21 +196,21 @@
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p><b style="color:red">new:</b> A starter model with minimal settings for UD data is now included in <b>models/udx</b></p><p>Beyond the language models that are available in the xrenner distribution, you can build your own models, or modify existing models, by editing their configuration files and gathering lexical data for your target language or domain, as well as training stochastic classifiers.</p>
 <p>A language model in xrenner is defined by a set of files in a directory under the models/ directory, or in a compressed archive containing such files, conventionally marked by the extension .xrm. For exmple, the default English language model is models/eng/, and different models, typically named using ISO 639-2 three letter language codes, can be invoked using the -m option. The following example invokes the German language model, named <em>deu</em> (for Deutsch, i.e. German):</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>&gt; python xrenner.py -m deu infile.conll10
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; python xrenner.py -m deu infile.conll10
 </pre></div>
 </div>
 <p>To locate this model, xrenner first checks whether you have supplied an absolute or relative model path (e.g. /path/to/model/deu.xrm, or my_subdir/deu/). If you have supplied just the model name, as in <em>deu</em> above, xrenner assumes that the model is located under the xrenner installation directory in the ./models/ sub-directory. If there is either a directory or a file called <em>deu</em> (or <em>deu.xrm</em> for a compressed model), that model will be used.</p>
 <p>Most of the language model files listed below are optional, but some, listed below, must be included in each model (whether compressed or not). The main configuration file determining the general behavior for a language is <em>config.ini</em>. Different variant behaviors for the same language model, using the same lexical data, can be created as configuration overide profiles using the optional <em>overide.ini</em> file.</p>
 <p>At a minimum, a model must include:</p>
 <ul class="simple">
-<li><a class="reference internal" href="#config-ini"><span class="std std-ref">config.ini</span></a></li>
-<li><a class="reference internal" href="#coref-rules-tab"><span class="std std-ref">coref_rules.tab</span></a></li>
+<li><p><a class="reference internal" href="#config-ini"><span class="std std-ref">config.ini</span></a></p></li>
+<li><p><a class="reference internal" href="#coref-rules-tab"><span class="std std-ref">coref_rules.tab</span></a></p></li>
 </ul>
 <p>It is also highly recommended to include:</p>
 <ul class="simple">
-<li><a class="reference internal" href="#pronouns-tab"><span class="std std-ref">pronouns.tab</span></a></li>
-<li><a class="reference internal" href="#entities-tab"><span class="std std-ref">entities.tab</span></a></li>
-<li><a class="reference internal" href="#entity-heads-tab"><span class="std std-ref">entity_heads.tab</span></a></li>
+<li><p><a class="reference internal" href="#pronouns-tab"><span class="std std-ref">pronouns.tab</span></a></p></li>
+<li><p><a class="reference internal" href="#entities-tab"><span class="std std-ref">entities.tab</span></a></p></li>
+<li><p><a class="reference internal" href="#entity-heads-tab"><span class="std std-ref">entity_heads.tab</span></a></p></li>
 </ul>
 </div>
 <div class="section" id="language-model-files">
@@ -194,35 +219,40 @@
 <h3>Configuration files<a class="headerlink" href="#configuration-files" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="config-ini">
 <span id="id1"></span><h4>config.ini<a class="headerlink" href="#config-ini" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>mandatory</strong></div>
-<div class="expandable container">
-This is the main configuration file for the model. For detailed documentation see <a class="reference internal" href="config.html"><span class="doc">config.ini</span></a></div>
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>mandatory</strong></p>
+</div>
+<div class="expandable docutils container">
+<p>This is the main configuration file for the model. For detailed documentation see <a class="reference internal" href="config.html"><span class="doc">config.ini</span></a></p>
+</div>
 </div>
 </div>
 <div class="section" id="depedit-ini">
 <h4>depedit.ini<a class="headerlink" href="#depedit-ini" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
-This is the configuration file for the <em>depedit</em> module, which can be used to preprocess input dependency trees before the system analyzes them. For detailed documentation see <a class="reference internal" href="depedit.html"><span class="doc">depedit.ini</span></a></div>
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
+<p>This is the configuration file for the <em>depedit</em> module, which can be used to preprocess input dependency trees before the system analyzes them. For detailed documentation see <a class="reference internal" href="depedit.html"><span class="doc">depedit.ini</span></a></p>
+</div>
 </div>
 </div>
 <div class="section" id="override-ini">
 <h4>override.ini<a class="headerlink" href="#override-ini" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>If you want to use multiple setting profiles with the same lexical data, you can either make duplicate models with different config.ini files (this can make maintenance difficult when updating lexical resources), or you can use alternate profiles in override.ini, which replaces specific settings in config.ini.</p>
 <p>To set up an override profile, name your profile in square brackets as shown below, then list any settings you wish to override in whatever order.</p>
 <p>To use the profile, call xrenner with the -x option and your profile name:</p>
-<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-x</span> <span class="pre">profile_name</span> <span class="pre">infile.conll10</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-x</span> <span class="pre">profile_name</span> <span class="pre">infile.conll10</span></code></p>
 <p><strong>example</strong>:</p>
 <blockquote>
-<div><div class="highlight-ini"><div class="highlight"><pre><span></span><span class="k">[GUM]</span>
+<div><div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[GUM]</span>
 
 <span class="c1"># Change the functions breaking the markable span</span>
 <span class="na">non_link_func</span><span class="o">=</span><span class="s">/^(acl|acl:relcl|advcl|aux|aux:pass|expl|nsubj|nsubj:pass|cop|dep|punct|appos|discourse|parataxis|orphan|advmod_neg|case|mark|list|csubj|csubj:pass|cc|obl.*)$/</span>
@@ -240,25 +270,26 @@ This is the configuration file for the <em>depedit</em> module, which can be use
 <h3>Lexical data files<a class="headerlink" href="#lexical-data-files" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="affix-tokens-tab">
 <h4>affix_tokens.tab<a class="headerlink" href="#affix-tokens-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>The purpose of this table is to list tokens that:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li>Should always be added to a markable when found before (for prefix tokens) or after (for suffix tokens) the edge of the markable</li>
-<li>Should not be treated as containing an entity head</li>
+<li><p>Should always be added to a markable when found before (for prefix tokens) or after (for suffix tokens) the edge of the markable</p></li>
+<li><p>Should not be treated as containing an entity head</p></li>
 </ol>
 <p>Typical examples are bleached quantity expressions, such as <em>a lot of</em> (prefix) or <em>etc.</em> (suffix). The columns are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><strong>form</strong> - a token or sequence of tokens to adjoin to adjacent markables</li>
-<li><strong>affix side</strong> - whether this is a <em>prefix</em> or <em>suffix</em></li>
+<li><p><strong>form</strong> - a token or sequence of tokens to adjoin to adjacent markables</p></li>
+<li><p><strong>affix side</strong> - whether this is a <em>prefix</em> or <em>suffix</em></p></li>
 </ul>
 <p><strong>example</strong></p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span>a bunch of      prefix
+<div><div class="highlight-html notranslate"><div class="highlight"><pre><span></span>a bunch of      prefix
 LLC     suffix
 p.m.    suffix
 </pre></div>
@@ -271,15 +302,16 @@ p.m.    suffix
 </div>
 <div class="section" id="antonyms-tab">
 <span id="id2"></span><h4>antonyms.tab<a class="headerlink" href="#antonyms-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>This file lists antonymous modifiers, or more precisely heterodeictic modifiers, which indicate that two mentions are not coreferent. For example <em>the good news</em> is not the same as <em>the bad news</em>.</p>
 <p>Entries are listed in comma separated sets, and items may appear in multiple sets. The order of the items does not matter. Note that items need not be adjectives, especially if you list nominal modification as a mod_func function in config.ini.</p>
 <p><strong>Example entries</strong>:</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># true antonyms</span>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># true antonyms</span>
 <span class="n">good</span><span class="p">,</span><span class="n">bad</span>
 <span class="n">fast</span><span class="p">,</span><span class="n">slow</span>
 <span class="c1"># ostensibly incompatible adjectives</span>
@@ -298,14 +330,15 @@ p.m.    suffix
 </div>
 <div class="section" id="atoms-tab">
 <span id="id3"></span><h4>atoms.tab<a class="headerlink" href="#atoms-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>This file gives a list of additional markable texts that are known to be atomic (may contain no nested markables), even if their entity type is unknown (if the entity type is known, use <a class="reference internal" href="#entities-tab"><span class="std std-ref">entities.tab</span></a> or <a class="reference internal" href="#entity-heads-tab"><span class="std std-ref">entity_heads.tab</span></a> with the <em>&#64;</em> annotation). A second column includes frequencies for the atoms, which can be left as 1 if unknown. This list extends, and does not replace atomic marked entries in the respective entity list files.</p>
 <p><strong>Example entries</strong>:</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">New</span> <span class="n">York</span>        <span class="mi">989</span>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">New</span> <span class="n">York</span>        <span class="mi">989</span>
 <span class="n">Hong</span> <span class="n">Kong</span>       <span class="mi">442</span>
 <span class="n">the</span> <span class="n">United</span> <span class="n">States</span>       <span class="mi">412</span>
 <span class="n">Xinhua</span> <span class="n">News</span> <span class="n">Agency</span>      <span class="mi">314</span>
@@ -317,14 +350,15 @@ p.m.    suffix
 </div>
 <div class="section" id="coref-tab">
 <span id="id4"></span><h4>coref.tab<a class="headerlink" href="#coref-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
-<p>This table provides pairs of potentially multi-word expressions that are equivalent and should be considered capable of coreference (for single word equivalents, use <a class="reference internal" href="#isa-tab"><span class="std std-ref">isa.tab</span></a>). The expressions are separated by a pipe, and the type of coreference relation is entered in a second column (e.g. &#8216;coref&#8217;, &#8216;aggregate&#8217;, or even &#8216;bridging&#8217; - the names of labels are not restricted).</p>
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
+<p>This table provides pairs of potentially multi-word expressions that are equivalent and should be considered capable of coreference (for single word equivalents, use <a class="reference internal" href="#isa-tab"><span class="std std-ref">isa.tab</span></a>). The expressions are separated by a pipe, and the type of coreference relation is entered in a second column (e.g. ‘coref’, ‘aggregate’, or even ‘bridging’ - the names of labels are not restricted).</p>
 <p><strong>Example entries</strong>:</p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span>the post season|post-season     coref
+<div><div class="highlight-html notranslate"><div class="highlight"><pre><span></span>the post season|post-season     coref
 sorghum|monocot species bridge
 the educational system|the education system     coref
 </pre></div>
@@ -335,37 +369,39 @@ the educational system|the education system     coref
 </div>
 <div class="section" id="coref-rules-tab">
 <span id="id5"></span><h4>coref_rules.tab<a class="headerlink" href="#coref-rules-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>mandatory</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>mandatory</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>The file coref_rules.tab lists a cascade of coreference matching rules of the form:</p>
 <blockquote>
-<div><code class="docutils literal"><span class="pre">ANA;ANT;DIST;PROP(;CLF(;THRESH))</span></code></div></blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">ANA;ANT;DIST;PROP(;CLF(;THRESH))</span></code></p>
+</div></blockquote>
 <p>Where ANA and ANT are ampersand-separated feature constraints on the anaphor and the antecedent, DIST is the maximum distance in sentences to search for a match and PROP is the direction of feature propagation once a match is made, if any. Two further optional components are a classifier file name created by <strong>utils/train_classifier</strong>, and an optional decision threshold to use for that classifier for this rule (see <a class="reference internal" href="buildclf.html"><span class="doc">Building classifiers</span></a>).</p>
-<p>Feature constraints include markable <strong>text</strong>, <strong>entity</strong> (e.g. <em>person</em>), <strong>subclass</strong> (e.g. <em>politician</em>), <strong>definiteness</strong> (<em>def</em> or <em>indef</em>), <strong>form</strong> (common/proper/pronoun), cardinality (numerical modifiers or amount of members in a coordination); features of the head token (<strong>lemma</strong>, <strong>pos</strong>, <strong>func</strong>, whether it is <strong>quoted</strong>, i.e. in quotation marks), as well as existence/non-existence of certain modifiers (<strong>mod</strong>) )or parents/children in a head token&#8217;s dependency graph (<em>parent</em>/<em>child</em>); and features of the sentence (<strong>mood</strong> and <strong>speaker</strong>).</p>
+<p>Feature constraints include markable <strong>text</strong>, <strong>entity</strong> (e.g. <em>person</em>), <strong>subclass</strong> (e.g. <em>politician</em>), <strong>definiteness</strong> (<em>def</em> or <em>indef</em>), <strong>form</strong> (common/proper/pronoun), cardinality (numerical modifiers or amount of members in a coordination); features of the head token (<strong>lemma</strong>, <strong>pos</strong>, <strong>func</strong>, whether it is <strong>quoted</strong>, i.e. in quotation marks), as well as existence/non-existence of certain modifiers (<strong>mod</strong>) )or parents/children in a head token’s dependency graph (<em>parent</em>/<em>child</em>); and features of the sentence (<strong>mood</strong> and <strong>speaker</strong>).</p>
 <p>Feature values can be regular expressions (surrounded by slashes), exact values (surrounded by double quotes), or a reference to the same value as the antecedent, marked <em>$1</em> (i.e. the anaphor, conceptually the second mention or $2, is the same as the antecedent, $1). For Boolean features, such as <strong>quoted</strong>, use <em>True</em> or <em>False</em>. Negative matching can be done using <em>!=</em>. For two markables (not) having the same dependency parent (e.g. to control reflexive coreference), there is a legacy shorthand <em>sameparent</em> and <em>!sameparent</em>, which is the same as <em>parent=$1</em> etc. For examples, see below.</p>
 <p>There are also special flags which allow turning off some compatibility checks, as well as switching on forward lookahead for cataphora. They are:</p>
 <ul class="simple">
-<li><strong>anyagree</strong> - ignore agreement checking</li>
-<li><strong>anyentity</strong> - ignore entity matching</li>
-<li><strong>anycardinality</strong> - ignore cardinality matching</li>
-<li><strong>anytext</strong> - ignore text of markable and antecedent in comparison</li>
-<li><strong>lookahead</strong> - search for &#8216;antecedent&#8217; in subsequent tokens of same sentence instead of preceding tokkens (for cataphora)</li>
-<li><strong>take_first</strong> - do not perform any scoring: take the first (closest) candidate found (for very high certainty rules, speeds up performance)</li>
+<li><p><strong>anyagree</strong> - ignore agreement checking</p></li>
+<li><p><strong>anyentity</strong> - ignore entity matching</p></li>
+<li><p><strong>anycardinality</strong> - ignore cardinality matching</p></li>
+<li><p><strong>anytext</strong> - ignore text of markable and antecedent in comparison</p></li>
+<li><p><strong>lookahead</strong> - search for ‘antecedent’ in subsequent tokens of same sentence instead of preceding tokkens (for cataphora)</p></li>
+<li><p><strong>take_first</strong> - do not perform any scoring: take the first (closest) candidate found (for very high certainty rules, speeds up performance)</p></li>
 </ul>
 <p>Feature propagation ensures entity types match across coreferent results, and can have the values:</p>
 <ul class="simple">
-<li><strong>nopropagate</strong> - do not propagate any features</li>
-<li><strong>propagate</strong> - automatically propagate from less certainly identified member to more certain one</li>
-<li><strong>propagate_forward</strong> - always propagate from antecedent to anaphor</li>
-<li><strong>propagate_backward</strong> - the reverse of forward</li>
-<li><strong>propagate_invert</strong> - a special setting for cataphora: propagates to earlier cataphor from the later postcedent</li>
+<li><p><strong>nopropagate</strong> - do not propagate any features</p></li>
+<li><p><strong>propagate</strong> - automatically propagate from less certainly identified member to more certain one</p></li>
+<li><p><strong>propagate_forward</strong> - always propagate from antecedent to anaphor</p></li>
+<li><p><strong>propagate_backward</strong> - the reverse of forward</p></li>
+<li><p><strong>propagate_invert</strong> - a special setting for cataphora: propagates to earlier cataphor from the later postcedent</p></li>
 </ul>
 <p>Rules are consulted in order, similarly to the sieve approach of Lee et al. (2013), so that the most certain rules are applied first. Every mention has only one antecedent, so that subsequent matching can be skipped, but some aspects of a mention-cluster or ‘entity-mention’ model (cf. Rahman &amp; Ng 2011) are also implemented, for example antonym modifier checks are applied to the entire chain (see <a class="reference internal" href="#antonyms-tab"><span class="std std-ref">antonyms.tab</span></a>).</p>
-<p>The first rule below illustrates a very &#8216;safe&#8217; strategy, searching for proper noun markables with identical text (=$1) in the previous 100 sentences, since these are almost always coreferent, and undertaking no feature propagation. It takes the vert first candidate found, without scoring. The second rule looks for a mention headed by &#8216;one&#8217; with the same modifier as its antecedent within 4 sentences, matching cases like <cite>the new flag ... the new one</cite>. It uses a classifier called clf_one.pkl, and sets a high threshold, demanding high confidence from the classifier (default threshold is 0.5). The third rule attempts to match a possessive pronoun (which has not saturated its antecedent yet, if this rule has been reached) to a nominal subject later on in the sentence, matching sentences like <cite>In [her] speech, [Angela Merkel] said...</cite>. It uses no classifier, meaning it uses xrenner heuristics to choose among candidates, but it will always choose some candidate if available. The heuristic, unlike classifiers, cannot reject an anaphor as &#8216;non-anaphoric&#8217;, whereas if all classifier candidates score below their threshold, no antecedent is selected.</p>
+<p>The first rule below illustrates a very ‘safe’ strategy, searching for proper noun markables with identical text (=$1) in the previous 100 sentences, since these are almost always coreferent, and undertaking no feature propagation. It takes the vert first candidate found, without scoring. The second rule looks for a mention headed by ‘one’ with the same modifier as its antecedent within 4 sentences, matching cases like <cite>the new flag … the new one</cite>. It uses a classifier called clf_one.pkl, and sets a high threshold, demanding high confidence from the classifier (default threshold is 0.5). The third rule attempts to match a possessive pronoun (which has not saturated its antecedent yet, if this rule has been reached) to a nominal subject later on in the sentence, matching sentences like <cite>In [her] speech, [Angela Merkel] said…</cite>. It uses no classifier, meaning it uses xrenner heuristics to choose among candidates, but it will always choose some candidate if available. The heuristic, unlike classifiers, cannot reject an anaphor as ‘non-anaphoric’, whereas if all classifier candidates score below their threshold, no antecedent is selected.</p>
 <blockquote>
-<div><div class="highlight-perl"><div class="highlight"><pre><span></span><span class="c1">#first match identical proper markables</span>
+<div><div class="highlight-perl notranslate"><div class="highlight"><pre><span></span><span class="c1">#first match identical proper markables</span>
 <span class="n">form</span><span class="o">=</span><span class="s">&quot;proper&quot;</span><span class="p">;</span><span class="n">form</span><span class="o">=</span><span class="s">&quot;proper&quot;</span><span class="o">&amp;</span><span class="n">text</span><span class="o">=</span><span class="nv">$1</span><span class="o">&amp;</span><span class="n">take_first</span><span class="p">;</span><span class="mi">100</span><span class="p">;</span><span class="n">nopropagate</span>
 <span class="c1">#identify coreferent light heads based on identical modifiers</span>
 <span class="n">lemma</span><span class="o">=</span><span class="sr">/^one$/</span><span class="p">;</span><span class="n">mod</span><span class="o">=</span><span class="nv">$1</span><span class="o">&amp;</span><span class="n">anytext</span><span class="o">&amp;</span><span class="n">form</span><span class="o">!=</span><span class="s">&quot;proper&quot;</span><span class="o">&amp;!</span><span class="n">sameparent</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="n">nopropagate</span><span class="p">;</span><span class="n">clf_one</span><span class="o">.</span><span class="n">pkl</span><span class="p">;</span><span class="mf">0.6</span>
@@ -377,7 +413,7 @@ the educational system|the education system     coref
 <p>Classifiers are invoked by their name, minus a python specific version. If your classifier is named <em>pron_clf.pkl</em>, you may either provide that file in the model directory for whichever Python version you intend to use (ideally: 3.X), or you can provide two files: <em>pron_clf2.pkl</em> and <em>pron_clf3.pkl</em>, which will be used automatically for the relevant Python version. Note that the classifier name in coref_rules.tab will still be <em>pron_clf.pkl</em>.</p>
 <p>Additionally, you may supply alternative versions of a classifier to work with different model override profiles (see <a class="reference internal" href="config.html"><span class="doc">config.ini</span></a>). These classifier files may be named with a certain suffix, which is then specified in the override file. For example, a classifier called <em>gbm_all.pkl</em> may have an alternate file <em>gbm_all_gum.pkl</em> in the model directory, and a corresponding entry in override.ini will specify:</p>
 <blockquote>
-<div><div class="highlight-ini"><div class="highlight"><pre><span></span><span class="na">classifier_suffix</span><span class="o">=</span><span class="s">_gum</span>
+<div><div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">classifier_suffix</span><span class="o">=</span><span class="s">_gum</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -387,31 +423,33 @@ the educational system|the education system     coref
 </div>
 <div class="section" id="entities-tab">
 <span id="id6"></span><h4>entities.tab<a class="headerlink" href="#entities-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional (but highly recommended)</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional (but highly recommended)</strong></p>
+</div>
+<div class="expandable docutils container">
 <blockquote>
 <div><p>The full text entity list file, with three tab delimited columns:</p>
 <blockquote>
 <div><blockquote>
 <div><ul class="simple">
-<li><strong>entity string</strong>: the full text of the entity. Some modifiers may be stripped using the <em>core_text</em> stripping and <em>non_essential_modifiers</em> settings in <a class="reference internal" href="config.html"><span class="doc">config.ini</span></a>, so it is often a good idea to include these without articles etc., unless you want to make sure that they were actually used before matching. For example, if you include <em>Washington Post</em> as an organization, and indicate that <em>the</em> may be stripped in <em>core_text</em>, then <em>The Washington Post</em> will also match. If you list <em>The Washington Post</em>, only that form will match.</li>
-<li><strong>entity type</strong>: the major type, such as <em>person</em> or <em>organization</em>, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use <em>ORG</em>, <em>organization</em>, or make your own arbitrary taxonomies).</li>
-<li><strong>subtype information</strong>: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally<ul>
-<li>include agreement information after a slash (e.g. <code class="docutils literal"><span class="pre">actress/Fem</span></code>)</li>
+<li><p><strong>entity string</strong>: the full text of the entity. Some modifiers may be stripped using the <em>core_text</em> stripping and <em>non_essential_modifiers</em> settings in <a class="reference internal" href="config.html"><span class="doc">config.ini</span></a>, so it is often a good idea to include these without articles etc., unless you want to make sure that they were actually used before matching. For example, if you include <em>Washington Post</em> as an organization, and indicate that <em>the</em> may be stripped in <em>core_text</em>, then <em>The Washington Post</em> will also match. If you list <em>The Washington Post</em>, only that form will match.</p></li>
+<li><p><strong>entity type</strong>: the major type, such as <em>person</em> or <em>organization</em>, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use <em>ORG</em>, <em>organization</em>, or make your own arbitrary taxonomies).</p></li>
+<li><p><strong>subtype information</strong>: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally</p>
+<ul>
+<li><p>include agreement information after a slash (e.g. <code class="docutils literal notranslate"><span class="pre">actress/Fem</span></code>)</p></li>
 </ul>
 </li>
 </ul>
 </div></blockquote>
 <ul>
-<li><p class="first">include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within this entity&#8217;s span, e.g. <code class="docutils literal"><span class="pre">President</span> <span class="pre">'s</span> <span class="pre">Choice</span>&#160;&#160;&#160;&#160; <span class="pre">object</span>&#160; <span class="pre">object/inanim&#64;</span></code></p>
+<li><p>include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within this entity’s span, e.g. <code class="docutils literal notranslate"><span class="pre">President</span> <span class="pre">'s</span> <span class="pre">Choice</span>&#160;&#160;&#160;&#160; <span class="pre">object</span>&#160; <span class="pre">object/inanim&#64;</span></code></p>
 <p>Example:</p>
 </li>
 </ul>
 </div></blockquote>
 </div></blockquote>
-<div class="highlight-html"><div class="highlight"><pre><span></span># An entity with distinct entity type and subtype, with agreement class &#39;inanim&#39;
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span># An entity with distinct entity type and subtype, with agreement class &#39;inanim&#39;
 Coca Cola    organization    company/inanim
 # An entity with no distinct subtype, with atomic annotation &#39;@&#39; (&#39;U.S.&#39; is not a markable)
 the U.S. government    organization    organization/inanim@
@@ -424,24 +462,25 @@ the USS Enterprise    object    ship
 </div>
 <div class="section" id="entity-deps-tab">
 <h4>entity_deps.tab<a class="headerlink" href="#entity-deps-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>This table is used to recognize entity types for out of vocabulary markables by considering their head and dependency label in the dependency graph.</p>
 <blockquote>
 <div><p>For example, if an unknown entity is the dependent of the word <em>embargo</em> with the function label <em>prep_against</em>, we can guess that the entity is a country or government.</p>
 <p>The table has 4 columns:</p>
 <ul class="simple">
-<li><strong>head</strong> for example <em>embargo</em></li>
-<li><strong>function</strong> for example <em>prep_against</em></li>
-<li><strong>entity type</strong> for example <em>COUNTRY</em></li>
-<li><strong>frequency</strong> for example <em>5</em></li>
+<li><p><strong>head</strong> for example <em>embargo</em></p></li>
+<li><p><strong>function</strong> for example <em>prep_against</em></p></li>
+<li><p><strong>entity type</strong> for example <em>COUNTRY</em></p></li>
+<li><p><strong>frequency</strong> for example <em>5</em></p></li>
 </ul>
 <p>This entry means that some training data contained 5 instances of a <em>COUNTRY</em> entity whose head noun was a <em>prep_against</em> child of the word <em>embargo</em>. To produce entity_dep.tab from a dependency annotated corpus and the <a class="reference internal" href="#entity-heads-tab"><span class="std std-ref">entity_heads.tab</span></a> you can use the <strong>make_entity_dep.py</strong> script in <em>utils/</em>.</p>
 <p><strong>Example entries</strong></p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span># Col A dominates entities of Col C type as Col B this often:
+<div><div class="highlight-html notranslate"><div class="highlight"><pre><span></span># Col A dominates entities of Col C type as Col B this often:
 based   prep_on abstract        60
 make    nsubj   person  57
 want    nsubj   person  49
@@ -454,26 +493,28 @@ want    nsubj   person  49
 </div>
 <div class="section" id="entity-heads-tab">
 <span id="id7"></span><h4>entity_heads.tab<a class="headerlink" href="#entity-heads-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional (but highly recommended)</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional (but highly recommended)</strong></p>
+</div>
+<div class="expandable docutils container">
 <blockquote>
 <div><p>This table has the exact same columns as <a class="reference internal" href="#entities-tab"><span class="std std-ref">entities.tab</span></a>, but the first column contains only one token. The entity_heads table is consulted after no match is found in entities.tab, meaning it is the second priority. Generally speaking, it is good practice to include single word named entities (e.g. <em>London</em>) in entities.tab, since they are a high priority type of exact match. Columns are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><strong>entity string</strong>: the full text of the entity. Some modifiers may be stripped using the <em>core_text</em> stripping and <em>non_essential_modifiers</em> settings in <cite>config.ini &lt;config&gt;</cite>, so it is often a good idea to include these without articles etc., unless you want to make sure that they were actually used before matching. For example, if you include <em>Washington Post</em> as an organization, and indicate that <em>the</em> may be stripped in <em>core_text</em>, then <em>The Washington Post</em> will also match. If you list <em>The Washington Post</em>, only that form will match.</li>
-<li><strong>entity type</strong>: the major type, such as <em>person</em> or <em>organization</em>, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use <em>ORG</em>, <em>organization</em>, or make your own arbitrary taxonomies).</li>
-<li><strong>subtype information</strong>: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally:<ul>
-<li>include agreement information after a slash (e.g. <code class="docutils literal"><span class="pre">politician/Fem</span></code>)</li>
-<li>include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within the span of the entity headed by this token, e.g. <code class="docutils literal"><span class="pre">museum</span>&#160;&#160;&#160;&#160; <span class="pre">place</span>&#160;&#160; <span class="pre">place/inanim&#64;</span></code></li>
+<li><p><strong>entity string</strong>: the full text of the entity. Some modifiers may be stripped using the <em>core_text</em> stripping and <em>non_essential_modifiers</em> settings in <cite>config.ini &lt;config&gt;</cite>, so it is often a good idea to include these without articles etc., unless you want to make sure that they were actually used before matching. For example, if you include <em>Washington Post</em> as an organization, and indicate that <em>the</em> may be stripped in <em>core_text</em>, then <em>The Washington Post</em> will also match. If you list <em>The Washington Post</em>, only that form will match.</p></li>
+<li><p><strong>entity type</strong>: the major type, such as <em>person</em> or <em>organization</em>, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use <em>ORG</em>, <em>organization</em>, or make your own arbitrary taxonomies).</p></li>
+<li><p><strong>subtype information</strong>: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally:</p>
+<ul>
+<li><p>include agreement information after a slash (e.g. <code class="docutils literal notranslate"><span class="pre">politician/Fem</span></code>)</p></li>
+<li><p>include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within the span of the entity headed by this token, e.g. <code class="docutils literal notranslate"><span class="pre">museum</span>&#160;&#160;&#160;&#160; <span class="pre">place</span>&#160;&#160; <span class="pre">place/inanim&#64;</span></code></p></li>
 </ul>
 </li>
 </ul>
 <p>Example excerpt:</p>
 </div></blockquote>
 </div></blockquote>
-<div class="highlight-html"><div class="highlight"><pre><span></span># An entity with distinct entity type and subtype, with agreement class &#39;inanim&#39;
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span># An entity with distinct entity type and subtype, with agreement class &#39;inanim&#39;
 taxi  object  car/inanim
 # An entity with no distinct subtype or agreement information
 sand  substance       substance
@@ -484,26 +525,28 @@ sand  substance       substance
 </div>
 <div class="section" id="entity-mods-tab">
 <h4>entity_mods.tab<a class="headerlink" href="#entity-mods-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <blockquote>
-<div><p>This table has the exact same columns as <a class="reference internal" href="#entity-heads-tab"><span class="std std-ref">entity_heads.tab</span></a>, but is meant to match a <strong>modifier</strong> of the markable&#8217;s head noun which identifies the entity type. Typical examples are titles like <em>Mr.</em> identifying a person or <em>Inc.</em> identifying a company. Columns are:</p>
+<div><p>This table has the exact same columns as <a class="reference internal" href="#entity-heads-tab"><span class="std std-ref">entity_heads.tab</span></a>, but is meant to match a <strong>modifier</strong> of the markable’s head noun which identifies the entity type. Typical examples are titles like <em>Mr.</em> identifying a person or <em>Inc.</em> identifying a company. Columns are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><strong>entity string</strong>: the full text of the entity. Some modifiers may be stripped using the <em>core_text</em> stripping and <em>non_essential_modifiers</em> settings in <cite>config.ini &lt;config&gt;</cite>, so it is often a good idea to include these without articles etc., unless you want to make sure that they were actually used before matching. For example, if you include <em>Washington Post</em> as an organization, and indicate that <em>the</em> may be stripped in <em>core_text</em>, then <em>The Washington Post</em> will also match. If you list <em>The Washington Post</em>, only that form will match.</li>
-<li><strong>entity type</strong>: the major type, such as <em>person</em> or <em>organization</em>, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use <em>ORG</em>, <em>organization</em>, or make your own arbitrary taxonomies).</li>
-<li><strong>subtype information</strong>: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally:<ul>
-<li>include agreement information after a slash (e.g. <code class="docutils literal"><span class="pre">politician/Fem</span></code>)</li>
-<li>include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within the span of the entity modified by this token, e.g. <code class="docutils literal"><span class="pre">Mr.</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">person</span>&#160; <span class="pre">person/male&#64;</span></code></li>
+<li><p><strong>entity string</strong>: the full text of the entity. Some modifiers may be stripped using the <em>core_text</em> stripping and <em>non_essential_modifiers</em> settings in <cite>config.ini &lt;config&gt;</cite>, so it is often a good idea to include these without articles etc., unless you want to make sure that they were actually used before matching. For example, if you include <em>Washington Post</em> as an organization, and indicate that <em>the</em> may be stripped in <em>core_text</em>, then <em>The Washington Post</em> will also match. If you list <em>The Washington Post</em>, only that form will match.</p></li>
+<li><p><strong>entity type</strong>: the major type, such as <em>person</em> or <em>organization</em>, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use <em>ORG</em>, <em>organization</em>, or make your own arbitrary taxonomies).</p></li>
+<li><p><strong>subtype information</strong>: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally:</p>
+<ul>
+<li><p>include agreement information after a slash (e.g. <code class="docutils literal notranslate"><span class="pre">politician/Fem</span></code>)</p></li>
+<li><p>include an atomicity annotation by ending with &#64; to ensure no other entities are recognized within the span of the entity modified by this token, e.g. <code class="docutils literal notranslate"><span class="pre">Mr.</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">person</span>&#160; <span class="pre">person/male&#64;</span></code></p></li>
 </ul>
 </li>
 </ul>
 <p>Example excerpt:</p>
 </div></blockquote>
 </div></blockquote>
-<div class="highlight-html"><div class="highlight"><pre><span></span># Anything modified by Corp. is an organization, subclass company, inanimate, and atomic
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span># Anything modified by Corp. is an organization, subclass company, inanimate, and atomic
 Corp.   organization    company/inanim@
 # Corporal X or Dr. X is a person, but agreement is unknown
 corporal        person  person
@@ -517,17 +560,18 @@ Duchess person  person/female
 </div>
 <div class="section" id="hasa-tab">
 <h4>hasa.tab<a class="headerlink" href="#hasa-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
-<p>This is a table of &#8220;things that have things&#8221;. It&#8217;s used to resolve the antecedent of possessive pronouns in cases like this:
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
+<p>This is a table of “things that have things”. It’s used to resolve the antecedent of possessive pronouns in cases like this:
 [The CEO] and [the taxi driver] met. [His] employees joined them.
 The identity of <em>his</em> can be resolved of there us an entry indicating that CEOs have employees, but no such entry for drivers.
 The table has the columns - <strong>possessor</strong>, <strong>possessed</strong> and <strong>frequency</strong>:</p>
 <p><strong>Example entries</strong>:</p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span>activists       network 3
+<div><div class="highlight-html notranslate"><div class="highlight"><pre><span></span>activists       network 3
 activity        duration        3
 actor   body    7
 actor   career  3
@@ -539,24 +583,25 @@ actor   career  3
 </div>
 <div class="section" id="isa-tab">
 <span id="id8"></span><h4>isa.tab<a class="headerlink" href="#isa-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>This table provides sets of equivalent entity head tokens, e.g. <em>company</em> is potentially equivalent to <em>firm, corporation</em>.</p>
 <blockquote>
 <div><p>The table is consulted for both entity head nouns and subclasses. There are three kinds of entry mappings:</p>
 <ol class="arabic simple">
-<li>From major class to comma separated lemmas (place -&gt; place,location)</li>
-<li>From subclass to comma separated lemmas (city -&gt; place,location,burg,metropolis...)</li>
-<li>From head token string to comma separated markable strings (U.S.A. -&gt; USA,US,America...)</li>
+<li><p>From major class to comma separated lemmas (place -&gt; place,location)</p></li>
+<li><p>From subclass to comma separated lemmas (city -&gt; place,location,burg,metropolis…)</p></li>
+<li><p>From head token string to comma separated markable strings (U.S.A. -&gt; USA,US,America…)</p></li>
 </ol>
-<p>The table has two columns: a single word to match, and any number of equivalents (for multi-word equivalents use <a class="reference internal" href="#coref-tab"><span class="std std-ref">coref.tab</span></a>). This means that is-a matching is directed: it&#8217;s possible for <em>king</em> to imply <em>man</em> but not vice versa:</p>
-<p><code class="docutils literal"><span class="pre">king</span>&#160; <span class="pre">man,person,majesty</span></code></p>
+<p>The table has two columns: a single word to match, and any number of equivalents (for multi-word equivalents use <a class="reference internal" href="#coref-tab"><span class="std std-ref">coref.tab</span></a>). This means that is-a matching is directed: it’s possible for <em>king</em> to imply <em>man</em> but not vice versa:</p>
+<p><code class="docutils literal notranslate"><span class="pre">king</span>&#160; <span class="pre">man,person,majesty</span></code></p>
 <p>Placing an asterisk in the equivalents list will result in exceptionally ignoring agreement matching for this entry (to switch off agreement matching for is-a in general, use the setting in <a class="reference internal" href="#config-ini"><span class="std std-ref">config.ini</span></a>).</p>
 <p><strong>Example entries</strong>:</p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span>airline airliner,carrier,company,airline
+<div><div class="highlight-html notranslate"><div class="highlight"><pre><span></span>airline airliner,carrier,company,airline
 town    town,township,borough,burg,hamlet,village,settlement,suburb,place
 place   place,location
 # note the use of asterisk to cancel agreement matching -
@@ -571,15 +616,16 @@ bees    swarm,*
 </div>
 <div class="section" id="names-tab">
 <h4>names.tab<a class="headerlink" href="#names-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>A table of personal names and their agreement classes. In addition to being used to recognize full names, the first space delimited token of each name is also recognized as a first name with that agreement class, and the last token is recognized as a last name.</p>
 <blockquote>
 <div><p><strong>Example</strong>:</p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span>John Smith      male
+<div><div class="highlight-html notranslate"><div class="highlight"><pre><span></span>John Smith      male
 Jane K. Tanaka  female
 </pre></div>
 </div>
@@ -590,14 +636,15 @@ Jane K. Tanaka  female
 </div>
 <div class="section" id="new-modifiers-tab">
 <h4>new_modifiers.tab<a class="headerlink" href="#new-modifiers-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>This file lists modifier tokens which may violate the no_new_modifiers setting in <a class="reference internal" href="#config-ini"><span class="std std-ref">config.ini</span></a>. This is only used if that setting is set to True, as well as the use_new_modifier_exceptions setting, which turns on use of this file. When used, subsequent mentions are exceptionally allowed to include previously unmentioned modifiers found in this list. A second column specifies the frequency with which these new modifiers are known to appear first in a subsequent mention (if unknown may be left as <em>1</em>).</p>
 <p><strong>Example entries</strong>:</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Mr</span><span class="o">.</span>     <span class="mi">2070</span>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Mr</span><span class="o">.</span>     <span class="mi">2070</span>
 <span class="n">Col</span><span class="o">.</span>    <span class="mi">110</span>
 <span class="n">junk</span>    <span class="mi">63</span>
 <span class="n">Ms</span><span class="o">.</span>     <span class="mi">59</span>
@@ -612,19 +659,20 @@ Jane K. Tanaka  female
 </div>
 <div class="section" id="numbers-tab">
 <h4>numbers.tab<a class="headerlink" href="#numbers-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>A table mapping literal numbers to Arabic numerals in the language in question, for cardinality matching (e.g. that <em>three boys</em> is not the same as <em>10 boys</em>). Contains two columns:</p>
 <blockquote>
 <div><ul class="simple">
-<li><strong>word</strong> - the spelled out number form</li>
-<li><strong>numerals</strong> - the number in Arabic numerals</li>
+<li><p><strong>word</strong> - the spelled out number form</p></li>
+<li><p><strong>numerals</strong> - the number in Arabic numerals</p></li>
 </ul>
 <p><strong>example</strong>:</p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span># English number words and corresponding Arabic numerals
+<div><div class="highlight-html notranslate"><div class="highlight"><pre><span></span># English number words and corresponding Arabic numerals
 one     1
 two     2
 three   3
@@ -648,19 +696,20 @@ dozen   12
 </div>
 <div class="section" id="open-close-punctuation-tab">
 <h4>open_close_punctuation.tab<a class="headerlink" href="#open-close-punctuation-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>This table contains paired punctuation marks, such as opening and closing brackets or quotation marks in the language. The purpose of this table is that if a markable contains one of the opening symbols in the first column, but the corresponding closing symbol only appears after the markable, the punctuation following the markable is included in its span (or the same for missing preceding opening punctuation).</p>
 <blockquote>
 <div><blockquote>
 <div><p>For example, the following markable span would be corrected like this:</p>
-<p><cite>[The &#8221; best possible result] &#8221; &#8211;&gt; [The &#8221; best possible result &#8220;]</cite></p>
+<p><cite>[The ” best possible result] ” –&gt; [The ” best possible result “]</cite></p>
 </div></blockquote>
 <p><strong>example</strong></p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span># Two columns, opening then corresponding closing punctuation
+<div><div class="highlight-html notranslate"><div class="highlight"><pre><span></span># Two columns, opening then corresponding closing punctuation
 (     )
 &#39;     &#39;
 </pre></div>
@@ -672,19 +721,20 @@ dozen   12
 </div>
 <div class="section" id="pronouns-tab">
 <span id="id9"></span><h4>pronouns.tab<a class="headerlink" href="#pronouns-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional (but highly recommended)</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional (but highly recommended)</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>A table containing all pronoun forms in the language and their possible agreement classes (multiple entries are required for ambiguous cases). Contains two columns:</p>
 <blockquote>
 <div><ul class="simple">
-<li><strong>form</strong> - the pronoun form</li>
-<li><strong>agreement</strong> - the agreement class</li>
+<li><p><strong>form</strong> - the pronoun form</p></li>
+<li><p><strong>agreement</strong> - the agreement class</p></li>
 </ul>
 <p><strong>example</strong></p>
 <blockquote>
-<div><div class="highlight-html"><div class="highlight"><pre><span></span>it      inanim
+<div><div class="highlight-html notranslate"><div class="highlight"><pre><span></span>it      inanim
 you     2sg
 you     2pl
 </pre></div>
@@ -696,14 +746,15 @@ you     2pl
 </div>
 <div class="section" id="similar-tab">
 <h4>similar.tab<a class="headerlink" href="#similar-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
 <p>A two column list of entity heads and comma separated heads that are similar to them. These can be obtained from lexical resources or populated from the top <em>n</em> most similar items from trained embeddings. Similar words are used whenever data is unavailable for the head in the first column, but some data is available for words in the second column. The idea is that the non-reliance on embeddings makes this usable even for low resource languages via manual curation, while languages for which embeddings can be obtained allow for quick stored look-up of most similar words without realtime vector space computations.</p>
 <blockquote>
 <div><p><strong>example</strong></p>
-<div class="highlight-html"><div class="highlight"><pre><span></span>deal    deals,agreement,pact
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span>deal    deals,agreement,pact
 City    city,Town,mayor
 May     April,June,March
 </pre></div>
@@ -714,14 +765,15 @@ May     April,June,March
 </div>
 <div class="section" id="stop-list-tab">
 <h4>stop_list.tab<a class="headerlink" href="#stop-list-tab" title="Permalink to this headline">¶</a></h4>
-<div class="boggle container">
-<div class="header container">
-<strong>optional</strong></div>
-<div class="expandable container">
-<p>This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. <em>mum &#8216;s the word</em> and not <em>mum&#8217;s the word</em>.  You can also specify entries that are only used as stop items when they are the whole markable. For example, an entry <em>Yangtze&#64;</em> will prevent that string becoming a markable if it is the entire text of the markable, but will not prevent a longer markable such as <em>Yangtze River</em> (regardless of which token is the head).</p>
+<div class="boggle docutils container">
+<div class="header docutils container">
+<p><strong>optional</strong></p>
+</div>
+<div class="expandable docutils container">
+<p>This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. <em>mum ‘s the word</em> and not <em>mum’s the word</em>.  You can also specify entries that are only used as stop items when they are the whole markable. For example, an entry <em>Yangtze&#64;</em> will prevent that string becoming a markable if it is the entire text of the markable, but will not prevent a longer markable such as <em>Yangtze River</em> (regardless of which token is the head).</p>
 <blockquote>
 <div><p><strong>example</strong></p>
-<div class="highlight-html"><div class="highlight"><pre><span></span># These token sequences are excluded as markable heads
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span># These token sequences are excluded as markable heads
 by air
 every week
 # The following example is only excluded if it is the entire text of the markable
@@ -738,15 +790,16 @@ Yangtze@
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="indepth.html" class="btn btn-neutral float-right" title="In depth guides" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="indepth.html" class="btn btn-neutral float-right" title="In depth guides" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="using.html" class="btn btn-neutral" title="Using xrenner" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="using.html" class="btn btn-neutral float-left" title="Using xrenner" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -755,11 +808,19 @@ Yangtze@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016-2020, Amir Zeldes.
+        
+        &copy; Copyright 2016-2020, Amir Zeldes
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -771,36 +832,15 @@ Yangtze@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
   
  <script type="text/javascript">
     $(document).ready(function() {

@@ -1,57 +1,56 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_lex &mdash; xrenner 2.1.0 documentation</title>
+  <title>modules.xrenner_lex &mdash; xrenner 2.2.0 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+
+  
+  
+  
   
 
   
-
-  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-
-  
-    <link rel="top" title="xrenner 2.1.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="../../index.html" class="icon icon-home"> xrenner
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> xrenner
           
 
           
@@ -61,7 +60,7 @@
             
             
               <div class="version">
-                2.1
+                2.2
               </div>
             
           
@@ -78,54 +77,77 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../indepth.html">     In depth guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers' module documentation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">xrenner</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">xrenner</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-    <li>modules.xrenner_lex</li>
+        
+      <li>modules.xrenner_lex</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -136,24 +158,24 @@
 
 <span class="kn">import</span> <span class="nn">gc</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">listdir</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">join</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">listdir</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">join</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">io</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">.xrenner_rule</span> <span class="k">import</span> <span class="n">CorefRule</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">.xrenner_rule</span> <span class="kn">import</span> <span class="n">CorefRule</span>
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
 	<span class="c1"># Python 2</span>
 	<span class="n">PY2</span> <span class="o">=</span> <span class="kc">True</span>
-	<span class="kn">from</span> <span class="nn">ConfigParser</span> <span class="k">import</span> <span class="n">ConfigParser</span><span class="p">,</span> <span class="n">NoSectionError</span>
+	<span class="kn">from</span> <span class="nn">ConfigParser</span> <span class="kn">import</span> <span class="n">ConfigParser</span><span class="p">,</span> <span class="n">NoSectionError</span>
 	<span class="k">def</span> <span class="nf">unicode_split_reader</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
 		<span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&quot;&#39;</span><span class="p">,</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)]</span>
 		<span class="c1">#return [line.replace(&quot;\n&quot;,&quot;&quot;).replace(&#39;\\&quot;&#39;,&#39;&quot;&#39;).split(&#39;\t&#39;) for line in f.readlines()]</span>
 <span class="k">else</span><span class="p">:</span>
 	<span class="c1"># Python 3</span>
 	<span class="n">PY2</span> <span class="o">=</span> <span class="kc">False</span>
-	<span class="kn">from</span> <span class="nn">configparser</span> <span class="k">import</span> <span class="n">NoSectionError</span><span class="p">,</span> <span class="n">RawConfigParser</span> <span class="k">as</span> <span class="n">ConfigParser</span>
+	<span class="kn">from</span> <span class="nn">configparser</span> <span class="kn">import</span> <span class="n">NoSectionError</span><span class="p">,</span> <span class="n">RawConfigParser</span> <span class="k">as</span> <span class="n">ConfigParser</span>
 	<span class="kn">import</span> <span class="nn">csv</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -169,7 +191,7 @@
 <span class="sd">	configuration files.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xrenner</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rule_based</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_seq</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xrenner</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rule_based</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_seq</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		:param model: model - string name of the model to read from models/</span>
 <span class="sd">		:param override: override - optional name of a section to use in models/override.ini</span>
@@ -195,10 +217,10 @@
 		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span>  <span class="c1"># Check if model provided is an absolute or relative path</span>
 			<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
 		<span class="c1"># Check the unlikely case that the model is directly in xrenner.py&#39;s directory</span>
-		<span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">model</span><span class="p">):</span>
-			<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">model</span>
+		<span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">model</span><span class="p">):</span>
+			<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">model</span>
 		<span class="k">else</span><span class="p">:</span>  <span class="c1"># This is a pathless model name specification, which is expected to live in ./models/</span>
-			<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;models&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">model</span>
+			<span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;models&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">model</span>
 
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>  <span class="c1"># Check if this is a default model name that might need the .xrm extension</span>
 			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_path</span> <span class="o">+</span> <span class="s2">&quot;.xrm&quot;</span><span class="p">):</span>
@@ -213,24 +235,24 @@
 			<span class="n">model_path</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span>
 			<span class="n">model_files_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">listdir</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">isfile</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">f</span><span class="p">))]</span>
 			<span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">model_files_list</span><span class="p">:</span>
-				<span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pkl&quot;</span><span class="p">):</span>  <span class="c1"># Classifier</span>
+				<span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pkl&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.crf&quot;</span><span class="p">):</span>  <span class="c1"># Classifier</span>
 					<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;3.pkl&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">PY2</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;2.pkl&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">PY2</span><span class="p">):</span>  <span class="c1"># Skip unpickling unneeded PY2/3 classifiers</span>
 						<span class="bp">self</span><span class="o">.</span><span class="n">model_files</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_path</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
 				<span class="k">else</span><span class="p">:</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">model_files</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">model_path</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="kn">from</span> <span class="nn">zipfile</span> <span class="k">import</span> <span class="n">ZipFile</span>
+			<span class="kn">from</span> <span class="nn">zipfile</span> <span class="kn">import</span> <span class="n">ZipFile</span>
 			<span class="k">try</span><span class="p">:</span>
 				<span class="nb">zip</span> <span class="o">=</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
 				<span class="n">model_files_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">zip</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
 				<span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">model_files_list</span><span class="p">:</span>
-					<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pkl&quot;</span><span class="p">):</span>  <span class="c1"># Python 2 or classifier</span>
+					<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pkl&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.crf&quot;</span><span class="p">):</span>  <span class="c1"># Python 2 or classifier</span>
 						<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;3.pkl&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">PY2</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;2.pkl&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">PY2</span><span class="p">):</span>  <span class="c1"># Skip unpickling unneeded PY2/3 classifiers</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">model_files</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 					<span class="k">else</span><span class="p">:</span>
 						<span class="bp">self</span><span class="o">.</span><span class="n">model_files</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">(</span><span class="nb">zip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
 			<span class="k">except</span><span class="p">:</span>
-				<span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not open model file &quot;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+				<span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not open model file &quot;</span> <span class="o">+</span> <span class="n">model_path</span><span class="p">)</span>
 
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">entity_sums</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -300,8 +322,14 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">sequencer</span> <span class="o">=</span> <span class="kc">None</span>
 		<span class="k">if</span> <span class="s2">&quot;sequencer&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">no_seq</span><span class="p">:</span>
 			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;sequencer&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-				<span class="kn">from</span> <span class="nn">.xrenner_sequence</span> <span class="k">import</span> <span class="n">Sequencer</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">sequencer</span> <span class="o">=</span> <span class="n">Sequencer</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;sequencer&quot;</span><span class="p">])</span>
+				<span class="kn">from</span> <span class="nn">.xrenner_sequence</span> <span class="kn">import</span> <span class="n">Sequencer</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;sequencer&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_files</span><span class="p">:</span>  <span class="c1"># Sequencer model is in model directory</span>
+					<span class="n">model_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;sequencer&quot;</span><span class="p">]]</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">sequencer</span> <span class="o">=</span> <span class="n">Sequencer</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;sequencer&quot;</span><span class="p">],</span><span class="n">pickle</span><span class="o">=</span><span class="n">model_file</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">sequencer</span> <span class="o">=</span> <span class="n">Sequencer</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;sequencer&quot;</span><span class="p">])</span>
+				<span class="k">if</span> <span class="s2">&quot;sequencer_override_thresh&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;sequencer_override_thresh&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># By default, prefer KB entries to sequencer</span>
 
 		<span class="n">gc</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
 
@@ -401,19 +429,19 @@
 <span class="sd">		:return: dictionary of atoms.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span>
-		<span class="n">places</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;place_def_entity&quot;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span>
-		<span class="n">atoms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">places</span><span class="p">)</span>
-		<span class="n">atoms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
-		<span class="n">persons</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span>
-		<span class="n">atoms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">persons</span><span class="p">)</span>
-		<span class="n">organizations</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;organization_def_entity&quot;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span>
-		<span class="n">atoms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">organizations</span><span class="p">)</span>
-		<span class="n">objects</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;object_def_entity&quot;</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span>
-		<span class="n">atoms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_atomic_named_entities&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">atoms</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_atomic_named_entities&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>  <span class="c1"># unspecified</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_atomic_named_entities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;place_def_entity&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;person_def_entity&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;organization_def_entity&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;object_def_entity&quot;</span><span class="p">]])</span>
+			<span class="n">atomic_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;default_atomic_named_entities&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">atomic_type</span> <span class="ow">in</span> <span class="n">atomic_types</span><span class="p">:</span>
+				<span class="n">to_add</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">atomic_type</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span>
+				<span class="n">atoms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">to_add</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">atoms</span></div>
 
-	<span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="LexData.get_first_last_names"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.get_first_last_names">[docs]</a>	<span class="k">def</span> <span class="nf">get_first_last_names</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+<div class="viewcode-block" id="LexData.get_first_last_names"><a class="viewcode-back" href="../../modules.html#modules.xrenner_lex.LexData.get_first_last_names">[docs]</a>	<span class="nd">@staticmethod</span>
+	<span class="k">def</span> <span class="nf">get_first_last_names</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Collects separate first and last name data from the collection in names.tab</span>
 
@@ -676,11 +704,11 @@
 									<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This model supports classifiers for Python 2 only.</span><span class="se">\n</span><span class="s2">  * switch to Python 2 and try running again</span><span class="se">\n</span><span class="s2">  * alternatively switch off classifiers with the option -r (expect lower accuracy)&quot;</span><span class="p">)</span>
 									<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
 					<span class="k">try</span><span class="p">:</span>
-						<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">load</span>
+						<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">load</span>
 					<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
 						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to import joblib:</span><span class="se">\n</span><span class="s2">  * classifiers in this model require installing joblib (pip install joblib)</span><span class="se">\n</span><span class="s2">  * alternatively switch off classifiers with the option -r (expect lower accuracy)&quot;</span><span class="p">)</span>
 						<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
-					<span class="kn">from</span> <span class="nn">.xrenner_classify</span> <span class="k">import</span> <span class="n">Classifier</span>
+					<span class="kn">from</span> <span class="nn">.xrenner_classify</span> <span class="kn">import</span> <span class="n">Classifier</span>
 
 					<span class="k">try</span><span class="p">:</span>
 						<span class="n">clf</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_files</span><span class="p">[</span><span class="n">rule_file_name</span><span class="p">])</span>
@@ -727,7 +755,7 @@
 							<span class="n">morph</span><span class="p">[</span><span class="n">substring</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">entity_class</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
 		<span class="k">return</span> <span class="n">morph</span></div>
 
-	<span class="k">def</span> <span class="nf">read_oracle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oracle_file</span><span class="p">,</span> <span class="n">as_text</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">read_oracle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oracle_file</span><span class="p">,</span> <span class="n">as_text</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">entity_oracle</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">as_text</span><span class="p">:</span>
@@ -750,6 +778,7 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
   
@@ -758,11 +787,19 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016-2020, Amir Zeldes.
+        
+        &copy; Copyright 2016-2020, Amir Zeldes
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -774,36 +811,15 @@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'2.1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
   
  <script type="text/javascript">
     $(document).ready(function() {

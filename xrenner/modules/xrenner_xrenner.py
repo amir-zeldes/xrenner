@@ -32,6 +32,7 @@ class Xrenner:
 		:param no_seq: do not use machine learning sequence taggers for entity resolution
 		"""
 
+		self.docname = "untitled"
 		self.rule_based = rule_based
 		self.no_seq = no_seq
 		self.load(model, override)
@@ -156,7 +157,10 @@ class Xrenner:
 			s_texts.append(" ".join(no_super))
 
 		if lex.sequencer is not None:  # Sequence label all tokens before reading sentences
-			seq_preds = lex.sequencer.predict_proba(s_texts)
+			if lex.sequencer.model_type == "crfsuite":
+				seq_preds = lex.sequencer.predict_proba(text)
+			else:
+				seq_preds = lex.sequencer.predict_proba(s_texts)
 
 		for myline in infile:
 			if "speaker" in myline and "=" in myline and myline.startswith("#"):  # speaker annotation

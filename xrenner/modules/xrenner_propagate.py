@@ -28,12 +28,12 @@ def propagate_entity(markable, candidate, direction="propagate"):
 		propagate_agree(markable, candidate)
 	else:
 		# Prefer nominal propagates to pronoun
-		if markable.form == "pronoun" and candidate.entity_certainty != "uncertain":
+		if markable.form == "pronoun" and candidate.entity_certainty != "uncertain" and candidate.form != "pronoun":
 			markable.entity = candidate.entity
 			markable.subclass = candidate.subclass
 			propagate_agree(candidate, markable)
 			markable.entity_certainty = "propagated"
-		elif candidate.form == "pronoun" and markable.entity_certainty != "uncertain":
+		elif candidate.form == "pronoun" and markable.entity_certainty != "uncertain" and markable.form != "pronoun":
 			candidate.entity = markable.entity
 			candidate.subclass = markable.subclass
 			candidate.entity_certainty = "propagated"

@@ -1,0 +1,684 @@
+=============================
+Buliding New Language Models
+=============================
+
+************
+Introduction
+************
+
+.. raw:: html
+
+   <p><b style="color:red">new:</b> A starter model with minimal settings for UD data is now included in <b>models/udx</b></p>
+
+Beyond the language models that are available in the xrenner distribution, you can build your own models, or modify existing models, by editing their configuration files and gathering lexical data for your target language or domain, as well as training stochastic classifiers.
+
+A language model in xrenner is defined by a set of files in a directory under the models/ directory, or in a compressed archive containing such files, conventionally marked by the extension .xrm. For exmple, the default English language model is models/eng/, and different models, typically named using ISO 639-2 three letter language codes, can be invoked using the -m option. The following example invokes the German language model, named *deu* (for Deutsch, i.e. German):
+
+.. code-block:: bash
+
+  > python xrenner.py -m deu infile.conll10
+  
+
+To locate this model, xrenner first checks whether you have supplied an absolute or relative model path (e.g. /path/to/model/deu.xrm, or my_subdir/deu/). If you have supplied just the model name, as in *deu* above, xrenner assumes that the model is located under the xrenner installation directory in the ./models/ sub-directory. If there is either a directory or a file called *deu* (or *deu.xrm* for a compressed model), that model will be used.
+  
+Most of the language model files listed below are optional, but some, listed below, must be included in each model (whether compressed or not). The main configuration file determining the general behavior for a language is *config.ini*. Different variant behaviors for the same language model, using the same lexical data, can be created as configuration overide profiles using the optional *overide.ini* file.
+
+At a minimum, a model must include:
+
+* :ref:`config.ini <config_ini>`
+* :ref:`coref_rules.tab <coref_rules_tab>`
+
+It is also highly recommended to include:
+
+* :ref:`pronouns.tab <pronouns_tab>`
+* :ref:`entities.tab <entities_tab>`
+* :ref:`entity_heads.tab <entity_heads_tab>`
+ 
+ 
+********************
+Language model files
+******************** 
+
+Configuration files
+===================
+
+	  
+.. _config_ini:
+
+config.ini
+**********
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **mandatory**
+
+  .. container:: expandable	
+  
+      This is the main configuration file for the model. For detailed documentation see :doc:`config.ini <config>`
+
+
+depedit.ini
+***********
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      This is the configuration file for the *depedit* module, which can be used to preprocess input dependency trees before the system analyzes them. For detailed documentation see :doc:`depedit.ini <depedit>`
+
+	  
+override.ini
+************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+		
+		If you want to use multiple setting profiles with the same lexical data, you can either make duplicate models with different config.ini files (this can make maintenance difficult when updating lexical resources), or you can use alternate profiles in override.ini, which replaces specific settings in config.ini.
+
+		To set up an override profile, name your profile in square brackets as shown below, then list any settings you wish to override in whatever order.
+
+		To use the profile, call xrenner with the -x option and your profile name:
+		
+		``> python xrenner.py -x profile_name infile.conll10``
+		
+		**example**:
+			 
+			 .. code-block:: ini
+
+				[GUM]
+
+				# Change the functions breaking the markable span
+				non_link_func=/^(acl|acl:relcl|advcl|aux|aux:pass|expl|nsubj|nsubj:pass|cop|dep|punct|appos|discourse|parataxis|orphan|advmod_neg|case|mark|list|csubj|csubj:pass|cc|obl.*)$/
+				# In this profile we want to keep singletons and cataphora
+				remove_cataphora=False
+				remove_singletons=False
+
+
+	  
+Lexical data files
+==================	  
+	 
+affix_tokens.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      The purpose of this table is to list tokens that:
+	  
+	  1. Should always be added to a markable when found before (for prefix tokens) or after (for suffix tokens) the edge of the markable 
+	  
+	  2. Should not be treated as containing an entity head
+	  
+	  Typical examples are bleached quantity expressions, such as *a lot of* (prefix) or *etc.* (suffix). The columns are:
+	  
+		* **form** - a token or sequence of tokens to adjoin to adjacent markables
+
+		* **affix side** - whether this is a *prefix* or *suffix*
+
+		**example**
+
+			.. code-block:: html
+
+				a bunch of	prefix
+				LLC	suffix
+				p.m.	suffix
+
+.. _antonyms_tab:
+
+antonyms.tab
+***************
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+	This file lists antonymous modifiers, or more precisely heterodeictic modifiers, which indicate that two mentions are not coreferent. For example *the good news* is not the same as *the bad news*.
+
+	Entries are listed in comma separated sets, and items may appear in multiple sets. The order of the items does not matter. Note that items need not be adjectives, especially if you list nominal modification as a mod_func function in config.ini.
+
+	**Example entries**:
+
+		.. code-block:: python
+		
+			# true antonyms
+			good,bad
+			fast,slow
+			# ostensibly incompatible adjectives
+			red,green,blue,orange,pink
+			# note that first is incompatible with second and last
+			first,second,third
+			# but second may also be last, so we need a separate entry for first,last
+			first,last
+			# not really antonyms or incompatible, but likely to indicate heterodeixis
+			business,holiday
+
+.. _atoms_tab:
+
+atoms.tab
+**********
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+	This file gives a list of additional markable texts that are known to be atomic (may contain no nested markables), even if their entity type is unknown (if the entity type is known, use :ref:`entities.tab <entities_tab>` or :ref:`entity_heads.tab <entity_heads_tab>` with the *@* annotation). A second column includes frequencies for the atoms, which can be left as 1 if unknown. This list extends, and does not replace atomic marked entries in the respective entity list files.
+
+	**Example entries**:
+
+		.. code-block:: python
+		
+			New York	989
+			Hong Kong	442
+			the United States	412
+			Xinhua News Agency	314
+
+.. _coref_tab:
+
+coref.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+	This table provides pairs of potentially multi-word expressions that are equivalent and should be considered capable of coreference (for single word equivalents, use :ref:`isa.tab <isa_tab>`). The expressions are separated by a pipe, and the type of coreference relation is entered in a second column (e.g. 'coref', 'aggregate', or even 'bridging' - the names of labels are not restricted).
+
+	**Example entries**:
+	
+			.. code-block:: html
+			
+				the post season|post-season	coref
+				sorghum|monocot species	bridge
+				the educational system|the education system	coref
+				
+				
+.. _coref_rules_tab:
+
+coref_rules.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **mandatory**
+
+  .. container:: expandable	
+  
+	The file coref_rules.tab lists a cascade of coreference matching rules of the form:
+
+		``ANA;ANT;DIST;PROP(;CLF(;THRESH))``
+
+	Where ANA and ANT are ampersand-separated feature constraints on the anaphor and the antecedent, DIST is the maximum distance in sentences to search for a match and PROP is the direction of feature propagation once a match is made, if any. Two further optional components are a classifier file name created by **utils/train_classifier**, and an optional decision threshold to use for that classifier for this rule (see :doc:`Building classifiers <buildclf>`).
+	
+	Feature constraints include markable **text**, **entity** (e.g. *person*), **subclass** (e.g. *politician*), **definiteness** (*def* or *indef*), **form** (common/proper/pronoun), cardinality (numerical modifiers or amount of members in a coordination); features of the head token (**lemma**, **pos**, **func**, whether it is **quoted**, i.e. in quotation marks), as well as existence/non-existence of certain modifiers (**mod**) )or parents/children in a head token's dependency graph (*parent*/*child*); and features of the sentence (**mood** and **speaker**).
+	
+	Feature values can be regular expressions (surrounded by slashes), exact values (surrounded by double quotes), or a reference to the same value as the antecedent, marked *$1* (i.e. the anaphor, conceptually the second mention or $2, is the same as the antecedent, $1). For Boolean features, such as **quoted**, use *True* or *False*. Negative matching can be done using *!=*. For two markables (not) having the same dependency parent (e.g. to control reflexive coreference), there is a legacy shorthand *sameparent* and *!sameparent*, which is the same as *parent=$1* etc. For examples, see below.
+	
+	There are also special flags which allow turning off some compatibility checks, as well as switching on forward lookahead for cataphora. They are:
+	
+	* **anyagree** - ignore agreement checking
+	* **anyentity** - ignore entity matching
+	* **anycardinality** - ignore cardinality matching
+	* **anytext** - ignore text of markable and antecedent in comparison
+	* **lookahead** - search for 'antecedent' in subsequent tokens of same sentence instead of preceding tokkens (for cataphora)
+	* **take_first** - do not perform any scoring: take the first (closest) candidate found (for very high certainty rules, speeds up performance)
+	
+	Feature propagation ensures entity types match across coreferent results, and can have the values:
+	
+	* **nopropagate** - do not propagate any features
+	* **propagate** - automatically propagate from less certainly identified member to more certain one
+	* **propagate_forward** - always propagate from antecedent to anaphor
+	* **propagate_backward** - the reverse of forward
+	* **propagate_invert** - a special setting for cataphora: propagates to earlier cataphor from the later postcedent 
+	
+	Rules are consulted in order, similarly to the sieve approach of Lee et al. (2013), so that the most certain rules are applied first. Every mention has only one antecedent, so that subsequent matching can be skipped, but some aspects of a mention-cluster or ‘entity-mention’ model (cf. Rahman & Ng 2011) are also implemented, for example antonym modifier checks are applied to the entire chain (see :ref:`antonyms.tab <antonyms_tab>`).
+
+	The first rule below illustrates a very 'safe' strategy, searching for proper noun markables with identical text (=$1) in the previous 100 sentences, since these are almost always coreferent, and undertaking no feature propagation. It takes the vert first candidate found, without scoring. The second rule looks for a mention headed by 'one' with the same modifier as its antecedent within 4 sentences, matching cases like `the new flag ... the new one`. It uses a classifier called clf_one.pkl, and sets a high threshold, demanding high confidence from the classifier (default threshold is 0.5). The third rule attempts to match a possessive pronoun (which has not saturated its antecedent yet, if this rule has been reached) to a nominal subject later on in the sentence, matching sentences like `In [her] speech, [Angela Merkel] said...`. It uses no classifier, meaning it uses xrenner heuristics to choose among candidates, but it will always choose some candidate if available. The heuristic, unlike classifiers, cannot reject an anaphor as 'non-anaphoric', whereas if all classifier candidates score below their threshold, no antecedent is selected.
+
+	    .. code-block:: perl
+
+			#first match identical proper markables
+			form="proper";form="proper"&text=$1&take_first;100;nopropagate
+			#identify coreferent light heads based on identical modifiers
+			lemma=/^one$/;mod=$1&anytext&form!="proper"&!sameparent;4;nopropagate;clf_one.pkl;0.6
+			#salvage unmatched pronouns - cataphoric cases like "in her speech, the chairwoman..."
+			text=/^(his|her|its)$/;form!=/pronoun/&func=/nsubj/&lookahead;0;propagate_invert
+
+	Classifiers are invoked by their name, minus a python specific version. If your classifier is named *pron_clf.pkl*, you may either provide that file in the model directory for whichever Python version you intend to use (ideally: 3.X), or you can provide two files: *pron_clf2.pkl* and *pron_clf3.pkl*, which will be used automatically for the relevant Python version. Note that the classifier name in coref_rules.tab will still be *pron_clf.pkl*. 
+	
+	Additionally, you may supply alternative versions of a classifier to work with different model override profiles (see :doc:`config.ini <config>`). These classifier files may be named with a certain suffix, which is then specified in the override file. For example, a classifier called *gbm_all.pkl* may have an alternate file *gbm_all_gum.pkl* in the model directory, and a corresponding entry in override.ini will specify: 
+
+	    .. code-block:: ini
+
+			classifier_suffix=_gum
+
+	This may be combined with alternative Python 2/3 versions (e.g. *gbm_all_gum2.pkl*, *gbm_all_gum3.pkl*)
+	
+	
+.. _entities_tab:
+
+entities.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional (but highly recommended)**
+
+  .. container:: expandable	
+  
+      The full text entity list file, with three tab delimited columns:
+	  
+	  * **entity string**: the full text of the entity. Some modifiers may be stripped using the *core_text* stripping and *non_essential_modifiers* settings in :doc:`config.ini <config>`, so it is often a good idea to include these without articles etc., unless you want to make sure that they were actually used before matching. For example, if you include *Washington Post* as an organization, and indicate that *the* may be stripped in *core_text*, then *The Washington Post* will also match. If you list *The Washington Post*, only that form will match.
+	  
+	  * **entity type**: the major type, such as *person* or *organization*, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use *ORG*, *organization*, or make your own arbitrary taxonomies).
+	  
+	  * **subtype information**: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally
+	  
+	    * include agreement information after a slash (e.g. ``actress/Fem``)
+		
+        * include an atomicity annotation by ending with @ to ensure no other entities are recognized within this entity's span, e.g. ``President 's Choice	object	object/inanim@``
+		
+	  Example:
+
+    .. code-block:: html
+
+	  # An entity with distinct entity type and subtype, with agreement class 'inanim'
+	  Coca Cola    organization    company/inanim
+	  # An entity with no distinct subtype, with atomic annotation '@' ('U.S.' is not a markable)
+	  the U.S. government    organization    organization/inanim@
+	  # An entity with no agreement information
+	  the USS Enterprise    object    ship
+	  
+
+entity_deps.tab
+***************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      This table is used to recognize entity types for out of vocabulary markables by considering their head and dependency label in the dependency graph. 
+
+	  For example, if an unknown entity is the dependent of the word *embargo* with the function label *prep_against*, we can guess that the entity is a country or government.
+
+
+	  The table has 4 columns:
+	  
+	  * **head** for example *embargo*
+	  
+	  * **function** for example *prep_against*
+	  
+	  * **entity type** for example *COUNTRY*
+	  
+	  * **frequency** for example *5*
+
+	  This entry means that some training data contained 5 instances of a *COUNTRY* entity whose head noun was a *prep_against* child of the word *embargo*. To produce entity_dep.tab from a dependency annotated corpus and the :ref:`entity_heads.tab <entity_heads_tab>` you can use the **make_entity_dep.py** script in *utils/*.
+	  
+	  **Example entries**
+	    
+		.. code-block:: html
+		
+			# Col A dominates entities of Col C type as Col B this often:
+			based	prep_on	abstract	60
+			make	nsubj	person	57
+			want	nsubj	person	49
+
+	  
+.. _entity_heads_tab:
+	  
+entity_heads.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional (but highly recommended)**
+
+  .. container:: expandable	
+  
+      This table has the exact same columns as :ref:`entities.tab <entities_tab>`, but the first column contains only one token. The entity_heads table is consulted after no match is found in entities.tab, meaning it is the second priority. Generally speaking, it is good practice to include single word named entities (e.g. *London*) in entities.tab, since they are a high priority type of exact match. Columns are:
+	  
+	  * **entity string**: the full text of the entity. Some modifiers may be stripped using the *core_text* stripping and *non_essential_modifiers* settings in `config.ini <config>`, so it is often a good idea to include these without articles etc., unless you want to make sure that they were actually used before matching. For example, if you include *Washington Post* as an organization, and indicate that *the* may be stripped in *core_text*, then *The Washington Post* will also match. If you list *The Washington Post*, only that form will match.
+	  
+	  * **entity type**: the major type, such as *person* or *organization*, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use *ORG*, *organization*, or make your own arbitrary taxonomies).
+	  
+	  * **subtype information**: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally:
+	  
+	    * include agreement information after a slash (e.g. ``politician/Fem``)
+      
+	    * include an atomicity annotation by ending with @ to ensure no other entities are recognized within the span of the entity headed by this token, e.g. ``museum	place	place/inanim@``
+		
+	  Example excerpt:
+
+    .. code-block:: html
+
+	  # An entity with distinct entity type and subtype, with agreement class 'inanim'
+	  taxi	object	car/inanim
+	  # An entity with no distinct subtype or agreement information
+	  sand	substance	substance
+	  
+
+entity_mods.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      This table has the exact same columns as :ref:`entity_heads.tab <entity_heads_tab>`, but is meant to match a **modifier** of the markable's head noun which identifies the entity type. Typical examples are titles like *Mr.* identifying a person or *Inc.* identifying a company. Columns are:
+	  
+	  * **entity string**: the full text of the entity. Some modifiers may be stripped using the *core_text* stripping and *non_essential_modifiers* settings in `config.ini <config>`, so it is often a good idea to include these without articles etc., unless you want to make sure that they were actually used before matching. For example, if you include *Washington Post* as an organization, and indicate that *the* may be stripped in *core_text*, then *The Washington Post* will also match. If you list *The Washington Post*, only that form will match.
+	  
+	  * **entity type**: the major type, such as *person* or *organization*, for entity type recognition. The amount and names of entity types is completely up to the model designer (i.e. you can use *ORG*, *organization*, or make your own arbitrary taxonomies).
+	  
+	  * **subtype information**: this column must include a subtype, which can be identical to the major type if no subtypes are used. This column may also optionally:
+	  
+	    * include agreement information after a slash (e.g. ``politician/Fem``)
+      
+	    * include an atomicity annotation by ending with @ to ensure no other entities are recognized within the span of the entity modified by this token, e.g. ``Mr.	person	person/male@``
+		
+	  Example excerpt:
+
+    .. code-block:: html
+
+		# Anything modified by Corp. is an organization, subclass company, inanimate, and atomic
+		Corp.	organization	company/inanim@
+		# Corporal X or Dr. X is a person, but agreement is unknown
+		corporal	person	person
+		Dr.	person	person
+		# Duchess is a female person
+		Duchess	person	person/female
+
+
+hasa.tab
+*********
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+		This is a table of "things that have things". It's used to resolve the antecedent of possessive pronouns in cases like this:
+		[The CEO] and [the taxi driver] met. [His] employees joined them.
+		The identity of *his* can be resolved of there us an entry indicating that CEOs have employees, but no such entry for drivers.
+		The table has the columns - **possessor**, **possessed** and **frequency**:
+		
+		**Example entries**:
+
+		    .. code-block:: html
+		
+				activists	network	3
+				activity	duration	3
+				actor	body	7
+				actor	career	3
+
+
+.. _isa_tab:
+
+isa.tab
+*******
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      This table provides sets of equivalent entity head tokens, e.g. *company* is potentially equivalent to *firm, corporation*.
+		
+		The table is consulted for both entity head nouns and subclasses. There are three kinds of entry mappings:
+
+		1. From major class to comma separated lemmas (place -> place,location)
+
+		2. From subclass to comma separated lemmas (city -> place,location,burg,metropolis...)
+
+		3. From head token string to comma separated markable strings (U.S.A. -> USA,US,America...)
+
+		The table has two columns: a single word to match, and any number of equivalents (for multi-word equivalents use :ref:`coref.tab <coref_tab>`). This means that is-a matching is directed: it's possible for *king* to imply *man* but not vice versa:
+		
+		``king  man,person,majesty``
+		
+		Placing an asterisk in the equivalents list will result in exceptionally ignoring agreement matching for this entry (to switch off agreement matching for is-a in general, use the setting in :ref:`config.ini <config_ini>`).
+		
+		**Example entries**:
+
+		    .. code-block:: html
+
+			airline	airliner,carrier,company,airline
+			town	town,township,borough,burg,hamlet,village,settlement,suburb,place
+			place	place,location
+			# note the use of asterisk to cancel agreement matching -
+			# this lets singular 'swarm' match plural 'bees'
+			bees	swarm,*
+
+			
+names.tab
+***********
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      A table of personal names and their agreement classes. In addition to being used to recognize full names, the first space delimited token of each name is also recognized as a first name with that agreement class, and the last token is recognized as a last name.
+
+		**Example**:
+		
+		  .. code-block:: html
+
+			John Smith	male
+			Jane K. Tanaka	female
+
+
+new_modifiers.tab
+******************
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+	This file lists modifier tokens which may violate the no_new_modifiers setting in :ref:`config.ini <config_ini>`. This is only used if that setting is set to True, as well as the use_new_modifier_exceptions setting, which turns on use of this file. When used, subsequent mentions are exceptionally allowed to include previously unmentioned modifiers found in this list. A second column specifies the frequency with which these new modifiers are known to appear first in a subsequent mention (if unknown may be left as *1*).
+
+	**Example entries**:
+
+		.. code-block:: python
+		
+			Mr.	2070
+			Col.	110
+			junk	63
+			Ms.	59
+			President	59
+			new	49
+			proposed	1
+
+
+numbers.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      A table mapping literal numbers to Arabic numerals in the language in question, for cardinality matching (e.g. that *three boys* is not the same as *10 boys*). Contains two columns:
+	  
+	  * **word** - the spelled out number form
+	  
+	  * **numerals** - the number in Arabic numerals
+
+	  **example**:
+	  
+		    .. code-block:: html
+
+				# English number words and corresponding Arabic numerals
+				one	1
+				two	2
+				three	3
+				four	4
+				five	5
+				six	6
+				seven	7
+				eight	8
+				nine	9
+				ten	10
+				eleven	11
+				twelve	12
+				dozen	12
+				...
+
+		
+
+open_close_punctuation.tab
+**************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      This table contains paired punctuation marks, such as opening and closing brackets or quotation marks in the language. The purpose of this table is that if a markable contains one of the opening symbols in the first column, but the corresponding closing symbol only appears after the markable, the punctuation following the markable is included in its span (or the same for missing preceding opening punctuation).
+
+	  For example, the following markable span would be corrected like this:
+
+	  `[The " best possible result] " --> [The " best possible result "]`
+
+	**example**
+
+		.. code-block:: html
+
+		  # Two columns, opening then corresponding closing punctuation
+		  (	)
+		  '	'
+
+
+	  
+.. _pronouns_tab:
+		  
+pronouns.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional (but highly recommended)**
+
+  .. container:: expandable	
+  
+      A table containing all pronoun forms in the language and their possible agreement classes (multiple entries are required for ambiguous cases). Contains two columns:
+
+		* **form** - the pronoun form
+
+		* **agreement** - the agreement class
+
+		**example**
+
+			.. code-block:: html
+
+				it	inanim
+				you	2sg
+				you	2pl
+
+
+similar.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      A two column list of entity heads and comma separated heads that are similar to them. These can be obtained from lexical resources or populated from the top *n* most similar items from trained embeddings. Similar words are used whenever data is unavailable for the head in the first column, but some data is available for words in the second column. The idea is that the non-reliance on embeddings makes this usable even for low resource languages via manual curation, while languages for which embeddings can be obtained allow for quick stored look-up of most similar words without realtime vector space computations.
+	  
+		**example**
+
+		.. code-block:: html
+
+			deal	deals,agreement,pact
+			City	city,Town,mayor
+			May	April,June,March
+
+
+stop_list.tab
+************************
+
+.. container:: boggle
+
+  .. container:: header
+  
+      **optional**
+
+  .. container:: expandable	
+  
+      This is a simple one column list of token sequences that exclude the presence of a markable (typically idiomatic non-referential NPs). Care should be taken to separate tokens in the same way that the input parse will include them, e.g. *mum 's the word* and not *mum's the word*.  You can also specify entries that are only used as stop items when they are the whole markable. For example, an entry *Yangtze@* will prevent that string becoming a markable if it is the entire text of the markable, but will not prevent a longer markable such as *Yangtze River* (regardless of which token is the head).
+	  
+		**example**
+
+		.. code-block:: html
+
+			# These token sequences are excluded as markable heads
+			by air
+			every week
+			# The following example is only excluded if it is the entire text of the markable
+			Yangtze@
+

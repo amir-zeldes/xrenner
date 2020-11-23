@@ -1,56 +1,56 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Building classifiers &mdash; xrenner 2.1.0 documentation</title>
+  <title>Building classifiers &mdash; xrenner 2.2.0 documentation</title>
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
+  
+  
   
 
   
-
-  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-
-  
-    <link rel="top" title="xrenner 2.1.0 documentation" href="index.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="index.html" class="icon icon-home"> xrenner
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> xrenner
           
 
           
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                2.1
+                2.2
               </div>
             
           
@@ -77,54 +77,79 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">     Building your own language models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="indepth.html">     In depth guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers&#8217; module documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">     Developers' module documentation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">xrenner</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xrenner</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Building classifiers</li>
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Building classifiers</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/buildclf.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/buildclf.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -134,17 +159,17 @@
 <h1>Building classifiers<a class="headerlink" href="#building-classifiers" title="Permalink to this headline">¶</a></h1>
 <p>xrenner provides a framework for integrating stochastic classifiers using scikit-learn (<a class="reference external" href="http://scikit-learn.org/">http://scikit-learn.org/</a>). To train a classifier, you will need to:</p>
 <ol class="arabic simple">
-<li>Dump data of anaphor-antecedent pair candidates that xrenner sees in your corpus</li>
-<li>Add information from gold standard data saying whether each pair is correct</li>
-<li>Train your classifier</li>
+<li><p>Dump data of anaphor-antecedent pair candidates that xrenner sees in your corpus</p></li>
+<li><p>Add information from gold standard data saying whether each pair is correct</p></li>
+<li><p>Train your classifier</p></li>
 </ol>
 <div class="section" id="dumping-data">
 <h2>Dumping data<a class="headerlink" href="#dumping-data" title="Permalink to this headline">¶</a></h2>
 <p>To train a classifier, a dump file is required which lists all of the anaphor-antecedent pairs that xrenner is considering during a run on your data. To create a dump file, run xrenner on all of your conll parse files with the option -d &lt;FILENAME&gt; and your model selected, in this case <em>jap</em> for Japanese. Output analyses are not needed, so we can select -o none:</p>
-<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-p</span> <span class="pre">4</span> <span class="pre">-d</span> <span class="pre">dumpfile</span> <span class="pre">-m</span> <span class="pre">jap</span> <span class="pre">-o</span> <span class="pre">none</span> <span class="pre">*.conll10</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">xrenner.py</span> <span class="pre">-p</span> <span class="pre">4</span> <span class="pre">-d</span> <span class="pre">dumpfile</span> <span class="pre">-m</span> <span class="pre">jap</span> <span class="pre">-o</span> <span class="pre">none</span> <span class="pre">*.conll10</span></code></p>
 <p>If you run xrenner as above, with multiple processes (-p 4), multiple dump files will be created and automatically merged at the end of the run, leaving you with <em>dumpfile.tab</em>. An example of such a file can be found in <em>utils/example_dump.tab</em>.</p>
 <p>The dump file has many columns describing the features observed or predicted by xrenner, and will look something like this:</p>
-<div class="highlight-html"><div class="highlight"><pre><span></span>position        docname genre   n_lemma n_func  n_head_text     n_form  n_pos   n_agree n_start n_end   n_cardinality   n_definiteness  n_entity        n_subclass      n_infstat       n_coordinate    n_length        n_mod_count     n_doc_position  n_sent_position n_quoted        n_negated       n_neg_parent    n_s_type        t_lemma t_func  t_head_text     t_form  t_pos   t_agree t_start t_end   t_cardinality   t_definiteness  t_entity        t_subclass      t_infstat       t_coordinate    t_length        t_mod_count     t_doc_position  t_sent_position t_quoted        t_negated       t_neg_parent    t_s_type        d_sent  d_tok   d_agr   d_intervene     d_cohort        d_hasa  d_entidep       d_entisimdep    d_lexdep        d_lexsimdep     d_sametext      d_samelemma     d_parent        d_speaker       heuristic_score rule_num
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span>position        docname genre   n_lemma n_func  n_head_text     n_form  n_pos   n_agree n_start n_end   n_cardinality   n_definiteness  n_entity        n_subclass      n_infstat       n_coordinate    n_length        n_mod_count     n_doc_position  n_sent_position n_quoted        n_negated       n_neg_parent    n_s_type        t_lemma t_func  t_head_text     t_form  t_pos   t_agree t_start t_end   t_cardinality   t_definiteness  t_entity        t_subclass      t_infstat       t_coordinate    t_length        t_mod_count     t_doc_position  t_sent_position t_quoted        t_negated       t_neg_parent    t_s_type        d_sent  d_tok   d_agr   d_intervene     d_cohort        d_hasa  d_entidep       d_entisimdep    d_lexdep        d_lexsimdep     d_sametext      d_samelemma     d_parent        d_speaker       heuristic_score rule_num
 13-16;11-11     GUM_interview_ants      interview       1       appos   Tuesday common  CD      _       13      16      0       indef   time    time    new     0       4       1       0.013474494706448507    0.6666666666666666      0       0       0       frag    Tuesday root    ROOT    proper  NP      _       11      11      0       def     time    time-unit       new     0       1       0       0.010587102983638113    0.16666666666666666     0       0       0       frag    0       2       1       2       1       0       4       9       0       0       0       0       -1      0       1.0     9
 28-35;1-3       GUM_interview_ants      interview       Bos     nsubj   studies proper  NP      _       28      35      0       def     person  person  new     0       8       2       0.02791145332050048     0.06666666666666667     0       0       0       decl    Bos     nsubj   tells   proper  NP      _       1       3       0       def     person  person  new     0       3       2       0.0028873917228103944   0.3     0       0       0       decl    4       25      1       11      1       0       2       4       1       0       0       1       0       0       1.0     25
 54-54;42-43     GUM_interview_ants      interview       they    nsubj   experience      pronoun PP      plural  54      54      0       def     abstract        abstract        new     0       1       0       0.0519730510105871      0.9     1       0       0       decl    insect  nsubj   evolved common  NNS     plural  42      43      0       indef   animal  animal  new     0       2       1       0.04138594802694899     0.5333333333333333      1       0       0       decl    0       11      1       3       2       0       1       0       0       0       0       0       0       0       1.0     24
@@ -157,7 +182,7 @@
 <div class="section" id="checking-responses">
 <h2>Checking responses<a class="headerlink" href="#checking-responses" title="Permalink to this headline">¶</a></h2>
 <p>The script <em>utils/check_response.py</em> enriches the dump file with responses from a gold file annotated in the conll coreference format. It contains all documents in one long file, with document names noted wherever they begin. The format looks like this:</p>
-<div class="highlight-html"><div class="highlight"><pre><span></span># begin document my_example
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span># begin document my_example
 1       Portrait        _
 2       shot    _
 3       of      _
@@ -179,72 +204,62 @@
 </div>
 <p>An example of this format is found in <em>utils/example_gold.conll</em>. To enrich the dump file, run the script <em>check_response.py</em> like this:</p>
 <ul class="simple">
-<li>python check_response.py goldfile.conll dumpfile.tab</li>
+<li><p>python check_response.py goldfile.conll dumpfile.tab</p></li>
 </ul>
 <p>Multiple options can modify the behavior of check_response depending on your needs:</p>
-<table class="docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-p</span>, <span class="option">--pairs</span></kbd></td>
-<td>output only a single negative example for each positive example (reduces training data size but balances the minority class: positive). Entries for markables with no antecedent are all outputted as well.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-b</span>, <span class="option">--binary</span></kbd></td>
-<td>output binary response only; if not used, output also includes error types (e.g. wrong link, missing antecedent, etc.)</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-d</span>, <span class="option">--del_id</span></kbd></td>
-<td>delete pair location IDs (prevents cohort based evaluation later, but smaller filesize)</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-a</span>, <span class="option">--appositions</span></kbd></td>
-</tr>
-<tr><td>&nbsp;</td><td>turn off automatic apposition fixing. Apposition fixing is only needed for OntoNotes-style corpora, where appositions are &#8216;wrapped&#8217; with an extra markable</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-c</span>, <span class="option">--copulas</span></kbd></td>
-<td>turn off automatic copula fixing. Otherwise, copula markables are heuristically restored in corpora which do not annotate copula predicates.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-s</span>, <span class="option">--single_negative</span></kbd></td>
-</tr>
-<tr><td>&nbsp;</td><td>in addition to &#8211;pairs, also output only a single negative example for each cohort that has no viable antecedents (not recommended)</td></tr>
-</tbody>
-</table>
+<dl class="option-list">
+<dt><kbd><span class="option">-p</span>, <span class="option">--pairs</span></kbd></dt>
+<dd><p>output only a single negative example for each positive example (reduces training data size but balances the minority class: positive). Entries for markables with no antecedent are all outputted as well.</p>
+</dd>
+<dt><kbd><span class="option">-b</span>, <span class="option">--binary</span></kbd></dt>
+<dd><p>output binary response only; if not used, output also includes error types (e.g. wrong link, missing antecedent, etc.)</p>
+</dd>
+<dt><kbd><span class="option">-d</span>, <span class="option">--del_id</span></kbd></dt>
+<dd><p>delete pair location IDs (prevents cohort based evaluation later, but smaller filesize)</p>
+</dd>
+<dt><kbd><span class="option">-a</span>, <span class="option">--appositions</span></kbd></dt>
+<dd><p>turn off automatic apposition fixing. Apposition fixing is only needed for OntoNotes-style corpora, where appositions are ‘wrapped’ with an extra markable</p>
+</dd>
+<dt><kbd><span class="option">-c</span>, <span class="option">--copulas</span></kbd></dt>
+<dd><p>turn off automatic copula fixing. Otherwise, copula markables are heuristically restored in corpora which do not annotate copula predicates.</p>
+</dd>
+<dt><kbd><span class="option">-s</span>, <span class="option">--single_negative</span></kbd></dt>
+<dd><p>in addition to –pairs, also output only a single negative example for each cohort that has no viable antecedents (not recommended)</p>
+</dd>
+</dl>
 </div>
 <div class="section" id="train-the-classifier">
 <h2>Train the classifier<a class="headerlink" href="#train-the-classifier" title="Permalink to this headline">¶</a></h2>
-<p>Once a checked file, in a format like <em>utils/example_dump_response.tab</em> is ready, we can train a classifier from sklearn&#8217;s repertoire using <em>utils/train_classifier.py</em>. Reading the script is recommended as it contains <strong>a detailed tutorial</strong>.</p>
+<p>Once a checked file, in a format like <em>utils/example_dump_response.tab</em> is ready, we can train a classifier from sklearn’s repertoire using <em>utils/train_classifier.py</em>. Reading the script is recommended as it contains <strong>a detailed tutorial</strong>.</p>
 <p>The script is run as:</p>
-<p><code class="docutils literal"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">train_classifier.py</span> <span class="pre">checked_dump.tab</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">python</span> <span class="pre">train_classifier.py</span> <span class="pre">checked_dump.tab</span></code></p>
 <p>Additional options:</p>
-<table class="docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-t</span>, <span class="option">--thresh</span></kbd></td>
-<td>Integer; A frequency threshold, replace rarer values by _unknown_</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-c</span>, <span class="option">--criterion</span></kbd></td>
-</tr>
-<tr><td>&nbsp;</td><td>Fraction; Decision criterion boundary for classifier positive decision (default: 0.5; choosing a lower criterion is often helpful!)</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-d</span>, <span class="option">--devset</span></kbd></td>
-<td>Filename; A file listing dev set document names one per line (useful to ensure different classifiers are evaluated on the same data for comparison)</td></tr>
-</tbody>
-</table>
+<dl class="option-list">
+<dt><kbd><span class="option">-t</span>, <span class="option">--thresh</span></kbd></dt>
+<dd><p>Integer; A frequency threshold, replace rarer values by _unknown_</p>
+</dd>
+<dt><kbd><span class="option">-c</span>, <span class="option">--criterion</span></kbd></dt>
+<dd><p>Fraction; Decision criterion boundary for classifier positive decision (default: 0.5; choosing a lower criterion is often helpful!)</p>
+</dd>
+<dt><kbd><span class="option">-d</span>, <span class="option">--devset</span></kbd></dt>
+<dd><p>Filename; A file listing dev set document names one per line (useful to ensure different classifiers are evaluated on the same data for comparison)</p>
+</dd>
+</dl>
 <p>Read the section <strong>Constructing a classifier</strong> within the script and adjust the features and classifier chosen based on your scenario. The script will produce a pickled dump file (*.pkl), which you can include in your language model directory (see &lt;models&gt;). You can then assign the classifier to some coreference rules in <a class="reference internal" href="models.html#coref-rules-tab"><span class="std std-ref">coref_rules.tab</span></a>.</p>
 </div>
 <div class="section" id="using-sample-weights">
 <h2>Using sample weights<a class="headerlink" href="#using-sample-weights" title="Permalink to this headline">¶</a></h2>
 <p>By default, sklearn trains classifiers to be right as often as possible on the training data, meaning they should get as many of the lines as possible right. However, for coreference resolution, what we want is often rather different.</p>
-<p>Firstly, a more appropriate measure than &#8216;correct rows&#8217; is probably &#8216;correct cohorts&#8217;: how many anaphors are assigned their correct antecedent. But the number of rows per cohort is determined by how many candidates xrenner happens to consider for each cohort. This disproportionately emphasizes the correct classification of candidates with multiple entries.</p>
-<p>Conversely, if an anaphor has many potential antecedents, only one of which is actually in the same entity, the classifier may learn to categorically deny any antecedents to this anaphor. This results in &#8216;many correct rows&#8217;, but leads to bad coreference resolution.</p>
-<p>Finally, coreference evaluation metrics are a very complicated topic (see <a class="reference external" href="http://www.aclweb.org/anthology/P14-2006">Pradhan et al. 2014</a>, <a class="reference external" href="http://www.aclweb.org/anthology/P16-1060">Moosavi &amp; Strube 2016</a>), and end up favoring rather unpredictable types of behavior. If you are evaluating your model using the conll metrics, different scores may result by being too lenient/stringent with coreference in different cases. For example, if singletons are excluded from the evaluation (as in OntoNotes), then for some metrics, getting the first or last link in a chain wrong results in less penalty than getting a &#8216;middle&#8217; mention wrong, which splits the chain into two predicted entities.</p>
+<p>Firstly, a more appropriate measure than ‘correct rows’ is probably ‘correct cohorts’: how many anaphors are assigned their correct antecedent. But the number of rows per cohort is determined by how many candidates xrenner happens to consider for each cohort. This disproportionately emphasizes the correct classification of candidates with multiple entries.</p>
+<p>Conversely, if an anaphor has many potential antecedents, only one of which is actually in the same entity, the classifier may learn to categorically deny any antecedents to this anaphor. This results in ‘many correct rows’, but leads to bad coreference resolution.</p>
+<p>Finally, coreference evaluation metrics are a very complicated topic (see <a class="reference external" href="http://www.aclweb.org/anthology/P14-2006">Pradhan et al. 2014</a>, <a class="reference external" href="http://www.aclweb.org/anthology/P16-1060">Moosavi &amp; Strube 2016</a>), and end up favoring rather unpredictable types of behavior. If you are evaluating your model using the conll metrics, different scores may result by being too lenient/stringent with coreference in different cases. For example, if singletons are excluded from the evaluation (as in OntoNotes), then for some metrics, getting the first or last link in a chain wrong results in less penalty than getting a ‘middle’ mention wrong, which splits the chain into two predicted entities.</p>
 <p>These issues mean that it can make sense to weight your training samples differentially: some rows are more important to get right than others. Several sklearn classifiers support sample weighting, such as GradientBoosting and RandomForest. The script in <em>scripts/get_decision_weights.py</em> gives a very rudimentary solution to weighting the effect of each wrong decision on the conll metrics for a given document. It can be used, for example, to get average weights for errors such as inventing an anaphor, or linking two true mentions incorrectly. These weights can be assigned at the top of the <em>train_classifier.py</em> script, and can be tuned for better overall performance together with the decision threshold (e.g. choosing a lower number than 0.5 as a classifier boundary for accepting coreference).</p>
 </div>
 </div>
 
 
            </div>
+           
           </div>
           <footer>
   
@@ -253,11 +268,19 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016-2020, Amir Zeldes.
+        
+        &copy; Copyright 2016-2020, Amir Zeldes
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -269,36 +292,15 @@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'2.1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
   
  <script type="text/javascript">
     $(document).ready(function() {

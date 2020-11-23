@@ -517,9 +517,9 @@ input_data:
 1	I	_	PRP	PRP	_	2	nsubj	_	_
 2	read	_	VBP	VBP	_	0	root	_	_
 3	the	_	DT	DT	_	6	det	_	_
-4	Wall	_	NNP	NNP	_	2	obj	_	_
+4	Wall	_	NNP	NNP	_	6	compound	_	_
 5	Street	_	NNP	NNP	_	4	flat	_	_
-6	Journal	_	NNP	NNP	_	4	flat	_	_
+6	Journal	_	NNP	NNP	_	2	obj	_	_
 7	.	_	.	.	_	2	punct	_	_
 
 1	That	_	DT	DT	_	2	det	_	_
@@ -587,15 +587,15 @@ input_data:
 
 name:morph_test
 model:eng
-toks:14 # A blorker and...
+toks:14 # A chirpmonger and...
 marks:2
 groups:1
 chains:
-  # A blorker
+  # A chirpmonger
   1_2 < 13_14
 input_data:
 1	A	_	DT	DT	_	2	det	_	_
-2	blorker	_	NN	NN	_	3	nsubj	_	_
+2	chirpmonger	_	NN	NN	_	3	nsubj	_	_
 3	had	_	VBD	VBD	_	0	root	_	_
 4	a	_	DT	DT	_	5	det	_	_
 5	mummelhound	_	NN	NN	_	3	obj	_	_

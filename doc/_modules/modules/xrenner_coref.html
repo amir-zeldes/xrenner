@@ -1,57 +1,56 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_coref &mdash; xrenner 2.1.0 documentation</title>
+  <title>modules.xrenner_coref &mdash; xrenner 2.2.0 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+
+  
+  
+  
   
 
   
-
-  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-
-  
-    <link rel="top" title="xrenner 2.1.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="../../index.html" class="icon icon-home"> xrenner
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> xrenner
           
 
           
@@ -61,7 +60,7 @@
             
             
               <div class="version">
-                2.1
+                2.2
               </div>
             
           
@@ -78,64 +77,87 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../indepth.html">     In depth guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers' module documentation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">xrenner</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">xrenner</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-    <li>modules.xrenner_coref</li>
+        
+      <li>modules.xrenner_coref</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
   <h1>Source code for modules.xrenner_coref</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.xrenner_marker</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.xrenner_compatible</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.xrenner_propagate</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.xrenner_rule</span> <span class="k">import</span> <span class="n">CorefRule</span><span class="p">,</span> <span class="n">ConstraintMatcher</span>
+<span></span><span class="kn">from</span> <span class="nn">.xrenner_marker</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_compatible</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_propagate</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_rule</span> <span class="kn">import</span> <span class="n">CorefRule</span><span class="p">,</span> <span class="n">ConstraintMatcher</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Coreference resolution module. Iterates through markables to find possible matches based on rules.</span>
@@ -205,11 +227,12 @@
 			<span class="n">ante_spec</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;lookahead&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ante_spec</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;lookahead&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
 				<span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">group</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">markable</span><span class="o">.</span><span class="n">non_antecdent_groups</span><span class="p">:</span>
 					<span class="k">if</span> <span class="n">coref_rule_applies</span><span class="p">(</span><span class="n">lex</span><span class="p">,</span> <span class="n">ante_constraints</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">markable</span><span class="p">):</span>
-						<span class="k">if</span> <span class="ow">not</span> <span class="n">markables_overlap</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
+						<span class="k">if</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;no_overlap&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">markables_overlap</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
 							<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">form</span> <span class="o">==</span> <span class="s2">&quot;pronoun&quot;</span><span class="p">:</span>
 								<span class="k">if</span> <span class="n">agree_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ante_spec</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;anyagree&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">group_agree_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span><span class="n">candidate</span><span class="p">,</span><span class="n">previous_markables</span><span class="p">,</span><span class="n">lex</span><span class="p">)):</span>
 									<span class="k">if</span> <span class="n">entities_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cardinality_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">lex</span><span class="p">):</span>
-										<span class="n">candidate_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+										<span class="k">if</span> <span class="n">speaker_compatible</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span><span class="n">candidate</span><span class="p">,</span><span class="n">previous_markables</span><span class="p">):</span>
+											<span class="n">candidate_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
 							<span class="k">elif</span> <span class="n">markable</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">candidate</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="ow">and</span> <span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">markable</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">())):</span>
 								<span class="c1">#propagate_entity(markable, candidate, propagate)</span>
 								<span class="n">candidate_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
@@ -276,7 +299,6 @@
 				<span class="k">if</span> <span class="n">markable</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">best</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">coref</span><span class="p">:</span>
 					<span class="n">markable</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">coref</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">best</span><span class="o">.</span><span class="n">text</span><span class="p">]</span>
 					<span class="n">propagate_entity</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">best</span><span class="p">,</span> <span class="n">propagate</span><span class="p">)</span>
-					<span class="n">propagate_entity</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">best</span><span class="p">)</span>
 				<span class="k">elif</span> <span class="n">markable</span><span class="o">.</span><span class="n">core_text</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">best</span><span class="o">.</span><span class="n">core_text</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">coref</span><span class="p">:</span>
 					<span class="n">markable</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">coref</span><span class="p">[</span><span class="n">markable</span><span class="o">.</span><span class="n">core_text</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">best</span><span class="o">.</span><span class="n">core_text</span><span class="p">]</span>
 					<span class="n">propagate_entity</span><span class="p">(</span><span class="n">markable</span><span class="p">,</span> <span class="n">candidate_item</span><span class="p">)</span>
@@ -368,6 +390,7 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
   
@@ -376,11 +399,19 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016-2020, Amir Zeldes.
+        
+        &copy; Copyright 2016-2020, Amir Zeldes
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -392,36 +423,15 @@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'2.1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
   
  <script type="text/javascript">
     $(document).ready(function() {

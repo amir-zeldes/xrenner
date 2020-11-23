@@ -487,6 +487,29 @@ def group_agree_compatible(markable,candidate,previous_markables,lex):
 			class1, class2 = pair.split("+")
 			if class1 in agreements and class2 in agreements:
 				return False
+
+	return True
+
+
+def speaker_compatible(markable, candidate, previous_markables):
+	if "2" in markable.agree or "1" in markable.agree or "2" in candidate.agree or "1" in candidate.agree:
+		markable_speaker = candidate_speaker = ""
+		if candidate.speaker != "" and "1" in candidate.agree:
+			candidate_speaker = candidate.speaker
+		for mark in previous_markables:
+			if "1" in mark.agree:
+				if mark.speaker != "":
+					markable_speaker = mark.speaker
+					break
+		if "1" in markable.agree:
+			if markable.speaker != "":
+				markable_speaker = markable.speaker
+		if markable_speaker != candidate_speaker and markable_speaker != "" and candidate_speaker != "":
+			return False
+		if ("2" in candidate.agree and "1" in markable.agree) or ("1" in candidate.agree and "2" in markable.agree):
+			if markable_speaker == candidate_speaker and markable_speaker != "" and candidate_speaker != "":
+				return False
+
 	return True
 
 

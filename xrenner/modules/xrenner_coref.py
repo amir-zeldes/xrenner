@@ -71,11 +71,12 @@ def search_prev_markables(markable, previous_markables, rule, lex):
 			ante_spec.find("lookahead") == -1) or (int(markable.head.id) < int(candidate.head.id) and ante_spec.find("lookahead") > -1)):
 				if candidate.group not in markable.non_antecdent_groups:
 					if coref_rule_applies(lex, ante_constraints, candidate, markable):
-						if not markables_overlap(markable, candidate, lex):
+						if not lex.filters["no_overlap"] or not markables_overlap(markable, candidate, lex):
 							if markable.form == "pronoun":
 								if agree_compatible(markable, candidate, lex) or (ante_spec.find("anyagree") > -1 and group_agree_compatible(markable,candidate,previous_markables,lex)):
 									if entities_compatible(markable, candidate, lex) and cardinality_compatible(markable, candidate, lex):
-										candidate_set.add(candidate)
+										if speaker_compatible(markable,candidate,previous_markables):
+											candidate_set.add(candidate)
 							elif markable.text == candidate.text or (len(markable.text) > 4 and (candidate.text.lower() == markable.text.lower())):
 								#propagate_entity(markable, candidate, propagate)
 								candidate_set.add(candidate)
@@ -142,7 +143,6 @@ def search_prev_markables(markable, previous_markables, rule, lex):
 				if markable.text + "|" + best.text in lex.coref:
 					markable.coref_type = lex.coref[markable.text + "|" + best.text]
 					propagate_entity(markable, best, propagate)
-					propagate_entity(markable, best)
 				elif markable.core_text + "|" + best.core_text in lex.coref:
 					markable.coref_type = lex.coref[markable.core_text + "|" + best.core_text]
 					propagate_entity(markable, candidate_item)
