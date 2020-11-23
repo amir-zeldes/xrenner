@@ -15,7 +15,7 @@ from multiprocessing import Process, Value, Lock, current_process, Array
 import ctypes
 from math import ceil
 
-__version__ = "2.1.2"
+__version__ = "2.2.0"
 xrenner_version = "xrenner V" + __version__
 
 sys.dont_write_bytecode = True
