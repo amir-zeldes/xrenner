@@ -1,0 +1,286 @@
+==============
+Using xrenner
+==============
+
+***********
+Basic usage
+***********
+
+To use the default model on English language data, you can run the main script xrenner.py on a text file in the 10 column conll10 or conllu format like this:
+
+``> python xrenner.py infile.conll10``
+
+If you have other language models, you can use them like this, for example for German:
+
+``> python xrenner.py -m deu infile.conll10``
+
+The default output format is a simple inline SGML format, but other output formats are available, using the -o option:
+
+``> python xrenner.py -o conll infile.conll10``
+
+If your model includes alternative setting profiles in an override.ini file (or compressed model component), you can invoke these using the -x option, e.g. to change the default model from the OntoNotes scheme to the GUM scheme:
+
+``> python xrenner.py -x GUM infile.conll10``
+
+You can also turn on verbose mode using -v which will report performance speed, and use -t without an input file to run unit tests and confirm the system is working as expected. Other options include -r to turn off classifiers (faster, but less accurate for models using classifiers), and -d <FILENAME> to dump all coreference candidate pairs to a file as training data for a classifier (see :doc:`Building classifiers <buildclf>`)
+
+
+*************
+Batch input
+*************
+
+You can use `glob <https://docs.python.org/2/library/glob.html>`_ syntax  to process multiple files in batch mode. This will be substantially faster than invoking the xrenner multiple times, since the lexical data will only be loaded once. For example, you can read all .conll10 files in a directory like this:
+
+``> python xrenner.py *.conll10``
+
+In batch mode, output file names are automatically generated using the input file name, minus extensions like 'conll10' or 'conllu', and suffixed with the output format extension. For PAULA, document directories with names corresponding to the input documents are generated automatically.
+
+If you have multiple cores available, batch mode works much faster by using multiple processes with the option -p, for example:
+
+``> python xrenner.py -x GUM -p 4 *.conll10``
+
+Note that if your model uses neural models with large contextualized embeddings (e.g. Bert), multiple processes may not fit in memory when RAM is limited. For "could not allocate memory errors", consider trying -p 1.
+
+**********************
+Importing as a module
+**********************
+
+You can import xrenner as a module. It may be convenient to just install xrenner via pip in this scenario::
+
+   > pip install xrenner
+   
+Then you can import the Xrenner object and feed it a string containing a 10 column conll format parse (see below on formats):
+
+
+.. code-block:: python
+
+   from xrenner import Xrenner
+   
+   xrenner = Xrenner()
+   # Get a parse in Universal Dependencies
+   my_conllu_result = some_parser.parse("John visited Spain. His visit went well.")
+   
+   sgml_result = xrenner.analyze(my_conllu_result,"sgml")
+   print(sgml_result)
+
+
+Keep in mind that the parser output must match whatever annotation scheme the xrenner model is expecting (tags, label names, head-dependent conventions, etc.)
+
+*************
+Input format
+*************
+
+xrenner uses the 10 column tab delimited conllu format, with **one line per token** and **a blank line between sentences**. All of the following columns should be included (use an **underscore** for missing values):
+
+1. **ID** - token ID within sentence
+
+2. **text** - token text
+
+3. **lemma** - dictionary entry for this token (optional)
+
+4. **upos** - universal part of speech
+
+5. **xpos** - native part of speech (for English: PTB)
+
+6. **morph** - morphological information for this token (optional)
+
+7. **head** - ID of head token
+
+8. **func** – dependency function
+
+9. -- 10. – reserved for alternate trees with multiple parentage (DAGs) and misc. annotations
+
+**Example**:
+
+	.. code-block:: html
+
+		1	Wikinews	_	PROPN	NNP	_	2	nsubj	_	_
+		2	interviews	_	VERB	VBZ	_	0	root	_	_
+		3	President	_	NOUN	NN	_	2	obj	_	_
+		4	of	_	ADP	IN	_	7	case	_	_
+		5	the	_	DET	DT	_	7	det	_	_
+		6	International	_	PROPN	NNP	_	7	amod	_	_
+		7	Brotherhood	_	PROPN	NNP	_	3	nmod	_	_
+		8	of	_	ADP	IN	_	9	case	_	_
+		9	Magicians	_	PROPN	NNPS	_	7	nmod	_	_
+												
+		1	Wednesday	_	PROPN	NNP	_	0	root	_	_
+		2	,	_	PUNCT	,	_	4	punct	_	_
+		3	October	_	PROPN	NNP	_	4	compound	_	_
+		4	9	_	NUM	CD	_	1	appos	_	_
+		5	,	_	PUNCT	,	_	6	punct	_	_
+		6	2013	_	NUM	CD	_	4	nmod:tmod	_	_
+
+
+It is also possible to include comments on lines beginning with the pound sign. These are generally ignored, with the exception of optional sentence type (s_type) and speaker annotations, as in the example below, which can be used as part of :ref:`coref_rules.tab <coref_rules_tab>` (e.g. specifying having the same or different speakers as a condition):
+
+	.. code-block:: html
+	
+		# speaker="Mario J. Lucero"
+		# s_type="decl"
+		1	Heaven	_	PROPN	NNP	_	6	nsubj	_	_
+		2	Sent	_	PROPN	NNP	_	1	flat	_	_
+		3	Gaming	_	PROPN	NNP	_	1	flat	_	_
+		4	is	_	AUX	VBZ	_	6	cop	_	_
+		5	basically	_	ADV	RB	_	6	advmod	_	_
+		6	me	_	PRON	PRP	_	0	root	_	_
+		7	and	_	CCONJ	CC	_	8	cc	_	_
+		8	Isabel	_	PROPN	NNP	_	6	conj	_	_
+		9	,	_	PUNCT	,	_	12	punct	_	_
+		10	I	_	PRON	PRP	_	12	nsubj	_	_
+		11	'm	_	AUX	VBP	_	12	cop	_	_
+		12	Mario	_	PROPN	NNP	_	6	parataxis	_	_
+		13	J.	_	PROPN	NNP	_	12	flat	_	_
+		14	Lucero	_	PROPN	NNP	_	12	flat	_	_
+		15	.	_	PUNCT	.	_	6	punct	_	_
+
+		# speaker="Isabel Ruiz"
+		# s_type="decl"
+		1	And	_	CCONJ	CC	_	5	cc	_	_
+		2	,	_	PUNCT	,	_	1	punct	_	_
+		3	I	_	PRON	PRP	_	5	nsubj	_	_
+		4	'm	_	AUX	VBP	_	5	cop	_	_
+		5	Isabel	_	PROPN	NNP	_	0	root	_	_
+		6	Ruiz	_	PROPN	NNP	_	5	flat	_	_
+		7	.	_	PUNCT	.	_	5	punct	_	_
+
+
+**************
+Output formats
+**************
+
+Using the -o flag, the following output formats are supported:
+
+sgml (default)
+--------------
+
+This is the default output format. Each line is either a token or an opening or closing entity tag.
+
+**Example**:
+
+	.. code-block:: xml
+
+		<referent id="referent_197" entity="person" group="34" antecedent="referent_142" type="coref">
+		Mrs.
+		Hills
+		</referent>
+		said
+		that
+		<referent id="referent_198" entity="place" group="2" antecedent="referent_157" type="coref">
+		the
+		U.S.
+		</referent>
+		is
+		still
+		concerned
+		about
+		``
+		disturbing
+		developments
+		in
+		<referent id="referent_201" entity="place" group="20" antecedent="referent_193" type="coref">
+		Turkey
+		</referent>
+		and
+		continuing
+		slow
+		progress
+		in
+		<referent id="referent_203" entity="place" group="20" antecedent="referent_201" type="coref">
+		Malaysia
+		</referent>
+		.
+		''
+		<referent id="referent_204" entity="person" group="34" antecedent="referent_197" type="ana">
+		She
+		</referent>
+		did
+		n't
+		elaborate
+		
+		
+conll
+------
+
+Standard conll coreference format, one token per line and numbered opening/closing brackets in a separate column to express groups.
+Note that this format only groups mentions but does not represent antecedents and chain types (anaphora, apposition etc.) directly.
+
+**Example**:
+
+	.. code-block:: html
+
+		1	Portrait	_
+		2	shot	_
+		3	of	_
+		4	Dennis	(4
+		5	Hopper	4)
+		6	,	_
+		7	famous	_
+		8	for	_
+		9	his	(4)
+		10	role	_
+		11	in	_
+		12	the	_
+		13	1969	_
+		14	film	_
+		15	Easy	_
+		16	Rider	_
+
+html
+------
+
+Very similar to sgml, but designed to visualize coreferent groups in same colored divs, and some entity icons, all using Font Awesome (http://fontawesome.io/) and JavaScript (see :doc:`main page <index>` for an example). The css and scripts are available in the utils/vis/ directory. 
+
+onto
+-------
+
+OntoNotes .coref XML format. Coreference types are represented, but only entity groups are used (no exact coref chains).
+
+**Example**:
+
+	.. code-block:: xml
+
+		Portrait shot of 
+		<COREF ID="4" ENTITY="person" INFSTAT="new">Dennis Hopper</COREF> , 
+		famous for <COREF ID="4" ENTITY="person" INFSTAT="giv" TYPE="ana">his</COREF> 
+		role in the 1969 film Easy Rider
+
+paula
+-------
+   
+`PAULA XML <https://www.sfb632.uni-potsdam.de/images/doc/PAULA_P1.1.2013.1.21a.pdf>`_ is a highly expressive, graph-like stand off XML format. Because PAULA documents are directory structures with multiple files, there is no need to specify an output file (> outfile) when using PAULA output. 
+
+The output using PAULA preserves both the exact antecdent chain structure and coreference types, as well as the optional information status annotations designating first mention (*new*) and subsequent mentions (*giv* for 'given').
+
+webannotsv
+--------
+
+Tab-delimited format used by the WebAnno and Inception annotation tools.
+
+**Example**:
+	.. code-block:: html
+
+		#FORMAT=WebAnno TSV 3.2
+		#T_SP=webanno.custom.Referent|entity|infstat
+		#T_RL=webanno.custom.Coref|coreftype|BT_webanno.custom.Referent
+
+		#Text=Charles J. Fillmore
+		1-1	0-7	Charles	person[1]	new[1]	coref	2-1[2_1]	
+		1-2	8-10	J.	person[1]	new[1]	_	_	
+		1-3	11-19	Fillmore	person[1]	new[1]	_	_	
+
+		#Text=Charles J. Fillmore ( August 9 , 1929 – February 13 , 2014 ) was an American linguist and Professor of Linguistics at the University of California , Berkeley .
+		2-1	20-27	Charles	person[2]	giv[2]	coref	2-16[9_2]	
+		2-2	28-30	J.	person[2]	giv[2]	_	_	
+		2-3	31-39	Fillmore	person[2]	giv[2]	_	_	
+
+
+unittest
+--------
+
+This is an internal format used only to generate test cases for xrenner unit tests.
+
+none
+----
+
+This is a dummy format setting - run the analysis but produce no output. Useful when using the -d, --dump option for classifier training data.

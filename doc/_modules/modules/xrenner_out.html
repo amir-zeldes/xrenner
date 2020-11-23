@@ -1,0 +1,904 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>modules.xrenner_out &mdash; xrenner 2.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> xrenner
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../indepth.html">     In depth guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers' module documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">xrenner</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>modules.xrenner_out</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for modules.xrenner_out</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">xmltodict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Output module for exporting resolved data to one of the supported serialization formats</span>
+
+<span class="sd">Author: Amir Zeldes, Siyao Peng</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">PY3</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+
+
+<div class="viewcode-block" id="clean_filename"><a class="viewcode-back" href="../../modules.html#modules.xrenner_out.clean_filename">[docs]</a><span class="k">def</span> <span class="nf">clean_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Heuristically replaces known extensions to create sensible output file name</span>
+
+<span class="sd">	:param filename: the input file name to strip extensions from</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.conll10&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.conllu&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.conll10&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.conllu&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">filename</span></div>
+
+
+<div class="viewcode-block" id="output_onto"><a class="viewcode-back" href="../../modules.html#modules.xrenner_out.output_onto">[docs]</a><span class="k">def</span> <span class="nf">output_onto</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Outputs analysis results in OntoNotes .coref XML format</span>
+
+<span class="sd">	:param conll_tokens: List of all processed ParsedToken objects in the document</span>
+<span class="sd">	:param markstart_dict: Dictionary from markable starting token ids to Markable objects</span>
+<span class="sd">	:param markend_dict: Dictionary from markable ending token ids to Markable objects</span>
+<span class="sd">	:return: serialized XML</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">output_string</span> <span class="o">=</span> <span class="s1">&#39;&lt;DOC DOCNO=&quot;&#39;</span> <span class="o">+</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;</span><span class="se">\n</span><span class="s1">&lt;TEXT PARTNO=&quot;000&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+	<span class="k">for</span> <span class="n">out_tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markstart_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">markstart_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)],</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+				<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&lt;COREF ID=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; ENTITY=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">+</span> <span class="s1">&#39;&quot; INFSTAT=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">infstat</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+					<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&quot; TYPE=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">coref_type</span>
+				<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&quot;&gt;&#39;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">output_string</span> <span class="o">+=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">,</span><span class="s2">&quot;&amp;amp;&quot;</span><span class="p">,</span><span class="n">out_tok</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">text</span> <span class="k">else</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">text</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+				<span class="n">output_string</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/COREF&gt;&quot;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span>
+
+
+	<span class="k">return</span> <span class="n">output_string</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;/TEXT&gt;</span><span class="se">\n</span><span class="s2">&lt;/DOC&gt;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="output_SGML"><a class="viewcode-back" href="../../modules.html#modules.xrenner_out.output_SGML">[docs]</a><span class="k">def</span> <span class="nf">output_SGML</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Outputs analysis results as CWB SGML (with nesting), one token per line and markables in &lt;referent&gt; tags</span>
+
+<span class="sd">	:param conll_tokens: List of all processed ParsedToken objects in the document</span>
+<span class="sd">	:param markstart_dict: Dictionary from markable starting token ids to Markable objects</span>
+<span class="sd">	:param markend_dict: Dictionary from markable ending token ids to Markable objects</span>
+<span class="sd">	:return: serialized SGML</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">output_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">out_tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markstart_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">markstart_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)],</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+				<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&lt;referent id=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; entity=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">+</span> <span class="s1">&#39;&quot; group=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+					<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&quot; antecedent=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; type=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">coref_type</span>
+				<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&quot;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">output_string</span> <span class="o">+=</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+				<span class="n">output_string</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/referent&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+	<span class="k">return</span> <span class="n">output_string</span></div>
+
+
+<div class="viewcode-block" id="output_conll"><a class="viewcode-back" href="../../modules.html#modules.xrenner_out.output_conll">[docs]</a><span class="k">def</span> <span class="nf">output_conll</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">output_infstat</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Outputs analysis results in CoNLL format, one token per line and markables with opening</span>
+<span class="sd">	and closing numbered brackets. Compatible with CoNLL scorer.</span>
+
+<span class="sd">	:param conll_tokens: List of all processed ParsedToken objects in the document</span>
+<span class="sd">	:param markstart_dict: Dictionary from markable starting token ids to Markable objects</span>
+<span class="sd">	:param markend_dict: Dictionary from markable ending token ids to Markable objects</span>
+<span class="sd">	:param file_name: name of the source file (dependency data) to create header for CoNLL file</span>
+<span class="sd">	:param output_infstat: whether to append the infstat property of each markable in a separate column (default False)</span>
+<span class="sd">	:return: serialized conll format in plain text</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">output_string</span> <span class="o">=</span> <span class="s2">&quot;# begin document &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.conll10&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_xrenner&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_hyph&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_deped&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_decyc&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="k">for</span> <span class="n">out_tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="n">coref_col</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="n">line</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+		<span class="n">infstat_col</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">output_infstat</span><span class="p">:</span>
+			<span class="n">infstat_col</span> <span class="o">=</span> <span class="s2">&quot;_</span><span class="se">\t</span><span class="s2">&quot;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markstart_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">markstart_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)],</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+				<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">output_infstat</span><span class="p">:</span>
+					<span class="n">infstat_col</span> <span class="o">=</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">infstat</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+				<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+						<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+						<span class="n">markend_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">out_mark</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+				<span class="k">if</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markstart_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+					<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coref_col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">coref_col</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+							<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;|&quot;</span>  <span class="c1"># Use pipe to separate group 1 opening and 2 closing leading to (12) -&gt; (1|2)</span>
+					<span class="n">coref_col</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">markstart_dict</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">:</span>
+			<span class="n">coref_col</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span>
+
+		<span class="n">line</span> <span class="o">+=</span> <span class="n">infstat_col</span> <span class="o">+</span> <span class="n">coref_col</span>
+		<span class="n">output_string</span> <span class="o">+=</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">output_string</span> <span class="o">+=</span> <span class="s2">&quot;# end document</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+	<span class="k">return</span> <span class="n">output_string</span></div>
+
+
+<div class="viewcode-block" id="output_conll_sent"><a class="viewcode-back" href="../../modules.html#modules.xrenner_out.output_conll_sent">[docs]</a><span class="k">def</span> <span class="nf">output_conll_sent</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">output_infstat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_entity</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Outputs analysis results in CoNLL format, one token per line and markables with opening</span>
+<span class="sd">	and closing numbered brackets. Compatible with CoNLL scorer.</span>
+
+<span class="sd">	:param conll_tokens: List of all processed ParsedToken objects in the document</span>
+<span class="sd">	:param markstart_dict: Dictionary from markable starting token ids to Markable objects</span>
+<span class="sd">	:param markend_dict: Dictionary from markable ending token ids to Markable objects</span>
+<span class="sd">	:param file_name: name of the source file (dependency data) to create header for CoNLL file</span>
+<span class="sd">	:param output_infstat: whether to append the infstat property of each markable in a separate column (default False)</span>
+<span class="sd">	:param output_entity: whether to output entity types in coref ID column (default True)</span>
+<span class="sd">	:return: serialized conll format in plain text</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">output_string</span> <span class="o">=</span> <span class="s2">&quot;# begin document &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.conll10&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="n">current_sent</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">out_tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+		<span class="k">if</span> <span class="n">current_sent</span> <span class="o">!=</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span><span class="p">:</span>
+			<span class="n">current_sent</span> <span class="o">=</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span>
+			<span class="n">output_string</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="n">coref_col</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="n">line</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+		<span class="n">infstat_col</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markstart_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">markstart_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)],</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+				<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">output_entity</span><span class="p">:</span>
+					<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">entity</span>
+				<span class="k">if</span> <span class="n">output_infstat</span><span class="p">:</span>
+					<span class="n">infstat_col</span> <span class="o">=</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">infstat</span>
+				<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+						<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+						<span class="n">markend_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">out_mark</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+				<span class="k">if</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markstart_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+					<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coref_col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">coref_col</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+							<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;|&quot;</span>  <span class="c1"># Use pipe to separate group 1 opening and 2 closing leading to (12) -&gt; (1|2)</span>
+					<span class="n">coref_col</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+					<span class="k">if</span> <span class="n">output_entity</span><span class="p">:</span>
+						<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">entity</span>
+					<span class="n">coref_col</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">markstart_dict</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">:</span>
+			<span class="n">coref_col</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span>
+
+		<span class="n">line</span> <span class="o">+=</span> <span class="n">infstat_col</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">coref_col</span>
+		<span class="n">output_string</span> <span class="o">+=</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">output_string</span> <span class="o">+=</span> <span class="s2">&quot;# end document</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+	<span class="k">return</span> <span class="n">output_string</span></div>
+
+
+<div class="viewcode-block" id="output_HTML"><a class="viewcode-back" href="../../modules.html#modules.xrenner_out.output_HTML">[docs]</a><span class="k">def</span> <span class="nf">output_HTML</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="n">rtl</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Outputs analysis results as HTML (assuming jquery, xrenner css and js files), one token per line and</span>
+<span class="sd">	markables in &lt;div&gt; tags with Font Awesome icons and colored groups.</span>
+
+<span class="sd">	:param conll_tokens: List of all processed ParsedToken objects in the document</span>
+<span class="sd">	:param markstart_dict: Dictionary from markable starting token ids to Markable objects</span>
+<span class="sd">	:param markend_dict: Dictionary from markable ending token ids to Markable objects</span>
+<span class="sd">	:return: serialized HTML</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="n">rtl</span><span class="p">:</span>
+		<span class="n">rtl_style</span> <span class="o">=</span> <span class="s1">&#39; style=&quot;direction: rtl&quot;&#39;</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">rtl_style</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+	<span class="n">output_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;html&gt;</span>
+<span class="s1">&lt;head&gt;</span>
+<span class="s1">	&lt;link rel=&quot;stylesheet&quot; href=&quot;http://corpling.uis.georgetown.edu/xrenner/css/renner.css&quot; type=&quot;text/css&quot; charset=&quot;utf-8&quot;/&gt;</span>
+<span class="s1">	&lt;link rel=&quot;stylesheet&quot; href=&quot;https://corpling.uis.georgetown.edu/xrenner/css/font-awesome-4.2.0/css/font-awesome.min.css&quot;/&gt;</span>
+<span class="s1">	&lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=utf-8&quot;/&gt;</span>
+<span class="s1">&lt;/head&gt;</span>
+<span class="s1">&lt;body&#39;&#39;&#39;</span><span class="o">+</span><span class="n">rtl_style</span><span class="o">+</span><span class="s1">&#39;&#39;&#39;&gt;</span>
+<span class="s1">&lt;script src=&quot;http://corpling.uis.georgetown.edu/xrenner/script/jquery-1.11.3.min.js&quot;&gt;&lt;/script&gt;</span>
+<span class="s1">&lt;script src=&quot;http://corpling.uis.georgetown.edu/xrenner/script/chroma.min.js&quot;&gt;&lt;/script&gt;</span>
+<span class="s1">&lt;script src=&quot;http://corpling.uis.georgetown.edu/xrenner/script/xrenner.js&quot;&gt;&lt;/script&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span>
+	<span class="k">for</span> <span class="n">out_tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markstart_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">markstart_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)],</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+				<span class="n">info_string</span> <span class="o">=</span> <span class="s2">&quot;class: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">entity</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; | subclass: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">subclass</span><span class="p">)</span> <span class="o">+</span> \
+				              <span class="s2">&quot;&amp;#10;definiteness: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">definiteness</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; | agree: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">agree</span><span class="p">)</span> <span class="o">+</span> \
+				              <span class="s2">&quot;&amp;#10;cardinality: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">cardinality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; | form: &quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">form</span><span class="p">)</span> <span class="o">+</span> \
+				              <span class="s2">&quot;&amp;#10;func: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">func</span><span class="p">)</span> <span class="o">+</span> \
+				              <span class="s2">&quot;&amp;#10;core_text: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">core_text</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; | lemma: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">lemma</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">speaker</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+					<span class="n">info_string</span> <span class="o">+=</span> <span class="s2">&quot;&amp;#10;speaker: &quot;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">speaker</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+					<span class="n">info_string</span> <span class="o">+=</span> <span class="s1">&#39;&amp;#10;coref_type: &#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">coref_type</span>
+				<span class="k">if</span> <span class="s2">&quot;matching_rule&quot;</span> <span class="ow">in</span> <span class="n">out_mark</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+					<span class="n">info_string</span> <span class="o">+=</span> <span class="s2">&quot;&amp;#10;coref_rule: &quot;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">matching_rule</span>
+				<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&lt;div id=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;&quot; head=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;&quot; onmouseover=&quot;highlight_group(&#39;</span> <span class="o">+</span> \
+				<span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="s1">&#39;)&quot; onmouseout=&quot;unhighlight_group(&#39;</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="s1">&#39;)&quot; class=&quot;referent&quot; group=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">group</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; title=&quot;&#39;</span> <span class="o">+</span> <span class="n">info_string</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+					<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&quot; antecedent=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">id</span>
+				<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&quot;&gt;&lt;span class=&quot;entity_type&quot;&gt;&#39;</span> <span class="o">+</span> <span class="n">get_glyph</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">entity</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&lt;/span&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">output_string</span> <span class="o">+=</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-RRB-&quot;</span><span class="p">,</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-LRB-&quot;</span><span class="p">,</span> <span class="s2">&quot;(&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-LSB-&quot;</span><span class="p">,</span> <span class="s2">&quot;[&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-RSB-&quot;</span><span class="p">,</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markend_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+				<span class="n">output_string</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/div&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&lt;script&gt;colorize();&lt;/script&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+	<span class="n">output_string</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;&lt;/body&gt;</span>
+<span class="s1">&lt;/html&gt;&#39;&#39;&#39;</span>
+	<span class="k">return</span> <span class="n">output_string</span></div>
+
+
+<div class="viewcode-block" id="output_PAULA"><a class="viewcode-back" href="../../modules.html#modules.xrenner_out.output_PAULA">[docs]</a><span class="k">def</span> <span class="nf">output_PAULA</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="n">docname</span><span class="p">,</span> <span class="n">docpath</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Outputs analysis results as PAULA standoff XML. Separate files for tokens, markables and coreference links</span>
+<span class="sd">	plus annotations. This format is the most complete, distinguishing apposition, anaphora, cataphora and other</span>
+<span class="sd">	coreference types as edge annotations.</span>
+
+<span class="sd">	:param conll_tokens: List of all processed ParsedToken objects in the document</span>
+<span class="sd">	:param markstart_dict: Dictionary from markable starting token ids to Markable objects</span>
+<span class="sd">	:param markend_dict: Dictionary from markable ending token ids to Markable objects</span>
+<span class="sd">	:return: void</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">paula_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">paula_tokens</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">paula_markables</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">paula_entities</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">paula_rels</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">paula_rel_annos</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">cursor</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">rel_id</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">paula_text_header</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; standalone=&quot;no&quot;?&gt;</span>
+<span class="s1">&lt;!DOCTYPE paula SYSTEM &quot;paula_text.dtd&quot;&gt;</span>
+
+<span class="s1">&lt;paula version=&quot;1.0&quot;&gt;</span>
+<span class="s1">&lt;header paula_id=&quot;renner.out_text&quot; type=&quot;text&quot;/&gt;</span>
+
+<span class="s1">&lt;body&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span>
+	<span class="n">paula_tok_header</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; standalone=&quot;no&quot;?&gt;</span>
+
+<span class="s1">&lt;!DOCTYPE paula SYSTEM &quot;paula_mark.dtd&quot;&gt;</span>
+<span class="s1">&lt;paula version=&quot;1.0&quot;&gt;</span>
+
+<span class="s1">&lt;header paula_id=&quot;renner.out_tok&quot;/&gt;</span>
+
+<span class="s1">&lt;markList xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot; type=&quot;tok&quot; xml:base=&quot;xrenner.&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.text.xml&quot;&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+	<span class="n">paula_mark_header</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;</span>
+<span class="s1">&lt;!DOCTYPE paula SYSTEM &quot;paula_mark.dtd&quot;&gt;</span>
+<span class="s1">&lt;paula version=&quot;1.0&quot;&gt;</span>
+
+<span class="s1">&lt;header paula_id=&quot;xrenner.&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;_referentSeg&quot;/&gt;</span>
+
+<span class="s1">&lt;markList xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot; type=&quot;referentSeg&quot; xml:base=&quot;xrenner.&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.tok.xml&quot;&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+	<span class="n">paula_entity_header</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;</span>
+
+<span class="s1">&lt;!DOCTYPE paula SYSTEM &quot;paula_feat.dtd&quot;&gt;</span>
+<span class="s1">&lt;paula version=&quot;1.0&quot;&gt;</span>
+
+<span class="s1">&lt;header paula_id=&quot;xrenner.&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;_referentSeg_entity&quot;/&gt;</span>
+
+<span class="s1">&lt;featList xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot; type=&quot;entity&quot; xml:base=&quot;xrenner.&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.referentSeg.xml&quot;&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+	<span class="n">paula_coref_header</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; standalone=&quot;no&quot;?&gt;</span>
+
+<span class="s1">&lt;!DOCTYPE paula SYSTEM &quot;paula_rel.dtd&quot;&gt;</span>
+<span class="s1">&lt;paula version=&quot;1.0&quot;&gt;</span>
+
+<span class="s1">&lt;header paula_id=&quot;xrenner.&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.referentSeg_coref&quot;/&gt;</span>
+
+<span class="s1">&lt;relList xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot; type=&quot;coref&quot; xml:base=&quot;xrenner.&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.referentSeg.xml&quot;&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span>
+	<span class="n">paula_coref_type_header</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;</span>
+
+<span class="s1">&lt;!DOCTYPE paula SYSTEM &quot;paula_feat.dtd&quot;&gt;</span>
+<span class="s1">&lt;paula version=&quot;1.0&quot;&gt;</span>
+
+<span class="s1">&lt;header paula_id=&quot;xrenner.&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.referentSeg_coref_type&quot;/&gt;</span>
+
+<span class="s1">&lt;featList xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot; type=&quot;type&quot; xml:base=&quot;xrenner.&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;.referentSeg_coref.xml&quot;&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span><span class="p">):</span>
+		<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span><span class="p">):</span>
+		<span class="k">raise</span><span class="p">(</span><span class="s2">&quot;Unable to create document directory. There is already a file named &quot;</span> <span class="o">+</span> <span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.text.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_text_header</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.tok.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_tok_header</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.referentSeg.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_mark_header</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.referentSeg_entity.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_entity_header</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.referentSeg_coref.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_coref_header</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.referentSeg_coref_type.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_coref_type_header</span><span class="p">)</span>
+
+	<span class="k">del</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">out_tok</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">:</span>
+		<span class="n">paula_text</span> <span class="o">+=</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">markstart_dict</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">out_mark</span> <span class="ow">in</span> <span class="n">markstart_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">id</span><span class="p">)]:</span>
+				<span class="k">if</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+					<span class="n">paula_markables</span> <span class="o">+=</span> <span class="s1">&#39;&lt;mark id=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;  xlink:href=&quot;#xpointer(id(&#39;</span> <span class="o">+</span> <span class="s2">&quot;&#39;tok_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;)/range-to(id(&#39;tok_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;)))&quot;</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;!-- &#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; --&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">paula_markables</span> <span class="o">+=</span> <span class="s1">&#39;&lt;mark id=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;  xlink:href=&quot;#tok_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_mark</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;!-- &#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; --&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+				<span class="n">paula_entities</span> <span class="o">+=</span> <span class="s1">&#39;&lt;feat xlink:href=&quot;#&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;&quot; value=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;!-- &#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; --&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+				<span class="k">if</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+					<span class="n">paula_rels</span> <span class="o">+=</span> <span class="s1">&#39;&lt;rel id=&quot;rel_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rel_id</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; xlink:href=&quot;#&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;&quot; target=&quot;#&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;&lt;!-- &#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s1">&#39; ... &#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s1">&#39; --&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+					<span class="n">paula_rel_annos</span> <span class="o">+=</span> <span class="s1">&#39;&lt;feat xlink:href=&quot;#rel_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rel_id</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; value=&quot;&#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;&lt;!-- &#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s1">&#39; ... &#39;</span> <span class="o">+</span> <span class="n">out_mark</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s1">&#39; --&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+					<span class="n">rel_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+		<span class="n">paula_tokens</span> <span class="o">+=</span> <span class="s1">&#39;&lt;mark id=&quot;tok_&#39;</span> <span class="o">+</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;&quot; xlink:href=&quot;#xpointer(string-range(//body,&#39;</span> <span class="o">+</span> <span class="s2">&quot;&#39;&#39;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">text</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;))&quot;</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;&lt;!-- &#39;</span> <span class="o">+</span> <span class="n">out_tok</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot; --&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">cursor</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_tok</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+	<span class="n">paula_text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;/body&gt;</span><span class="se">\n</span><span class="s2">&lt;/paula&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">paula_tokens</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/markList&gt;</span><span class="se">\n</span><span class="s2">&lt;/paula&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">paula_markables</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/markList&gt;</span><span class="se">\n</span><span class="s2">&lt;/paula&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">paula_entities</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/featList&gt;</span><span class="se">\n</span><span class="s2">&lt;/paula&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">paula_rels</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/relList&gt;</span><span class="se">\n</span><span class="s2">&lt;/paula&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">paula_rel_annos</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/featList&gt;</span><span class="se">\n</span><span class="s2">&lt;/paula&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.text.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_text</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.tok.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_tokens</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.referentSeg.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_markables</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.referentSeg_entity.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_entities</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.referentSeg_coref.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_rels</span><span class="p">)</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">docpath</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;xrenner.&#39;</span> <span class="o">+</span> <span class="n">docname</span> <span class="o">+</span> <span class="s1">&#39;.referentSeg_coref_type.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">paula_rel_annos</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">output_webanno</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markables</span><span class="p">):</span>
+	<span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s1">	&lt;xmi:XMI xmlns:cas=&quot;http:///uima/cas.ecore&quot;</span>
+<span class="s1">	    xmlns:type2=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/metadata/type.ecore&quot;</span>
+<span class="s1">	    xmlns:dependency=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/syntax/type/dependency.ecore&quot;</span>
+<span class="s1">	    xmlns:type5=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/syntax/type.ecore&quot;</span>
+<span class="s1">	    xmlns:type3=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/ner/type.ecore&quot;</span>
+<span class="s1">	    xmlns:custom=&quot;http:///webanno/custom.ecore&quot;</span>
+<span class="s1">	    xmlns:type4=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/segmentation/type.ecore&quot;</span>
+<span class="s1">	    xmlns:tcas=&quot;http:///uima/tcas.ecore&quot;</span>
+<span class="s1">	    xmlns:tweet=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/lexmorph/type/pos/tweet.ecore&quot;</span>
+<span class="s1">	    xmlns:chunk=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/syntax/type/chunk.ecore&quot;</span>
+<span class="s1">	    xmlns:xmi=&quot;http://www.omg.org/XMI&quot;</span>
+<span class="s1">	    xmlns:type=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/coref/type.ecore&quot;</span>
+<span class="s1">	    xmlns:morph=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/lexmorph/type/morph.ecore&quot;</span>
+<span class="s1">	    xmlns:constituent=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/syntax/type/constituent.ecore&quot;</span>
+<span class="s1">	    xmlns:pos=&quot;http:///de/tudarmstadt/ukp/dkpro/core/api/lexmorph/type/pos.ecore&quot; xmi:version=&quot;2.0&quot;&gt;</span>
+<span class="s1">	    &lt;cas:NULL xmi:id=&quot;0&quot;/&gt;</span>
+<span class="s1">	    &lt;cas:Sofa xmi:id=&quot;12000&quot; sofaNum=&quot;1&quot; sofaID=&quot;_InitialView&quot; mimeType=&quot;text&quot;</span>
+<span class="s1">	        sofaString=&quot;&#39;&#39;&#39;</span>
+
+	<span class="n">text_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">all_ids_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">text_length</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">:</span>
+		<span class="n">escape_offset</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">escaped_token</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span>
+		<span class="k">if</span> <span class="s1">&#39;&amp;&#39;</span> <span class="ow">in</span> <span class="n">escaped_token</span><span class="p">:</span>
+			<span class="n">escaped_token</span> <span class="o">=</span> <span class="n">escaped_token</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">,</span> <span class="s2">&quot;&amp;amp;&quot;</span><span class="p">)</span>
+			<span class="n">escape_offset</span> <span class="o">+=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="s1">&#39;&quot;&#39;</span> <span class="ow">in</span> <span class="n">escaped_token</span><span class="p">:</span>
+			<span class="n">escaped_token</span> <span class="o">=</span> <span class="n">escaped_token</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span><span class="s2">&quot;&amp;quot;&quot;</span><span class="p">)</span>
+			<span class="n">escape_offset</span> <span class="o">+=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="s1">&#39;&gt;&#39;</span> <span class="ow">in</span> <span class="n">escaped_token</span><span class="p">:</span>
+			<span class="n">escaped_token</span> <span class="o">=</span> <span class="n">escaped_token</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="s2">&quot;&amp;gt;&quot;</span><span class="p">)</span>
+			<span class="n">escape_offset</span> <span class="o">+=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="s1">&#39;&lt;&#39;</span> <span class="ow">in</span> <span class="n">escaped_token</span><span class="p">:</span>
+			<span class="n">escaped_token</span> <span class="o">=</span> <span class="n">escaped_token</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="s2">&quot;&amp;lt;&quot;</span><span class="p">)</span>
+			<span class="n">escape_offset</span> <span class="o">+=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">)</span>
+
+		<span class="n">text_string</span> <span class="o">+=</span> <span class="n">escaped_token</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+		<span class="k">if</span> <span class="n">PY3</span><span class="p">:</span>
+			<span class="n">text_length</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">text_length</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+
+	<span class="n">output</span> <span class="o">+=</span> <span class="n">text_string</span>
+	<span class="n">output</span> <span class="o">+=</span> <span class="s1">&#39;&quot;/&gt;</span><span class="se">\n</span><span class="s1">&lt;type2:DocumentMetaData xmi:id=&quot;10001&quot; sofa=&quot;12000&quot; begin=&quot;0&quot; end=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">text_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+	<span class="n">output</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">		language=&quot;x-unspecified&quot;</span>
+<span class="s1">        documentTitle=&quot;renner_out.tcf&quot; documentId=&quot;renner_out&quot;</span>
+<span class="s1">        documentUri=&quot;file:/srv/webanno/repository/project/2/document/4/source/renner_out.tcf&quot;</span>
+<span class="s1">        collectionId=&quot;file:/srv/webanno/repository/project/2/document/4/source/&quot;</span>
+<span class="s1">        documentBaseUri=&quot;file:/srv/webanno/repository/project/2/document/4/source/&quot;</span>
+<span class="s1">        isLastSegment=&quot;false&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;&#39;&#39;</span>
+
+	<span class="n">cursor</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">current_sent</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">sent_begin</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">sentences_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">tok_starts</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">tok_ends</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">conll_tokens</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">PY3</span><span class="p">:</span>
+			<span class="n">token_text</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">token_text</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+
+		<span class="n">output</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&lt;type4:Token xmi:id=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; sofa=&quot;12000&quot; begin=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; end=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cursor</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">token_text</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+		<span class="n">all_ids_string</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+		<span class="n">tok_starts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
+		<span class="n">tok_ends</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cursor</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">token_text</span><span class="p">))</span>
+
+		<span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">sentence</span><span class="o">.</span><span class="n">sent_num</span> <span class="o">&gt;</span> <span class="n">current_sent</span><span class="p">:</span>
+			<span class="n">sentences_string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&lt;type4:Sentence xmi:id=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">4000</span> <span class="o">+</span> <span class="n">current_sent</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; sofa=&quot;12000&quot; begin=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sent_begin</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; end=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cursor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+			<span class="n">all_ids_string</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">4000</span> <span class="o">+</span> <span class="n">current_sent</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+			<span class="n">current_sent</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="n">sent_begin</span> <span class="o">=</span> <span class="n">cursor</span>
+		<span class="n">cursor</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token_text</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+	<span class="n">sentences_string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&lt;type4:Sentence xmi:id=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">4000</span> <span class="o">+</span> <span class="n">current_sent</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; sofa=&quot;12000&quot; begin=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sent_begin</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; end=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cursor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+	<span class="n">all_ids_string</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">4000</span> <span class="o">+</span> <span class="n">current_sent</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+
+	<span class="n">output</span> <span class="o">+=</span> <span class="n">sentences_string</span>
+
+	<span class="n">mark_counter</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">mark_xmi_ids</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">markables</span><span class="p">:</span>
+		<span class="n">output</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&lt;custom:Referent xmi:id=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">5000</span> <span class="o">+</span> <span class="n">mark_counter</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; sofa=&quot;12000&quot; begin=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tok_starts</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> \
+		          <span class="s1">&#39;&quot; end=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tok_ends</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;&quot; entity=&quot;&#39;</span> <span class="o">+</span> <span class="n">mark</span><span class="o">.</span><span class="n">entity</span> <span class="o">+</span> <span class="s1">&#39;&quot; infstat=&quot;&#39;</span> <span class="o">+</span> <span class="n">mark</span><span class="o">.</span><span class="n">infstat</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+		<span class="n">all_ids_string</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">5000</span> <span class="o">+</span> <span class="n">mark_counter</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+		<span class="n">mark_xmi_ids</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">5000</span> <span class="o">+</span> <span class="n">mark_counter</span><span class="p">)</span>
+		<span class="n">mark_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="n">link_counter</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="k">for</span> <span class="n">mark</span> <span class="ow">in</span> <span class="n">markables</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+			<span class="n">output</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&lt;custom:Coref xmi:id=&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">6000</span> <span class="o">+</span> <span class="n">link_counter</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot; sofa=&quot;12000&quot; begin=&quot;&#39;</span> <span class="o">+</span> \
+			             <span class="nb">str</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">tok_starts</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">tok_starts</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">start</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="s1">&#39;&quot; end=&quot;&#39;</span> <span class="o">+</span> \
+			             <span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">tok_ends</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">end</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">tok_starts</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">end</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="s1">&#39;&quot; Dependent=&quot;&#39;</span> <span class="o">+</span> <span class="n">mark_xmi_ids</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">antecedent</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> \
+			             <span class="o">+</span> <span class="s1">&#39;&quot; Governor=&quot;&#39;</span> <span class="o">+</span> <span class="n">mark_xmi_ids</span><span class="p">[</span><span class="n">mark</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&quot; type=&quot;&#39;</span> <span class="o">+</span> <span class="n">mark</span><span class="o">.</span><span class="n">coref_type</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+			<span class="n">all_ids_string</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">6000</span> <span class="o">+</span> <span class="n">link_counter</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+			<span class="n">link_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="n">output</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;    &lt;type2:TagsetDescription xmi:id=&quot;15571&quot; sofa=&quot;12000&quot; begin=&quot;0&quot; end=&quot;0&quot;</span>
+<span class="s1">        layer=&quot;de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency&quot; name=&quot;Tiger&quot;/&gt;</span>
+<span class="s1">    &lt;type2:TagsetDescription xmi:id=&quot;15578&quot; sofa=&quot;12000&quot; begin=&quot;0&quot; end=&quot;0&quot;</span>
+<span class="s1">        layer=&quot;de.tudarmstadt.ukp.dkpro.core.api.ner.type.NamedEntity&quot; name=&quot;NER_WebAnno&quot;/&gt;</span>
+<span class="s1">    &lt;type2:TagsetDescription xmi:id=&quot;15585&quot; sofa=&quot;12000&quot; begin=&quot;0&quot; end=&quot;0&quot;</span>
+<span class="s1">        layer=&quot;de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS&quot; name=&quot;STTS&quot;/&gt;</span>
+<span class="s1">		&lt;type2:TagsetDescription xmi:id=&quot;15592&quot; sofa=&quot;12000&quot; begin=&quot;0&quot; end=&quot;0&quot; layer=&quot;webanno.custom.Coref&quot;</span>
+<span class="s1">			name=&quot;coref_tags&quot;/&gt;</span>
+<span class="s1">		&lt;type2:TagsetDescription xmi:id=&quot;15599&quot; sofa=&quot;12000&quot; begin=&quot;0&quot; end=&quot;0&quot;</span>
+<span class="s1">			layer=&quot;webanno.custom.Referent&quot; name=&quot;infstat_tags&quot;/&gt;</span><span class="se">\n</span><span class="s1">&#39;&#39;&#39;</span>
+
+	<span class="n">output</span> <span class="o">+=</span> <span class="s1">&#39;&lt;cas:View sofa=&quot;12000&quot; members=&quot;&#39;</span> <span class="o">+</span> <span class="n">all_ids_string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;&quot;/&gt;</span><span class="se">\n</span><span class="s1">&lt;/xmi:XMI&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+	<span class="k">return</span> <span class="n">output</span>
+
+
+<span class="k">def</span> <span class="nf">output_webannotsv</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markables</span><span class="p">,</span> <span class="n">output_infstat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+	<span class="n">webannoxmi</span> <span class="o">=</span> <span class="n">xmltodict</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">output_webanno</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markables</span><span class="p">))</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">output_infstat</span><span class="p">:</span>
+		<span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#FORMAT=WebAnno TSV 3.2&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;#T_SP=webanno.custom.Referent|entity&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;#T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#FORMAT=WebAnno TSV 3.2&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;#T_SP=webanno.custom.Referent|entity|infstat&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;#T_RL=webanno.custom.Coref|type|BT_webanno.custom.Referent&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+
+	<span class="n">tokenstring</span> <span class="o">=</span> <span class="n">webannoxmi</span><span class="p">[</span><span class="s1">&#39;xmi:XMI&#39;</span><span class="p">][</span><span class="s1">&#39;cas:Sofa&#39;</span><span class="p">][</span><span class="s1">&#39;@sofaString&#39;</span><span class="p">]</span>
+
+	<span class="c1"># ref_id: (ref_start_char, ref_end_char, ref_start_tok, ref_end_tok)</span>
+	<span class="n">refdict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+
+	<span class="n">singletokens</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">webannoxmi</span><span class="p">[</span><span class="s1">&#39;xmi:XMI&#39;</span><span class="p">][</span><span class="s1">&#39;type4:Sentence&#39;</span><span class="p">]:</span>
+		<span class="n">sent_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sent</span><span class="p">[</span><span class="s1">&#39;@xmi:id&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">4000</span>
+		<span class="n">sent_start_char</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sent</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">])</span>
+		<span class="n">sent_end_char</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sent</span><span class="p">[</span><span class="s1">&#39;@end&#39;</span><span class="p">])</span>
+
+		<span class="n">tok_id</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">webannoxmi</span><span class="p">[</span><span class="s1">&#39;xmi:XMI&#39;</span><span class="p">][</span><span class="s1">&#39;type4:Token&#39;</span><span class="p">]:</span>
+			<span class="n">tok_start_char</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">])</span>
+			<span class="n">tok_end_char</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tok</span><span class="p">[</span><span class="s1">&#39;@end&#39;</span><span class="p">])</span>
+
+			<span class="k">if</span> <span class="n">tok_start_char</span> <span class="o">&gt;</span> <span class="n">sent_end_char</span><span class="p">:</span>
+				<span class="k">break</span>
+			<span class="k">elif</span> <span class="n">tok_start_char</span> <span class="o">&gt;=</span> <span class="n">sent_start_char</span><span class="p">:</span>
+				<span class="n">line_ref_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+				<span class="n">line_type_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+				<span class="n">line_coref_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+				<span class="n">line_coref_chain</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+				<span class="k">if</span> <span class="n">tok_id</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+					<span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#Text=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tokenstring</span><span class="p">[</span><span class="n">sent_start_char</span><span class="p">:</span><span class="n">sent_end_char</span><span class="p">]))</span>
+
+				<span class="n">line_output</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sent_id</span><span class="p">,</span> <span class="n">tok_id</span><span class="p">),</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tok_start_char</span><span class="p">,</span> <span class="n">tok_end_char</span><span class="p">),</span> <span class="n">tokenstring</span><span class="p">[</span><span class="n">tok_start_char</span><span class="p">:</span><span class="n">tok_end_char</span><span class="p">]]</span>
+
+
+				<span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">webannoxmi</span><span class="p">[</span><span class="s1">&#39;xmi:XMI&#39;</span><span class="p">][</span><span class="s1">&#39;custom:Referent&#39;</span><span class="p">]:</span>
+
+					<span class="n">refdict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@xmi:id&#39;</span><span class="p">])</span><span class="o">-</span><span class="mi">5000</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span>  <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">]</span>
+					<span class="n">refdict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@xmi:id&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@end&#39;</span><span class="p">]</span>
+
+					<span class="k">if</span> <span class="n">tok_start_char</span> <span class="o">&gt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="n">tok_end_char</span><span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@end&#39;</span><span class="p">]):</span>
+
+						<span class="k">if</span> <span class="n">tok_start_char</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="n">tok_end_char</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@end&#39;</span><span class="p">]):</span>
+							<span class="n">line_ref_string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">|&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@entity&#39;</span><span class="p">])</span>
+							<span class="k">if</span> <span class="n">output_infstat</span><span class="p">:</span>
+								<span class="n">line_type_string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">|&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@infstat&#39;</span><span class="p">])</span>
+						<span class="k">else</span><span class="p">:</span>
+							<span class="n">line_ref_string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">[</span><span class="si">%d</span><span class="s1">]|&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@entity&#39;</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@xmi:id&#39;</span><span class="p">])</span><span class="o">-</span><span class="mi">5000</span><span class="p">)</span>
+							<span class="k">if</span> <span class="n">output_infstat</span><span class="p">:</span>
+								<span class="n">line_type_string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">[</span><span class="si">%d</span><span class="s1">]|&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@infstat&#39;</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@xmi:id&#39;</span><span class="p">])</span><span class="o">-</span><span class="mi">5000</span><span class="p">)</span>
+
+						<span class="k">if</span> <span class="n">tok_start_char</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">]):</span>
+							<span class="n">refdict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@xmi:id&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sent_id</span><span class="p">,</span> <span class="n">tok_id</span><span class="p">)</span>
+
+						<span class="k">if</span> <span class="n">tok_end_char</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@end&#39;</span><span class="p">]):</span>
+							<span class="n">refdict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@xmi:id&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">-</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sent_id</span><span class="p">,</span> <span class="n">tok_id</span><span class="p">)</span>
+
+						<span class="k">if</span> <span class="s1">&#39;custom:Coref&#39;</span> <span class="ow">in</span> <span class="n">webannoxmi</span><span class="p">[</span><span class="s2">&quot;xmi:XMI&quot;</span><span class="p">]:</span>
+							<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">webannoxmi</span><span class="p">[</span><span class="s1">&#39;xmi:XMI&#39;</span><span class="p">][</span><span class="s1">&#39;custom:Coref&#39;</span><span class="p">],</span><span class="nb">list</span><span class="p">):</span>
+								<span class="n">webannoxmi</span><span class="p">[</span><span class="s1">&#39;xmi:XMI&#39;</span><span class="p">][</span><span class="s1">&#39;custom:Coref&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">webannoxmi</span><span class="p">[</span><span class="s1">&#39;xmi:XMI&#39;</span><span class="p">][</span><span class="s1">&#39;custom:Coref&#39;</span><span class="p">]]</span>
+							<span class="k">for</span> <span class="n">coref</span> <span class="ow">in</span> <span class="n">webannoxmi</span><span class="p">[</span><span class="s1">&#39;xmi:XMI&#39;</span><span class="p">][</span><span class="s1">&#39;custom:Coref&#39;</span><span class="p">]:</span>
+								<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">coref</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">]):</span>
+
+									<span class="k">if</span> <span class="n">tok_start_char</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">]):</span>
+										<span class="c1"># line_coref_chain += &#39;%d[%d_%d]|&#39; % (int(ref[&#39;@xmi:id&#39;])-5000, int(coref[&#39;@Governor&#39;])-5000, int(coref[&#39;@Dependent&#39;])-5000)</span>
+										<span class="n">line_coref_chain</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">[</span><span class="si">%d</span><span class="s1">_</span><span class="si">%d</span><span class="s1">]|&#39;</span> <span class="o">%</span> <span class="p">(</span>
+										<span class="nb">int</span><span class="p">(</span><span class="n">coref</span><span class="p">[</span><span class="s1">&#39;@Governor&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">coref</span><span class="p">[</span><span class="s1">&#39;@Governor&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">coref</span><span class="p">[</span><span class="s1">&#39;@Dependent&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">)</span>
+										<span class="n">line_coref_string</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">|&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">coref</span><span class="p">[</span><span class="s1">&#39;@type&#39;</span><span class="p">])</span>
+
+
+										<span class="k">if</span> <span class="n">tok_start_char</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@begin&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="n">tok_end_char</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@end&#39;</span><span class="p">]):</span>
+											<span class="n">singletokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s1">&#39;@xmi:id&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">5000</span><span class="p">)</span>
+
+				<span class="k">if</span> <span class="n">line_ref_string</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+					<span class="n">line_ref_string</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span>
+				<span class="k">elif</span> <span class="n">line_ref_string</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">):</span>
+					<span class="n">line_ref_string</span> <span class="o">=</span> <span class="n">line_ref_string</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+				<span class="k">if</span> <span class="n">line_type_string</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+					<span class="n">line_type_string</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span>
+				<span class="k">elif</span> <span class="n">line_type_string</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">):</span>
+					<span class="n">line_type_string</span> <span class="o">=</span> <span class="n">line_type_string</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+				<span class="k">if</span> <span class="n">line_coref_chain</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+					<span class="n">line_coref_chain</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span>
+				<span class="k">elif</span> <span class="n">line_coref_chain</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">):</span>
+					<span class="n">line_coref_chain</span> <span class="o">=</span> <span class="n">line_coref_chain</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+				<span class="k">if</span> <span class="n">line_coref_string</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+					<span class="n">line_coref_string</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span>
+				<span class="k">elif</span> <span class="n">line_coref_string</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">):</span>
+					<span class="n">line_coref_string</span> <span class="o">=</span> <span class="n">line_coref_string</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+				<span class="n">line_output</span> <span class="o">+=</span> <span class="p">[</span><span class="n">line_ref_string</span><span class="p">,</span> <span class="n">line_type_string</span><span class="p">,</span> <span class="n">line_coref_string</span><span class="p">,</span> <span class="n">line_coref_chain</span><span class="p">]</span>
+
+				<span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_output</span><span class="p">)</span>
+				<span class="n">tok_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+		<span class="c1"># output += &#39;\n&#39;</span>
+		<span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+	<span class="c1"># put the coref token back in</span>
+	<span class="c1"># TODO: which exact token should the Webanno corefer to ? start, end, or head?</span>
+
+	<span class="k">for</span> <span class="n">id_l</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+			<span class="n">corefcol</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+			<span class="k">if</span> <span class="n">corefcol</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span><span class="p">:</span>
+				<span class="n">chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[\[\]_]&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">corefcol</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)]</span>
+
+				<span class="k">for</span> <span class="n">id_j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chains</span><span class="p">)):</span>
+					<span class="n">tokenplace</span> <span class="o">=</span> <span class="n">refdict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="n">id_j</span><span class="p">][</span><span class="mi">0</span><span class="p">])][</span><span class="mi">2</span><span class="p">]</span>
+
+					<span class="k">if</span> <span class="n">refdict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="n">id_j</span><span class="p">][</span><span class="mi">1</span><span class="p">])][</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">refdict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="n">id_j</span><span class="p">][</span><span class="mi">1</span><span class="p">])][</span><span class="mi">3</span><span class="p">]:</span>
+						<span class="n">leftid</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">leftid</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="n">id_j</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+					<span class="k">if</span> <span class="n">refdict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="n">id_j</span><span class="p">][</span><span class="mi">2</span><span class="p">])][</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">refdict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">chains</span><span class="p">[</span><span class="n">id_j</span><span class="p">][</span><span class="mi">2</span><span class="p">])][</span><span class="mi">3</span><span class="p">]:</span>
+						<span class="n">rightid</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">rightid</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="n">id_j</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+
+					<span class="k">if</span> <span class="n">rightid</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span> <span class="ow">and</span> <span class="n">leftid</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span>
+						<span class="n">chains</span><span class="p">[</span><span class="n">id_j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenplace</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">chains</span><span class="p">[</span><span class="n">id_j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenplace</span> <span class="o">+</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="n">leftid</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">rightid</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
+
+				<span class="n">output</span><span class="p">[</span><span class="n">id_l</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chains</span><span class="p">)</span>
+
+			<span class="n">output</span><span class="p">[</span><span class="n">id_l</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">id_l</span><span class="p">])</span>
+
+	<span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">output</span>
+
+
+<div class="viewcode-block" id="get_glyph"><a class="viewcode-back" href="../../modules.html#modules.xrenner_out.get_glyph">[docs]</a><span class="k">def</span> <span class="nf">get_glyph</span><span class="p">(</span><span class="n">entity_type</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Generates appropriate Font Awesome icon strings based on entity type strings, such as</span>
+<span class="sd">	a person icon (fa-male) for the &#39;person&#39; entity, etc.</span>
+
+<span class="sd">	:param entity_type: String specifying the entity type to be visualized</span>
+<span class="sd">	:return: HTML string with the corresponding Font Awesome icon</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;person&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-male&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;place&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-map-marker&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-clock-o&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;abstract&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-cloud&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;quantity&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-sort-numeric-asc&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;organization&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-bank&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;object&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-cube&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;event&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-bell-o&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;animal&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-paw&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;plant&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-pagelines&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">elif</span> <span class="n">entity_type</span> <span class="o">==</span> <span class="s2">&quot;substance&quot;</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-flask&quot;&gt;&lt;/i&gt;&#39;</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;i title=&quot;&#39;</span> <span class="o">+</span> <span class="n">entity_type</span> <span class="o">+</span> <span class="s1">&#39;&quot; class=&quot;fa fa-question&quot;&gt;&lt;/i&gt;&#39;</span></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2016-2020, Amir Zeldes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            //$(this).parent().children(".hidden").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

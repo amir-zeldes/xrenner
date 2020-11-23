@@ -1,0 +1,120 @@
+================================
+Developers' module documentation
+================================
+
+**********
+Classes
+**********
+
+Xrenner
+=======
+ .. autoclass:: modules.xrenner_xrenner.Xrenner
+     :members:
+
+ParsedToken
+===========
+
+ .. autoclass:: modules.xrenner_classes.ParsedToken
+     :members:
+
+Markable
+========
+ 
+ .. autoclass:: modules.xrenner_classes.Markable
+     :members:
+
+CorefRule
+========= 
+ .. autoclass:: modules.xrenner_rule.CorefRule
+     :members:
+
+ConstraintMatcher
+=================
+ .. autoclass:: modules.xrenner_rule.ConstraintMatcher
+     :members:
+
+LexData
+=======
+
+ .. autoclass:: modules.xrenner_lex.LexData
+     :members:
+
+
+*******
+Modules
+*******
+
+depedit
+=======
+
+.. automodule:: modules.depedit
+     :members:
+
+xrenner_compatible
+==================
+	
+.. automodule:: modules.xrenner_compatible
+     :members: 
+
+xrenner_coref
+=============
+	
+.. automodule:: modules.xrenner_coref
+     :members: 
+
+xrenner_marker
+==============
+	
+.. automodule:: modules.xrenner_marker
+     :members: 
+
+xrenner_out
+==============
+	
+.. automodule:: modules.xrenner_out
+     :members: 
+
+xrenner_postprocess
+===================
+	
+.. automodule:: modules.xrenner_postprocess
+     :members: 
+	
+xrenner_preprocess
+==================
+
+.. automodule:: modules.xrenner_preprocess
+     :members: 
+	
+xrenner_propagate
+=================
+	
+.. automodule:: modules.xrenner_propagate
+     :members: 
+	
+xrenner_sequence
+=================
+	
+.. automodule:: modules.xrenner_sequence
+     :members: 
+	
+	
+**********
+Unit tests
+**********
+
+.. autoclass:: modules.xrenner_test.Test1Model
+	 :members:
+	 :undoc-members:
+
+.. autoclass:: modules.xrenner_test.Test2MarkableMethods
+	 :members:
+	 :undoc-members:
+
+.. autoclass:: modules.xrenner_test.Test3CorefMethods
+	 :members:
+	 :undoc-members:
+
+.. autoclass:: modules.xrenner_test.Case
+	 :members:
+	 :undoc-members:

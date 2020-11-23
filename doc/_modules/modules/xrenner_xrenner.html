@@ -1,57 +1,56 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.xrenner_xrenner &mdash; xrenner 2.1.0 documentation</title>
+  <title>modules.xrenner_xrenner &mdash; xrenner 2.2.0 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+
+  
+  
+  
   
 
   
-
-  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-
-  
-    <link rel="top" title="xrenner 2.1.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="../../index.html" class="icon icon-home"> xrenner
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> xrenner
           
 
           
@@ -61,7 +60,7 @@
             
             
               <div class="version">
-                2.1
+                2.2
               </div>
             
           
@@ -78,54 +77,77 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../using.html">     Using xrenner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../models.html">     Building your own language models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../indepth.html">     In depth guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers&#8217; module documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">     Developers' module documentation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">xrenner</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">xrenner</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-    <li>modules.xrenner_xrenner</li>
+        
+      <li>modules.xrenner_xrenner</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -141,22 +163,22 @@
 <span class="sd">Author: Amir Zeldes</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">.xrenner_out</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.xrenner_classes</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.xrenner_coref</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.xrenner_preprocess</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.xrenner_marker</span> <span class="k">import</span> <span class="n">make_markable</span>
-<span class="kn">from</span> <span class="nn">.xrenner_lex</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.xrenner_postprocess</span> <span class="k">import</span> <span class="n">postprocess_coref</span>
-<span class="kn">from</span> <span class="nn">.depedit</span> <span class="k">import</span> <span class="n">DepEdit</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">.xrenner_out</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_classes</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_coref</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_preprocess</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_marker</span> <span class="kn">import</span> <span class="n">make_markable</span>
+<span class="kn">from</span> <span class="nn">.xrenner_lex</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.xrenner_postprocess</span> <span class="kn">import</span> <span class="n">postprocess_coref</span>
+<span class="kn">from</span> <span class="nn">.depedit</span> <span class="kn">import</span> <span class="n">DepEdit</span>
 <span class="kn">import</span> <span class="nn">ntpath</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">io</span><span class="o">,</span> <span class="nn">decimal</span>
 
 <span class="n">decimal</span><span class="o">.</span><span class="n">getcontext</span><span class="p">()</span><span class="o">.</span><span class="n">rounding</span> <span class="o">=</span> <span class="n">decimal</span><span class="o">.</span><span class="n">ROUND_DOWN</span>
 
 <div class="viewcode-block" id="Xrenner"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner">[docs]</a><span class="k">class</span> <span class="nc">Xrenner</span><span class="p">:</span>
 
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rule_based</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_seq</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rule_based</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_seq</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Main class for xrenner coreferencer. Invokes the load method to read model data.</span>
 <span class="sd">		</span>
@@ -166,6 +188,7 @@
 <span class="sd">		:param no_seq: do not use machine learning sequence taggers for entity resolution</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
+		<span class="bp">self</span><span class="o">.</span><span class="n">docname</span> <span class="o">=</span> <span class="s2">&quot;untitled&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">rule_based</span> <span class="o">=</span> <span class="n">rule_based</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">no_seq</span> <span class="o">=</span> <span class="n">no_seq</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">override</span><span class="p">)</span>
@@ -203,7 +226,7 @@
 
 	<span class="k">def</span> <span class="nf">check_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="c1"># Check for large model files which should be in models/_sequence_taggers/</span>
-		<span class="kn">from</span> <span class="nn">.get_models</span> <span class="k">import</span> <span class="n">check_models</span>
+		<span class="kn">from</span> <span class="nn">.get_models</span> <span class="kn">import</span> <span class="n">check_models</span>
 		<span class="n">check_models</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Xrenner.analyze"><a class="viewcode-back" href="../../modules.html#modules.xrenner_xrenner.Xrenner.analyze">[docs]</a>	<span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">,</span> <span class="n">out_format</span><span class="p">):</span>
@@ -290,7 +313,10 @@
 			<span class="n">s_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">no_super</span><span class="p">))</span>
 
 		<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">sequencer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Sequence label all tokens before reading sentences</span>
-			<span class="n">seq_preds</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">sequencer</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">s_texts</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">lex</span><span class="o">.</span><span class="n">sequencer</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;crfsuite&quot;</span><span class="p">:</span>
+				<span class="n">seq_preds</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">sequencer</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">seq_preds</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">sequencer</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">s_texts</span><span class="p">)</span>
 
 		<span class="k">for</span> <span class="n">myline</span> <span class="ow">in</span> <span class="n">infile</span><span class="p">:</span>
 			<span class="k">if</span> <span class="s2">&quot;speaker&quot;</span> <span class="ow">in</span> <span class="n">myline</span> <span class="ow">and</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">myline</span> <span class="ow">and</span> <span class="n">myline</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>  <span class="c1"># speaker annotation</span>
@@ -517,7 +543,7 @@
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;onto&quot;</span><span class="p">:</span>
 			<span class="k">return</span> <span class="n">output_onto</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markstart_dict</span><span class="p">,</span> <span class="n">markend_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docname</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;unittest&quot;</span><span class="p">:</span>
-			<span class="kn">from</span> <span class="nn">.xrenner_test</span> <span class="k">import</span> <span class="n">generate_test</span>
+			<span class="kn">from</span> <span class="nn">.xrenner_test</span> <span class="kn">import</span> <span class="n">generate_test</span>
 			<span class="k">return</span> <span class="n">generate_test</span><span class="p">(</span><span class="n">conll_tokens</span><span class="p">,</span> <span class="n">markables</span><span class="p">,</span> <span class="n">parse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">out_format</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
 			<span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -668,7 +694,7 @@
 			<span class="n">middle_name_candidate</span> <span class="o">=</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">if</span> <span class="n">tok1</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">conll_tokens</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
 			<span class="n">last_name_candidate</span> <span class="o">=</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">if</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">tok2</span><span class="o">.</span><span class="n">text</span>
 			<span class="k">if</span> <span class="ow">not</span> <span class="n">lex</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;cap_names&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="p">(</span><span class="n">first_name_candidate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">and</span> <span class="n">last_name_candidate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()):</span>
-				<span class="k">if</span> <span class="n">first_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span> <span class="ow">and</span> <span class="n">last_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">last_names</span> <span class="ow">and</span> <span class="n">tok1</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">tok2</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">r&#39;^[A-Z]\.$&#39;</span><span class="p">,</span><span class="n">middle_name_candidate</span><span class="p">)</span> <span class="ow">or</span> <span class="n">middle_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span><span class="p">):</span>
+				<span class="k">if</span> <span class="n">first_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span> <span class="ow">and</span> <span class="n">last_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">last_names</span> <span class="ow">and</span> <span class="n">tok1</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">tok2</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[A-Z]\.$&#39;</span><span class="p">,</span><span class="n">middle_name_candidate</span><span class="p">)</span> <span class="ow">or</span> <span class="n">middle_name_candidate</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">first_names</span><span class="p">):</span>
 					<span class="n">stop_ids</span><span class="p">[</span><span class="n">tok1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
 		<span class="c1"># Expand children list recursively into descendants for this sentence</span>
@@ -746,6 +772,9 @@
 		<span class="c1"># Check for atomicity and remove any subsumed markables if atomic</span>
 		<span class="k">for</span> <span class="n">mark_id</span> <span class="ow">in</span> <span class="n">mark_candidates_by_head</span><span class="p">:</span>
 			<span class="n">mark</span> <span class="o">=</span> <span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">mark_id</span><span class="p">]</span>
+			<span class="c1">## DEBUG POINT ##</span>
+			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">mark</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">lex</span><span class="o">.</span><span class="n">debug</span><span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">]:</span>
+				<span class="n">a</span> <span class="o">=</span> <span class="mi">5</span>
 			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;</span> <span class="n">mark</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>  <span class="c1"># No atomicity check if single token</span>
 				<span class="c1"># Check if the markable has a modifier based entity guess</span>
 				<span class="n">modifier_based_entity</span> <span class="o">=</span> <span class="n">recognize_entity_by_mod</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span> <span class="n">lex</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
@@ -762,6 +791,17 @@
 			<span class="c1"># Check for whole markable only exclusion</span>
 			<span class="k">if</span> <span class="n">mark</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;@&quot;</span> <span class="ow">in</span> <span class="n">lex</span><span class="o">.</span><span class="n">stop_list</span><span class="p">:</span>
 				<span class="n">keys_to_pop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mark_id</span><span class="p">)</span>
+
+		<span class="c1"># Check for singleton classifier if desired</span>
+		<span class="c1"># TODO: remove or fix</span>
+		<span class="n">check_singleton</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">if</span> <span class="n">check_singleton</span><span class="p">:</span>
+			<span class="kn">import</span> <span class="nn">cPickle</span> <span class="k">as</span> <span class="nn">pickle</span>
+			<span class="n">classifier</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;models&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;singleton_net.p&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span>
+			<span class="k">for</span> <span class="n">head_id</span> <span class="ow">in</span> <span class="n">mark_candidates_by_head</span><span class="p">:</span>
+				<span class="n">mark</span> <span class="o">=</span> <span class="n">mark_candidates_by_head</span><span class="p">[</span><span class="n">mark_candidates_by_head</span><span class="p">]</span>
+				<span class="k">if</span> <span class="n">classifier</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">mark</span><span class="p">):</span>
+					<span class="n">keys_to_pop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head_id</span><span class="p">)</span>
 
 		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys_to_pop</span><span class="p">:</span>
 			<span class="n">mark_candidates_by_head</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -832,12 +872,10 @@
 				<span class="n">lex</span><span class="o">.</span><span class="n">last</span><span class="p">[</span><span class="n">current_markable</span><span class="o">.</span><span class="n">agree</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_markable</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="k">pass</span></div></div>
-
-
-
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
   
@@ -846,11 +884,19 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016-2020, Amir Zeldes.
+        
+        &copy; Copyright 2016-2020, Amir Zeldes
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -862,36 +908,15 @@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'2.1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
   
  <script type="text/javascript">
     $(document).ready(function() {
