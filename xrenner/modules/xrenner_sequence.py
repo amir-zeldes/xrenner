@@ -227,7 +227,7 @@ class Sequencer:
 
             major, minor = str(__version__).split(".")[0:2]
             if int(major) > 0 or int(minor) > 4:
-                sentences = [Sentence(s) for s in sentences]
+                sentences = [Sentence(s, use_tokenizer=lambda q: q.split()) for s in sentences]
             preds = self.tagger.predict(sentences)
 
             if preds is None:  # Newer versions of flair have void predict method, use modified Sentence list
