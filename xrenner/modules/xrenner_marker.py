@@ -206,7 +206,7 @@ def resolve_mark_entity(mark, lex):
 					mark.definiteness = "def"  # literal year numbers are considered definite like 'proper names'
 					mark.form = "proper"  # literal year numbers are considered definite like 'proper names'
 			if entity == "":
-				if re.match(r'^(([0-9]+[.,]?)+)$', mark.core_text) is not None:
+				if re.match(r'^(([0-9]{1,3}[.,]?)+)$', mark.core_text) is not None:
 					entity = lex.filters["quantity_def_entity"]
 					mark.alt_entities.append(lex.filters["time_def_entity"])
 					mark.entity_certainty = "uncertain"
