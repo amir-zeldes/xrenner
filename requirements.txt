@@ -2,3 +2,6 @@ scikit-learn>=0.22.1
 xgboost>=0.81,<=0.90
 flair==0.6.1
 xmltodict
+transformers==3.0.2
+numpy>=1.20.0,<=1.24.4
+scikit-learn==0.22.1
