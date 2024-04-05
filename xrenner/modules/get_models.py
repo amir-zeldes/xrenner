@@ -25,7 +25,7 @@ def check_models(path=None):
 		model = path.split(os.sep)[-1]
 
 	if not os.path.exists(path):
-		server = "corpling.uis.georgetown.edu"
+		server = "gucorpling.org"
 		resource = "/".join([server, "amir", "download", model])
 		download_file("https://" + resource, os.sep.join([script_dir,"..","models","_sequence_taggers",model]))
 	else:
